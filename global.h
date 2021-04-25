@@ -3,9 +3,13 @@
 
 
 extern void* memory;
+extern void* bg;
 
 extern int winSizeX;
 extern int winSizeY;
+
+extern float winMidX;
+extern float winMidY;
 
 extern float dTime;
 

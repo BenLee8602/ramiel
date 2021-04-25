@@ -1,12 +1,18 @@
 #include <windows.h>
 #include <stdio.h>
+
 #include "draw.h"
 #include "global.h"
+#include "render.h"
 
 void* memory;
+void* bg;
 
 int winSizeX;
 int winSizeY;
+
+float winMidX;
+float winMidY;
 
 float time;
 float dTime;
@@ -34,10 +40,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 	
 			winSizeX = rect.right - rect.left;
 			winSizeY = rect.bottom - rect.top;
+			winMidX = (float)winSizeX / 2.0f;
+			winMidY = (float)winSizeY / 2.0f;
 			bufferSize = winSizeX * winSizeY * sizeof(unsigned int);
 
 			if (memory) VirtualFree(memory, 0, MEM_RELEASE);
 			memory = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+			if (bg) VirtualFree(bg, 0, MEM_RELEASE);
+			bg = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+			drawBackground();
 
 			bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 			bitmapInfo.bmiHeader.biWidth = winSizeX;
@@ -98,7 +111,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		}
 
 		// draw frame
-		drawLine(100, 100, 500, 350);
+		memcpy(bg, memory, bufferSize);
+		renderMain();
 
 		// update frame
 		StretchDIBits(

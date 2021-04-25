@@ -1,4 +1,16 @@
 #include "global.h"
+#include "render.h"
+#include "draw.h"
+
+
+void drawBackground() {
+	unsigned int* pixel = (unsigned int*)bg;
+	for (float y = 0.0f; y < winSizeY; y += 1) {
+		for (float x = 0.0f; x < winSizeX; x += 1) {
+			*pixel++ = 0;
+		}
+	}
+}
 
 
 void drawRect(unsigned int color, int x1, int y1, int len, int ht) {
@@ -86,4 +98,11 @@ void drawLine(int x1, int y1, int x2, int y2) {
 			}
 		}
 	}
+}
+
+
+void drawTriangle(struct Tri2D* tri) {
+	drawLine(tri->pts[0].x, tri->pts[0].y, tri->pts[1].x, tri->pts[1].y);
+	drawLine(tri->pts[1].x, tri->pts[1].y, tri->pts[2].x, tri->pts[2].y);
+	drawLine(tri->pts[2].x, tri->pts[2].y, tri->pts[0].x, tri->pts[0].y);
 }
