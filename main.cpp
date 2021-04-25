@@ -1,13 +1,26 @@
 #include <windows.h>
+#include <stdio.h>
+#include "draw.h"
+#include "global.h"
 
 void* memory;
 
 int winSizeX;
 int winSizeY;
 
+float time;
+float dTime;
+
 bool run = true;
 int bufferSize;
 BITMAPINFO bitmapInfo;
+
+
+float getTime(LARGE_INTEGER* frameStartTime, LARGE_INTEGER* frameEndTime) {
+	LARGE_INTEGER runsPerSec;
+	QueryPerformanceFrequency(&runsPerSec);
+	return float(frameEndTime->QuadPart - frameStartTime->QuadPart) / runsPerSec.QuadPart;
+}
 
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -46,6 +59,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+	char title[23] = "";
+	float fps;
+
 	// register window class
 	WNDCLASS winClass = {};
 	winClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -65,6 +81,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	);
 	HDC hdc = GetDC(window);
 
+	// inititalize time
+	time = 0;
+	dTime = 0.016666f;
+	LARGE_INTEGER frameStartTime;
+	LARGE_INTEGER frameEndTime;
+	QueryPerformanceCounter(&frameStartTime);
+
 	// main loop
 	while (run) {
 		// window message handling
@@ -73,6 +96,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
+
+		// draw frame
+		drawLine(100, 100, 500, 350);
 
 		// update frame
 		StretchDIBits(
@@ -83,6 +109,20 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			memory, &bitmapInfo,
 			DIB_RGB_COLORS, SRCCOPY
 		);
+
+		// update time
+		QueryPerformanceCounter(&frameEndTime);
+		dTime = getTime(&frameStartTime, &frameEndTime);
+		frameStartTime = frameEndTime;
+		time += dTime;
+
+		// display fps
+		if (time > 1) {
+			time = 0;
+			fps = 1.0f / dTime;
+			sprintf_s(title, "Window - %.2f FPS", fps);
+			SetWindowTextA(window, title);
+		}
 	}
 
 	return 0;
