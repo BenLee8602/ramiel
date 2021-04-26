@@ -1,20 +1,25 @@
 #include "global.h"
 #include "render.h"
 #include "draw.h"
+using namespace std;
 
 float zFar = 1000.0f;
+struct Vec3f cameraPos = { 640.0f, 360.0f, 0.0f };
+struct Vec3f cameraRot = { 0.0f };
 
 
 struct Vec2 convDimension(struct Vec3* pt3D) {
 	struct Vec2 pt2D = { 0 };
-	float depth = (float)pt3D->z / zFar;
-	pt2D.x = (int)((float)pt3D->x * (1.0f - depth) + winMidX * depth);
-	pt2D.y = (int)((float)pt3D->y * (1.0f - depth) + winMidY * depth);
+	float depth = (cameraPos.z + (float)pt3D->z) / zFar;
+	pt2D.x = (pt3D->x * (1.0f - depth) + cameraPos.x * depth) - cameraPos.x + winMidX;
+	pt2D.y = (pt3D->y * (1.0f - depth) + cameraPos.y * depth) - cameraPos.y + winMidY;
 	return pt2D;
 }
 
 
 void renderMain() {
+	zFar = cameraPos.z + 1000.0f;
+
 	struct Vec3 pt1c = { 800, 200, 100 };
 	struct Vec3 pt2c = { 900, 200, 100 };
 	struct Vec3 pt3c = { 800, 100, 100 };

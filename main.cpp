@@ -4,6 +4,7 @@
 #include "draw.h"
 #include "global.h"
 #include "render.h"
+#include "input.cpp"
 
 void* memory;
 void* bg;
@@ -111,7 +112,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		}
 
 		// draw frame
-		memcpy(bg, memory, bufferSize);
+		memcpy(memory, bg, bufferSize);
+		getInput();
 		renderMain();
 
 		// update frame

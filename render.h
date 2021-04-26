@@ -14,6 +14,18 @@ struct Vec3 {
 };
 
 
+struct Vec2f {
+	float x;
+	float y;
+};
+
+struct Vec3f {
+	float x;
+	float y;
+	float z;
+};
+
+
 struct Tri2D {
 	struct Vec2 pts[3];
 };
