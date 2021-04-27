@@ -1,17 +1,17 @@
 #include <windows.h>
 #include <stdio.h>
+#include <string.h>
 
-#include "draw.h"
 #include "global.h"
+#include "draw.h"
 #include "render.h"
-#include "input.cpp"
+#include "input.h"
 
 void* memory;
 void* bg;
 
 int winSizeX;
 int winSizeY;
-
 float winMidX;
 float winMidY;
 
@@ -32,7 +32,6 @@ float getTime(LARGE_INTEGER* frameStartTime, LARGE_INTEGER* frameEndTime) {
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	LRESULT result = 0;
-
 	switch (uMsg) {
 		// window size changed
 		case WM_SIZE: {
@@ -44,7 +43,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			winMidX = (float)winSizeX / 2.0f;
 			winMidY = (float)winSizeY / 2.0f;
 			bufferSize = winSizeX * winSizeY * sizeof(unsigned int);
-
+			
 			if (memory) VirtualFree(memory, 0, MEM_RELEASE);
 			memory = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
@@ -52,7 +51,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			bg = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 			drawBackground();
-
+	
 			bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 			bitmapInfo.bmiHeader.biWidth = winSizeX;
 			bitmapInfo.bmiHeader.biHeight = winSizeY;
@@ -60,11 +59,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			bitmapInfo.bmiHeader.biBitCount = 32;
 			bitmapInfo.bmiHeader.biCompression = BI_RGB;
 		} break;
-
+	
 		// exit
 		case WM_CLOSE: run = false; break;
 		case WM_DESTROY: run = false; break;
-
+	
+		// no message
 		default: result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 
@@ -105,24 +105,24 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	// main loop
 	while (run) {
 		// window message handling
+		run = updateControls();
 		MSG message;
 		while (PeekMessage(&message, window, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
 
-		// draw frame
+		// render frame
 		memcpy(memory, bg, bufferSize);
-		getInput();
 		renderMain();
 
 		// update frame
 		StretchDIBits(
-			hdc, 0, 0,
-			winSizeX, winSizeY,
-			0, 0,
-			winSizeX, winSizeY,
-			memory, &bitmapInfo,
+			hdc, 0, 0, 
+			winSizeX, winSizeY, 
+			0, 0, 
+			winSizeX, winSizeY, 
+			memory, &bitmapInfo, 
 			DIB_RGB_COLORS, SRCCOPY
 		);
 
@@ -131,7 +131,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		dTime = getTime(&frameStartTime, &frameEndTime);
 		frameStartTime = frameEndTime;
 		time += dTime;
-
+		
 		// display fps
 		if (time > 1) {
 			time = 0;
