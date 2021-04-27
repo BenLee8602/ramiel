@@ -1,6 +1,8 @@
+#include <windows.h>
+#include "draw.h"
 #include "global.h"
 #include "render.h"
-#include "draw.h"
+#include "util.h"
 
 
 void drawBackground() {
@@ -46,13 +48,13 @@ void drawVertLine(int y1, int y2, int x) {
 
 void drawLine(int x1, int y1, int x2, int y2) {
 	if (x1 > x2) {
-		int temp = x1;
-		x1 = x2;
-		x2 = temp;
+	int temp = x1;
+	x1 = x2;
+	x2 = temp;
 
-		temp = y1;
-		y1 = y2;
-		y2 = temp;
+	temp = y1;
+	y1 = y2;
+	y2 = temp;
 	}
 	else if (y1 == y2) {
 		drawHzLine(x1, x2, y1);
@@ -78,6 +80,7 @@ void drawLine(int x1, int y1, int x2, int y2) {
 			while (x >= 1.0f) {
 				pixel += winSizeX;
 				y1++;
+				if (y1 == y2) return;
 				*pixel = 0xffffff;
 				x -= 1.0f;
 			}
@@ -93,6 +96,7 @@ void drawLine(int x1, int y1, int x2, int y2) {
 			while (x >= 1.0f) {
 				pixel -= winSizeX;
 				y1--;
+				if (y1 == y2) return;
 				*pixel = 0xffffff;
 				x -= 1.0f;
 			}
@@ -102,7 +106,12 @@ void drawLine(int x1, int y1, int x2, int y2) {
 
 
 void drawTriangle(struct Tri2D* tri) {
-	drawLine(tri->pts[0].x, tri->pts[0].y, tri->pts[1].x, tri->pts[1].y);
-	drawLine(tri->pts[1].x, tri->pts[1].y, tri->pts[2].x, tri->pts[2].y);
-	drawLine(tri->pts[2].x, tri->pts[2].y, tri->pts[0].x, tri->pts[0].y);
+	struct Tri2D triNew = { 0 };
+	for (int a = 0; a < 3; a++) {
+		triNew.pts[a].x = range(tri->pts[a].x, 0, winSizeX - 1);
+		triNew.pts[a].y = range(tri->pts[a].y, 0, winSizeY - 1);
+	}
+	drawLine(triNew.pts[0].x, triNew.pts[0].y, triNew.pts[1].x, triNew.pts[1].y);
+	drawLine(triNew.pts[1].x, triNew.pts[1].y, triNew.pts[2].x, triNew.pts[2].y);
+	drawLine(triNew.pts[2].x, triNew.pts[2].y, triNew.pts[0].x, triNew.pts[0].y);
 }

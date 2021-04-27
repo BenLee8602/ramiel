@@ -1,5 +1,8 @@
-#ifndef GLOBAL_VARIABLES_H_
-#define GLOBAL_VARIABLES_H_
+#ifndef GLOBAL_H_
+#define GLOBAL_H_
+
+
+#include "render.h"
 
 
 extern void* memory;

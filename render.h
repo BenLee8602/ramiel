@@ -36,6 +36,7 @@ struct Tri3D {
 
 
 struct Vec2 convDimension(struct Vec3* pt3D);
+struct Vec2 getScreenCoords(struct Vec3* pt3D);
 void renderMain();
 
 

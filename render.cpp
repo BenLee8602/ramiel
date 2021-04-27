@@ -1,37 +1,52 @@
 #include "global.h"
 #include "render.h"
 #include "draw.h"
-using namespace std;
+#include <math.h>
 
-float zFar = 1000.0f;
-struct Vec3f cameraPos = { 640.0f, 360.0f, 0.0f };
+struct Vec3f cameraPos = { 0.0f, 0.0f, 0.0f };
 struct Vec3f cameraRot = { 0.0f };
 
 
-struct Vec2 convDimension(struct Vec3* pt3D) {
+struct Vec2 getScreenCoords(struct Vec3* pt3D) {
+	// adjust for camera position
+	struct Vec3 pt3DTr = { 0 };
+	pt3DTr.x = pt3D->x - cameraPos.x;
+	pt3DTr.y = pt3D->y - cameraPos.y;
+	pt3DTr.z = pt3D->z - cameraPos.z;
+
+	// adjust for camera rotation
+	struct Vec3 pt3DRot = { pt3DTr };
+	pt3DRot.x = pt3DTr.x * cos(cameraRot.y) + pt3DTr.z * sin(cameraRot.y);
+	pt3DRot.z = pt3DTr.x * -sin(cameraRot.y) + pt3DTr.z * cos(cameraRot.y);
+
+	pt3DRot.y = pt3DRot.y * cos(cameraRot.x) + pt3DRot.z * -sin(cameraRot.x);
+	pt3DRot.z = pt3DRot.y * sin(cameraRot.x) + pt3DRot.z * cos(cameraRot.x);
+
+	// project to screen
 	struct Vec2 pt2D = { 0 };
-	float depth = (cameraPos.z + (float)pt3D->z) / zFar;
-	pt2D.x = (pt3D->x * (1.0f - depth) + cameraPos.x * depth) - cameraPos.x + winMidX;
-	pt2D.y = (pt3D->y * (1.0f - depth) + cameraPos.y * depth) - cameraPos.y + winMidY;
+	if (pt3DRot.z != 0) {
+		pt2D.x = pt3DRot.x * winSizeX / pt3DRot.z + (int)winMidX;
+		pt2D.y = pt3DRot.y * winSizeX / pt3DRot.z + (int)winMidY;
+	}
+
 	return pt2D;
 }
 
 
 void renderMain() {
-	zFar = cameraPos.z + 1000.0f;
-
-	struct Vec3 pt1c = { 800, 200, 100 };
-	struct Vec3 pt2c = { 900, 200, 100 };
-	struct Vec3 pt3c = { 800, 100, 100 };
-	struct Vec3 pt4c = { 900, 100, 100 };
-	struct Vec3 pt5c = { 800, 200, 200 };
-	struct Vec3 pt6c = { 900, 200, 200 };
-	struct Vec3 pt7c = { 800, 100, 200 };
-	struct Vec3 pt8c = { 900, 100, 200 };
+	// cube
+	struct Vec3 pt1c = { -50, 50, 550 };
+	struct Vec3 pt2c = { 50, 50, 550 };
+	struct Vec3 pt3c = { -50, -50, 550 };
+	struct Vec3 pt4c = { 50, -50, 550 };
+	struct Vec3 pt5c = { -50, 50, 650 };
+	struct Vec3 pt6c = { 50, 50, 650 };
+	struct Vec3 pt7c = { -50, -50, 650 };
+	struct Vec3 pt8c = { 50, -50, 650 };
 
 	struct Tri3D cube[12] = {
 		// front
-		{ { pt3c, pt1c, pt2c } },
+		{ { pt3c, pt1c, pt2c } }, 
 		{ { pt2c, pt4c, pt3c } },
 		// right
 		{ { pt4c, pt2c, pt6c } },
@@ -54,7 +69,7 @@ void renderMain() {
 
 	for (int a = 0; a < 12; a++) {
 		for (int b = 0; b < 3; b++) {
-			cube2[a].pts[b] = convDimension(&cube[a].pts[b]);
+			cube2[a].pts[b] = getScreenCoords(&cube[a].pts[b]);
 		}
 		drawTriangle(&cube2[a]);
 	}
