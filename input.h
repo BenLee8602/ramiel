@@ -25,14 +25,14 @@ bool updateControls() {
 
 	// move left
 	if (((unsigned short)GetKeyState(VK_A)) >> 15) {
-		cam.pos.x -= dTime * CAM_POS_SPEED * cosf(cam.rot.y);
-		cam.pos.z -= dTime * CAM_POS_SPEED * sinf(cam.rot.y);
+		cam.pos.x -= dTime * CAM_POS_SPEED * cam.cosy;
+		cam.pos.z -= dTime * CAM_POS_SPEED * cam.siny;
 	}
 
 	// move right
 	if (((unsigned short)GetKeyState(VK_D)) >> 15) {
-		cam.pos.x += dTime * CAM_POS_SPEED * cosf(cam.rot.y);
-		cam.pos.z += dTime * CAM_POS_SPEED * sinf(cam.rot.y);
+		cam.pos.x += dTime * CAM_POS_SPEED * cam.cosy;
+		cam.pos.z += dTime * CAM_POS_SPEED * cam.siny;
 	}
 
 	// move down
@@ -47,16 +47,16 @@ bool updateControls() {
 
 	// move backward
 	if (((unsigned short)GetKeyState(VK_S)) >> 15) {
-		cam.pos.x += dTime * CAM_POS_SPEED *  sinf(cam.rot.y);
-		cam.pos.y += dTime * CAM_POS_SPEED * -sinf(cam.rot.x);
-		cam.pos.z -= dTime * CAM_POS_SPEED *  cosf(cam.rot.y);
+		cam.pos.x += dTime * CAM_POS_SPEED *  cam.siny;
+		cam.pos.y += dTime * CAM_POS_SPEED * -cam.sinx;
+		cam.pos.z -= dTime * CAM_POS_SPEED *  cam.cosy;
 	}
 
 	// move forward
 	if (((unsigned short)GetKeyState(VK_W)) >> 15) {
-		cam.pos.x -= dTime * CAM_POS_SPEED *  sinf(cam.rot.y);
-		cam.pos.y -= dTime * CAM_POS_SPEED * -sinf(cam.rot.x);
-		cam.pos.z += dTime * CAM_POS_SPEED *  cosf(cam.rot.y);
+		cam.pos.x -= dTime * CAM_POS_SPEED *  cam.siny;
+		cam.pos.y -= dTime * CAM_POS_SPEED * -cam.sinx;
+		cam.pos.z += dTime * CAM_POS_SPEED *  cam.cosy;
 	}
 
 	// turn right
