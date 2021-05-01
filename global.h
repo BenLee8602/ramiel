@@ -16,8 +16,7 @@ extern float winMidY;
 
 extern float dTime;
 
-extern struct Vec3f cameraPos;
-extern struct Vec3f cameraRot;
+extern class Camera cam;
 
 
 #endif

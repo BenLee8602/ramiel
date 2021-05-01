@@ -102,6 +102,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	LARGE_INTEGER frameEndTime;
 	QueryPerformanceCounter(&frameStartTime);
 
+	// initialize world
+	renderStart();
+
 	// main loop
 	while (run) {
 		// window message handling

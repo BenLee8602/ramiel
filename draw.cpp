@@ -48,13 +48,13 @@ void drawVertLine(int y1, int y2, int x) {
 
 void drawLine(int x1, int y1, int x2, int y2) {
 	if (x1 > x2) {
-	int temp = x1;
-	x1 = x2;
-	x2 = temp;
+		int temp = x1;
+		x1 = x2;
+		x2 = temp;
 
-	temp = y1;
-	y1 = y2;
-	y2 = temp;
+		temp = y1;
+		y1 = y2;
+		y2 = temp;
 	}
 	else if (y1 == y2) {
 		drawHzLine(x1, x2, y1);

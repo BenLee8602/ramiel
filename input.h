@@ -6,6 +6,9 @@
 #include <windows.h>
 #include "global.h"
 
+#define CAM_POS_SPEED 2
+#define CAM_ROT_SPEED 1.57079f
+
 #define VK_W 0x57
 #define VK_A 0x41
 #define VK_S 0x53
@@ -17,64 +20,63 @@
 bool updateControls() {
 	// reset pos and rot
 	if (((unsigned short)GetKeyState(VK_Q)) >> 15) {
-		cameraPos = { 0.0f };
-		cameraRot = { 0.0f };
+		cam.resetCameraState();
 	}
 
 	// move left
 	if (((unsigned short)GetKeyState(VK_A)) >> 15) {
-		cameraPos.x -= dTime * 100.0f * cos(cameraRot.y);
-		cameraPos.z -= dTime * 100.0f * sin(cameraRot.y);
+		cam.pos.x -= dTime * CAM_POS_SPEED * cosf(cam.rot.y);
+		cam.pos.z -= dTime * CAM_POS_SPEED * sinf(cam.rot.y);
 	}
 
 	// move right
 	if (((unsigned short)GetKeyState(VK_D)) >> 15) {
-		cameraPos.x += dTime * 100.0f * cos(cameraRot.y);
-		cameraPos.z += dTime * 100.0f * sin(cameraRot.y);
+		cam.pos.x += dTime * CAM_POS_SPEED * cosf(cam.rot.y);
+		cam.pos.z += dTime * CAM_POS_SPEED * sinf(cam.rot.y);
 	}
 
 	// move down
 	if (((unsigned short)GetKeyState(VK_CONTROL)) >> 15) {
-		cameraPos.y -= dTime * 100.0f;
+		cam.pos.y -= dTime * CAM_POS_SPEED;
 	}
 
 	// move up
 	if (((unsigned short)GetKeyState(VK_SPACE)) >> 15) {
-		cameraPos.y += dTime * 100.0f;
+		cam.pos.y += dTime * CAM_POS_SPEED;
 	}
 
 	// move backward
 	if (((unsigned short)GetKeyState(VK_S)) >> 15) {
-		cameraPos.x += dTime * 100.0f * sin(cameraRot.y);
-		cameraPos.y += dTime * 100.0f * sin(cameraRot.x);
-		cameraPos.z -= dTime * 100.0f * cos(cameraRot.y);
+		cam.pos.x += dTime * CAM_POS_SPEED *  sinf(cam.rot.y);
+		cam.pos.y += dTime * CAM_POS_SPEED * -sinf(cam.rot.x);
+		cam.pos.z -= dTime * CAM_POS_SPEED *  cosf(cam.rot.y);
 	}
 
 	// move forward
 	if (((unsigned short)GetKeyState(VK_W)) >> 15) {
-		cameraPos.x -= dTime * 100.0f * sin(cameraRot.y);
-		cameraPos.y -= dTime * 100.0f * sin(cameraRot.x);
-		cameraPos.z += dTime * 100.0f * cos(cameraRot.y);
+		cam.pos.x -= dTime * CAM_POS_SPEED *  sinf(cam.rot.y);
+		cam.pos.y -= dTime * CAM_POS_SPEED * -sinf(cam.rot.x);
+		cam.pos.z += dTime * CAM_POS_SPEED *  cosf(cam.rot.y);
 	}
 
 	// turn right
 	if (((unsigned short)GetKeyState(VK_RIGHT)) >> 15) {
-		cameraRot.y -= dTime * 1.57079f;
+		cam.rot.y -= dTime * CAM_ROT_SPEED;
 	}
 
 	// turn left
 	if (((unsigned short)GetKeyState(VK_LEFT)) >> 15) {
-		cameraRot.y += dTime * 1.57079f;
+		cam.rot.y += dTime * CAM_ROT_SPEED;
 	}
 
 	// turn down
 	if (((unsigned short)GetKeyState(VK_DOWN)) >> 15) {
-		cameraRot.x -= dTime * 1.57079f;
+		if (cam.rot.x > -1.57079f) cam.rot.x -= dTime * CAM_ROT_SPEED;
 	}
 
 	// turn up
 	if (((unsigned short)GetKeyState(VK_UP)) >> 15) {
-		cameraRot.x += dTime * 1.57079f;
+		if (cam.rot.x < 1.57079f) cam.rot.x += dTime * CAM_ROT_SPEED;
 	}
 
 	return !(((unsigned short)GetKeyState(VK_ESCAPE)) >> 15);
