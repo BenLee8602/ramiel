@@ -6,7 +6,6 @@
 
 
 extern void* memory;
-extern void* bg;
 
 extern int winSizeX;
 extern int winSizeY;

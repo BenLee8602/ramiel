@@ -6,7 +6,10 @@
 #include "draw.h"
 
 
-class Camera cam = { };
+class Camera cam = {
+	{0, 0, 0}, // pos (world units)
+	{0, 0, 0}  // rot (degrees)
+};
 
 
 class Triangle {
@@ -23,6 +26,14 @@ public:
 		for (int a = 0; a < 3; a++) {
 			triScreen.pts[a] = getScreenCoords(&triWorld.pts[a]);
 		}
+	}
+
+	struct Vec3 calcNormal() {
+		struct Vec3 normalVector;
+		normalVector.x = 0;
+		normalVector.y = 0;
+		normalVector.z = 0;
+		return normalVector;
 	}
 };
 
@@ -51,6 +62,13 @@ public:
 
 	void drawWireMesh() {
 		for (auto &element : triangles) {
+			element.calcTriScreen();
+			drawTriangleOutline(&element.triScreen);
+		}
+	}
+
+	void drawObject() {
+		for (auto& element : triangles) {
 			element.calcTriScreen();
 			drawTriangle(&element.triScreen);
 		}
@@ -102,13 +120,13 @@ void renderMain() {
 	cam.calcTrigValues();
 
 	for (auto thisObj : objs) {
-		thisObj.drawWireMesh();
+		thisObj.drawObject();
 	}
 }
 
 
 void renderStart() {
-	struct Tri3D cubeTri[12] = {
+	struct Tri3D cube[12] = {
 		// front
 		{ { { -1, -1, -1 }, { -1,  1, -1 }, {  1,  1, -1 } } },
 		{ { {  1,  1, -1 }, {  1, -1, -1 }, { -1, -1, -1 } } },
@@ -129,6 +147,6 @@ void renderStart() {
 		{ { { -1, -1,  1 }, { -1, -1, -1 }, {  1, -1, -1 } } }
 	};
 
-	objs.push_back(Object3D(12, cubeTri));
+	objs.push_back(Object3D(12, cube));
 	objs.at(0).translateObject(0, 0, 10);
 }

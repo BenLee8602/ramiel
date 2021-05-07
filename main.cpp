@@ -8,7 +8,8 @@
 #include "input.h"
 
 void* memory;
-void* bg;
+bool run = true;
+int bufferSize;
 
 int winSizeX;
 int winSizeY;
@@ -18,8 +19,6 @@ float winMidY;
 float time;
 float dTime;
 
-bool run = true;
-int bufferSize;
 BITMAPINFO bitmapInfo;
 
 
@@ -46,11 +45,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			
 			if (memory) VirtualFree(memory, 0, MEM_RELEASE);
 			memory = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-
-			if (bg) VirtualFree(bg, 0, MEM_RELEASE);
-			bg = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-
-			drawBackground();
 	
 			bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 			bitmapInfo.bmiHeader.biWidth = winSizeX;
@@ -96,7 +90,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	HDC hdc = GetDC(window);
 
 	// inititalize time
-	time = 0;
+	time = 0.0f;
 	dTime = 0.016666f;
 	LARGE_INTEGER frameStartTime;
 	LARGE_INTEGER frameEndTime;
@@ -116,7 +110,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		}
 
 		// render frame
-		memcpy(memory, bg, bufferSize);
+		memset(memory, 0, bufferSize);
 		renderMain();
 
 		// update frame
