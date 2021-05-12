@@ -2,7 +2,6 @@
 #define INPUT_H_
 
 
-#include <math.h>
 #include <windows.h>
 #include "global.h"
 

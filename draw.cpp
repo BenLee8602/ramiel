@@ -1,7 +1,7 @@
 #include <windows.h>
+#include <algorithm>
 #include "draw.h"
 #include "global.h"
-#include "render.h"
 #include "util.h"
 
 
@@ -17,12 +17,12 @@ void drawRect(unsigned int color, int x1, int y1, int len, int ht) {
 }
 
 
-void drawHzLine(int x1, int x2, int y) {
+void drawHzLine(int x1, int x2, int y, unsigned int color) {
 	if (x1 > x2) swapInt(&x1, &x2);
-	int len = (x2 - x1) * sizeof(int);
+	int len = (x2 - x1);
 	unsigned int* pixel = (unsigned int*)memory;
 	pixel += x1 + y * winSizeX;
-	memset(pixel, 0xffffff, len);
+	std::fill_n(pixel, len, color);
 }
 
 
@@ -42,7 +42,7 @@ void drawLine(int x1, int y1, int x2, int y2) {
 		swapInt(&y1, &y2);
 	}
 	else if (y1 == y2) {
-		drawHzLine(x1, x2, y1);
+		drawHzLine(x1, x2, y1, 0xffffff);
 		return;
 	}
 	else if (x1 == x2) {
@@ -90,6 +90,18 @@ void drawLine(int x1, int y1, int x2, int y2) {
 }
 
 
+void drawVector(Vec3f vec) {
+	Vec3f origin = { 0.0f, 0.0f, 0.0f };
+	Vec2 originScreen = getScreenCoords(&origin);
+	Vec2 vecScreen = getScreenCoords(&vec);
+	originScreen.x = range(originScreen.x, 0, winSizeX - 1);
+	originScreen.y = range(originScreen.y, 0, winSizeY - 1);
+	vecScreen.x = range(vecScreen.x, 0, winSizeX - 1);
+	vecScreen.y = range(vecScreen.y, 0, winSizeY - 1);
+	drawLine(originScreen.x, originScreen.y, vecScreen.x, vecScreen.y);
+}
+
+
 void drawTriangleOutline(struct Tri2D* tri) {
 	struct Tri2D triNew = { 0 };
 	for (int a = 0; a < 3; a++) {
@@ -102,7 +114,7 @@ void drawTriangleOutline(struct Tri2D* tri) {
 }
 
 
-void drawTriangle(struct Tri2D* aTri) {
+void drawTriangle(struct Tri2D* aTri, unsigned int color) {
 	struct Tri2D tri = { 0 };
 	for (int a = 0; a < 3; a++) {
 		tri.pts[a].x = range(aTri->pts[a].x, 0, winSizeX - 1);
@@ -122,7 +134,7 @@ void drawTriangle(struct Tri2D* aTri) {
 
 	if (tri.pts[1].x > edges[2].getXatY(tri.pts[1].y)) {
 		for (int a = tri.pts[2].y; a > tri.pts[1].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a);
+			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
 			scanLineStart -= edges[2].invSlope;
 			scanLineEnd -= edges[1].invSlope;
 		}
@@ -131,7 +143,7 @@ void drawTriangle(struct Tri2D* aTri) {
 		scanLineEnd = (float)tri.pts[1].x;
 
 		for (int a = tri.pts[1].y; a > tri.pts[0].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a);
+			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
 			scanLineStart -= edges[2].invSlope;
 			scanLineEnd -= edges[0].invSlope;
 		}
@@ -139,7 +151,7 @@ void drawTriangle(struct Tri2D* aTri) {
 	
 	else {
 		for (int a = tri.pts[2].y; a > tri.pts[1].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a);
+			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
 			scanLineStart -= edges[1].invSlope;
 			scanLineEnd -= edges[2].invSlope;
 		}
@@ -148,7 +160,7 @@ void drawTriangle(struct Tri2D* aTri) {
 		scanLineEnd = (float)edges[2].getXatY(tri.pts[1].y);
 
 		for (int a = tri.pts[1].y; a > tri.pts[0].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a);
+			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
 			scanLineStart -= edges[0].invSlope;
 			scanLineEnd -= edges[2].invSlope;
 		}

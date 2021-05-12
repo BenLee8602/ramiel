@@ -34,7 +34,7 @@ struct Tri2D {
 };
 
 struct Tri3D {
-	struct Vec3 pts[3];
+	struct Vec3f pts[3];
 };
 
 
@@ -123,7 +123,7 @@ public:
 };
 
 
-struct Vec2 getScreenCoords(struct Vec3* pt3D);
+struct Vec2 getScreenCoords(struct Vec3f* pt3D);
 void renderMain();
 void renderStart();
 
