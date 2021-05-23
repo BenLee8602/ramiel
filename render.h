@@ -3,6 +3,7 @@
 
 
 #include <math.h>
+#include <vector>
 
 
 struct Vec2 {
@@ -94,20 +95,16 @@ public:
 
 
 class Line {
-private:
+public:
 	Vec2 start = { 0 };
 	Vec2 end = { 0 };
-
-public:
 	float slope = 0.0f;
 	float invSlope = 0.0f;
 
-	Line(int x1, int y1, int x2, int y2) {
-		start.x = x1;
-		start.y = y1;
-		end.x = x2;
-		end.y = y2;
-		slope = (float)(y2 - y1) / (float)(x2 - x1);
+	Line(Vec2 aStart, Vec2 aEnd) {
+		start = aStart;
+		end = aEnd;
+		slope = (float)(end.y - start.y) / (float)(end.x - start.x);
 		invSlope = 1.0f / slope;
 	}
 
@@ -120,10 +117,64 @@ public:
 		if (end.x == start.x) return 0;
 		return start.y + (end.y - start.y) * (x - start.x) / (end.x - start.x);
 	}
+
+	int clipX(int min, int max) {
+		int lineState = 0;
+
+		// clip start point
+		if (start.x < min) {
+			lineState += 1;
+			start = { min, getYatX(min) };
+		}
+		else if (start.x > max) {
+			lineState += 2;
+			start = { max, getYatX(max) };
+		}
+
+		// clip end point
+		if (end.x < min) {
+			lineState += 4;
+			end = { min, getYatX(min) };
+		}
+		else if (end.x > max) {
+			lineState += 8;
+			end = { max, getYatX(max) };
+		}
+
+		return lineState;
+	}
+
+	int clipY(int min, int max) {
+		int lineState = 0;
+
+		// clip start point
+		if (start.y < min) {
+			lineState += 1;
+			start = { getXatY(min), min };
+		}
+		else if (start.y > max) {
+			lineState += 2;
+			start = { getXatY(max), max };
+		}
+
+		// clip end point
+		if (end.y < min) {
+			lineState += 4;
+			end = { getXatY(min), min };
+		}
+		else if (end.y > max) {
+			lineState += 8;
+			end = { getXatY(max), max };
+		}
+
+		return lineState;
+	}
 };
 
 
 struct Vec2 getScreenCoords(struct Vec3f* pt3D);
+void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput);
+
 void renderMain();
 void renderStart();
 

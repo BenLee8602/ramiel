@@ -18,7 +18,6 @@ void drawRect(unsigned int color, int x1, int y1, int len, int ht) {
 
 
 void drawHzLine(int x1, int x2, int y, unsigned int color) {
-	if (x1 > x2) swapInt(&x1, &x2);
 	int len = (x2 - x1);
 	unsigned int* pixel = (unsigned int*)memory;
 	pixel += x1 + y * winSizeX;
@@ -102,31 +101,20 @@ void drawVector(Vec3f vec) {
 }
 
 
-void drawTriangleOutline(struct Tri2D* tri) {
-	struct Tri2D triNew = { 0 };
-	for (int a = 0; a < 3; a++) {
-		triNew.pts[a].x = range(tri->pts[a].x, 0, winSizeX - 1);
-		triNew.pts[a].y = range(tri->pts[a].y, 0, winSizeY - 1);
-	}
-	drawLine(triNew.pts[0].x, triNew.pts[0].y, triNew.pts[1].x, triNew.pts[1].y);
-	drawLine(triNew.pts[1].x, triNew.pts[1].y, triNew.pts[2].x, triNew.pts[2].y);
-	drawLine(triNew.pts[2].x, triNew.pts[2].y, triNew.pts[0].x, triNew.pts[0].y);
+void drawTriangleOutline(struct Tri2D tri) {
+	drawLine(tri.pts[0].x, tri.pts[0].y, tri.pts[1].x, tri.pts[1].y);
+	drawLine(tri.pts[1].x, tri.pts[1].y, tri.pts[2].x, tri.pts[2].y);
+	drawLine(tri.pts[2].x, tri.pts[2].y, tri.pts[0].x, tri.pts[0].y);
 }
 
 
-void drawTriangle(struct Tri2D* aTri, unsigned int color) {
-	struct Tri2D tri = { 0 };
-	for (int a = 0; a < 3; a++) {
-		tri.pts[a].x = range(aTri->pts[a].x, 0, winSizeX - 1);
-		tri.pts[a].y = range(aTri->pts[a].y, 0, winSizeY - 1);
-	}
-
+void drawTriangle(struct Tri2D tri, unsigned int color) {
 	sortTriToRaster(&tri);
 
 	Line edges[3] = {
-		Line(tri.pts[0].x, tri.pts[0].y, tri.pts[1].x, tri.pts[1].y),
-		Line(tri.pts[1].x, tri.pts[1].y, tri.pts[2].x, tri.pts[2].y),
-		Line(tri.pts[2].x, tri.pts[2].y, tri.pts[0].x, tri.pts[0].y)
+		Line(tri.pts[0], tri.pts[1]),
+		Line(tri.pts[1], tri.pts[2]),
+		Line(tri.pts[2], tri.pts[0])
 	};
 
 	float scanLineStart = (float)tri.pts[2].x;

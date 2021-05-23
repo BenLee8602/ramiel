@@ -13,8 +13,8 @@ void drawLine(int x1, int y1, int x2, int y2);
 
 void drawVector(Vec3f vec);
 
-void drawTriangleOutline(struct Tri2D* tri);
-void drawTriangle(struct Tri2D* tri, unsigned int color);
+void drawTriangleOutline(struct Tri2D tri);
+void drawTriangle(struct Tri2D tri, unsigned int color);
 
 
 #endif

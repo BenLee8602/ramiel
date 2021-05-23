@@ -1,6 +1,4 @@
 #include <math.h>
-#include <vector>
-
 #include "global.h"
 #include "render.h"
 #include "draw.h"
@@ -134,8 +132,14 @@ public:
 
 	void drawWireMesh() {
 		for (auto& tri : triangles) {
-			if (dotProductVec3(tri.triCamera.pts[0], tri.calcNormal(tri.triCamera)) <= 0.0f) {
-				drawTriangleOutline(&tri.triScreen);
+			// clipping
+			tri.calcTriScreen();
+			std::vector<Tri2D> clippedTris;
+			clipTriangle(clippedTris, tri.triScreen);
+
+			// display clipped tris
+			for (auto& thisTri : clippedTris) {
+				drawTriangleOutline(thisTri);
 			}
 		}
 	}
@@ -146,14 +150,21 @@ public:
 			Vec3f normalWorld = tri.calcNormal(tri.triWorld);
 
 			if (dotProductVec3(tri.triCamera.pts[0], normalCam) < 0.0f) {
+				// color/shading
 				float sim = similarityVec3(normalWorld, lightVec);
-
 				Vec3f rgb = { 255.0f, 255.0f, 255.0f };
 				rgb = scalarMultVec3(rgb, sim);
-				unsigned int color = rgbToDec(rgb.x, rgb.y, rgb.z);
+				unsigned int color = rgbToDec((int)rgb.x, rgb.y, rgb.z);
 
+				// clipping
 				tri.calcTriScreen();
-				drawTriangle(&tri.triScreen, color);
+				std::vector<Tri2D> clippedTris;
+				clipTriangle(clippedTris, tri.triScreen);
+
+				// display clipped tris
+				for (auto& thisTri : clippedTris) {
+					drawTriangle(thisTri, color);
+				}
 			}
 		}
 	}
@@ -194,6 +205,59 @@ struct Vec2 getScreenCoords(struct Vec3f* pt3D) {
 	}
 
 	return screenPt;
+}
+
+
+void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput) {
+	int xMin = 0;
+	int yMin = 0;
+	int xMax = winSizeX - 1;
+	int yMax = winSizeY - 1;
+
+	// convert input tri to edges
+	std::vector<Line> edges;
+	edges.push_back(Line(triInput.pts[0], triInput.pts[1]));
+	edges.push_back(Line(triInput.pts[1], triInput.pts[2]));
+	edges.push_back(Line(triInput.pts[2], triInput.pts[0]));
+
+	// clip each line in triangle (x-axis)
+	for (int a = 0; a < edges.size(); a++) {
+		int lineState = edges[a].clipX(xMin, xMax);
+		if (lineState == 5 || lineState == 10) {
+			edges.erase(edges.begin() + a);
+			a--;
+		}
+	}
+
+	// return early if tri is not in frame
+	if (edges.size() == 0) return;
+	
+	// connect gaps in lines with new lines
+	connectLines(edges);
+
+	// clip each line in triangle (y-axis)
+	for (int a = 0; a < edges.size(); a++) {
+		int lineState = edges[a].clipY(yMin, yMax);
+		if (lineState == 5 || lineState == 10) {
+			edges.erase(edges.begin() + a);
+			a--;
+		}
+	}
+
+	// return early if tri is not in frame
+	if (edges.size() == 0) return;
+
+	// connect gaps in lines with new lines
+	connectLines(edges);
+	
+	// divide polygon into triangles
+	for (int a = 0; a < edges.size() - 2; a++) {
+		Tri2D newTri;
+		newTri.pts[0] = edges[0].end;
+		newTri.pts[1] = edges[a + 1].end;
+		newTri.pts[2] = edges[a + 2].end;
+		clippedTris.push_back(newTri);
+	}
 }
 
 
