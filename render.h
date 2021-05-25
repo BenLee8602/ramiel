@@ -175,6 +175,8 @@ public:
 struct Vec2 getScreenCoords(struct Vec3f* pt3D);
 void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput);
 
+void loadObjFile(const char* fileName);
+
 void renderMain();
 void renderStart();
 

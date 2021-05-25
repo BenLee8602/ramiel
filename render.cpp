@@ -1,4 +1,8 @@
 #include <math.h>
+#include <fstream>
+#include <string>
+#include <sstream>
+
 #include "global.h"
 #include "render.h"
 #include "draw.h"
@@ -78,10 +82,9 @@ private:
 	std::vector<Triangle> triangles;
 
 public:
-	Object3D(int numTris, Tri3D* tris) {
-		for (int a = 0; a < numTris; a++) {
-			triangles.push_back(Triangle(*tris));
-			tris++;
+	Object3D(std::vector<Tri3D> &aTris) {
+		for (int a = 0; a < aTris.size(); a++) {
+			triangles.push_back(aTris[a]);
 		}
 	}
 
@@ -264,39 +267,64 @@ void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput) {
 std::vector<Object3D> objs;
 
 
+void loadObjFile(const char* fileName) {
+	std::vector<Vec3f> points;
+	std::vector<Tri3D> triangles;
+
+	std::string ltr = "";
+	std::ifstream file(fileName);
+
+	while (file >> ltr) {
+		if (ltr == "v") {
+			Vec3f tempPt;
+			file >> tempPt.x >> tempPt.y >> tempPt.z;
+			points.push_back(tempPt);
+		}
+
+		else if (ltr == "f") {
+			Tri3D tempTri;
+			for (int a = 0; a < 3; a++) {
+				std::string nums = "";
+				std::stringstream stream;
+				int index;
+
+				file >> nums;
+				stream << nums;
+				stream >> index;
+				tempTri.pts[a] = points[index - 1];
+			}
+			triangles.push_back(tempTri);
+		}
+	}
+
+	file.close();
+	objs.push_back(triangles);
+}
+
+
 void renderMain() {
 	cam.calcTrigValues();
 
-	objs.at(0).rotateObject(dTime * 0.8f, dTime * 1.0f, dTime * 1.2f);
-
 	for (auto& thisObj : objs) {
+		//thisObj.rotateObject(dTime * 0.2f, dTime * 0.5f, dTime * 0.8f);
 		thisObj.calcAllTriCamera();
 		thisObj.drawObject();
 	}
 }
 
 
-void renderStart() {
-	struct Tri3D cube[12] = {
-		// front
-		{ { { -0.5f, -0.5f, -0.5f }, { -0.5f,  0.5f, -0.5f }, {  0.5f,  0.5f, -0.5f } } },
-		{ { {  0.5f,  0.5f, -0.5f }, {  0.5f, -0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f } } },
-		// right
-		{ { {  0.5f, -0.5f, -0.5f }, {  0.5f,  0.5f, -0.5f }, {  0.5f,  0.5f,  0.5f } } },
-		{ { {  0.5f,  0.5f,  0.5f }, {  0.5f, -0.5f,  0.5f }, {  0.5f, -0.5f, -0.5f } } },
-		// back
-		{ { {  0.5f, -0.5f,  0.5f }, {  0.5f,  0.5f,  0.5f }, { -0.5f,  0.5f,  0.5f } } },
-		{ { { -0.5f,  0.5f,  0.5f }, { -0.5f, -0.5f,  0.5f }, {  0.5f, -0.5f,  0.5f } } },
-		// left
-		{ { { -0.5f, -0.5f,  0.5f }, { -0.5f,  0.5f,  0.5f }, { -0.5f,  0.5f, -0.5f } } },
-		{ { { -0.5f,  0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f }, { -0.5f, -0.5f,  0.5f } } },
-		// top
-		{ { { -0.5f,  0.5f, -0.5f }, { -0.5f,  0.5f,  0.5f }, {  0.5f,  0.5f,  0.5f } } },
-		{ { {  0.5f,  0.5f,  0.5f }, {  0.5f,  0.5f, -0.5f }, { -0.5f,  0.5f, -0.5f } } },
-		// bottom
-		{ { {  0.5f, -0.5f, -0.5f }, {  0.5f, -0.5f,  0.5f }, { -0.5f, -0.5f,  0.5f } } },
-		{ { { -0.5f, -0.5f,  0.5f }, { -0.5f, -0.5f, -0.5f }, {  0.5f, -0.5f, -0.5f } } }
-	};
+void renderStart() {/*
+	for (int a = 0; a < 8; a++) {
+		loadObjFile("cube.obj");
+	}
 
-	objs.push_back(Object3D(12, cube));
+	objs[0].translateObject(-1.0f, -1.0f, -1.0f);
+	objs[1].translateObject(-1.0f, -1.0f,  1.0f);
+	objs[2].translateObject(-1.0f,  1.0f, -1.0f);
+	objs[3].translateObject(-1.0f,  1.0f,  1.0f);
+	objs[4].translateObject( 1.0f, -1.0f, -1.0f);
+	objs[5].translateObject( 1.0f, -1.0f,  1.0f);
+	objs[6].translateObject( 1.0f,  1.0f, -1.0f);
+	objs[7].translateObject( 1.0f,  1.0f,  1.0f);*/
+	loadObjFile("teapot.obj");
 }

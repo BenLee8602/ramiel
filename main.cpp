@@ -8,6 +8,8 @@
 #include "input.h"
 
 void* memory;
+void* zBuffer;
+
 bool run = true;
 int bufferSize;
 
@@ -45,6 +47,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			
 			if (memory) VirtualFree(memory, 0, MEM_RELEASE);
 			memory = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+			if (zBuffer) VirtualFree(zBuffer, 0, MEM_RELEASE);
+			zBuffer = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	
 			bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 			bitmapInfo.bmiHeader.biWidth = winSizeX;
