@@ -6,7 +6,7 @@
 
 
 extern void* memory;
-extern void* zbuffer;
+//extern void* zbuffer;
 
 extern int winSizeX;
 extern int winSizeY;

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "global.h"
 #include "render.h"
@@ -83,7 +84,7 @@ private:
 
 public:
 	Object3D(std::vector<Tri3D> &aTris) {
-		for (int a = 0; a < aTris.size(); a++) {
+		for (int a = 0; a < (int)aTris.size(); a++) {
 			triangles.push_back(aTris[a]);
 		}
 	}
@@ -148,6 +149,16 @@ public:
 	}
 
 	void drawObject() {
+		calcAllTriCamera();
+
+		// sort triangles based on distance from camera
+		std::sort(triangles.begin(), triangles.end(), [](Triangle &tri1, Triangle &tri2) {
+			float z1 = (tri1.triCamera.pts[0].z + tri1.triCamera.pts[1].z + tri1.triCamera.pts[2].z) / 3.0f;
+			float z2 = (tri2.triCamera.pts[0].z + tri2.triCamera.pts[1].z + tri2.triCamera.pts[2].z) / 3.0f;
+			return z1 > z2;
+		});
+
+		// draw all triangles
 		for (auto& tri : triangles) {
 			Vec3f normalCam = tri.calcNormal(tri.triCamera);
 			Vec3f normalWorld = tri.calcNormal(tri.triWorld);
@@ -157,14 +168,14 @@ public:
 				float sim = similarityVec3(normalWorld, lightVec);
 				Vec3f rgb = { 255.0f, 255.0f, 255.0f };
 				rgb = scalarMultVec3(rgb, sim);
-				unsigned int color = rgbToDec((int)rgb.x, rgb.y, rgb.z);
+				unsigned int color = rgbToDec((int)rgb.x, (int)rgb.y, (int)rgb.z);
 
 				// clipping
 				tri.calcTriScreen();
 				std::vector<Tri2D> clippedTris;
 				clipTriangle(clippedTris, tri.triScreen);
 
-				// display clipped tris
+				// draw clipped tris
 				for (auto& thisTri : clippedTris) {
 					drawTriangle(thisTri, color);
 				}
@@ -224,7 +235,7 @@ void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput) {
 	edges.push_back(Line(triInput.pts[2], triInput.pts[0]));
 
 	// clip each line in triangle (x-axis)
-	for (int a = 0; a < edges.size(); a++) {
+	for (int a = 0; a < (int)edges.size(); a++) {
 		int lineState = edges[a].clipX(xMin, xMax);
 		if (lineState == 5 || lineState == 10) {
 			edges.erase(edges.begin() + a);
@@ -239,7 +250,7 @@ void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput) {
 	connectLines(edges);
 
 	// clip each line in triangle (y-axis)
-	for (int a = 0; a < edges.size(); a++) {
+	for (int a = 0; a < (int)edges.size(); a++) {
 		int lineState = edges[a].clipY(yMin, yMax);
 		if (lineState == 5 || lineState == 10) {
 			edges.erase(edges.begin() + a);
@@ -254,7 +265,7 @@ void clipTriangle(std::vector<Tri2D> &clippedTris, Tri2D triInput) {
 	connectLines(edges);
 	
 	// divide polygon into triangles
-	for (int a = 0; a < edges.size() - 2; a++) {
+	for (int a = 0; a < (int)edges.size() - 2; a++) {
 		Tri2D newTri;
 		newTri.pts[0] = edges[0].end;
 		newTri.pts[1] = edges[a + 1].end;
@@ -275,12 +286,14 @@ void loadObjFile(const char* fileName) {
 	std::ifstream file(fileName);
 
 	while (file >> ltr) {
+		// vertex data
 		if (ltr == "v") {
 			Vec3f tempPt;
 			file >> tempPt.x >> tempPt.y >> tempPt.z;
 			points.push_back(tempPt);
 		}
 
+		// triangle data
 		else if (ltr == "f") {
 			Tri3D tempTri;
 			for (int a = 0; a < 3; a++) {
@@ -306,14 +319,14 @@ void renderMain() {
 	cam.calcTrigValues();
 
 	for (auto& thisObj : objs) {
-		//thisObj.rotateObject(dTime * 0.2f, dTime * 0.5f, dTime * 0.8f);
-		thisObj.calcAllTriCamera();
+		thisObj.rotateObject(dTime * 0.2f, dTime * 0.5f, dTime * 0.8f);
 		thisObj.drawObject();
 	}
 }
 
 
-void renderStart() {/*
+void renderStart() {
+	/*
 	for (int a = 0; a < 8; a++) {
 		loadObjFile("cube.obj");
 	}
@@ -325,6 +338,8 @@ void renderStart() {/*
 	objs[4].translateObject( 1.0f, -1.0f, -1.0f);
 	objs[5].translateObject( 1.0f, -1.0f,  1.0f);
 	objs[6].translateObject( 1.0f,  1.0f, -1.0f);
-	objs[7].translateObject( 1.0f,  1.0f,  1.0f);*/
+	objs[7].translateObject( 1.0f,  1.0f,  1.0f);
+	*/
+
 	loadObjFile("teapot.obj");
 }
