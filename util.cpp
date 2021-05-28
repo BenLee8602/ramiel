@@ -1,4 +1,6 @@
+#include "global.h"
 #include "util.h"
+#include "render.h"
 
 
 int range(int num, int min, int max) {
@@ -15,38 +17,96 @@ void swapInt(int* num1, int* num2) {
 }
 
 
+void swapFloat(float* num1, float* num2) {
+	float temp = *num1;
+	*num1 = *num2;
+	*num2 = temp;
+}
+
+
 int rgbToDec(int r, int g, int b) {
 	return (r << 16) + (g << 8) + b;
 }
 
 
-void sortTriToRaster(struct Tri2D* tri) {
+Vec2 getScreenCoords(Vec3f* pt3D) {
+	Vec3f in = { 0.0f };
+	Vec3f out = { 0.0f };
+
+	in.x = pt3D->x;
+	in.y = pt3D->y;
+	in.z = pt3D->z;
+
+	// adjust for camera position
+	out.x = in.x - cam.pos.x;
+	out.y = in.y - cam.pos.y;
+	out.z = in.z - cam.pos.z;
+	in = out;
+
+	// adjust for camera rotation
+	out.x = in.x * cam.cosz + in.y * -cam.sinz;
+	out.y = in.x * cam.sinz + in.y * cam.cosz;
+	in = out;
+
+	out.x = in.x * cam.cosy + in.z * cam.siny;
+	out.z = in.x * -cam.siny + in.z * cam.cosy;
+	in = out;
+
+	out.y = in.y * cam.cosx + in.z * -cam.sinx;
+	out.z = in.y * cam.sinx + in.z * cam.cosx;
+
+	// project to screen
+	Vec2 screenPt = { 0 };
+	if (out.z != 0) {
+		screenPt.x = (int)(out.x * winSizeX / out.z + winMidX);
+		screenPt.y = (int)(out.y * winSizeX / out.z + winMidY);
+	}
+
+	return screenPt;
+}
+
+
+void sortTriToRaster(Tri2D* tri, Tri3D* triDepth) {
 	// sort points by y ascending
 	if (tri->pts[0].y > tri->pts[1].y) {
-		swapInt(&tri->pts[0].y, &tri->pts[1].y);
 		swapInt(&tri->pts[0].x, &tri->pts[1].x);
+		swapInt(&tri->pts[0].y, &tri->pts[1].y);
+		
+		swapFloat(&triDepth->pts[0].x, &triDepth->pts[1].x);
+		swapFloat(&triDepth->pts[0].y, &triDepth->pts[1].y);
+		swapFloat(&triDepth->pts[0].z, &triDepth->pts[1].z);
 	}
+
 	if (tri->pts[0].y > tri->pts[2].y) {
-		swapInt(&tri->pts[0].y, &tri->pts[2].y);
 		swapInt(&tri->pts[0].x, &tri->pts[2].x);
+		swapInt(&tri->pts[0].y, &tri->pts[2].y);
+
+		swapFloat(&triDepth->pts[0].x, &triDepth->pts[2].x);
+		swapFloat(&triDepth->pts[0].y, &triDepth->pts[2].y);
+		swapFloat(&triDepth->pts[0].z, &triDepth->pts[2].z);
 	}
+
 	if (tri->pts[1].y > tri->pts[2].y) {
-		swapInt(&tri->pts[1].y, &tri->pts[2].y);
 		swapInt(&tri->pts[1].x, &tri->pts[2].x);
+		swapInt(&tri->pts[1].y, &tri->pts[2].y);
+
+		swapFloat(&triDepth->pts[1].x, &triDepth->pts[2].x);
+		swapFloat(&triDepth->pts[1].y, &triDepth->pts[2].y);
+		swapFloat(&triDepth->pts[1].z, &triDepth->pts[2].z);
 	}
 }
 
 
-struct Vec3f addVec3(struct Vec3f aVec, struct Vec3f bVec) {
-	struct Vec3f out = { 0.0f };
+Vec3f addVec3(Vec3f aVec, Vec3f bVec) {
+	Vec3f out = { 0.0f };
 	out.x = aVec.x + bVec.x;
 	out.y = aVec.y + bVec.y;
 	out.z = aVec.z + bVec.z;
 	return out;
 }
 
-struct Vec3f subtractVec3(struct Vec3f aVec, struct Vec3f bVec) {
-	struct Vec3f out = { 0.0f };
+Vec3f subtractVec3(Vec3f aVec, Vec3f bVec) {
+	Vec3f out = { 0.0f };
 	out.x = aVec.x - bVec.x;
 	out.y = aVec.y - bVec.y;
 	out.z = aVec.z - bVec.z;
@@ -54,8 +114,8 @@ struct Vec3f subtractVec3(struct Vec3f aVec, struct Vec3f bVec) {
 }
 
 
-struct Vec3f scalarMultVec3(struct Vec3f in, float mult) {
-	struct Vec3f out = { 0.0f };
+Vec3f scalarMultVec3(Vec3f in, float mult) {
+	Vec3f out = { 0.0f };
 	out.x = in.x * mult;
 	out.y = in.y * mult;
 	out.z = in.z * mult;
@@ -63,8 +123,8 @@ struct Vec3f scalarMultVec3(struct Vec3f in, float mult) {
 }
 
 
-struct Vec3f scalarDivVec3(struct Vec3f in, float divisor) {
-	struct Vec3f out = { 0.0f };
+Vec3f scalarDivVec3(Vec3f in, float divisor) {
+	Vec3f out = { 0.0f };
 	out.x = in.x / divisor;
 	out.y = in.y / divisor;
 	out.z = in.z / divisor;
@@ -72,13 +132,13 @@ struct Vec3f scalarDivVec3(struct Vec3f in, float divisor) {
 }
 
 
-float dotProductVec3(struct Vec3f aVec, struct Vec3f bVec) {
+float dotProductVec3(Vec3f aVec, Vec3f bVec) {
 	return aVec.x * bVec.x + aVec.y * bVec.y + aVec.z * bVec.z;
 }
 
 
-struct Vec3f crossProductVec3(struct Vec3f aVec, struct Vec3f bVec) {
-	struct Vec3f out = { 0.0f };
+Vec3f crossProductVec3(Vec3f aVec, Vec3f bVec) {
+	Vec3f out = { 0.0f };
 	out.x = aVec.y * bVec.z - aVec.z * bVec.y;
 	out.y = aVec.z * bVec.x - aVec.x * bVec.z;
 	out.z = aVec.x * bVec.y - aVec.y * bVec.x;
@@ -86,8 +146,8 @@ struct Vec3f crossProductVec3(struct Vec3f aVec, struct Vec3f bVec) {
 }
 
 
-struct Vec3f normalizeVector(struct Vec3f in) {
-	struct Vec3f out = { 0.0f };
+Vec3f normalizeVector(Vec3f in) {
+	Vec3f out = { 0.0f };
 	float mag = 0.0f;
 	mag = sqrtf(in.x * in.x + in.y * in.y + in.z * in.z);
 	out = scalarDivVec3(in, mag);
@@ -109,31 +169,10 @@ float similarityVec3(Vec3f aVec, Vec3f bVec) {
 }
 
 
-struct Vec3f multiplyMatrixVec3(struct Matrix3* mat, struct Vec3f* in) {
-	struct Vec3f out = { 0.0f };
+Vec3f multiplyMatrixVec3(Matrix3* mat, Vec3f* in) {
+	Vec3f out = { 0.0f };
 	out.x = in->x * mat->num[0][0] + in->y * mat->num[0][1] + in->z * mat->num[0][2];
 	out.y = in->x * mat->num[1][0] + in->y * mat->num[1][1] + in->z * mat->num[1][2];
 	out.z = in->x * mat->num[2][0] + in->y * mat->num[2][1] + in->z * mat->num[2][2];
 	return out;
-}
-
-
-void connectLines(std::vector<Line>& edges) {
-	// connect distance between end of line and
-	// start of adjacent line by inserting new line
-	Vec2 pt1;
-	Vec2 pt2;
-	for (int a = 0; a < edges.size() - 1; a++) {
-		pt1 = edges[a].end;
-		pt2 = edges[a + 1].start;
-		if (pt1.x != pt2.x || pt1.y != pt2.y) {
-			edges.insert(edges.begin() + a + 1, Line(pt1, pt2));
-		}
-	}
-	// connect final line in list to first
-	pt1 = edges[edges.size() - 1].end;
-	pt2 = edges[0].start;
-	if (pt1.x != pt2.x || pt1.y != pt2.y) {
-		edges.push_back(Line(pt1, pt2));
-	}
 }

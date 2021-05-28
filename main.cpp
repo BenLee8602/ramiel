@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <algorithm>
 #include <stdio.h>
 #include <string.h>
 
@@ -8,7 +9,7 @@
 #include "input.h"
 
 void* memory;
-//void* zBuffer;
+void* zBuffer;
 
 bool run = true;
 int bufferSize;
@@ -48,8 +49,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			if (memory) VirtualFree(memory, 0, MEM_RELEASE);
 			memory = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
-			//if (zBuffer) VirtualFree(zBuffer, 0, MEM_RELEASE);
-			//zBuffer = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+			if (zBuffer) VirtualFree(zBuffer, 0, MEM_RELEASE);
+			zBuffer = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	
 			bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 			bitmapInfo.bmiHeader.biWidth = winSizeX;
@@ -116,6 +117,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 		// render frame
 		memset(memory, 0, bufferSize);
+		memset(zBuffer, 1, bufferSize); // fill buffer with large number
 		renderMain();
 
 		// update frame

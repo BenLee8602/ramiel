@@ -18,7 +18,7 @@ void drawRect(unsigned int color, int x1, int y1, int len, int ht) {
 
 
 void drawHzLine(int x1, int x2, int y, unsigned int color) {
-	int len = (x2 - x1);
+	int len = x2 - x1;
 	unsigned int* pixel = (unsigned int*)memory;
 	pixel += x1 + y * winSizeX;
 	std::fill_n(pixel, len, color);
@@ -108,49 +108,73 @@ void drawTriangleOutline(struct Tri2D tri) {
 }
 
 
-void drawTriangle(struct Tri2D tri, unsigned int color) {
-	sortTriToRaster(&tri);
+void drawTriangle(Tri2D* tri, Tri3D* triDepth, unsigned int color) {
+	sortTriToRaster(tri, triDepth);
 
-	Line edges[3] = {
-		Line(tri.pts[0], tri.pts[1]),
-		Line(tri.pts[1], tri.pts[2]),
-		Line(tri.pts[2], tri.pts[0])
+	Line2D edges[3] = {
+		Line2D(tri->pts[0], tri->pts[1]),
+		Line2D(tri->pts[1], tri->pts[2]),
+		Line2D(tri->pts[2], tri->pts[0])
 	};
 
-	float scanLineStart = (float)tri.pts[2].x;
-	float scanLineEnd = (float)tri.pts[2].x;
+	float scanLineStart = (float)tri->pts[2].x;
+	float scanLineEnd = (float)tri->pts[2].x;
 
-	if (tri.pts[1].x > edges[2].getXatY(tri.pts[1].y)) {
-		for (int a = tri.pts[2].y; a > tri.pts[1].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
+	if (tri->pts[1].x > edges[2].getXatY(tri->pts[1].y)) {
+		for (int a = tri->pts[2].y; a > tri->pts[1].y; a--) {
 			scanLineStart -= edges[2].invSlope;
 			scanLineEnd -= edges[1].invSlope;
+
+			int* pixel = (int*)memory;
+			pixel += (int)scanLineStart + a * winSizeX;
+
+			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
+				*pixel++ = color;
+			}
 		}
 
-		scanLineStart = (float)edges[2].getXatY(tri.pts[1].y);
-		scanLineEnd = (float)tri.pts[1].x;
+		scanLineStart = (float)edges[2].getXatY(tri->pts[1].y);
+		scanLineEnd = (float)tri->pts[1].x;
 
-		for (int a = tri.pts[1].y; a > tri.pts[0].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
+		for (int a = tri->pts[1].y; a > tri->pts[0].y; a--) {
 			scanLineStart -= edges[2].invSlope;
 			scanLineEnd -= edges[0].invSlope;
+
+			int* pixel = (int*)memory;
+			pixel += (int)scanLineStart + a * winSizeX;
+
+			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
+				*pixel++ = color;
+			}
 		}
 	}
 	
 	else {
-		for (int a = tri.pts[2].y; a > tri.pts[1].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
+		for (int a = tri->pts[2].y; a > tri->pts[1].y; a--) {
 			scanLineStart -= edges[1].invSlope;
 			scanLineEnd -= edges[2].invSlope;
+
+			int* pixel = (int*)memory;
+			pixel += (int)scanLineStart + a * winSizeX;
+
+			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
+				*pixel++ = color;
+			}
 		}
 
-		scanLineStart = (float)tri.pts[1].x;
-		scanLineEnd = (float)edges[2].getXatY(tri.pts[1].y);
+		scanLineStart = (float)tri->pts[1].x;
+		scanLineEnd = (float)edges[2].getXatY(tri->pts[1].y);
 
-		for (int a = tri.pts[1].y; a > tri.pts[0].y; a--) {
-			drawHzLine((int)scanLineStart, (int)scanLineEnd, a, color);
+		for (int a = tri->pts[1].y; a > tri->pts[0].y; a--) {
 			scanLineStart -= edges[0].invSlope;
 			scanLineEnd -= edges[2].invSlope;
+
+			int* pixel = (int*)memory;
+			pixel += (int)scanLineStart + a * winSizeX;
+
+			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
+				*pixel++ = color;
+			}
 		}
 	}
 }

@@ -2,11 +2,12 @@
 #define GLOBAL_H_
 
 
-#include "render.h"
+#include "camera.h"
 
+#define MAX_RENDER_DISTANCE 1000
 
 extern void* memory;
-//extern void* zbuffer;
+extern void* zBuffer;
 
 extern int winSizeX;
 extern int winSizeY;
