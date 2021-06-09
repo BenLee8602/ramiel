@@ -117,7 +117,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 		// render frame
 		memset(memory, 0, bufferSize);
-		memset(zBuffer, 1, bufferSize); // fill buffer with large number
+		memset(zBuffer, 100, bufferSize); // fill buffer with large number
 		renderMain();
 
 		// update frame

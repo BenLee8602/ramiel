@@ -27,6 +27,8 @@ Vec3f scalarDivVec3(Vec3f in, float divisor);
 float dotProductVec3(Vec3f aVec, Vec3f bVec);
 Vec3f crossProductVec3(Vec3f aVec, Vec3f bVec);
 
+float getMagnitudeVec3(Vec3f vec);
+
 Vec3f normalizeVector(Vec3f in);
 float similarityVec3(Vec3f aVec, Vec3f bVec);
 

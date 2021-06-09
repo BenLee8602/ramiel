@@ -146,6 +146,11 @@ Vec3f crossProductVec3(Vec3f aVec, Vec3f bVec) {
 }
 
 
+float getMagnitudeVec3(Vec3f vec) {
+	return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
+
+
 Vec3f normalizeVector(Vec3f in) {
 	Vec3f out = { 0.0f };
 	float mag = 0.0f;

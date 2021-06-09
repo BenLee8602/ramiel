@@ -5,6 +5,16 @@
 #include "util.h"
 
 
+
+
+
+
+
+
+
+#include <stdio.h>
+
+
 void drawRect(unsigned int color, int x1, int y1, int len, int ht) {
 	unsigned int* pixel = (unsigned int*)memory;
 	pixel += x1 + y1 * winSizeX;
@@ -108,8 +118,30 @@ void drawTriangleOutline(struct Tri2D tri) {
 }
 
 
-void drawTriangle(Tri2D* tri, Tri3D* triDepth, unsigned int color) {
-	sortTriToRaster(tri, triDepth);
+void drawScanLine(Vec3f& scanLineStart, Vec3f& scanLineEnd, unsigned int color, int y) {
+	int* pixel = (int*)memory;
+	pixel += (int)scanLineStart.x + y * winSizeX;
+
+	float* depth = (float*)zBuffer;
+	depth += (int)scanLineStart.x + y * winSizeX;
+
+	float thisDepth = scanLineStart.z;
+	float thisDepthCh = (scanLineEnd.z - scanLineStart.z) / (scanLineEnd.x - scanLineStart.x);
+
+	for (int b = (int)scanLineStart.x; b < scanLineEnd.x; b++) {
+		if (thisDepth < *depth) {
+			*pixel = color;
+			*depth = thisDepth;
+		}
+		thisDepth += thisDepthCh;
+		pixel++;
+		depth++;
+	}
+}
+
+
+void drawTriangle(Tri2D* tri, Tri3D* tri3D, unsigned int color) {
+	sortTriToRaster(tri, tri3D);
 
 	Line2D edges[3] = {
 		Line2D(tri->pts[0], tri->pts[1]),
@@ -117,64 +149,76 @@ void drawTriangle(Tri2D* tri, Tri3D* triDepth, unsigned int color) {
 		Line2D(tri->pts[2], tri->pts[0])
 	};
 
-	float scanLineStart = (float)tri->pts[2].x;
-	float scanLineEnd = (float)tri->pts[2].x;
+	float triDepth[3] = {
+		getMagnitudeVec3(tri3D->pts[0]),
+		getMagnitudeVec3(tri3D->pts[1]),
+		getMagnitudeVec3(tri3D->pts[2])
+	};
+
+	Vec3f scanLineStart = {
+		(float)tri->pts[2].x,
+		0.0f,    // y not used
+		triDepth[2]
+	};
+	Vec3f scanLineEnd = scanLineStart;
 
 	if (tri->pts[1].x > edges[2].getXatY(tri->pts[1].y)) {
+		float depthCh1 = (triDepth[2] - triDepth[0]) / (tri->pts[2].y - tri->pts[0].y);
+		float depthCh2 = (triDepth[2] - triDepth[1]) / (tri->pts[2].y - tri->pts[1].y);
+
 		for (int a = tri->pts[2].y; a > tri->pts[1].y; a--) {
-			scanLineStart -= edges[2].invSlope;
-			scanLineEnd -= edges[1].invSlope;
+			scanLineStart.x -= edges[2].invSlope;
+			scanLineEnd.x -= edges[1].invSlope;
 
-			int* pixel = (int*)memory;
-			pixel += (int)scanLineStart + a * winSizeX;
+			scanLineStart.z -= depthCh1;
+			scanLineEnd.z -= depthCh2;
 
-			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
-				*pixel++ = color;
-			}
+			drawScanLine(scanLineStart, scanLineEnd, color, a);
 		}
 
-		scanLineStart = (float)edges[2].getXatY(tri->pts[1].y);
-		scanLineEnd = (float)tri->pts[1].x;
+		scanLineStart.x = (float)edges[2].getXatY(tri->pts[1].y);
+		scanLineEnd.x = (float)tri->pts[1].x;
+
+		depthCh2 = (triDepth[1] - triDepth[0]) / (tri->pts[1].y - tri->pts[0].y);
 
 		for (int a = tri->pts[1].y; a > tri->pts[0].y; a--) {
-			scanLineStart -= edges[2].invSlope;
-			scanLineEnd -= edges[0].invSlope;
+			scanLineStart.x -= edges[2].invSlope;
+			scanLineEnd.x -= edges[0].invSlope;
 
-			int* pixel = (int*)memory;
-			pixel += (int)scanLineStart + a * winSizeX;
+			scanLineStart.z -= depthCh1;
+			scanLineEnd.z -= depthCh2;
 
-			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
-				*pixel++ = color;
-			}
+			drawScanLine(scanLineStart, scanLineEnd, color, a);
 		}
 	}
 	
 	else {
+		float depthCh1 = (triDepth[2] - triDepth[1]) / (tri->pts[2].y - tri->pts[1].y);
+		float depthCh2 = (triDepth[2] - triDepth[0]) / (tri->pts[2].y - tri->pts[0].y);
+		
 		for (int a = tri->pts[2].y; a > tri->pts[1].y; a--) {
-			scanLineStart -= edges[1].invSlope;
-			scanLineEnd -= edges[2].invSlope;
+			scanLineStart.x -= edges[1].invSlope;
+			scanLineEnd.x -= edges[2].invSlope;
 
-			int* pixel = (int*)memory;
-			pixel += (int)scanLineStart + a * winSizeX;
+			scanLineStart.z -= depthCh1;
+			scanLineEnd.z -= depthCh2;
 
-			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
-				*pixel++ = color;
-			}
+			drawScanLine(scanLineStart, scanLineEnd, color, a);
 		}
 
-		scanLineStart = (float)tri->pts[1].x;
-		scanLineEnd = (float)edges[2].getXatY(tri->pts[1].y);
+		scanLineStart.x = (float)tri->pts[1].x;
+		scanLineEnd.x = (float)edges[2].getXatY(tri->pts[1].y);
+
+		depthCh1 = (triDepth[1] - triDepth[0]) / (tri->pts[1].y - tri->pts[0].y);
 
 		for (int a = tri->pts[1].y; a > tri->pts[0].y; a--) {
-			scanLineStart -= edges[0].invSlope;
-			scanLineEnd -= edges[2].invSlope;
+			scanLineStart.x -= edges[0].invSlope;
+			scanLineEnd.x -= edges[2].invSlope;
 
-			int* pixel = (int*)memory;
-			pixel += (int)scanLineStart + a * winSizeX;
+			scanLineStart.z -= depthCh1;
+			scanLineEnd.z -= depthCh2;
 
-			for (int b = (int)scanLineStart; b < scanLineEnd; b++) {
-				*pixel++ = color;
-			}
+			drawScanLine(scanLineStart, scanLineEnd, color, a);
 		}
 	}
 }

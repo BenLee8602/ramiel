@@ -97,7 +97,7 @@ public:
 			[](Triangle& tri1, Triangle& tri2) {
 				float z1 = (tri1.triCamera.pts[0].z + tri1.triCamera.pts[1].z + tri1.triCamera.pts[2].z) / 3.0f;
 				float z2 = (tri2.triCamera.pts[0].z + tri2.triCamera.pts[1].z + tri2.triCamera.pts[2].z) / 3.0f;
-				return z1 > z2;
+				return z1 < z2;
 			}
 		);
 
@@ -172,16 +172,17 @@ void renderMain() {
 	cam.calcTrigValues();
 
 	for (auto& thisObj : objs) {
-		//thisObj.rotateObject(dTime * 0.2f, dTime * 0.5f, dTime * 0.8f);
+		thisObj.rotateObject(dTime * 0.1f, dTime * 0.25f, dTime * 0.4f);
 		thisObj.drawObject();
 	}
 }
 
 
 void renderStart() {
-	/*
+	///*
 	for (int a = 0; a < 8; a++) {
 		loadObjFile("cube.obj");
+		objs[a].rotateObject(a, a, a);
 	}
 
 	objs[0].translateObject(-1.0f, -1.0f, -1.0f);
@@ -192,7 +193,13 @@ void renderStart() {
 	objs[5].translateObject( 1.0f, -1.0f,  1.0f);
 	objs[6].translateObject( 1.0f,  1.0f, -1.0f);
 	objs[7].translateObject( 1.0f,  1.0f,  1.0f);
-	*/
+	//*/
 
-	loadObjFile("amogus.obj");
+	//loadObjFile("teapot.obj");
+
+	//std::vector<Tri3D> tris;
+	//tris.push_back({ { { -1, 1, -1 }, { 1, 1, 1 }, { 1, -1, 1 } } });
+	//tris.push_back({ { { -1, -1, 1 }, { -1, 1, 1 }, { 1, 1, -1 } } });
+	//objs.push_back(tris);
+	//objs[0].rotateObject(0, 0.174f, 0);
 }
