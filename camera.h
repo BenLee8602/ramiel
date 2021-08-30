@@ -18,10 +18,10 @@ namespace bl {
 		Camera();
 		Camera(const Vec3f& pos, const Vec3f& rot, int fov = 0);
 		void calcTrigValues();
-		void resetCameraState();
+		void reset();
 
 		void setFov(int fov);
-
+		
 		void setpos(float x, float y, float z);
 		void setrot(float x, float y, float z);
 		void move(float x, float y, float z);

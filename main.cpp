@@ -77,7 +77,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	// main loop
 	while (run) {
 		frameStart = std::chrono::steady_clock::now();
-
+		
 		// window message handling
 		MSG message;
 		while (PeekMessage(&message, window, 0, 0, PM_REMOVE)) {

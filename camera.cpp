@@ -44,7 +44,7 @@ namespace bl {
 		cos.z = cosf(rot.z);
 	}
 
-	void Camera::resetCameraState() {
+	void Camera::reset() {
 		pos = { 0.0f };
 		rot = { 0.0f };
 	}
@@ -111,7 +111,7 @@ namespace bl {
 	void Camera::getControls() {
 		// reset pos and rot
 		if (((unsigned short)GetKeyState(KEY_Q)) >> 15) {
-			resetCameraState();
+			reset();
 		}
 		
 		// move left

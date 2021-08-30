@@ -26,7 +26,6 @@ namespace bl {
 	}
 
 	void RenderBL::renderFrame(float dtime) {
-		debug << dtime << std::endl;
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();

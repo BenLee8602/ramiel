@@ -54,9 +54,9 @@ namespace bl {
 		Vec3f getNormalized() const;
 	};
 
-	inline float dotProduct(const Vec3f& vec1, const Vec3f& vec2);
-	inline Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2);
-	inline float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2);
+	float dotProduct(const Vec3f& vec1, const Vec3f& vec2);
+	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2);
+	float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2);
 	// similarity of direction of 2 vectors, 
 	// 0.0f meaning opposite, 1.0f meaning same direction
 

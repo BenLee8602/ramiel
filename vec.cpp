@@ -140,11 +140,11 @@ namespace bl {
 		return *this / getMagnitude();
 	}
 
-	inline float dotProduct(const Vec3f& vec1, const Vec3f& vec2) {
+	float dotProduct(const Vec3f& vec1, const Vec3f& vec2) {
 		return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 	}
 
-	inline Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2) {
+	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2) {
 		Vec3f out;
 		out.x = vec1.y * vec2.z - vec1.z * vec2.y;
 		out.y = vec1.z * vec2.x - vec1.x * vec2.z;
@@ -152,7 +152,7 @@ namespace bl {
 		return out;
 	}
 
-	inline float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2) {
+	float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2) {
 		Vec3f vec1n = vec1.getNormalized();
 		Vec3f vec2n = vec2.getNormalized();
 		float sim = (dotProduct(vec1n, vec2n) + 1.0f) / 2.0f;
