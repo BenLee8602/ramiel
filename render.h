@@ -12,7 +12,6 @@ namespace bl {
 		static int* pixels;
 		static Camera cam;
 		static Vec2 size;
-		static Vec2 size_m1;
 		static Vec2 mid;
 		static int bufferSize;
 		static float dtime;

@@ -128,10 +128,6 @@ namespace bl {
 		if (triScreen[0].y > triScreen[2].y) std::swap(triScreen[0], triScreen[2]);
 		if (triScreen[1].y > triScreen[2].y) std::swap(triScreen[1], triScreen[2]);
 
-		// start and end x values of scanline
-		float x1 = (float)triScreen[0].x;
-		float x2 = (float)triScreen[0].x;
-
 		// change in x per change in y
 		float dx1 = (float)(triScreen[2].x - triScreen[0].x) / (float)(triScreen[2].y - triScreen[0].y);
 		float dx2 = (float)(triScreen[1].x - triScreen[0].x) / (float)(triScreen[1].y - triScreen[0].y);
@@ -145,25 +141,36 @@ namespace bl {
 			dx = &dx1;
 		}
 
-		// draw triangle from triScreen[0].y to triScreen[1].y
-		for (int y = triScreen[0].y; y < triScreen[1].y; y++) {
-			index = RenderBL::coordsToIndex({ (int)x1, y });
-			for (float x = x1; x < x2; x += 1.0f) {
+		// y value of scanline
+		int y = std::max(0, triScreen[0].y);
+		int ymax = std::min(triScreen[1].y, RenderBL::size.y);
+
+		// start and end x values of scanline
+		float x1 = (float)triScreen[0].x + dx1 * (float)(y - triScreen[0].y);
+		float x2 = (float)triScreen[0].x + dx2 * (float)(y - triScreen[0].y);;
+
+		// draw first tri segment
+		for (y; y < ymax; y++) {
+			int x = std::max(0, (int)x1);
+			index = RenderBL::coordsToIndex({ x, y });
+			for (x; x < std::min((int)x2, RenderBL::size.x); x++) {
 				RenderBL::pixels[index++] = color;
 			}
 			x1 += dx1;
 			x2 += dx2;
 		}
 
-		// update dx for second segment
+		// update values for second segment
+		ymax = std::min(triScreen[2].y, RenderBL::size.y);
 		*dx = (float)(triScreen[2].x - triScreen[1].x) / (float)(triScreen[2].y - triScreen[1].y);
-		x1 = (float)triScreen[2].x - (float)(triScreen[2].y - triScreen[1].y) * dx1;
-		x2 = (float)triScreen[2].x - (float)(triScreen[2].y - triScreen[1].y) * dx2;
+		x1 = (float)triScreen[2].x - (float)(triScreen[2].y - y) * dx1;
+		x2 = (float)triScreen[2].x - (float)(triScreen[2].y - y) * dx2;
 
-		// draw triangle from triScreen[1].y to triScreen[2].y
-		for (int y = triScreen[1].y; y < triScreen[2].y; y++) {
-			index = RenderBL::coordsToIndex({ (int)x1, y });
-			for (float x = x1; x < x2; x += 1.0f) {
+		// draw second tri segment
+		for (y; y < ymax; y++) {
+			int x = std::max(0, (int)x1);
+			index = RenderBL::coordsToIndex({ x, y });
+			for (x; x < std::min((int)x2, RenderBL::size.x); x++) {
 				RenderBL::pixels[index++] = color;
 			}
 			x1 += dx1;
