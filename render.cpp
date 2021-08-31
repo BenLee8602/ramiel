@@ -6,15 +6,19 @@ namespace bl {
 	int* RenderBL::pixels;
 	Camera RenderBL::cam;
 	Vec2 RenderBL::size;
+	Vec2 RenderBL::size_m1;
 	Vec2 RenderBL::mid;
 	int RenderBL::bufferSize;
 	float RenderBL::dtime;
+	const float RenderBL::znear = 0.1f;
 	std::ofstream RenderBL::debug("output.txt");
 
 	void RenderBL::setBuffer(void* pixelBuffer, int sizex, int sizey) {
 		pixels = (int*)pixelBuffer;
 		size.x = sizex;
 		size.y = sizey;
+		size_m1.x = sizex - 1;
+		size_m1.y = sizey - 1;
 		mid.x = sizex / 2;
 		mid.y = sizey / 2;
 		bufferSize = sizex * sizey * sizeof(int);

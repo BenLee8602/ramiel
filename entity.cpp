@@ -39,6 +39,7 @@ namespace bl {
 		file.close();
 	}
 
+
 	void Entity::draw() const {
 		for (auto& t : triangles) {
 			t.draw();

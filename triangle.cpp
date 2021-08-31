@@ -4,11 +4,6 @@
 
 namespace bl {
 
-	Vec3f Triangle::getNormal(const Vec3f* tri) const {
-		return crossProduct(tri[1] - tri[0], tri[2] - tri[0]);
-	}
-
-
 	Triangle::Triangle() {
 		pts[0] = { 0.0f };
 		pts[1] = { 0.0f };
@@ -22,6 +17,160 @@ namespace bl {
 		pts[2] = pt2;
 	}
 
+
+	Vec3f Triangle::getNormal(const Vec3f* tri) const {
+		return crossProduct(tri[1] - tri[0], tri[2] - tri[0]);
+	}
+
+
+	bool Triangle::clip(Vec3f* tri) const {
+		if (tri[0].z < RenderBL::znear) {
+			if (tri[1].z < RenderBL::znear) {
+				// case 2
+				if (tri[2].z < RenderBL::znear) {
+					return false;
+				}
+				// case 6
+				else {
+					tri[0].x = tri[0].x + (tri[2].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
+					tri[0].y = tri[0].y + (tri[2].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
+					tri[0].z = RenderBL::znear;
+					tri[1].x = tri[1].x + (tri[2].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+					tri[1].y = tri[1].y + (tri[2].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+					tri[1].z = RenderBL::znear;
+				}
+			}
+			// case 8
+			else if (tri[2].z < RenderBL::znear) {
+				tri[0].x = tri[0].x + (tri[1].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+				tri[0].y = tri[0].y + (tri[1].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+				tri[0].z = RenderBL::znear;
+				tri[2].x = tri[2].x + (tri[1].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+				tri[2].y = tri[2].y + (tri[1].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+				tri[2].z = RenderBL::znear;
+			}
+			// case 3
+			else {
+				Vec3f temp[3] = { 0.0f };
+				temp[0].x = tri[0].x + (tri[2].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
+				temp[0].y = tri[0].y + (tri[2].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
+				temp[0].z = RenderBL::znear;
+				temp[1].x = tri[0].x + (tri[1].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+				temp[1].y = tri[0].y + (tri[1].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+				temp[1].z = RenderBL::znear;
+				temp[2] = tri[1];
+				raster(temp);
+				tri[0] = temp[0];
+			}
+		}
+
+		else if (tri[1].z < RenderBL::znear) {
+			// case 7
+			if (tri[2].z < RenderBL::znear) {
+				tri[1].x = tri[1].x + (tri[0].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+				tri[1].y = tri[1].y + (tri[0].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+				tri[1].z = RenderBL::znear;
+				tri[2].x = tri[2].x + (tri[0].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
+				tri[2].y = tri[2].y + (tri[0].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
+				tri[2].z = RenderBL::znear;
+			}
+			// case 4
+			else {
+				Vec3f temp[3] = { 0.0f };
+				temp[0].x = tri[1].x + (tri[0].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+				temp[0].y = tri[1].y + (tri[0].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+				temp[0].z = RenderBL::znear;
+				temp[1].x = tri[1].x + (tri[2].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+				temp[1].y = tri[1].y + (tri[2].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+				temp[1].z = RenderBL::znear;
+				temp[2] = tri[2];
+				raster(temp);
+				tri[1] = temp[0];
+			}
+		}
+
+		// case 5
+		else if (tri[2].z < RenderBL::znear) {
+			Vec3f temp[3] = { 0.0f };
+			temp[0].x = tri[2].x + (tri[0].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
+			temp[0].y = tri[2].y + (tri[0].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
+			temp[0].z = RenderBL::znear;
+			temp[1].x = tri[2].x + (tri[1].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+			temp[1].y = tri[2].y + (tri[1].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+			temp[1].z = RenderBL::znear;
+			temp[2] = tri[1];
+			raster(temp);
+			tri[2] = temp[0];
+		}
+
+		// case 1 (do nothing)
+
+		return true;
+	}
+
+
+	void Triangle::raster(Vec3f* tri) const {
+		// get color
+		Vec3f normalWorld = getNormal(pts);
+		Vec3f rgb = { 255, 255, 255 };
+		float sim = dirSimilarity(normalWorld, { 0.0f, 0.0f, -1.0f });
+		rgb *= sim;
+		int color = ((int)rgb.x << 16) + ((int)rgb.y << 8) + (int)rgb.z;
+
+		// project tri onto screen
+		Vec2 triScreen[3] = { 0 };
+		for (int a = 0; a < 3; a++) {
+			triScreen[a] = RenderBL::cam.getScreenCoord(tri[a]);
+		}
+
+		// sort tri pts by y ascending
+		if (triScreen[0].y > triScreen[1].y) std::swap(triScreen[0], triScreen[1]);
+		if (triScreen[0].y > triScreen[2].y) std::swap(triScreen[0], triScreen[2]);
+		if (triScreen[1].y > triScreen[2].y) std::swap(triScreen[1], triScreen[2]);
+
+		// start and end x values of scanline
+		float x1 = (float)triScreen[0].x;
+		float x2 = (float)triScreen[0].x;
+
+		// change in x per change in y
+		float dx1 = (float)(triScreen[2].x - triScreen[0].x) / (float)(triScreen[2].y - triScreen[0].y);
+		float dx2 = (float)(triScreen[1].x - triScreen[0].x) / (float)(triScreen[1].y - triScreen[0].y);
+
+		float* dx = &dx2;	// points to dx for side of triangle with pt1 (2 segments)
+		int index;			// index of pixel buffer to be written to
+
+		// always ensure x1 < x2
+		if (dx1 > dx2) {
+			std::swap(dx1, dx2);
+			dx = &dx1;
+		}
+
+		// draw triangle from triScreen[0].y to triScreen[1].y
+		for (int y = triScreen[0].y; y < triScreen[1].y; y++) {
+			index = RenderBL::coordsToIndex({ (int)x1, y });
+			for (float x = x1; x < x2; x += 1.0f) {
+				RenderBL::pixels[index++] = color;
+			}
+			x1 += dx1;
+			x2 += dx2;
+		}
+
+		// update dx for second segment
+		*dx = (float)(triScreen[2].x - triScreen[1].x) / (float)(triScreen[2].y - triScreen[1].y);
+		x1 = (float)triScreen[2].x - (float)(triScreen[2].y - triScreen[1].y) * dx1;
+		x2 = (float)triScreen[2].x - (float)(triScreen[2].y - triScreen[1].y) * dx2;
+
+		// draw triangle from triScreen[1].y to triScreen[2].y
+		for (int y = triScreen[1].y; y < triScreen[2].y; y++) {
+			index = RenderBL::coordsToIndex({ (int)x1, y });
+			for (float x = x1; x < x2; x += 1.0f) {
+				RenderBL::pixels[index++] = color;
+			}
+			x1 += dx1;
+			x2 += dx2;
+		}
+	}
+
 	
 	void Triangle::draw() const {
 		// conv from world-space to camera-space
@@ -30,70 +179,10 @@ namespace bl {
 			triCamera[a] = RenderBL::cam.getCameraCoord(pts[a]);
 		}
 
-		// get normals
-		Vec3f normalWorld = getNormal(pts);
-		Vec3f normalCam = getNormal(triCamera);
-
 		// only draw tris facing camera
+		Vec3f normalCam = getNormal(triCamera);
 		if (dotProduct(triCamera[0], normalCam) < 0.0f) {
-			// get color
-			Vec3f rgb = { 255, 255, 255 };
-			float sim = dirSimilarity(normalWorld, { 0.0f, 0.0f, -1.0f });
-			rgb *= sim;
-			int color = ((int)rgb.x << 16) + ((int)rgb.y << 8) + (int)rgb.z;
-
-			// project tri onto screen
-			Vec2 triScreen[3] = { 0 };
-			for (int a = 0; a < 3; a++) {
-				triScreen[a] = RenderBL::cam.getScreenCoord(triCamera[a]);
-			}
-
-			// sort tri pts by y ascending
-			if (triScreen[0].y > triScreen[1].y) std::swap(triScreen[0], triScreen[1]);
-			if (triScreen[0].y > triScreen[2].y) std::swap(triScreen[0], triScreen[2]);
-			if (triScreen[1].y > triScreen[2].y) std::swap(triScreen[1], triScreen[2]);
-
-			// start and end x values of scanline
-			float x1 = (float)triScreen[0].x;
-			float x2 = (float)triScreen[0].x;
-
-			// change in x per change in y
-			float dx1 = (float)(triScreen[2].x - triScreen[0].x) / (float)(triScreen[2].y - triScreen[0].y);
-			float dx2 = (float)(triScreen[1].x - triScreen[0].x) / (float)(triScreen[1].y - triScreen[0].y);
-
-			float* dx = &dx2;	// points to dx for side of triangle with pt1 (2 segments)
-			int index;			// index of pixel buffer to be written to
-
-			// always ensure x1 < x2
-			if (dx1 > dx2) {
-				std::swap(dx1, dx2);
-				dx = &dx1;
-			}
-			
-			// draw triangle from triScreen[0].y to triScreen[1].y
-			for (int y = triScreen[0].y; y < triScreen[1].y; y++) {
-				index = RenderBL::coordsToIndex({ (int)x1, y });
-				for (float x = x1; x < x2; x += 1.0f) {
-					RenderBL::pixels[index++] = color;
-				}
-				x1 += dx1;
-				x2 += dx2;
-			}
-
-			// update dx for second segment
-			*dx = (float)(triScreen[2].x - triScreen[1].x) / (float)(triScreen[2].y - triScreen[1].y);
-			x1 = (float)triScreen[2].x - (float)(triScreen[2].y - triScreen[1].y) * dx1;
-			x2 = (float)triScreen[2].x - (float)(triScreen[2].y - triScreen[1].y) * dx2;
-			
-			// draw triangle from triScreen[1].y to triScreen[2].y
-			for (int y = triScreen[1].y; y < triScreen[2].y; y++) {
-				index = RenderBL::coordsToIndex({ (int)x1, y });
-				for (float x = x1; x < x2; x += 1.0f) {
-					RenderBL::pixels[index++] = color;
-				}
-				x1 += dx1;
-				x2 += dx2;
-			}
+			if (clip(triCamera)) raster(triCamera);
 		}
 	}
 
