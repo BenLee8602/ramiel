@@ -10,6 +10,7 @@ namespace bl {
 	class RenderBL {
 		static std::vector<Entity> entities;
 		static int* pixels;
+		static float* depth;
 		static Camera cam;
 		static Vec2 size;
 		static Vec2 mid;

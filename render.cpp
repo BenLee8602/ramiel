@@ -4,6 +4,7 @@ namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
 	int* RenderBL::pixels;
+	float* RenderBL::depth;
 	Camera RenderBL::cam;
 	Vec2 RenderBL::size;
 	Vec2 RenderBL::mid;
@@ -19,6 +20,8 @@ namespace bl {
 		mid.x = sizex / 2;
 		mid.y = sizey / 2;
 		bufferSize = sizex * sizey * sizeof(int);
+		delete[] depth;
+		depth = new float[sizex * sizey];
 		setFov(90);
 	}
 
@@ -31,6 +34,7 @@ namespace bl {
 		cam.getControls();
 		cam.calcTrigValues();
 		memset((void*)pixels, 0, bufferSize);
+		std::fill(depth, depth + (size.x * size.y), 1000.0f);
 		for (auto& e : entities) {
 			e.draw();
 		}
