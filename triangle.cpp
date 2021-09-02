@@ -32,80 +32,64 @@ namespace bl {
 				}
 				// case 6
 				else {
-					tri[0].x = tri[0].x + (tri[2].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
-					tri[0].y = tri[0].y + (tri[2].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
-					tri[0].z = RenderBL::znear;
-					tri[1].x = tri[1].x + (tri[2].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
-					tri[1].y = tri[1].y + (tri[2].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
-					tri[1].z = RenderBL::znear;
+					std::swap(tri[1], tri[2]);
+					clip_2p(tri);
 				}
 			}
 			// case 8
 			else if (tri[2].z < RenderBL::znear) {
-				tri[0].x = tri[0].x + (tri[1].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
-				tri[0].y = tri[0].y + (tri[1].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
-				tri[0].z = RenderBL::znear;
-				tri[2].x = tri[2].x + (tri[1].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
-				tri[2].y = tri[2].y + (tri[1].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
-				tri[2].z = RenderBL::znear;
+				clip_2p(tri);
 			}
 			// case 3
 			else {
-				Vec3f temp[3] = { 0.0f };
-				temp[0].x = tri[0].x + (tri[2].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
-				temp[0].y = tri[0].y + (tri[2].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[2].z - tri[0].z);
-				temp[0].z = RenderBL::znear;
-				temp[1].x = tri[0].x + (tri[1].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
-				temp[1].y = tri[0].y + (tri[1].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
-				temp[1].z = RenderBL::znear;
-				temp[2] = tri[1];
-				tri[0] = temp[0];
-				raster(temp);
+				std::swap(tri[1], tri[0]);
+				clip_1p(tri);
 			}
 		}
 
 		else if (tri[1].z < RenderBL::znear) {
 			// case 7
 			if (tri[2].z < RenderBL::znear) {
-				tri[1].x = tri[1].x + (tri[0].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
-				tri[1].y = tri[1].y + (tri[0].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
-				tri[1].z = RenderBL::znear;
-				tri[2].x = tri[2].x + (tri[0].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
-				tri[2].y = tri[2].y + (tri[0].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
-				tri[2].z = RenderBL::znear;
+				std::swap(tri[1], tri[0]);
+				clip_2p(tri);
 			}
 			// case 4
 			else {
-				Vec3f temp[3] = { 0.0f };
-				temp[0].x = tri[1].x + (tri[0].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
-				temp[0].y = tri[1].y + (tri[0].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
-				temp[0].z = RenderBL::znear;
-				temp[1].x = tri[1].x + (tri[2].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
-				temp[1].y = tri[1].y + (tri[2].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
-				temp[1].z = RenderBL::znear;
-				temp[2] = tri[2];
-				tri[1] = temp[0];
-				raster(temp);
+				clip_1p(tri);
 			}
 		}
 
 		// case 5
 		else if (tri[2].z < RenderBL::znear) {
-			Vec3f temp[3] = { 0.0f };
-			temp[0].x = tri[2].x + (tri[0].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
-			temp[0].y = tri[2].y + (tri[0].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[0].z - tri[2].z);
-			temp[0].z = RenderBL::znear;
-			temp[1].x = tri[2].x + (tri[1].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
-			temp[1].y = tri[2].y + (tri[1].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
-			temp[1].z = RenderBL::znear;
-			temp[2] = tri[1];
-			tri[2] = temp[0];
-			raster(temp);
+			std::swap(tri[1], tri[2]);
+			clip_1p(tri);
 		}
 
 		// case 1 (do nothing)
 
 		return true;
+	}
+
+	void Triangle::clip_1p(Vec3f* tri) const {
+		Vec3f temp[3] = { 0.0f };
+		temp[0].x = tri[1].x + (tri[0].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+		temp[0].y = tri[1].y + (tri[0].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+		temp[0].z = RenderBL::znear;
+		temp[1].x = tri[1].x + (tri[2].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+		temp[1].y = tri[1].y + (tri[2].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+		temp[1].z = RenderBL::znear;
+		temp[2] = tri[2];
+		tri[1] = temp[0];
+		raster(temp);
+	}
+
+	void Triangle::clip_2p(Vec3f* tri) const {
+		tri[0].x = tri[0].x + (tri[1].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+		tri[0].y = tri[0].y + (tri[1].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+		tri[0].z = RenderBL::znear;
+		tri[2].x = tri[2].x + (tri[1].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+		tri[2].y = tri[2].y + (tri[1].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+		tri[2].z = RenderBL::znear;
 	}
 
 
