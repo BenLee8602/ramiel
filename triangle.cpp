@@ -94,13 +94,6 @@ namespace bl {
 
 
 	void Triangle::raster(Vec3f* tri) const {
-		// get color
-		Vec3f normalWorld = getNormal(pts);
-		Vec3f rgb = { 255, 255, 255 };
-		float sim = dirSimilarity(normalWorld, { 0.0f, 0.0f, -1.0f });
-		rgb *= sim;
-		int color = ((int)rgb.x << 16) + ((int)rgb.y << 8) + (int)rgb.z;
-
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
@@ -120,6 +113,17 @@ namespace bl {
 			std::swap(triScreen[1], triScreen[2]);
 			std::swap(tri[1], tri[2]);
 		}
+
+		// early return if tri out of frame (y-axis)
+		if (triScreen[2].y < 0 || triScreen[0].y > RenderBL::size.y) return;
+
+		// get color
+		Vec3f normalWorld = getNormal(pts);
+		Vec3f rgb = { 0.0f };
+		for (int a = 0; a < RenderBL::lights.size(); a++) {
+			RenderBL::lights[a].getLight(rgb, normalWorld);
+		}
+		int color = rgbToDec(rgb);
 
 		// change in x per change in y
 		float dx1_y = (float)(triScreen[2].x - triScreen[0].x) / (float)(triScreen[2].y - triScreen[0].y);

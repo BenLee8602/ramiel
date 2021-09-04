@@ -1,6 +1,8 @@
 #ifndef BL_VEC_H
 #define BL_VEC_H
 
+#include <fstream>
+
 namespace bl {
 
 	struct Vec2 {
@@ -49,6 +51,7 @@ namespace bl {
 		Vec3f operator/(const Vec3f& vec) const;
 
 		Vec3f& operator=(float num);
+		operator bool();
 
 		float getMagnitude() const;
 		Vec3f getNormalized() const;
@@ -59,6 +62,8 @@ namespace bl {
 	float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2);
 	// similarity of direction of 2 vectors, 
 	// 0.0f meaning opposite, 1.0f meaning same direction
+
+	std::ostream& operator<<(std::ostream& os, const Vec3f& vec);
 
 }
 

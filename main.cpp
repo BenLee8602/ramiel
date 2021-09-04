@@ -72,7 +72,15 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	std::chrono::steady_clock::time_point frameEnd;
 	float dtime = 0.0f;
 
-	RenderBL::addEntity("model/teapot.obj", 0.0f, 0.0f, 4.0f);
+	// add objects and lighting to scene
+	RenderBL::addEntity("model/sphere.obj", 0.0f, 0.0f, 4.0f);
+
+	RenderBL::addLight(0.0f, 0.0f, -1.0f, 255.0f);
+	RenderBL::addLight(-2.0f, 0.0f, 1.0f, 0.0f, 255.0f);
+	RenderBL::addLight(2.0f, 0.0f, 1.0f, 0.0f, 0.0f, 255.0f);
+
+	//RenderBL::addLight();
+	//RenderBL::addLight(1.0f, 0.0f, 1.0f);
 
 	// main loop
 	while (run) {

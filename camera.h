@@ -19,7 +19,7 @@ namespace bl {
 		Camera(const Vec3f& pos, const Vec3f& rot, int fov = 0);
 		void calcTrigValues();
 		void reset();
-
+		
 		void setFov(int fov);
 		
 		void setpos(float x, float y, float z);

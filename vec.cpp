@@ -132,6 +132,10 @@ namespace bl {
 		return *this;
 	}
 
+	Vec3f::operator bool() {
+		return x || y || z;
+	}
+
 	float Vec3f::getMagnitude() const {
 		return sqrtf(x*x + y*y + z*z);
 	}
@@ -157,6 +161,10 @@ namespace bl {
 		Vec3f vec2n = vec2.getNormalized();
 		float sim = (dotProduct(vec1n, vec2n) + 1.0f) / 2.0f;
 		return sim;
+	}
+
+	std::ostream& operator<<(std::ostream& os, const Vec3f& vec) {
+		return os << vec.x << ", " << vec.y << ", " << vec.z;
 	}
 
 }
