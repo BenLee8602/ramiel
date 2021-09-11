@@ -7,38 +7,49 @@
 namespace bl {
 
 	Entity::Entity(const char* filename, const Vec3f& pos) {
-		std::vector<Vec3f> points;
-
-		std::string ltr = "";
+		std::vector<Vec3f> pts;
 		std::ifstream file(filename);
+		std::string line;
 
-		while (file >> ltr) {
+		while (getline(file, line)) {
+			// insert line content into stream
+			std::stringstream stream;
+			stream << line;
+
+			// determine type of data on current line
+			std::string ltr;
+			stream >> ltr;
+
 			// vertex data
 			if (ltr == "v") {
 				Vec3f tempPt;
-				file >> tempPt.x >> tempPt.y >> tempPt.z;
-				points.push_back(tempPt + pos);
+				stream >> tempPt.x >> tempPt.y >> tempPt.z;
+				pts.push_back(tempPt + pos);
 			}
 
 			// triangle data
 			else if (ltr == "f") {
-				Vec3f tempTri[3];
+				Vec3f temp[3];
+				int index;
 				for (int a = 0; a < 3; a++) {
-					std::string nums = "";
-					std::stringstream stream;
-					int index;
-
-					file >> nums;
-					stream << nums;
 					stream >> index;
-					tempTri[a] = points[index - 1];
+					stream.ignore(1000, ' ');
+					temp[a] = pts[index - 1];
 				}
-				triangles.push_back(Triangle(tempTri[0], tempTri[1], tempTri[2]));
+				triangles.push_back(temp);
+				
+				// triangulate quad faces
+				int index2;
+				stream >> index2;
+				if (index != index2) {
+					Vec3f temp2[3] = { temp[2], pts[index2 - 1], temp[0] };
+					triangles.push_back(temp2);
+				}
 			}
 		}
 		file.close();
 	}
-
+	
 
 	void Entity::draw() const {
 		for (auto& t : triangles) {
