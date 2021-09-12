@@ -39,7 +39,7 @@ namespace bl {
 				triangles.push_back(temp);
 				
 				// triangulate quad faces
-				int index2;
+				int index2 = index;
 				stream >> index2;
 				if (index != index2) {
 					Vec3f temp2[3] = { temp[2], pts[index2 - 1], temp[0] };
