@@ -7,8 +7,9 @@ namespace bl {
 
 	class Entity {
 	protected:
-		std::vector<Vec3f> pts;
+		std::vector<Vertex> vertices;
 		std::vector<Triangle> triangles;
+		void calcVertexNormals();
 	public:
 		Entity(const char* filename, const Vec3f& pos);
 		virtual void draw() const;

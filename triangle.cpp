@@ -4,7 +4,7 @@
 
 namespace bl {
 
-	Triangle::Triangle(Vec3f** pts) {
+	Triangle::Triangle(Vertex** pts) {
 		this->pts[0] = pts[0];
 		this->pts[1] = pts[1];
 		this->pts[2] = pts[2];
@@ -12,7 +12,7 @@ namespace bl {
 
 
 	Vec3f Triangle::getNormal() const {
-		return crossProduct(*pts[1] - *pts[0], *pts[2] - *pts[0]);
+		return crossProduct(pts[1]->pos - pts[0]->pos, pts[2]->pos - pts[0]->pos).getNormalized();
 	}
 
 
@@ -207,7 +207,7 @@ namespace bl {
 		// conv from world-space to camera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = RenderBL::cam.getCameraCoord(*pts[a]);
+			triCam[a] = RenderBL::cam.getCameraCoord(pts[a]->pos);
 		}
 
 		// only draw tris facing camera
@@ -215,6 +215,10 @@ namespace bl {
 		if (dotProduct(triCam[0], normalCam) < 0.0f) {
 			if (clip(triCam)) raster(triCam);
 		}
+	}
+
+	const Vertex* Triangle::operator[](int index) const {
+		return pts[index];
 	}
 
 }

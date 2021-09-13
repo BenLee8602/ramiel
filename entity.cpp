@@ -21,19 +21,20 @@ namespace bl {
 
 			// vertex data
 			if (ltr == "v") {
-				Vec3f tempPt;
-				stream >> tempPt.x >> tempPt.y >> tempPt.z;
-				pts.push_back(tempPt + pos);
+				Vertex temp;
+				stream >> temp.pos.x >> temp.pos.y >> temp.pos.z;
+				temp.pos += pos;
+				vertices.push_back(temp);
 			}
 
 			// triangle data
 			else if (ltr == "f") {
-				Vec3f* temp[3];
+				Vertex* temp[3];
 				int index;
 				for (int a = 0; a < 3; a++) {
 					stream >> index;
 					stream.ignore(1000, ' ');
-					temp[a] = &pts[index - 1];
+					temp[a] = &vertices[index - 1];
 				}
 				triangles.push_back(temp);
 				
@@ -41,12 +42,32 @@ namespace bl {
 				int index2 = index;
 				stream >> index2;
 				if (index != index2) {
-					Vec3f* temp2[3] = { temp[2], &pts[index2 - 1], temp[0] };
+					Vertex* temp2[3] = { temp[2], &vertices[index2 - 1], temp[0] };
 					triangles.push_back(temp2);
 				}
 			}
 		}
 		file.close();
+		calcVertexNormals();
+	}
+
+
+	void Entity::calcVertexNormals() {
+		for (auto& v : vertices) {
+			Vec3f normal = { 0.0f };
+			int numVecs = 0;
+			for (auto& t : triangles) {
+				for (int a = 0; a < 3; a++) {
+					if (t[a] == &v) {
+						normal += t.getNormal();
+						numVecs++;
+						break;
+					}
+				}
+			}
+			v.normal = normal / (float)numVecs;
+			RenderBL::debug << v.pos << " || " << v.normal << std::endl;
+		}
 	}
 	
 
