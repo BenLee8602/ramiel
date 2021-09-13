@@ -7,7 +7,6 @@
 namespace bl {
 
 	Entity::Entity(const char* filename, const Vec3f& pos) {
-		std::vector<Vec3f> pts;
 		std::ifstream file(filename);
 		std::string line;
 
@@ -29,12 +28,12 @@ namespace bl {
 
 			// triangle data
 			else if (ltr == "f") {
-				Vec3f temp[3];
+				Vec3f* temp[3];
 				int index;
 				for (int a = 0; a < 3; a++) {
 					stream >> index;
 					stream.ignore(1000, ' ');
-					temp[a] = pts[index - 1];
+					temp[a] = &pts[index - 1];
 				}
 				triangles.push_back(temp);
 				
@@ -42,7 +41,7 @@ namespace bl {
 				int index2 = index;
 				stream >> index2;
 				if (index != index2) {
-					Vec3f temp2[3] = { temp[2], pts[index2 - 1], temp[0] };
+					Vec3f* temp2[3] = { temp[2], &pts[index2 - 1], temp[0] };
 					triangles.push_back(temp2);
 				}
 			}

@@ -7,15 +7,14 @@
 namespace bl {
 
 	class Triangle {
-		Vec3f pts[3];
-		Vec3f getNormal(const Vec3f* tri) const;
+		Vec3f* pts[3];
+		Vec3f getNormal() const;
 		bool clip(Vec3f* tri) const;	// clips z-near plane
 		void clip_1p(Vec3f* tri) const;
 		void clip_2p(Vec3f* tri) const;
 		void raster(Vec3f* tri) const;
 	public:
-		Triangle();
-		Triangle(Vec3f& pt0, Vec3f& pt1, Vec3f& pt2);
+		Triangle(Vec3f** pts);
 		void draw() const;
 	};
 

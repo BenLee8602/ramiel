@@ -7,6 +7,7 @@ namespace bl {
 
 	class Entity {
 	protected:
+		std::vector<Vec3f> pts;
 		std::vector<Triangle> triangles;
 	public:
 		Entity(const char* filename, const Vec3f& pos);

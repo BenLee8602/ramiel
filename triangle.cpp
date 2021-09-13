@@ -4,22 +4,15 @@
 
 namespace bl {
 
-	Triangle::Triangle() {
-		pts[0] = { 0.0f };
-		pts[1] = { 0.0f };
-		pts[2] = { 0.0f };
+	Triangle::Triangle(Vec3f** pts) {
+		this->pts[0] = pts[0];
+		this->pts[1] = pts[1];
+		this->pts[2] = pts[2];
 	}
 
 
-	Triangle::Triangle(Vec3f& pt0, Vec3f& pt1, Vec3f& pt2) {
-		pts[0] = pt0;
-		pts[1] = pt1;
-		pts[2] = pt2;
-	}
-
-
-	Vec3f Triangle::getNormal(const Vec3f* tri) const {
-		return crossProduct(tri[1] - tri[0], tri[2] - tri[0]);
+	Vec3f Triangle::getNormal() const {
+		return crossProduct(*pts[1] - *pts[0], *pts[2] - *pts[0]);
 	}
 
 
@@ -118,10 +111,10 @@ namespace bl {
 		if (triScreen[2].y < 0 || triScreen[0].y > RenderBL::size.y) return;
 
 		// get color
-		Vec3f normalWorld = getNormal(pts);
+		Vec3f normalWorld = getNormal();
 		Vec3f rgb = { 0.0f };
-		for (int a = 0; a < RenderBL::lights.size(); a++) {
-			RenderBL::lights[a].getLight(rgb, normalWorld);
+		for (auto& lgt : RenderBL::lights) {
+			lgt.getLight(rgb, normalWorld);
 		}
 		int color = rgbToDec(rgb);
 
@@ -165,9 +158,9 @@ namespace bl {
 			for (x; x < xmax; x++) {
 				if (z < RenderBL::depth[index]) {
 					RenderBL::depth[index] = z;
-					RenderBL::pixels[index++] = color;
+					RenderBL::pixels[index] = color;
 				}
-				else index++;
+				index++;
 				z += dz_x;
 			}
 			x1 += dx1_y;
@@ -197,9 +190,9 @@ namespace bl {
 			for (x; x < xmax; x++) {
 				if (z < RenderBL::depth[index]) {
 					RenderBL::depth[index] = z;
-					RenderBL::pixels[index++] = color;
+					RenderBL::pixels[index] = color;
 				}
-				else index++;
+				index++;
 				z += dz_x;
 			}
 			x1 += dx1_y;
@@ -212,15 +205,15 @@ namespace bl {
 	
 	void Triangle::draw() const {
 		// conv from world-space to camera-space
-		Vec3f triCamera[3] = { 0.0f };
+		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCamera[a] = RenderBL::cam.getCameraCoord(pts[a]);
+			triCam[a] = RenderBL::cam.getCameraCoord(*pts[a]);
 		}
 
 		// only draw tris facing camera
-		Vec3f normalCam = getNormal(triCamera);
-		if (dotProduct(triCamera[0], normalCam) < 0.0f) {
-			if (clip(triCamera)) raster(triCamera);
+		Vec3f normalCam = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
+		if (dotProduct(triCam[0], normalCam) < 0.0f) {
+			if (clip(triCam)) raster(triCam);
 		}
 	}
 
