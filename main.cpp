@@ -4,8 +4,8 @@
 using namespace bl;
 
 void* pixels;
-int winSizeX;
-int winSizeY;
+int winSizeX = 1280;
+int winSizeY = 720;
 bool run = true;
 BITMAPINFO bitmapInfo;
 
@@ -61,7 +61,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		"Window",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		1280, 720, 0, 0,
+		winSizeX, winSizeY, 0, 0,
 		hInstance,
 		0
 	);
@@ -73,14 +73,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	float dtime = 0.0f;
 
 	// add objects and lighting to scene
-	RenderBL::addEntity("model/sphere.obj", 0.0f, 0.0f, 4.0f);
+	RenderBL::addEntity("model/teapot.obj", 0.0f, 0.0f, 1.0f);
 
-	RenderBL::addLight(0.0f, 0.0f, -1.0f, 255.0f);
-	RenderBL::addLight(-2.0f, 0.0f, 1.0f, 0.0f, 255.0f);
-	RenderBL::addLight(2.0f, 0.0f, 1.0f, 0.0f, 0.0f, 255.0f);
+	RenderBL::addLight_dir(0.0f, 0.0f, -1.0f, 150.0f, 150.0f, 150.0f);
+	RenderBL::addLight_pt(0.0f, 0.0f, 0.0f, 150.0f, 150.0f, 150.0f, 0.5f);
 
-	//RenderBL::addLight();
-	//RenderBL::addLight(1.0f, 0.0f, 1.0f);
+	//RenderBL::addLight(0.0f, 0.0f, -1.0f, 255.0f);
+	//RenderBL::addLight(-2.0f, 0.0f, 1.0f, 0.0f, 255.0f);
+	//RenderBL::addLight(2.0f, 0.0f, 1.0f, 0.0f, 0.0f, 255.0f);
 
 	// main loop
 	while (run) {

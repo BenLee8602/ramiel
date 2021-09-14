@@ -68,6 +68,7 @@ namespace bl {
 	struct Vertex {
 		Vec3f pos = { 0.0f };
 		Vec3f normal = { 0.0f };
+		Vec3f color = { 0.0f };
 	};
 
 }

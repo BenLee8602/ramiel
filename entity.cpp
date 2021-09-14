@@ -6,7 +6,7 @@
 
 namespace bl {
 
-	Entity::Entity(const char* filename, const Vec3f& pos) {
+	Entity::Entity(const char* filename, const Vec3f& pos, const Vec3f& color) {
 		std::ifstream file(filename);
 		std::string line;
 
@@ -48,6 +48,8 @@ namespace bl {
 			}
 		}
 		file.close();
+
+		this->color = color;
 		calcVertexNormals();
 	}
 
@@ -66,12 +68,22 @@ namespace bl {
 				}
 			}
 			v.normal = normal / (float)numVecs;
-			RenderBL::debug << v.pos << " || " << v.normal << std::endl;
+		}
+	}
+
+
+	void Entity::calcVertexColor() {
+		for (auto& v : vertices) {
+			v.color = { 0.0f }; // not using entity color
+			for (auto& l : RenderBL::lights_pt) {
+				l.getLight(v);
+			}
 		}
 	}
 	
 
-	void Entity::draw() const {
+	void Entity::draw() {
+		calcVertexColor();
 		for (auto& t : triangles) {
 			t.draw();
 		}

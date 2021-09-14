@@ -8,10 +8,10 @@ namespace bl {
 
 	class Triangle {
 		Vertex* pts[3];
-		bool clip(Vec3f* tri) const;	// clips z-near plane
-		void clip_1p(Vec3f* tri) const;
-		void clip_2p(Vec3f* tri) const;
-		void raster(Vec3f* tri) const;
+		bool clip(Vec3f* tri, Vec3f* tri_c) const;	// clips z-near plane
+		void clip_1p(Vec3f* tri, Vec3f* tri_c) const;
+		void clip_2p(Vec3f* tri, Vec3f* tri_c) const;
+		void raster(Vec3f* tri, Vec3f* tri_c) const;
 	public:
 		Triangle(Vertex** pts);
 		void draw() const;

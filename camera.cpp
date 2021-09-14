@@ -54,16 +54,12 @@ namespace bl {
 		else focalLen = RenderBL::size.x;
 	}
 
-	void Camera::setpos(float x, float y, float z) {
-		pos.x = x;
-		pos.y = y;
-		pos.z = z;
+	const Vec3f& Camera::getpos() const {
+		return pos;
 	}
 
-	void Camera::setrot(float x, float y, float z) {
-		rot.x = x;
-		rot.y = y;
-		rot.z = z;
+	const Vec3f& Camera::getrot() const {
+		return rot;
 	}
 
 	void Camera::move(float x, float y, float z) {

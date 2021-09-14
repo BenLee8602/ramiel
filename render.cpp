@@ -3,7 +3,8 @@
 namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
-	std::vector<Light> RenderBL::lights;
+	std::vector<Light_Dir> RenderBL::lights_dir;
+	std::vector<Light_Pt> RenderBL::lights_pt;
 	int* RenderBL::pixels;
 	float* RenderBL::depth;
 	Camera RenderBL::cam;
@@ -31,27 +32,37 @@ namespace bl {
 	}
 
 	void RenderBL::renderFrame(float dtime) {
+		memset((void*)pixels, 0, bufferSize);
+		std::fill(depth, depth + (size.x * size.y), 1000.0f);
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();
-		memset((void*)pixels, 0, bufferSize);
-		std::fill(depth, depth + (size.x * size.y), 1000.0f);
+		lights_pt[0].moveSource(cam.getpos()); // temp
 		for (auto& e : entities) {
 			e.draw();
 		}
 	}
 
-	void RenderBL::addEntity(const char* objfilename, float x, float y, float z) {
+	void RenderBL::addEntity(const char* objfilename, float x, float y, float z, float r, float g, float b) {
 		Vec3f pos = { x, y, z };
-		entities.push_back(Entity(objfilename, pos));
+		Vec3f color = { r, g, b };
+		if (!color) color = { 255.0f, 255.0f, 255.0f };
+		entities.push_back(Entity(objfilename, pos, color));
 	}
 
-	void RenderBL::addLight(float x, float y, float z, float r, float g, float b) {
+	void RenderBL::addLight_dir(float x, float y, float z, float r, float g, float b) {
+		Vec3f dir = { x, y, z };
+		Vec3f color = { r, g, b };
+		if (!dir) dir = { 0.0f, 0.0f, -1.0f };
+		if (!color) color = { 255.0f, 255.0f, 255.0f };
+		lights_dir.push_back(Light_Dir(dir, color));
+	}
+
+	void RenderBL::addLight_pt(float x, float y, float z, float r, float g, float b, float falloff) {
 		Vec3f source = { x, y, z };
 		Vec3f color = { r, g, b };
-		if (!source) source = { 0.0f, 0.0f, -1.0f };
 		if (!color) color = { 255.0f, 255.0f, 255.0f };
-		lights.push_back(Light(source, color));
+		lights_pt.push_back(Light_Pt(source, color, falloff));
 	}
 
 	int RenderBL::coordsToIndex(const Vec2& in) {

@@ -22,8 +22,8 @@ namespace bl {
 		
 		void setFov(int fov);
 		
-		void setpos(float x, float y, float z);
-		void setrot(float x, float y, float z);
+		const Vec3f& getpos() const;
+		const Vec3f& getrot() const;
 		void move(float x, float y, float z);
 		void rotate(float x, float y, float z);
 

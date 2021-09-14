@@ -7,12 +7,14 @@ namespace bl {
 
 	class Entity {
 	protected:
+		Vec3f color;
 		std::vector<Vertex> vertices;
 		std::vector<Triangle> triangles;
 		void calcVertexNormals();
+		void calcVertexColor();
 	public:
-		Entity(const char* filename, const Vec3f& pos);
-		virtual void draw() const;
+		Entity(const char* filename, const Vec3f& pos, const Vec3f& color);
+		virtual void draw();
 	};
 
 }
