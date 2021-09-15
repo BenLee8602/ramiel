@@ -68,25 +68,52 @@ namespace bl {
 	}
 
 	void Triangle::clip_1p(Vec3f* tri, Vec3f* tri_c) const {
+		// ratio of line clipped
+		float c1 = (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+		float c2 = (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+
+		// new tri formed from quad
 		Vec3f temp[3] = { 0.0f };
-		temp[0].x = tri[1].x + (tri[0].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
-		temp[0].y = tri[1].y + (tri[0].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
+		Vec3f temp_c[3] = { 0.0f };
+
+		// interpolate x and y
+		temp[0].x = tri[1].x + (tri[0].x - tri[1].x) * c1;
+		temp[0].y = tri[1].y + (tri[0].y - tri[1].y) * c1;
 		temp[0].z = RenderBL::znear;
-		temp[1].x = tri[1].x + (tri[2].x - tri[1].x) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
-		temp[1].y = tri[1].y + (tri[2].y - tri[1].y) * (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
+		temp[1].x = tri[1].x + (tri[2].x - tri[1].x) * c2;
+		temp[1].y = tri[1].y + (tri[2].y - tri[1].y) * c2;
 		temp[1].z = RenderBL::znear;
 		temp[2] = tri[2];
+
+		// interpolate color
+		temp_c[0] = tri_c[1] + (tri_c[0] - tri_c[1]) * c1;
+		temp_c[1] = tri_c[1] + (tri_c[2] - tri_c[1]) * c2;
+		temp_c[2] = tri_c[2];
+
+		// update original tri
 		tri[1] = temp[0];
-		raster(temp, tri_c);
+		tri_c[1] = temp_c[0];
+
+		// raster new tri
+		raster(temp, temp_c);
 	}
 
 	void Triangle::clip_2p(Vec3f* tri, Vec3f* tri_c) const {
-		tri[0].x = tri[0].x + (tri[1].x - tri[0].x) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
-		tri[0].y = tri[0].y + (tri[1].y - tri[0].y) * (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+		// ratio of line clipped
+		float c1 = (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
+		float c2 = (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+
+		// interpolate x and y
+		tri[0].x = tri[0].x + (tri[1].x - tri[0].x) * c1;
+		tri[0].y = tri[0].y + (tri[1].y - tri[0].y) * c1;
 		tri[0].z = RenderBL::znear;
-		tri[2].x = tri[2].x + (tri[1].x - tri[2].x) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
-		tri[2].y = tri[2].y + (tri[1].y - tri[2].y) * (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
+		tri[2].x = tri[2].x + (tri[1].x - tri[2].x) * c2;
+		tri[2].y = tri[2].y + (tri[1].y - tri[2].y) * c2;
 		tri[2].z = RenderBL::znear;
+
+		// interpolate color
+		tri_c[0] = tri_c[0] + (tri_c[1] - tri_c[0]) * c1;
+		tri_c[2] = tri_c[2] + (tri_c[1] - tri_c[2]) * c2;
 	}
 
 
