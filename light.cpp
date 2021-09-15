@@ -11,9 +11,6 @@ namespace bl {
 
 	void Light_Dir::getLight(Vec3f& rgb, Vec3f& normal) const {
 		rgb += color * dirSimilarity(normal, direction);
-		rgb.x = std::min(rgb.x, 255.0f);
-		rgb.y = std::min(rgb.y, 255.0f);
-		rgb.z = std::min(rgb.z, 255.0f);
 	}
 
 
@@ -28,9 +25,6 @@ namespace bl {
 		float d = vec.getMagnitude();
 		float f = 1.0f / (falloff * d * d + 1.0f);
 		vertex.color += color * f * (1.0f - dirSimilarity(vec, vertex.normal));
-		vertex.color.x = std::min(vertex.color.x, 255.0f);
-		vertex.color.y = std::min(vertex.color.y, 255.0f);
-		vertex.color.z = std::min(vertex.color.z, 255.0f);
 	}
 
 	void Light_Pt::moveSource(const Vec3f& pos) {

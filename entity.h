@@ -13,7 +13,7 @@ namespace bl {
 		void calcVertexNormals();
 		void calcVertexColor();
 	public:
-		Entity(const char* filename, const Vec3f& pos, const Vec3f& color);
+		Entity(const char* filename, Vec3f& pos, Vec3f& color);
 		virtual void draw();
 	};
 

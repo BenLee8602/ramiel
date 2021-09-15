@@ -16,7 +16,7 @@ namespace bl {
 	}
 
 
-	bool Triangle::clip(Vec3f* tri, Vec3f* tri_c) const {
+	bool Triangle::clip(Vec3f* tri, Vec3f* tri_c, const Vec3f& color_e) const {
 		if (tri[0].z < RenderBL::znear) {
 			if (tri[1].z < RenderBL::znear) {
 				// case 2
@@ -27,18 +27,18 @@ namespace bl {
 				else {
 					std::swap(tri[1], tri[2]);
 					std::swap(tri_c[1], tri_c[2]);
-					clip_2p(tri, tri_c);
+					clip_2p(tri, tri_c, color_e);
 				}
 			}
 			// case 8
 			else if (tri[2].z < RenderBL::znear) {
-				clip_2p(tri, tri_c);
+				clip_2p(tri, tri_c, color_e);
 			}
 			// case 3
 			else {
 				std::swap(tri[1], tri[0]);
 				std::swap(tri_c[1], tri_c[0]);
-				clip_1p(tri, tri_c);
+				clip_1p(tri, tri_c, color_e);
 			}
 		}
 
@@ -47,11 +47,11 @@ namespace bl {
 			if (tri[2].z < RenderBL::znear) {
 				std::swap(tri[1], tri[0]);
 				std::swap(tri_c[1], tri_c[0]);
-				clip_2p(tri, tri_c);
+				clip_2p(tri, tri_c, color_e);
 			}
 			// case 4
 			else {
-				clip_1p(tri, tri_c);
+				clip_1p(tri, tri_c, color_e);
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace bl {
 		else if (tri[2].z < RenderBL::znear) {
 			std::swap(tri[1], tri[2]);
 			std::swap(tri_c[1], tri_c[2]);
-			clip_1p(tri, tri_c);
+			clip_1p(tri, tri_c, color_e);
 		}
 
 		// case 1 (do nothing)
@@ -67,7 +67,7 @@ namespace bl {
 		return true;
 	}
 
-	void Triangle::clip_1p(Vec3f* tri, Vec3f* tri_c) const {
+	void Triangle::clip_1p(Vec3f* tri, Vec3f* tri_c, const Vec3f& color_e) const {
 		// ratio of line clipped
 		float c1 = (RenderBL::znear - tri[1].z) / (tri[0].z - tri[1].z);
 		float c2 = (RenderBL::znear - tri[1].z) / (tri[2].z - tri[1].z);
@@ -95,10 +95,10 @@ namespace bl {
 		tri_c[1] = temp_c[0];
 
 		// raster new tri
-		raster(temp, temp_c);
+		raster(temp, temp_c, color_e);
 	}
 
-	void Triangle::clip_2p(Vec3f* tri, Vec3f* tri_c) const {
+	void Triangle::clip_2p(Vec3f* tri, Vec3f* tri_c, const Vec3f& color_e) const {
 		// ratio of line clipped
 		float c1 = (RenderBL::znear - tri[0].z) / (tri[1].z - tri[0].z);
 		float c2 = (RenderBL::znear - tri[2].z) / (tri[1].z - tri[2].z);
@@ -117,7 +117,7 @@ namespace bl {
 	}
 
 
-	void Triangle::raster(Vec3f* tri, Vec3f* tri_c) const {
+	void Triangle::raster(Vec3f* tri, Vec3f* tri_c, const Vec3f& color_e) const {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
@@ -144,7 +144,7 @@ namespace bl {
 		// early return if tri out of frame (y-axis)
 		if (triScreen[2].y < 0 || triScreen[0].y > RenderBL::size.y) return;
 
-		// get color
+		// get color (dir)
 		Vec3f normalWorld = getNormal();
 		Vec3f color = { 0.0f };
 		for (auto& lgt : RenderBL::lights_dir) {
@@ -155,6 +155,10 @@ namespace bl {
 			tri_c[a].x = std::min(tri_c[a].x, 255.0f);
 			tri_c[a].y = std::min(tri_c[a].y, 255.0f);
 			tri_c[a].z = std::min(tri_c[a].z, 255.0f);
+			tri_c[a] -= color_e;
+			tri_c[a].x = std::max(tri_c[a].x, 0.0f);
+			tri_c[a].y = std::max(tri_c[a].y, 0.0f);
+			tri_c[a].z = std::max(tri_c[a].z, 0.0f);
 		}
 
 		// change in x per change in y
@@ -223,7 +227,7 @@ namespace bl {
 			c1 += dc1_y;
 			c2 += dc2_y;
 		}
-
+		
 		// update values for second segment
 		ymax = std::min(triScreen[2].y, RenderBL::size.y);
 
@@ -267,10 +271,7 @@ namespace bl {
 	}
 
 	
-	void Triangle::draw() const {
-		// vertex colors
-		Vec3f tri_c[3] = { pts[0]->color, pts[1]->color, pts[2]->color };
-
+	void Triangle::draw(const Vec3f& color_e) const {
 		// conv from world-space to camera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
@@ -280,7 +281,8 @@ namespace bl {
 		// only draw tris facing camera
 		Vec3f normalCam = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
 		if (dotProduct(triCam[0], normalCam) < 0.0f) {
-			if (clip(triCam, tri_c)) raster(triCam, tri_c);
+			Vec3f tri_c[3] = { pts[0]->color, pts[1]->color, pts[2]->color }; // vertex colors
+			if (clip(triCam, tri_c, color_e)) raster(triCam, tri_c, color_e);
 		}
 	}
 
