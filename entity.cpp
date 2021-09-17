@@ -10,6 +10,7 @@ namespace bl {
 		std::ifstream file(filename);
 		std::string line;
 
+		// get vertex data
 		while (getline(file, line)) {
 			// insert line content into stream
 			std::stringstream stream;
@@ -19,16 +20,28 @@ namespace bl {
 			std::string ltr;
 			stream >> ltr;
 
-			// vertex data
 			if (ltr == "v") {
 				Vertex temp;
 				stream >> temp.pos.x >> temp.pos.y >> temp.pos.z;
 				temp.pos += pos;
 				vertices.push_back(temp);
 			}
+		}
 
-			// triangle data
-			else if (ltr == "f") {
+		file.close();
+		file.open(filename);
+
+		// get triangle data
+		while (getline(file, line)) {
+			// insert line content into stream
+			std::stringstream stream;
+			stream << line;
+
+			// determine type of data on current line
+			std::string ltr;
+			stream >> ltr;
+
+			if (ltr == "f") {
 				Vertex* temp[3];
 				int index;
 				for (int a = 0; a < 3; a++) {
@@ -37,7 +50,7 @@ namespace bl {
 					temp[a] = &vertices[index - 1];
 				}
 				triangles.push_back(temp);
-				
+
 				// triangulate quad faces
 				int index2 = index;
 				stream >> index2;
@@ -47,7 +60,6 @@ namespace bl {
 				}
 			}
 		}
-		file.close();
 
 		this->color = { 255.0f };
 		this->color -= color;
@@ -56,19 +68,11 @@ namespace bl {
 
 
 	void Entity::calcVertexNormals() {
-		for (auto& v : vertices) {
-			Vec3f normal = { 0.0f };
-			int numVecs = 0;
-			for (auto& t : triangles) {
-				for (int a = 0; a < 3; a++) {
-					if (t[a] == &v) {
-						normal += t.getNormal();
-						numVecs++;
-						break;
-					}
-				}
+		for (auto& t : triangles) {
+			for (int a = 0; a < 3; a++) {
+				RenderBL::debug << t[a]->normal << std::endl;
+				t[a]->normal += t.getNormal();
 			}
-			v.normal = normal / (float)numVecs;
 		}
 	}
 
