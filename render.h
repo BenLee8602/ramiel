@@ -10,8 +10,8 @@ namespace bl {
 
 	class RenderBL {
 		static std::vector<Entity> entities;
-		static std::vector<Light_Dir> lights_dir;
-		static std::vector<Light_Pt> lights_pt;
+		static std::vector<Light*> lights_flat;
+		static std::vector<Light*> lights_vtx;
 		static int* pixels;
 		static float* depth;
 		static Camera cam;
@@ -26,20 +26,21 @@ namespace bl {
 		static void setBuffer(void* pixelBuffer, int sizex, int sizey);
 		static void setFov(int fov);
 		static void renderFrame(float dtime = 0.0f);
+
 		static void addEntity(
 			const char* objfilename, 
 			float x = 0.0f, float y = 0.0f, float z = 0.0f, 
 			float r = 0.0f, float g = 0.0f, float b = 0.0f
 		);
-		static void addLight_dir(
-			float x = 0.0f, float y = 0.0f, float z = 0.0f, 
-			float r = 0.0f, float g = 0.0f, float b = 0.0f
-		);
-		static void addLight_pt(
+		static void addLight(
+			char type = 'd', char shading = 'f',
 			float x = 0.0f, float y = 0.0f, float z = 0.0f,
 			float r = 0.0f, float g = 0.0f, float b = 0.0f,
 			float falloff = 1.0f
 		);
+
+		static void removeEntity(unsigned int index);
+		static void removeLight(char shading, unsigned int index);
 
 		static int coordsToIndex(const Vec2& in);
 

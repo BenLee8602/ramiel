@@ -74,9 +74,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// add objects and lighting to scene
 	RenderBL::addEntity("model/teapot.obj", 0.0f, 0.0f, 1.0f);
-
-	RenderBL::addLight_dir(0.0f, 0.0f, -1.0f, 150.0f, 150.0f, 150.0f);
-	RenderBL::addLight_pt(0.0f, 0.0f, 0.0f, 150.0f, 150.0f, 150.0f, 0.5f);
+	RenderBL::addLight('p');
 
 	//RenderBL::addLight(0.0f, 0.0f, -1.0f, 255.0f);
 	//RenderBL::addLight(-2.0f, 0.0f, 1.0f, 0.0f, 255.0f);

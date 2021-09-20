@@ -12,7 +12,9 @@ namespace bl {
 
 
 	Vec3f Triangle::getNormal() const {
-		return crossProduct(pts[1]->pos - pts[0]->pos, pts[2]->pos - pts[0]->pos).getNormalized();
+		Vec3f vec1 = pts[1]->pos - pts[0]->pos;
+		Vec3f vec2 = pts[2]->pos - pts[0]->pos;
+		return crossProduct(vec1, vec2).getNormalized();
 	}
 
 
@@ -144,14 +146,14 @@ namespace bl {
 		// early return if tri out of frame (y-axis)
 		if (triScreen[2].y < 0 || triScreen[0].y > RenderBL::size.y) return;
 
-		// get color (dir)
-		Vec3f normalWorld = getNormal();
-		Vec3f color = { 0.0f };
-		for (auto& lgt : RenderBL::lights_dir) {
-			lgt.getLight(color, normalWorld);
+		// get color (flat)
+		Vec3f pos = (pts[0]->pos + pts[1]->pos + pts[2]->pos) / 3.0f;
+		Vertex v = { pos, getNormal(), { 0.0f } };
+		for (auto& lgt : RenderBL::lights_flat) {
+			lgt->getLight(v);
 		}
 		for (int a = 0; a < 3; a++) {
-			tri_c[a] += color;
+			tri_c[a] += v.color;
 			tri_c[a].x = std::min(tri_c[a].x, 255.0f);
 			tri_c[a].y = std::min(tri_c[a].y, 255.0f);
 			tri_c[a].z = std::min(tri_c[a].z, 255.0f);
@@ -286,7 +288,7 @@ namespace bl {
 		}
 	}
 
-	const Vertex* Triangle::operator[](int index) const {
+	Vertex* Triangle::operator[](int index) const {
 		return pts[index];
 	}
 

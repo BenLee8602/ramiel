@@ -16,7 +16,7 @@ namespace bl {
 		Triangle(Vertex** pts);
 		void draw(const Vec3f& color_e) const;
 		Vec3f getNormal() const;
-		const Vertex* operator[](int index) const;
+		Vertex* operator[](int index) const;
 	};
 
 }

@@ -80,8 +80,8 @@ namespace bl {
 	void Entity::calcVertexColor() {
 		for (auto& v : vertices) {
 			v.color = { 0.0f };
-			for (auto& l : RenderBL::lights_pt) {
-				l.getLight(v);
+			for (auto& l : RenderBL::lights_vtx) {
+				l->getLight(v);
 			}
 		}
 	}
