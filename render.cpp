@@ -3,6 +3,7 @@
 namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
+	Vec3f RenderBL::light_ambient;
 	std::vector<Light*> RenderBL::lights_flat;
 	std::vector<Light*> RenderBL::lights_vtx;
 	int* RenderBL::pixels;
@@ -75,6 +76,14 @@ namespace bl {
 			if (shading == 'f') lights_flat.push_back(lt);
 			else if (shading == 'v') lights_vtx.push_back(lt);
 		}
+	}
+
+
+	void RenderBL::setAmbientLightColor(float r, float g, float b) {
+		r = std::min(std::max(0.0f, r), 255.0f);
+		g = std::min(std::max(0.0f, g), 255.0f);
+		b = std::min(std::max(0.0f, b), 255.0f);
+		light_ambient = { r, g, b };
 	}
 
 

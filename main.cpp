@@ -73,12 +73,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	float dtime = 0.0f;
 
 	// add objects and lighting to scene
-	RenderBL::addEntity("model/teapot.obj", 0.0f, 0.0f, 1.0f);
+	RenderBL::setAmbientLightColor(25.0f, 25.0f, 25.0f);
+
+	RenderBL::addEntity("model/sphere.obj", 0.0f, 0.0f, 1.0f);
 	RenderBL::addLight('p');
 
-	//RenderBL::addLight(0.0f, 0.0f, -1.0f, 255.0f);
-	//RenderBL::addLight(-2.0f, 0.0f, 1.0f, 0.0f, 255.0f);
-	//RenderBL::addLight(2.0f, 0.0f, 1.0f, 0.0f, 0.0f, 255.0f);
+	//RenderBL::addLight('d', 'v', 0.0f, 0.0f, -1.0f, 255.0f);
+	//RenderBL::addLight('d', 'v', -2.0f, 0.0f, 1.0f, 0.0f, 255.0f);
+	//RenderBL::addLight('d', 'v', 2.0f, 0.0f, 1.0f, 0.0f, 0.0f, 255.0f);
 
 	// main loop
 	while (run) {

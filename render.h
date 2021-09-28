@@ -10,6 +10,7 @@ namespace bl {
 
 	class RenderBL {
 		static std::vector<Entity> entities;
+		static Vec3f light_ambient;
 		static std::vector<Light*> lights_flat;
 		static std::vector<Light*> lights_vtx;
 		static int* pixels;
@@ -38,6 +39,8 @@ namespace bl {
 			float r = 0.0f, float g = 0.0f, float b = 0.0f,
 			float falloff = 1.0f
 		);
+
+		static void setAmbientLightColor(float r, float g, float b);
 
 		static void removeEntity(unsigned int index);
 		static void removeLight(char shading, unsigned int index);

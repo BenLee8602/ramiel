@@ -9,7 +9,7 @@ namespace bl {
 	protected:
 		Vec3f color;
 	public:
-		Light(Vec3f& color) : color(color) {}
+		Light(Vec3f& color);
 		virtual void getLight(Vertex& v) const = 0;
 		virtual void move(const Vec3f& pos) = 0;
 	};
@@ -17,7 +17,7 @@ namespace bl {
 	class Light_Dir : public Light {
 		Vec3f dir;
 	public:
-		Light_Dir(Vec3f& color, Vec3f& dir) : Light(color), dir(dir) {}
+		Light_Dir(Vec3f& color, Vec3f& dir);
 		virtual void getLight(Vertex& v) const override;
 		virtual void move(const Vec3f& pos) override;
 	};
@@ -26,12 +26,12 @@ namespace bl {
 		Vec3f pos;
 		float falloff;
 	public:
-		Light_Pt(Vec3f& color, Vec3f& pos, float falloff) : Light(color), pos(pos), falloff(falloff) {}
+		Light_Pt(Vec3f& color, Vec3f& pos, float falloff);
 		virtual void getLight(Vertex& v) const override;
 		void move(const Vec3f& pos) override;
 	};
 
-	int rgbToDec(Vec3f& rgb);
+	int rgbToDec(Vec3f rgb);
 
 }
 

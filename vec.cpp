@@ -157,9 +157,9 @@ namespace bl {
 	}
 
 	float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2) {
-		Vec3f vec1n = vec1.getNormalized();
-		Vec3f vec2n = vec2.getNormalized();
-		float sim = (dotProduct(vec1n, vec2n) + 1.0f) / 2.0f;
+		//Vec3f vec1n = vec1.getNormalized();
+		//Vec3f vec2n = vec2.getNormalized();
+		float sim = (dotProduct(vec1, vec2) + 1.0f) / 2.0f;
 		return sim;
 	}
 

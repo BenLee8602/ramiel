@@ -74,12 +74,15 @@ namespace bl {
 				t[a]->normal += t.getNormal();
 			}
 		}
+		for (auto& v : vertices) {
+			v.normal = v.normal.getNormalized();
+		}
 	}
 
 
 	void Entity::calcVertexColor() {
 		for (auto& v : vertices) {
-			v.color = { 0.0f };
+			v.color = RenderBL::light_ambient;
 			for (auto& l : RenderBL::lights_vtx) {
 				l->getLight(v);
 			}
