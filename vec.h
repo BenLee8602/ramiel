@@ -8,7 +8,38 @@ namespace bl {
 	struct Vec2 {
 		int x;
 		int y;
+
+		// scalar arithmetic assignment
+		Vec2& operator+=(int num);
+		Vec2& operator-=(int num);
+		Vec2& operator*=(int num);
+		Vec2& operator/=(int num);
+
+		// scalar arithmetic
+		Vec2 operator+(int num) const;
+		Vec2 operator-(int num) const;
+		Vec2 operator*(int num) const;
+		Vec2 operator/(int num) const;
+
+		// vector arithmetic assigment
+		Vec2& operator+=(const Vec2& vec);
+		Vec2& operator-=(const Vec2& vec);
+		Vec2& operator*=(const Vec2& vec);
+		Vec2& operator/=(const Vec2& vec);
+
+		// vector arithmetic
+		Vec2 operator+(const Vec2& vec) const;
+		Vec2 operator-(const Vec2& vec) const;
+		Vec2 operator*(const Vec2& vec) const;
+		Vec2 operator/(const Vec2& vec) const;
+
+		Vec2& operator=(int num);
+		operator bool();
+
+		float getMagnitude() const;
+		Vec2 getNormalized() const;
 	};
+
 
 	struct Vec3 {
 		int x;
@@ -16,10 +47,12 @@ namespace bl {
 		int z;
 	};
 
+
 	struct Vec2f {
 		float x;
 		float y;
 	};
+
 
 	struct Vec3f {
 		float x;

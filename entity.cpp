@@ -70,7 +70,6 @@ namespace bl {
 	void Entity::calcVertexNormals() {
 		for (auto& t : triangles) {
 			for (int a = 0; a < 3; a++) {
-				RenderBL::debug << t[a]->normal << std::endl;
 				t[a]->normal += t.getNormal();
 			}
 		}

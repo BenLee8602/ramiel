@@ -3,6 +3,134 @@
 
 namespace bl {
 
+	Vec2& Vec2::operator+=(int num) {
+		x += num;
+		y += num;
+		return *this;
+	}
+
+	Vec2& Vec2::operator-=(int num) {
+		x -= num;
+		y -= num;
+		return *this;
+	}
+
+	Vec2& Vec2::operator*=(int num) {
+		x *= num;
+		y *= num;
+		return *this;
+	}
+
+	Vec2& Vec2::operator/=(int num) {
+		x /= num;
+		y /= num;
+		return *this;
+	}
+
+
+	Vec2 Vec2::operator+(int num) const {
+		Vec2 sum;
+		sum.x = x + num;
+		sum.y = y + num;
+		return sum;
+	}
+
+	Vec2 Vec2::operator-(int num) const {
+		Vec2 diff;
+		diff.x = x - num;
+		diff.y = y - num;
+		return diff;
+	}
+
+	Vec2 Vec2::operator*(int num) const {
+		Vec2 prod;
+		prod.x = x * num;
+		prod.y = y * num;
+		return prod;
+	}
+
+	Vec2 Vec2::operator/(int num) const {
+		Vec2 quot;
+		quot.x = x / num;
+		quot.y = y / num;
+		return quot;
+	}
+
+
+	Vec2& Vec2::operator+=(const Vec2& vec) {
+		x += vec.x;
+		y += vec.y;
+		return *this;
+	}
+
+	Vec2& Vec2::operator-=(const Vec2& vec) {
+		x -= vec.x;
+		y -= vec.y;
+		return *this;
+	}
+
+	Vec2& Vec2::operator*=(const Vec2& vec) {
+		x *= vec.x;
+		y *= vec.y;
+		return *this;
+	}
+
+	Vec2& Vec2::operator/=(const Vec2& vec) {
+		x /= vec.x;
+		y /= vec.y;
+		return *this;
+	}
+
+
+	Vec2 Vec2::operator+(const Vec2& vec) const {
+		Vec2 sum;
+		sum.x = x + vec.x;
+		sum.y = y + vec.y;
+		return sum;
+	}
+
+	Vec2 Vec2::operator-(const Vec2& vec) const {
+		Vec2 diff;
+		diff.x = x - vec.x;
+		diff.y = y - vec.y;
+		return diff;
+	}
+
+	Vec2 Vec2::operator*(const Vec2& vec) const {
+		Vec2 prod;
+		prod.x = x * vec.x;
+		prod.y = y * vec.y;
+		return prod;
+	}
+
+	Vec2 Vec2::operator/(const Vec2& vec) const {
+		Vec2 quot;
+		quot.x = x / vec.x;
+		quot.y = y / vec.y;
+		return quot;
+	}
+
+
+	Vec2& Vec2::operator=(int num) {
+		x = num;
+		y = num;
+		return *this;
+	}
+
+	Vec2::operator bool() {
+		return x && y;
+	}
+
+
+	float Vec2::getMagnitude() const {
+		return sqrtf(x*x + y*y);
+	}
+
+	Vec2 Vec2::getNormalized() const {
+		return *this / getMagnitude();
+	}
+
+
 	Vec3f& Vec3f::operator+=(float num) {
 		x += num;
 		y += num;
