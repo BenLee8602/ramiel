@@ -6,7 +6,15 @@
 
 namespace bl {
 
-	Entity::Entity(const char* filename, Vec3f& pos, Vec3f& color) {
+	Entity::Entity(const char* filename, Vec3f& pos, Vec3f& color, char shading) {
+		this->shading = shading;
+		if (shading != 'f' && shading != 'v') {
+			this->shading = 'f';
+		}
+
+		this->color = { 255.0f };
+		this->color -= color;
+
 		std::ifstream file(filename);
 		std::string line;
 
@@ -61,8 +69,6 @@ namespace bl {
 			}
 		}
 
-		this->color = { 255.0f };
-		this->color -= color;
 		calcVertexNormals();
 	}
 
@@ -82,17 +88,33 @@ namespace bl {
 	void Entity::calcVertexColor() {
 		for (auto& v : vertices) {
 			v.color = RenderBL::light_ambient;
-			for (auto& l : RenderBL::lights_vtx) {
+			for (auto& l : RenderBL::lights) {
 				l->getLight(v);
 			}
+			v.color.x = std::min(v.color.x, 255.0f);
+			v.color.y = std::min(v.color.y, 255.0f);
+			v.color.z = std::min(v.color.z, 255.0f);
+			v.color -= color;
+			v.color.x = std::max(v.color.x, RenderBL::light_ambient.x);
+			v.color.y = std::max(v.color.y, RenderBL::light_ambient.y);
+			v.color.z = std::max(v.color.z, RenderBL::light_ambient.z);
 		}
 	}
-	
+
 
 	void Entity::draw() {
-		calcVertexColor();
-		for (auto& t : triangles) {
-			t.draw(color);
+		switch (shading) {
+		case 'f':
+			for (auto& t : triangles) {
+				t.draw_f(color);
+			}
+			break;
+		case 'v':
+			calcVertexColor();
+			for (auto& t : triangles) {
+				t.draw_v();
+			}
+			break;
 		}
 	}
 

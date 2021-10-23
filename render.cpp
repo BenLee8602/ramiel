@@ -4,8 +4,7 @@ namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
 	Vec3f RenderBL::light_ambient;
-	std::vector<Light*> RenderBL::lights_flat;
-	std::vector<Light*> RenderBL::lights_vtx;
+	std::vector<Light*> RenderBL::lights;
 	int* RenderBL::pixels;
 	float* RenderBL::depth;
 	Camera RenderBL::cam;
@@ -14,6 +13,7 @@ namespace bl {
 	int RenderBL::bufferSize;
 	float RenderBL::dtime;
 	const float RenderBL::znear = 0.2f;
+	const float RenderBL::zfar = 1000.0f;
 	std::ofstream RenderBL::debug("output.txt");
 
 
@@ -23,7 +23,7 @@ namespace bl {
 		size.y = sizey;
 		mid.x = sizex / 2;
 		mid.y = sizey / 2;
-		bufferSize = sizex * sizey * sizeof(int);
+		bufferSize = sizex * sizey;
 		delete[] depth;
 		depth = new float[sizex * sizey];
 		setFov(90);
@@ -36,27 +36,27 @@ namespace bl {
 
 
 	void RenderBL::renderFrame(float dtime) {
-		memset((void*)pixels, 0, bufferSize);
-		std::fill(depth, depth + (size.x * size.y), 1000.0f);
+		std::fill(pixels, pixels + bufferSize, 0);
+		std::fill(depth, depth + bufferSize, zfar);
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();
-		lights_flat[0]->move(cam.getpos()); // temp
+		//lights[0]->move(cam.getpos()); // temp
 		for (auto& e : entities) {
 			e.draw();
 		}
 	}
 
 
-	void RenderBL::addEntity(const char* objfilename, float x, float y, float z, float r, float g, float b) {
+	void RenderBL::addEntity(const char* objfilename, char shading, float x, float y, float z, float r, float g, float b) {
 		Vec3f pos = { x, y, z };
 		Vec3f color = { r, g, b };
 		if (!color) color = { 255.0f, 255.0f, 255.0f };
-		entities.push_back(Entity(objfilename, pos, color));
+		entities.push_back(Entity(objfilename, pos, color, shading));
 	}
 
 
-	void RenderBL::addLight(char type, char shading, float x, float y, float z, float r, float g, float b, float falloff) {
+	void RenderBL::addLight(char type, float x, float y, float z, float r, float g, float b, float falloff) {
 		Vec3f pos = { x, y, z };
 		Vec3f color = { r, g, b };
 		if (!color) color = { 255.0f, 255.0f, 255.0f };
@@ -66,15 +66,12 @@ namespace bl {
 		if (type == 'd') {
 			if (!pos) pos = { 0.0f, 0.0f, -1.0f };
 			lt = new Light_Dir(color, pos);
-
-			if (shading == 'f') lights_flat.push_back(lt);
-			else if (shading == 'v') lights_vtx.push_back(lt);
+			lights.push_back(lt);
 		}
 
 		else if (type == 'p') {
 			lt = new Light_Pt(color, pos, falloff);
-			if (shading == 'f') lights_flat.push_back(lt);
-			else if (shading == 'v') lights_vtx.push_back(lt);
+			lights.push_back(lt);
 		}
 	}
 
@@ -93,18 +90,13 @@ namespace bl {
 			entities.erase(entities.begin() + index);
 		}
 	}
-	
 
-	void RenderBL::removeLight(char shading, unsigned int index) {
-		if (shading == 'f' && lights_flat.size()) {
-			index %= lights_flat.size();
-			delete lights_flat[index];
-			lights_flat.erase(lights_flat.begin() + index);
-		}
-		else if (shading == 'v' && lights_vtx.size()) {
-			index %= lights_vtx.size();
-			delete lights_vtx[index];
-			lights_vtx.erase(lights_vtx.begin() + index);
+
+	void RenderBL::removeLight(unsigned int index) {
+		if (lights.size()) {
+			index %= lights.size();
+			delete lights[index];
+			lights.erase(lights.begin() + index);
 		}
 	}
 

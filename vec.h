@@ -70,7 +70,7 @@ namespace bl {
 		Vec3f operator-(float num) const;
 		Vec3f operator*(float num) const;
 		Vec3f operator/(float num) const;
-		
+
 		// vector arithmetic assigment
 		Vec3f& operator+=(const Vec3f& vec);
 		Vec3f& operator-=(const Vec3f& vec);

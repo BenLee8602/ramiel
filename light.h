@@ -5,41 +5,6 @@
 
 namespace bl {
 
-	struct RGB {
-		uint16_t r;
-		uint16_t g;
-		uint16_t b;
-		
-		int getDec();
-		void setDec(int dec);
-
-		void clamp();
-
-		// scalar arithmetic assignment
-		RGB& operator+=(uint16_t num);
-		RGB& operator-=(uint16_t num);
-		RGB& operator*=(uint16_t num);
-		RGB& operator/=(uint16_t num);
-
-		// scalar arithmetic
-		RGB operator+(uint16_t num) const;
-		RGB operator-(uint16_t num) const;
-		RGB operator*(uint16_t num) const;
-		RGB operator/(uint16_t num) const;
-
-		// rgb arithmetic assigment
-		RGB& operator+=(const RGB& other);
-		RGB& operator-=(const RGB& other);
-		RGB& operator*=(const RGB& other);
-		RGB& operator/=(const RGB& other);
-
-		// rgb arithmetic
-		RGB operator+(const RGB& other) const;
-		RGB operator-(const RGB& other) const;
-		RGB operator*(const RGB& other) const;
-		RGB operator/(const RGB& other) const;
-	};
-
 	class Light {
 	protected:
 		Vec3f color;
@@ -56,7 +21,7 @@ namespace bl {
 		virtual void getLight(Vertex& v) const override;
 		virtual void move(const Vec3f& pos) override;
 	};
-	
+
 	class Light_Pt : public Light {
 		Vec3f pos;
 		float falloff;

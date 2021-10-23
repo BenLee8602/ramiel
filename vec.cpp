@@ -123,7 +123,7 @@ namespace bl {
 
 
 	float Vec2::getMagnitude() const {
-		return sqrtf(x*x + y*y);
+		return sqrtf(x * x + y * y);
 	}
 
 	Vec2 Vec2::getNormalized() const {
@@ -265,7 +265,7 @@ namespace bl {
 	}
 
 	float Vec3f::getMagnitude() const {
-		return sqrtf(x*x + y*y + z*z);
+		return sqrtf(x * x + y * y + z * z);
 	}
 
 	Vec3f Vec3f::getNormalized() const {

@@ -11,8 +11,7 @@ namespace bl {
 	class RenderBL {
 		static std::vector<Entity> entities;
 		static Vec3f light_ambient;
-		static std::vector<Light*> lights_flat;
-		static std::vector<Light*> lights_vtx;
+		static std::vector<Light*> lights;
 		static int* pixels;
 		static float* depth;
 		static Camera cam;
@@ -21,6 +20,7 @@ namespace bl {
 		static int bufferSize;
 		static float dtime;
 		static const float znear;
+		static const float zfar;
 		static std::ofstream debug;
 
 	public:
@@ -29,12 +29,12 @@ namespace bl {
 		static void renderFrame(float dtime = 0.0f);
 
 		static void addEntity(
-			const char* objfilename, 
-			float x = 0.0f, float y = 0.0f, float z = 0.0f, 
+			const char* objfilename, char shading = 'f',
+			float x = 0.0f, float y = 0.0f, float z = 0.0f,
 			float r = 0.0f, float g = 0.0f, float b = 0.0f
 		);
 		static void addLight(
-			char type = 'd', char shading = 'f',
+			char type = 'd', 
 			float x = 0.0f, float y = 0.0f, float z = 0.0f,
 			float r = 0.0f, float g = 0.0f, float b = 0.0f,
 			float falloff = 1.0f
@@ -43,7 +43,7 @@ namespace bl {
 		static void setAmbientLightColor(float r, float g, float b);
 
 		static void removeEntity(unsigned int index);
-		static void removeLight(char shading, unsigned int index);
+		static void removeLight(unsigned int index);
 
 		static int coordsToIndex(const Vec2& in);
 
