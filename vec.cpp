@@ -1,286 +1,25 @@
-#include <cmath>
+#include <utility>
 #include "vec.h"
 
 namespace bl {
 
-	Vec2& Vec2::operator+=(int num) {
-		x += num;
-		y += num;
-		return *this;
+	float getMagnitude(const Vec3f& v) {
+		return sqrtf(v[x] * v[x] + v[y] * v[y] + v[z] * v[z]);
 	}
 
-	Vec2& Vec2::operator-=(int num) {
-		x -= num;
-		y -= num;
-		return *this;
-	}
-
-	Vec2& Vec2::operator*=(int num) {
-		x *= num;
-		y *= num;
-		return *this;
-	}
-
-	Vec2& Vec2::operator/=(int num) {
-		x /= num;
-		y /= num;
-		return *this;
-	}
-
-
-	Vec2 Vec2::operator+(int num) const {
-		Vec2 sum;
-		sum.x = x + num;
-		sum.y = y + num;
-		return sum;
-	}
-
-	Vec2 Vec2::operator-(int num) const {
-		Vec2 diff;
-		diff.x = x - num;
-		diff.y = y - num;
-		return diff;
-	}
-
-	Vec2 Vec2::operator*(int num) const {
-		Vec2 prod;
-		prod.x = x * num;
-		prod.y = y * num;
-		return prod;
-	}
-
-	Vec2 Vec2::operator/(int num) const {
-		Vec2 quot;
-		quot.x = x / num;
-		quot.y = y / num;
-		return quot;
-	}
-
-
-	Vec2& Vec2::operator+=(const Vec2& vec) {
-		x += vec.x;
-		y += vec.y;
-		return *this;
-	}
-
-	Vec2& Vec2::operator-=(const Vec2& vec) {
-		x -= vec.x;
-		y -= vec.y;
-		return *this;
-	}
-
-	Vec2& Vec2::operator*=(const Vec2& vec) {
-		x *= vec.x;
-		y *= vec.y;
-		return *this;
-	}
-
-	Vec2& Vec2::operator/=(const Vec2& vec) {
-		x /= vec.x;
-		y /= vec.y;
-		return *this;
-	}
-
-
-	Vec2 Vec2::operator+(const Vec2& vec) const {
-		Vec2 sum;
-		sum.x = x + vec.x;
-		sum.y = y + vec.y;
-		return sum;
-	}
-
-	Vec2 Vec2::operator-(const Vec2& vec) const {
-		Vec2 diff;
-		diff.x = x - vec.x;
-		diff.y = y - vec.y;
-		return diff;
-	}
-
-	Vec2 Vec2::operator*(const Vec2& vec) const {
-		Vec2 prod;
-		prod.x = x * vec.x;
-		prod.y = y * vec.y;
-		return prod;
-	}
-
-	Vec2 Vec2::operator/(const Vec2& vec) const {
-		Vec2 quot;
-		quot.x = x / vec.x;
-		quot.y = y / vec.y;
-		return quot;
-	}
-
-
-	Vec2& Vec2::operator=(int num) {
-		x = num;
-		y = num;
-		return *this;
-	}
-
-	Vec2::operator bool() {
-		return x && y;
-	}
-
-
-	float Vec2::getMagnitude() const {
-		return sqrtf(x * x + y * y);
-	}
-
-	Vec2 Vec2::getNormalized() const {
-		return *this / getMagnitude();
-	}
-
-
-	Vec3f& Vec3f::operator+=(float num) {
-		x += num;
-		y += num;
-		z += num;
-		return *this;
-	}
-
-	Vec3f& Vec3f::operator-=(float num) {
-		x -= num;
-		y -= num;
-		z -= num;
-		return *this;
-	}
-
-	Vec3f& Vec3f::operator*=(float num) {
-		x *= num;
-		y *= num;
-		z *= num;
-		return *this;
-	}
-
-	Vec3f& Vec3f::operator/=(float num) {
-		x /= num;
-		y /= num;
-		z /= num;
-		return *this;
-	}
-
-
-	Vec3f Vec3f::operator+(float num) const {
-		Vec3f sum;
-		sum.x = x + num;
-		sum.y = y + num;
-		sum.z = z + num;
-		return sum;
-	}
-
-	Vec3f Vec3f::operator-(float num) const {
-		Vec3f diff;
-		diff.x = x - num;
-		diff.y = y - num;
-		diff.z = z - num;
-		return diff;
-	}
-
-	Vec3f Vec3f::operator*(float num) const {
-		Vec3f prod;
-		prod.x = x * num;
-		prod.y = y * num;
-		prod.z = z * num;
-		return prod;
-	}
-
-	Vec3f Vec3f::operator/(float num) const {
-		Vec3f quot;
-		quot.x = x / num;
-		quot.y = y / num;
-		quot.z = z / num;
-		return quot;
-	}
-
-
-	Vec3f& Vec3f::operator+=(const Vec3f& vec) {
-		x += vec.x;
-		y += vec.y;
-		z += vec.z;
-		return *this;
-	}
-
-	Vec3f& Vec3f::operator-=(const Vec3f& vec) {
-		x -= vec.x;
-		y -= vec.y;
-		z -= vec.z;
-		return *this;
-	}
-
-	Vec3f& Vec3f::operator*=(const Vec3f& vec) {
-		x *= vec.x;
-		y *= vec.y;
-		z *= vec.z;
-		return *this;
-	}
-
-	Vec3f& Vec3f::operator/=(const Vec3f& vec) {
-		x /= vec.x;
-		y /= vec.y;
-		z /= vec.z;
-		return *this;
-	}
-
-	Vec3f Vec3f::operator+(const Vec3f& vec) const {
-		Vec3f sum;
-		sum.x = x + vec.x;
-		sum.y = y + vec.y;
-		sum.z = z + vec.z;
-		return sum;
-	}
-
-	Vec3f Vec3f::operator-(const Vec3f& vec) const {
-		Vec3f diff;
-		diff.x = x - vec.x;
-		diff.y = y - vec.y;
-		diff.z = z - vec.z;
-		return diff;
-	}
-
-	Vec3f Vec3f::operator*(const Vec3f& vec) const {
-		Vec3f prod;
-		prod.x = x * vec.x;
-		prod.y = y * vec.y;
-		prod.z = z * vec.z;
-		return prod;
-	}
-
-	Vec3f Vec3f::operator/(const Vec3f& vec) const {
-		Vec3f quot;
-		quot.x = x / vec.x;
-		quot.y = y / vec.y;
-		quot.z = z / vec.z;
-		return quot;
-	}
-
-	Vec3f& Vec3f::operator=(float num) {
-		x = num;
-		y = num;
-		z = num;
-		return *this;
-	}
-
-	Vec3f::operator bool() {
-		return x || y || z;
-	}
-
-	float Vec3f::getMagnitude() const {
-		return sqrtf(x * x + y * y + z * z);
-	}
-
-	Vec3f Vec3f::getNormalized() const {
-		return *this / getMagnitude();
+	Vec3f getNormalized(const Vec3f& v) {
+		return v / getMagnitude(v);
 	}
 
 	float dotProduct(const Vec3f& vec1, const Vec3f& vec2) {
-		return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
+		return vec1[x] * vec2[x] + vec1[y] * vec2[y] + vec1[z] * vec2[z];
 	}
 
 	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2) {
 		Vec3f out;
-		out.x = vec1.y * vec2.z - vec1.z * vec2.y;
-		out.y = vec1.z * vec2.x - vec1.x * vec2.z;
-		out.z = vec1.x * vec2.y - vec1.y * vec2.x;
+		out[x] = vec1[y] * vec2[z] - vec1[z] * vec2[y];
+		out[y] = vec1[z] * vec2[x] - vec1[x] * vec2[z];
+		out[z] = vec1[x] * vec2[y] - vec1[y] * vec2[x];
 		return out;
 	}
 
@@ -292,7 +31,30 @@ namespace bl {
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Vec3f& vec) {
-		return os << vec.x << ", " << vec.y << ", " << vec.z;
+		return os << vec[x] << ", " << vec[y] << ", " << vec[z];
+	}
+
+
+	void c_min(Vec3f& color) {
+		color[r] = std::min(color[r], 255.0f);
+		color[g] = std::min(color[g], 255.0f);
+		color[b] = std::min(color[b], 255.0f);
+	}
+
+	void c_max(Vec3f& color) {
+		color[r] = std::max(color[r], 0.0f);
+		color[g] = std::max(color[g], 0.0f);
+		color[b] = std::max(color[b], 0.0f);
+	}
+
+	void c_clamp(Vec3f& color) {
+		color[r] = std::min(std::max(color[r], 0.0f), 255.0f);
+		color[g] = std::min(std::max(color[g], 0.0f), 255.0f);
+		color[b] = std::min(std::max(color[b], 0.0f), 255.0f);
+	}
+
+	int rgbToDec(const Vec3f& color) {
+		return ((int)color[r] << 16) + ((int)color[g] << 8) + (int)color[b];
 	}
 
 }

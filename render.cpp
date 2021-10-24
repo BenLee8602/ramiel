@@ -3,7 +3,7 @@
 namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
-	Vec3f RenderBL::light_ambient;
+	Vec3f RenderBL::light_ambient = { 0.0f };
 	std::vector<Light*> RenderBL::lights;
 	int* RenderBL::pixels;
 	float* RenderBL::depth;
@@ -19,10 +19,10 @@ namespace bl {
 
 	void RenderBL::setBuffer(void* pixelBuffer, int sizex, int sizey) {
 		pixels = (int*)pixelBuffer;
-		size.x = sizex;
-		size.y = sizey;
-		mid.x = sizex / 2;
-		mid.y = sizey / 2;
+		size[x] = sizex;
+		size[y] = sizey;
+		mid[x] = sizex / 2;
+		mid[y] = sizey / 2;
 		bufferSize = sizex * sizey;
 		delete[] depth;
 		depth = new float[sizex * sizey];
@@ -36,7 +36,7 @@ namespace bl {
 
 
 	void RenderBL::renderFrame(float dtime) {
-		std::fill(pixels, pixels + bufferSize, 0);
+		std::fill(pixels, pixels + bufferSize, rgbToDec(RenderBL::light_ambient));
 		std::fill(depth, depth + bufferSize, zfar);
 		RenderBL::dtime = dtime;
 		cam.getControls();
@@ -48,23 +48,23 @@ namespace bl {
 	}
 
 
-	void RenderBL::addEntity(const char* objfilename, char shading, float x, float y, float z, float r, float g, float b) {
-		Vec3f pos = { x, y, z };
-		Vec3f color = { r, g, b };
-		if (!color) color = { 255.0f, 255.0f, 255.0f };
+	void RenderBL::addEntity(const char* objfilename, char shading, float _x, float _y, float _z, float _r, float _g, float _b) {
+		Vec3f pos = { _x, _y, _z };
+		Vec3f color = { _r, _g, _b };
+		if (!_r && !_g && !_b) color = { 255.0f, 255.0f, 255.0f };
 		entities.push_back(Entity(objfilename, pos, color, shading));
 	}
 
 
-	void RenderBL::addLight(char type, float x, float y, float z, float r, float g, float b, float falloff) {
-		Vec3f pos = { x, y, z };
-		Vec3f color = { r, g, b };
-		if (!color) color = { 255.0f, 255.0f, 255.0f };
+	void RenderBL::addLight(char type, float _x, float _y, float _z, float _r, float _g, float _b, float falloff) {
+		Vec3f pos = { _x, _y, _z };
+		Vec3f color = { _r, _g, _b };
+		if (!_r && !_g && !_b) color = { 255.0f, 255.0f, 255.0f };
 
 		Light* lt;
 
 		if (type == 'd') {
-			if (!pos) pos = { 0.0f, 0.0f, -1.0f };
+			if (!pos[x] && !pos[y] && !pos[z]) pos = { 0.0f, 0.0f, -1.0f };
 			lt = new Light_Dir(color, pos);
 			lights.push_back(lt);
 		}
@@ -76,11 +76,9 @@ namespace bl {
 	}
 
 
-	void RenderBL::setAmbientLightColor(float r, float g, float b) {
-		r = std::min(std::max(0.0f, r), 255.0f);
-		g = std::min(std::max(0.0f, g), 255.0f);
-		b = std::min(std::max(0.0f, b), 255.0f);
-		light_ambient = { r, g, b };
+	void RenderBL::setAmbientLightColor(float _r, float _g, float _b) {
+		light_ambient = { _r, _g, _b };
+		c_clamp(light_ambient);
 	}
 
 
@@ -102,7 +100,7 @@ namespace bl {
 
 
 	int RenderBL::coordsToIndex(const Vec2& in) {
-		return size.x * in.y + in.x;
+		return size[x] * in[y] + in[x];
 	}
 
 }

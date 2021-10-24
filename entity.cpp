@@ -12,8 +12,9 @@ namespace bl {
 			this->shading = 'f';
 		}
 
-		this->color = { 255.0f };
+		this->color = 255.0f;
 		this->color -= color;
+		c_clamp(this->color);
 
 		std::ifstream file(filename);
 		std::string line;
@@ -30,7 +31,7 @@ namespace bl {
 
 			if (ltr == "v") {
 				Vertex temp;
-				stream >> temp.pos.x >> temp.pos.y >> temp.pos.z;
+				stream >> temp.pos[x]>> temp.pos[y] >> temp.pos[z];
 				temp.pos += pos;
 				vertices.push_back(temp);
 			}
@@ -80,7 +81,7 @@ namespace bl {
 			}
 		}
 		for (auto& v : vertices) {
-			v.normal = v.normal.getNormalized();
+			v.normal = getNormalized(v.normal);
 		}
 	}
 
@@ -91,13 +92,9 @@ namespace bl {
 			for (auto& l : RenderBL::lights) {
 				l->getLight(v);
 			}
-			v.color.x = std::min(v.color.x, 255.0f);
-			v.color.y = std::min(v.color.y, 255.0f);
-			v.color.z = std::min(v.color.z, 255.0f);
+			c_min(v.color);
 			v.color -= color;
-			v.color.x = std::max(v.color.x, RenderBL::light_ambient.x);
-			v.color.y = std::max(v.color.y, RenderBL::light_ambient.y);
-			v.color.z = std::max(v.color.z, RenderBL::light_ambient.z);
+			c_max(v.color);
 		}
 	}
 

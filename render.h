@@ -30,17 +30,17 @@ namespace bl {
 
 		static void addEntity(
 			const char* objfilename, char shading = 'f',
-			float x = 0.0f, float y = 0.0f, float z = 0.0f,
-			float r = 0.0f, float g = 0.0f, float b = 0.0f
+			float _x = 0.0f, float _y = 0.0f, float _z = 0.0f,
+			float _r = 0.0f, float _g = 0.0f, float _b = 0.0f
 		);
 		static void addLight(
 			char type = 'd', 
-			float x = 0.0f, float y = 0.0f, float z = 0.0f,
-			float r = 0.0f, float g = 0.0f, float b = 0.0f,
+			float _x = 0.0f, float _y = 0.0f, float _z = 0.0f,
+			float _r = 0.0f, float _g = 0.0f, float _b = 0.0f,
 			float falloff = 1.0f
 		);
 
-		static void setAmbientLightColor(float r, float g, float b);
+		static void setAmbientLightColor(float _r, float _g, float _b);
 
 		static void removeEntity(unsigned int index);
 		static void removeLight(unsigned int index);

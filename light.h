@@ -31,8 +31,6 @@ namespace bl {
 		void move(const Vec3f& pos) override;
 	};
 
-	int rgbToDec(Vec3f rgb);
-
 }
 
 #endif

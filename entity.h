@@ -3,7 +3,7 @@
 
 #include "triangle.h"
 
-namespace bl {
+namespace bl { 
 
 	class Entity {
 	protected:
