@@ -48,6 +48,9 @@ namespace bl {
 	enum xyz : size_t { x, y, z };
 	enum rgb : size_t { r, g, b };
 
+	const Vec3f vec3f_0 = { 0.0f, 0.0f, 0.0f };
+	const Vec3f vec3f_255 = { 255.0f, 255.0f, 255.0f };
+
 
 	float getMagnitude(const Vec3f& v);
 	Vec3f getNormalized(const Vec3f& v);
@@ -57,8 +60,8 @@ namespace bl {
 	std::ostream& operator<<(std::ostream& os, const Vec3f& vec);
 
 
-	void c_min(Vec3f& color);
-	void c_max(Vec3f& color);
+	void c_min(Vec3f& color, const Vec3f& min = vec3f_255);
+	void c_max(Vec3f& color, const Vec3f& max = vec3f_0);
 	void c_clamp(Vec3f& color);
 	int rgbToDec(const Vec3f& color);
 

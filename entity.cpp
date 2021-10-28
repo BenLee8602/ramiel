@@ -8,11 +8,11 @@ namespace bl {
 
 	Entity::Entity(const char* filename, Vec3f& pos, Vec3f& color, char shading) {
 		this->shading = shading;
-		if (shading != 'f' && shading != 'v') {
+		if (shading != 'f' && shading != 'v' && shading != 'p') {
 			this->shading = 'f';
 		}
 
-		this->color = 255.0f;
+		this->color = vec3f_255;
 		this->color -= color;
 		c_clamp(this->color);
 
@@ -94,7 +94,7 @@ namespace bl {
 			}
 			c_min(v.color);
 			v.color -= color;
-			c_max(v.color);
+			c_max(v.color, RenderBL::light_ambient);
 		}
 	}
 
@@ -112,6 +112,10 @@ namespace bl {
 				t.draw_v();
 			}
 			break;
+		case 'p':
+			for (auto& t : triangles) {
+				t.draw_p(color);
+			}
 		}
 	}
 

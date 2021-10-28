@@ -35,16 +35,16 @@ namespace bl {
 	}
 
 
-	void c_min(Vec3f& color) {
-		color[r] = std::min(color[r], 255.0f);
-		color[g] = std::min(color[g], 255.0f);
-		color[b] = std::min(color[b], 255.0f);
+	void c_min(Vec3f& color, const Vec3f& min) {
+		color[r] = std::min(color[r], min[r]);
+		color[g] = std::min(color[g], min[g]);
+		color[b] = std::min(color[b], min[b]);
 	}
 
-	void c_max(Vec3f& color) {
-		color[r] = std::max(color[r], 0.0f);
-		color[g] = std::max(color[g], 0.0f);
-		color[b] = std::max(color[b], 0.0f);
+	void c_max(Vec3f& color, const Vec3f& max) {
+		color[r] = std::max(color[r], max[r]);
+		color[g] = std::max(color[g], max[g]);
+		color[b] = std::max(color[b], max[b]);
 	}
 
 	void c_clamp(Vec3f& color) {

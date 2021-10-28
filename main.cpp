@@ -73,10 +73,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	float dtime = 0.0f;
 
 	// add objects and lighting to scene
-	RenderBL::setAmbientLightColor(25, 50, 60);
-	RenderBL::addLight('p', 0, 2, 0, 0, 0, 0, 0.1f);
-	RenderBL::addEntity("model/terrain.obj", 'f', -32, 0, -32);
+	RenderBL::addEntity("model/cube.obj", 'f', -2, 0, 2);
+	RenderBL::addEntity("model/cube.obj", 'v', 0, 0, 2);
+	RenderBL::addEntity("model/cube.obj", 'p', 2, 0, 2);
+	RenderBL::addLight('p', 0, 0, 0, 0, 0, 0, 5);
 
+	//RenderBL::setAmbientLightColor(25, 50, 60);
+	//RenderBL::addLight('p', 0, 2, 0, 0, 0, 0, 0.1f);
+	//RenderBL::addEntity("model/terrain.obj", 'p', -32, 0, -32);
 
 	//RenderBL::addLight('d', 'v', 0.0f, 0.0f, -1.0f, 255.0f);
 	//RenderBL::addLight('d', 'v', -2.0f, 0.0f, 1.0f, 0.0f, 255.0f);

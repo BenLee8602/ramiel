@@ -1,9 +1,9 @@
 #include "render.h"
-
+#include <Windows.h>
 namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
-	Vec3f RenderBL::light_ambient = { 0.0f };
+	Vec3f RenderBL::light_ambient = vec3f_0;
 	std::vector<Light*> RenderBL::lights;
 	int* RenderBL::pixels;
 	float* RenderBL::depth;
@@ -36,12 +36,12 @@ namespace bl {
 
 
 	void RenderBL::renderFrame(float dtime) {
-		std::fill(pixels, pixels + bufferSize, rgbToDec(RenderBL::light_ambient));
+		std::fill(pixels, pixels + bufferSize, 0);
 		std::fill(depth, depth + bufferSize, zfar);
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();
-		//lights[0]->move(cam.getpos()); // temp
+		lights[0]->move(cam.getpos()); // temp
 		for (auto& e : entities) {
 			e.draw();
 		}
@@ -51,7 +51,7 @@ namespace bl {
 	void RenderBL::addEntity(const char* objfilename, char shading, float _x, float _y, float _z, float _r, float _g, float _b) {
 		Vec3f pos = { _x, _y, _z };
 		Vec3f color = { _r, _g, _b };
-		if (!_r && !_g && !_b) color = { 255.0f, 255.0f, 255.0f };
+		if (!_r && !_g && !_b) color = vec3f_255;
 		entities.push_back(Entity(objfilename, pos, color, shading));
 	}
 
@@ -59,7 +59,7 @@ namespace bl {
 	void RenderBL::addLight(char type, float _x, float _y, float _z, float _r, float _g, float _b, float falloff) {
 		Vec3f pos = { _x, _y, _z };
 		Vec3f color = { _r, _g, _b };
-		if (!_r && !_g && !_b) color = { 255.0f, 255.0f, 255.0f };
+		if (!_r && !_g && !_b) color = vec3f_255;
 
 		Light* lt;
 
@@ -104,3 +104,16 @@ namespace bl {
 	}
 
 }
+
+
+
+
+
+/*
+if (((unsigned short)GetKeyState(0x49)) >> 15) { lights[0]->move({ 0, 0, dtime *  2 }); }  // z+ i
+if (((unsigned short)GetKeyState(0x4A)) >> 15) { lights[0]->move({ dtime * -2, 0, 0 }); }  // x- j
+if (((unsigned short)GetKeyState(0x4B)) >> 15) { lights[0]->move({ 0, 0, dtime * -2 }); }  // z- k
+if (((unsigned short)GetKeyState(0x4C)) >> 15) { lights[0]->move({ dtime *  2, 0, 0 }); }  // x+ l
+if (((unsigned short)GetKeyState(0x55)) >> 15) { lights[0]->move({ 0, dtime *  2, 0 }); }  // y+ u
+if (((unsigned short)GetKeyState(0x4F)) >> 15) { lights[0]->move({ 0, dtime * -2, 0 }); }  // y- o
+*/
