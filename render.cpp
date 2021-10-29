@@ -1,5 +1,5 @@
 #include "render.h"
-#include <Windows.h>
+
 namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
@@ -34,7 +34,7 @@ namespace bl {
 		cam.setFov(fov);
 	}
 
-
+	
 	void RenderBL::renderFrame(float dtime) {
 		std::fill(pixels, pixels + bufferSize, 0);
 		std::fill(depth, depth + bufferSize, zfar);
@@ -103,17 +103,126 @@ namespace bl {
 		return size[x] * in[y] + in[x];
 	}
 
+
+	void RenderBL::drawLine(const Vec3f& start_w, const Vec3f& end_w, const Vec3f& color) {
+		// get camera coords
+		Vec3f start_c = cam.getCameraCoord(start_w);
+		Vec3f end_c = cam.getCameraCoord(end_w);
+
+		// clip z-axis
+		if (start_c[z] < znear && end_c[z] < znear) return;
+		if (start_c[z] < znear) {
+			start_c[x] = start_c[x] + (end_c[x] - start_c[x]) * (znear - start_c[z]) / (end_c[z] - start_c[z]);
+			start_c[y] = start_c[y] + (end_c[y] - start_c[y]) * (znear - start_c[z]) / (end_c[z] - start_c[z]);
+			start_c[z] = znear;
+		}
+		else if (end_c[z] < znear) {
+			end_c[x] = end_c[x] + (start_c[x] - end_c[x]) * (znear - end_c[z]) / (start_c[z] - end_c[z]);
+			end_c[y] = end_c[y] + (start_c[y] - end_c[y]) * (znear - end_c[z]) / (start_c[z] - end_c[z]);
+			end_c[z] = znear;
+		}
+
+		// get screen coords
+		Vec2 start_s = cam.getScreenCoord(start_c);
+		Vec2 end_s = cam.getScreenCoord(end_c);
+
+		// draw
+		drawLine(start_s, end_s, color);
+	}
+
+	void RenderBL::drawLine(Vec2 start, Vec2 end, const Vec3f& color) {
+		if (start[y] > end[y]) std::swap(start, end);
+		else if (end[y] < 0 || start[y] > size[y]) return;
+
+		int* p;
+		int c = rgbToDec(color);
+
+		// horizontal line
+		if (start[y] == end[y]) {
+			if (start[x] > end[x]) std::swap(start, end);
+			if (start[x] > size[x] || end[x] < 0) return;
+			start[x] = std::max(start[x], 0);
+			end[x] = std::min(end[x], size[x]);
+			p = pixels + coordsToIndex(start);
+			for (int _x = start[x]; _x < end[x]; _x++) {
+				*p++ = c;
+			}
+			return;
+		}
+
+		float dx_y = (float)(end[x] - start[x]) / (float)(end[y] - start[y]);
+
+		// clip y-axis
+		if (start[y] < 0) {
+			start[x] = start[x] - dx_y * start[y];
+			start[y] = 0;
+		}
+		if (end[y] > size[y]) {
+			end[x] = end[x] - dx_y * (end[y] - size[y]);
+			end[y] = size[y];
+		}
+
+		float _x = 0.0f;
+
+		// +ve slope line
+		if (dx_y > 0.0f) {
+			// clip x-axis
+			if (start[x] > size[x] || end[x] < 0) return;
+			if (start[x] < 0) {
+				start[y] = start[y] - start[x] / dx_y;
+				start[x] = 0;
+			}
+			if (end[x] > size[x]) {
+				end[y] = end[y] - (end[x] - size[x]) / dx_y;
+				end[x] = size[x];
+			}
+
+			// draw
+			p = pixels + coordsToIndex(start);
+			for (int _y = start[y]; _y < end[y]; _y++) {
+				*p = c;
+				for (_x; _x <= dx_y; _x++) {
+					*p++ = c;
+				}
+				_x -= dx_y;
+				p += size[x];
+			}
+		}
+		
+		// -ve slope line
+		else if (dx_y < 0.0f) {
+			// clip x-axis
+			if (start[x] < 0 || end[x] > size[x]) return;
+			if (end[x] < 0) {
+				end[y] = end[y] - end[x] / dx_y;
+				end[x] = 0;
+			}
+			if (start[x] > size[x]) {
+				start[y] = start[y] - (start[x] - size[x]) / dx_y;
+				start[x] = size[x];
+			}
+
+			// draw
+			p = pixels + coordsToIndex(start);
+			for (int _y = start[y]; _y < end[y]; _y++) {
+				*p = c;
+				for (_x; _x >= dx_y; _x--) {
+					*p-- = c;
+				}
+				_x -= dx_y;
+				p += size[x];
+			}
+		}
+
+		// vertical line
+		else {
+			if (start[x] > size[x] || end[x] < 0) return;
+			p = pixels + coordsToIndex(start);
+			for (int _y = start[y]; _y < end[y]; _y++) {
+				*p = c;
+				p += size[x];
+			}
+		}
+	}
+
 }
-
-
-
-
-
-/*
-if (((unsigned short)GetKeyState(0x49)) >> 15) { lights[0]->move({ 0, 0, dtime *  2 }); }  // z+ i
-if (((unsigned short)GetKeyState(0x4A)) >> 15) { lights[0]->move({ dtime * -2, 0, 0 }); }  // x- j
-if (((unsigned short)GetKeyState(0x4B)) >> 15) { lights[0]->move({ 0, 0, dtime * -2 }); }  // z- k
-if (((unsigned short)GetKeyState(0x4C)) >> 15) { lights[0]->move({ dtime *  2, 0, 0 }); }  // x+ l
-if (((unsigned short)GetKeyState(0x55)) >> 15) { lights[0]->move({ 0, dtime *  2, 0 }); }  // y+ u
-if (((unsigned short)GetKeyState(0x4F)) >> 15) { lights[0]->move({ 0, dtime * -2, 0 }); }  // y- o
-*/

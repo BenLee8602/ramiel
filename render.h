@@ -47,6 +47,17 @@ namespace bl {
 
 		static int coordsToIndex(const Vec2& in);
 
+		static void drawLine(
+			const Vec3f& start_w, 
+			const Vec3f& end_w, 
+			const Vec3f& color = vec3f_255
+		);
+		static void drawLine(
+			Vec2 start,
+			Vec2 end,
+			const Vec3f& color = vec3f_255
+		);
+
 		friend class Triangle;
 		friend class Entity;
 		friend class Camera;

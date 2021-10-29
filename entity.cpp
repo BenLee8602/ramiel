@@ -66,23 +66,22 @@ namespace bl {
 				if (index != index2) {
 					Vertex* temp2[3] = { temp[2], &vertices[index2 - 1], temp[0] };
 					triangles.push_back(temp2);
+					
+					// vertex normals
+					Vec3f n = crossProduct(temp[1]->pos - temp[0]->pos, temp2[1]->pos - temp[0]->pos);
+					for (int a = 0; a < 3; a++) temp[a]->normal += n;
+					temp2[1]->normal += n;
+				}
+				else {
+					// vertex normals
+					Vec3f n = crossProduct(temp[1]->pos - temp[0]->pos, temp[2]->pos - temp[0]->pos);
+					for (int a = 0; a < 3; a++) temp[a]->normal += n;
 				}
 			}
 		}
 
-		calcVertexNormals();
-	}
-
-
-	void Entity::calcVertexNormals() {
-		for (auto& t : triangles) {
-			for (int a = 0; a < 3; a++) {
-				t[a]->normal += t.getNormal();
-			}
-		}
-		for (auto& v : vertices) {
-			v.normal = getNormalized(v.normal);
-		}
+		file.close();
+		for (auto& v : vertices) v.normal = getNormalized(v.normal);
 	}
 
 
