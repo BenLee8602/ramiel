@@ -116,6 +116,8 @@ namespace bl {
 				t.draw_p(color);
 			}
 		}
+
+		//for (auto& v : vertices) RenderBL::drawLine(v.pos, v.pos + v.normal / 20, { 0, 0, 255 });
 	}
 
 }

@@ -34,10 +34,14 @@ namespace bl {
 			float _r = 0.0f, float _g = 0.0f, float _b = 0.0f
 		);
 		static void addLight(
-			char type = 'd', 
+			char type = 'd',
 			float _x = 0.0f, float _y = 0.0f, float _z = 0.0f,
 			float _r = 0.0f, float _g = 0.0f, float _b = 0.0f,
-			float falloff = 1.0f
+			// for pointlights
+			float falloff = -1.0f,
+			// for spotlights
+			float _x2 = 0.0f, float _y2 = 0.0f, float _z2 = 0.0f,
+			float width = 30.0f, float falloffExp = 50.0f
 		);
 
 		static void setAmbientLightColor(float _r, float _g, float _b);

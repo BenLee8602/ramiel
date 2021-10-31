@@ -24,6 +24,7 @@ namespace bl {
 		
 		const Vec3f& getpos() const;
 		const Vec3f& getrot() const;
+
 		void move(float _x, float _y, float _z);
 		void rotate(float _x, float _y, float _z);
 

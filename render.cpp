@@ -42,9 +42,7 @@ namespace bl {
 		cam.getControls();
 		cam.calcTrigValues();
 		lights[0]->move(cam.getpos()); // temp
-		for (auto& e : entities) {
-			e.draw();
-		}
+		for (auto& e : entities) e.draw();
 	}
 
 
@@ -56,7 +54,7 @@ namespace bl {
 	}
 
 
-	void RenderBL::addLight(char type, float _x, float _y, float _z, float _r, float _g, float _b, float falloff) {
+	void RenderBL::addLight(char type, float _x, float _y, float _z, float _r, float _g, float _b, float falloff, float _x2, float _y2, float _z2, float width, float falloffExp) {
 		Vec3f pos = { _x, _y, _z };
 		Vec3f color = { _r, _g, _b };
 		if (!_r && !_g && !_b) color = vec3f_255;
@@ -70,7 +68,16 @@ namespace bl {
 		}
 
 		else if (type == 'p') {
+			if (falloff < 0.0f) falloff = 1.0f;
 			lt = new Light_Pt(color, pos, falloff);
+			lights.push_back(lt);
+		}
+
+		else if (type == 's') {
+			Vec3f dir = { _x2, _y2, _z2 };
+			if (!dir[x] && !dir[y] && !dir[z]) dir = { 0.0f, 0.0f, 1.0f };
+			if (falloff < 0.0f) falloff = 0.1f;
+			lt = new Light_Sp(color, pos, dir, falloff, width, falloffExp);
 			lights.push_back(lt);
 		}
 	}

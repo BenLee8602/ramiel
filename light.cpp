@@ -1,4 +1,4 @@
-#include <algorithm>
+#include <cmath>
 #include "light.h"
 #include "render.h"
 
@@ -37,6 +37,27 @@ namespace bl {
 
 	void Light_Pt::move(const Vec3f& pos) {
 		this->pos = pos;
+	}
+
+
+	Light_Sp::Light_Sp(Vec3f& color, Vec3f& pos, Vec3f& dir, float falloff, float width, float falloffExp) : Light_Pt(color, pos, falloff) {
+		this->dir = getNormalized(dir);
+		this->width = 1.0f - (width / 360.0f);
+		this->falloffExp = falloffExp;
+	}
+
+	void Light_Sp::getLight(Vertex& v) const {
+		Vec3f vec = v.pos - pos;
+		float d = getMagnitude(vec);
+		vec = getNormalized(vec);
+		float s = dirSimilarity(vec, dir);
+		if (s < width) return;
+		float f = 1.0f / (falloff * d * d + 1.0f) * std::powf(s, falloffExp);
+		v.color += color * f * (1.0f - dirSimilarity(vec, v.normal));
+	}
+
+	void Light_Sp::rotate(const Vec3f& dir) {
+		this->dir = getNormalized(dir);
 	}
 
 }
