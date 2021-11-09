@@ -3,15 +3,16 @@
 namespace bl {
 
 	std::vector<Entity> RenderBL::entities;
-	Vec3f RenderBL::light_ambient = vec3f_0;
 	std::vector<Light*> RenderBL::lights;
-	int* RenderBL::pixels;
-	float* RenderBL::depth;
+	Vec3f RenderBL::light_ambient = vec3f_0;
+	int RenderBL::bg_color = 0;
+	int* RenderBL::pixels = nullptr;
+	float* RenderBL::depth = nullptr;
 	Camera RenderBL::cam;
-	Vec2 RenderBL::size;
-	Vec2 RenderBL::mid;
-	int RenderBL::bufferSize;
-	float RenderBL::dtime;
+	Vec2 RenderBL::size = { 0 };
+	Vec2 RenderBL::mid = { 0 };
+	int RenderBL::bufferSize = 0;
+	float RenderBL::dtime = 0.0f;
 	const float RenderBL::znear = 0.2f;
 	const float RenderBL::zfar = 1000.0f;
 	std::ofstream RenderBL::debug("output.txt");
@@ -36,33 +37,29 @@ namespace bl {
 
 	
 	void RenderBL::renderFrame(float dtime) {
-		std::fill(pixels, pixels + bufferSize, 0);
+		std::fill(pixels, pixels + bufferSize, bg_color);
 		std::fill(depth, depth + bufferSize, zfar);
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();
-		lights[0]->move(cam.getpos()); // temp
+		//lights[0]->move(cam.getpos()); // temp
 		for (auto& e : entities) e.draw();
 	}
 
 
-	void RenderBL::addEntity(const char* objfilename, char shading, float _x, float _y, float _z, float _r, float _g, float _b) {
-		Vec3f pos = { _x, _y, _z };
-		Vec3f color = { _r, _g, _b };
-		if (!_r && !_g && !_b) color = vec3f_255;
+	void RenderBL::addEntity(const char* objfilename, char shading, Vec3f pos, Vec3f color) {
+		if (!color[r] && !color[g] && !color[b]) color = vec3f_255;
 		entities.push_back(Entity(objfilename, pos, color, shading));
 	}
 
 
-	void RenderBL::addLight(char type, float _x, float _y, float _z, float _r, float _g, float _b, float falloff, float _x2, float _y2, float _z2, float width, float falloffExp) {
-		Vec3f pos = { _x, _y, _z };
-		Vec3f color = { _r, _g, _b };
-		if (!_r && !_g && !_b) color = vec3f_255;
+	void RenderBL::addLight(char type, Vec3f pos, Vec3f color, float falloff, Vec3f dir, float width, float falloffExp) {
+		if (!color[r] && !color[g] && !color[b]) color = vec3f_255;
 
 		Light* lt;
 
 		if (type == 'd') {
-			if (!pos[x] && !pos[y] && !pos[z]) pos = { 0.0f, 0.0f, -1.0f };
+			if (!pos[x] && !pos[y] && !pos[z]) pos[z] = -1.0f;
 			lt = new Light_Dir(color, pos);
 			lights.push_back(lt);
 		}
@@ -74,8 +71,7 @@ namespace bl {
 		}
 
 		else if (type == 's') {
-			Vec3f dir = { _x2, _y2, _z2 };
-			if (!dir[x] && !dir[y] && !dir[z]) dir = { 0.0f, 0.0f, 1.0f };
+			if (!dir[x] && !dir[y] && !dir[z]) dir[z] = 1.0f;
 			if (falloff < 0.0f) falloff = 0.1f;
 			lt = new Light_Sp(color, pos, dir, falloff, width, falloffExp);
 			lights.push_back(lt);
@@ -83,9 +79,14 @@ namespace bl {
 	}
 
 
-	void RenderBL::setAmbientLightColor(float _r, float _g, float _b) {
-		light_ambient = { _r, _g, _b };
-		c_clamp(light_ambient);
+	void RenderBL::setAmbientLightColor(Vec3f color) {
+		c_clamp(color);
+		light_ambient = color;
+	}
+
+	void RenderBL::setBackgroundColor(Vec3f color) {
+		c_clamp(color);
+		bg_color = rgbToDec(color);
 	}
 
 

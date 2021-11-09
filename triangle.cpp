@@ -632,6 +632,13 @@ namespace bl {
 		// early return if tri out of frame (y-axis)
 		if (triScreen[2][y] < 0 || triScreen[0][y] > RenderBL::size[y]) return;
 
+		// divide tri_c by z to account for perspective
+		float tri_zinv[3] = { 1.0f / tri[0][z], 1.0f / tri[1][z], 1.0f / tri[2][z] };
+		for (int a = 0; a < 3; a++) {
+			tri_c[a].pos *= tri_zinv[a];
+			tri_c[a].normal *= tri_zinv[a];
+		}
+
 		// change in x per change in y
 		float dx1_y = (float)(triScreen[2][x] - triScreen[0][x]) / (float)(triScreen[2][y] - triScreen[0][y]);
 		float dx2_y = (float)(triScreen[1][x] - triScreen[0][x]) / (float)(triScreen[1][y] - triScreen[0][y]);
@@ -641,6 +648,11 @@ namespace bl {
 		float dz1_y = (tri[2][z] - tri[0][z]) / (float)(triScreen[2][y] - triScreen[0][y]);
 		float dz2_y = (tri[1][z] - tri[0][z]) / (float)(triScreen[1][y] - triScreen[0][y]);
 		float* dz_y = &dz2_y;	// points to dz for side of triangle with pt1 (2 segments)
+
+		// change in inverse z per change in y
+		float dz1inv_y = (tri_zinv[2] - tri_zinv[0]) / (float)(triScreen[2][y] - triScreen[0][y]);
+		float dz2inv_y = (tri_zinv[1] - tri_zinv[0]) / (float)(triScreen[1][y] - triScreen[0][y]);
+		float* dzinv_y = &dz2inv_y;
 		
 		// change in pos per change in y
 		Vec3f dp1_y = (tri_c[2].pos - tri_c[0].pos) / (float)(triScreen[2][y] - triScreen[0][y]);
@@ -656,10 +668,12 @@ namespace bl {
 		if (dx1_y > dx2_y) {
 			std::swap(dx1_y, dx2_y);
 			std::swap(dz1_y, dz2_y);
+			std::swap(dz1inv_y, dz2inv_y);
 			std::swap(dp1_y, dp2_y);
 			std::swap(dn1_y, dn2_y);
 			dx_y = &dx1_y;
 			dz_y = &dz1_y;
+			dzinv_y = &dz1inv_y;
 			dp_y = &dp1_y;
 			dn_y = &dn1_y;
 		}
@@ -675,6 +689,10 @@ namespace bl {
 		// start and end z values of scanline
 		float z1 = tri[0][z] + dz1_y * (float)(_y - triScreen[0][y]);
 		float z2 = tri[0][z] + dz2_y * (float)(_y - triScreen[0][y]);
+
+		// start and end inverse z values of scanline
+		float z1inv = tri_zinv[0] + dz1inv_y * (float)(_y - triScreen[0][y]);
+		float z2inv = tri_zinv[0] + dz2inv_y * (float)(_y - triScreen[0][y]);
 
 		// start and end pos values of scanline
 		Vec3f p1 = tri_c[0].pos + dp1_y * (float)(_y - triScreen[0][y]);
@@ -693,6 +711,9 @@ namespace bl {
 				float dz_x = (z2 - z1) / (x2 - x1);
 				float _z = z1 + dz_x * (_x - (int)x1);
 
+				float dzinv_x = (z2inv - z1inv) / (x2 - x1);
+				float zinv = z1inv + dzinv_x * (_x - (int)x1);
+
 				Vec3f dp_x = (p2 - p1) / (x2 - x1);
 				Vec3f p = p1 + dp_x * (_x - (int)x1);
 
@@ -704,7 +725,7 @@ namespace bl {
 				for (_x; _x < xmax; _x++) {
 					if (_z < RenderBL::depth[index]) {
 						RenderBL::depth[index] = _z;
-						Vertex v = { p, getNormalized(n), RenderBL::light_ambient };
+						Vertex v = { p / zinv, getNormalized(n), RenderBL::light_ambient };
 						for (auto& l : RenderBL::lights) {
 							l->getLight(v);
 						}
@@ -715,6 +736,7 @@ namespace bl {
 					}
 					index++;
 					_z += dz_x;
+					zinv += dzinv_x;
 					p += dp_x;
 					n += dn_x;
 				}
@@ -723,6 +745,9 @@ namespace bl {
 
 				z1 += dz1_y;
 				z2 += dz2_y;
+
+				z1inv += dz1inv_y;
+				z2inv += dz2inv_y;
 
 				p1 += dp1_y;
 				p2 += dp2_y;
@@ -745,6 +770,10 @@ namespace bl {
 		*dz_y = (tri[2][z] - tri[1][z]) / (float)(triScreen[2][y] - triScreen[1][y]);
 		z1 = tri[2][z] - dz1_y * (float)(triScreen[2][y] - _y);
 		z2 = tri[2][z] - dz2_y * (float)(triScreen[2][y] - _y);
+
+		*dzinv_y = (tri_zinv[2] - tri_zinv[1]) / (float)(triScreen[2][y] - triScreen[1][y]);
+		z1inv = tri_zinv[2] - dz1inv_y * (float)(triScreen[2][y] - _y);
+		z2inv = tri_zinv[2] - dz2inv_y * (float)(triScreen[2][y] - _y);
 
 		*dp_y = (tri_c[2].pos - tri_c[1].pos) / (float)(triScreen[2][y] - triScreen[1][y]);
 		p1 = tri_c[2].pos - dp1_y * (float)(triScreen[2][y] - _y);
