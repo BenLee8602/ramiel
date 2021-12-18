@@ -73,10 +73,10 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	float dtime = 0.0f;
 
 	// add objects and lighting to scene
-	RenderBL::setAmbientLightColor(25, 25, 25);
-	RenderBL::addEntity("model/terrain.obj", 'f', -32, 2, -32);
-	RenderBL::addLight('p');
-	RenderBL::addLight('s');
+	RenderBL::addLight(new Light_Dir({ 255, 255, 255 }, { 1, 1, 1 }));
+	RenderBL::addEntity(new Entity("model/terrain.obj", ShadingType::FLAT, { -32, 0, -32 }, { 125, 165, 87 }));
+	RenderBL::addEntity(new Entity("model/car.obj", ShadingType::VERTEX));
+	RenderBL::addEffect(new Fog(10, 30, { 154, 203, 255 }, true));
 	
 	// main loop
 	while (run) {

@@ -4,13 +4,14 @@
 
 namespace bl {
 
-	Light::Light(Vec3f& color) {
+	Light::Light(Vec3f color) {
 		this->color = color;
 		c_clamp(this->color);
 	}
 
 
-	Light_Dir::Light_Dir(Vec3f& color, Vec3f& dir) : Light(color) {
+	Light_Dir::Light_Dir(Vec3f color, Vec3f dir) : Light(color) {
+		if (!dir[x] && !dir[y] && !dir[z]) dir[z] = -1.0f;
 		this->dir = getNormalized(dir);
 	}
 
@@ -23,7 +24,8 @@ namespace bl {
 	}
 
 
-	Light_Pt::Light_Pt(Vec3f& color, Vec3f& pos, float falloff) : Light(color) {
+	Light_Pt::Light_Pt(Vec3f color, Vec3f pos, float falloff) : Light(color) {
+		if (falloff < 0.0f) falloff = 1.0f;
 		this->pos = pos;
 		this->falloff = falloff;
 	}
@@ -40,7 +42,9 @@ namespace bl {
 	}
 
 
-	Light_Sp::Light_Sp(Vec3f& color, Vec3f& pos, Vec3f& dir, float falloff, float width, float falloffExp) : Light_Pt(color, pos, falloff) {
+	Light_Sp::Light_Sp(Vec3f color, Vec3f pos, Vec3f dir, float falloff, float width, float falloffExp) : Light_Pt(color, pos, falloff) {
+		if (!dir[x] && !dir[y] && !dir[z]) dir[z] = 1.0f;
+		if (falloff < 0.0f) falloff = 0.1f;
 		this->dir = getNormalized(dir);
 		this->width = 1.0f - (width / 360.0f);
 		this->falloffExp = falloffExp;

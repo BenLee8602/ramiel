@@ -9,8 +9,14 @@ namespace bl {
 	template<typename T, size_t N>
 	struct Vec {
 		T arr[N];
+
+		// element retrieval
 		T& operator[](size_t index) { return arr[index]; }
 		const T& operator[](size_t index) const { return arr[index]; }
+
+		// assignment
+		template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] = v[i]; return *this; }
+		template<typename U> Vec<T, N>& operator=(U num) { for (size_t i = 0; i < N; i++) arr[i] = num; return *this; }
 
 		// scalar arithmetic assignment
 		template<typename U> Vec<T, N>& operator+=(U num) { for (size_t i = 0; i < N; i++) arr[i] += num; return *this; }
@@ -35,15 +41,27 @@ namespace bl {
 		template<typename U> Vec<T, N> operator-(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] - v[i]; return temp; }
 		template<typename U> Vec<T, N> operator*(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] * v[i]; return temp; }
 		template<typename U> Vec<T, N> operator/(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] / v[i]; return temp; }
-
-		template<typename U> Vec<T, N>& operator=(U num) { for (size_t i = 0; i < N; i++) arr[i] = num; return *this; }
 	};
 
 
-	typedef Vec<int, 2> Vec2;
-	typedef Vec<int, 3> Vec3;
-	typedef Vec<float, 2> Vec2f;
-	typedef Vec<float, 3> Vec3f;
+	typedef Vec<char, 2> Vec2i8;			typedef Vec<unsigned char, 2> Vec2ui8;
+	typedef Vec<char, 3> Vec3i8;			typedef Vec<unsigned char, 3> Vec3ui8;
+
+	typedef Vec<short, 2> Vec2i16;			typedef Vec<unsigned short, 2> Vec2ui16;
+	typedef Vec<short, 3> Vec3i16;			typedef Vec<unsigned short, 3> Vec3ui16;
+
+	typedef Vec<int, 2> Vec2;				typedef Vec<unsigned int, 2> Vec2u;
+	typedef Vec<int, 3> Vec3;				typedef Vec<unsigned int, 3> Vec3u;
+
+	typedef Vec<long, 2> Vec2i32;			typedef Vec<unsigned long, 2> Vec2ui32;
+	typedef Vec<long, 3> Vec3i32;			typedef Vec<unsigned long, 3> Vec3ui32;
+	
+	typedef Vec<long long, 2> Vec2i64;		typedef Vec<unsigned long long, 2> Vec2ui64;
+	typedef Vec<long long, 3> Vec3i64;		typedef Vec<unsigned long long, 3> Vec3ui64;
+	
+	typedef Vec<float, 2> Vec2f;			typedef Vec<double, 2> Vec2lf;
+	typedef Vec<float, 3> Vec3f;			typedef Vec<double, 3> Vec3lf;
+
 
 	enum xyz : size_t { x, y, z };
 	enum rgb : size_t { r, g, b };

@@ -3,17 +3,27 @@
 
 #include "triangle.h"
 
-namespace bl { 
+namespace bl {
+
+	enum class ShadingType : char {
+		FLAT,
+		VERTEX,
+		PIXEL
+	};
 
 	class Entity {
 	protected:
 		Vec3f color;
-		char shading;
+		ShadingType shading;
 		std::vector<Vertex> vertices;
 		std::vector<Triangle> triangles;
 		void calcVertexColor();
 	public:
-		Entity(const char* filename, Vec3f& pos, Vec3f& color, char shading);
+		Entity(const char* filename,
+			ShadingType shading = ShadingType::FLAT,
+			Vec3f pos = vec3f_0,
+			Vec3f color = vec3f_255
+		);
 		virtual void draw();
 	};
 

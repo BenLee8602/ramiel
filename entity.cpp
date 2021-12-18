@@ -6,11 +6,8 @@
 
 namespace bl {
 
-	Entity::Entity(const char* filename, Vec3f& pos, Vec3f& color, char shading) {
+	Entity::Entity(const char* filename, ShadingType shading, Vec3f pos, Vec3f color) {
 		this->shading = shading;
-		if (shading != 'f' && shading != 'v' && shading != 'p') {
-			this->shading = 'f';
-		}
 
 		this->color = vec3f_255;
 		this->color -= color;
@@ -100,18 +97,18 @@ namespace bl {
 
 	void Entity::draw() {
 		switch (shading) {
-		case 'f':
+		case ShadingType::FLAT:
 			for (auto& t : triangles) {
 				t.draw_f(color);
 			}
 			break;
-		case 'v':
+		case ShadingType::VERTEX:
 			calcVertexColor();
 			for (auto& t : triangles) {
 				t.draw_v();
 			}
 			break;
-		case 'p':
+		case ShadingType::PIXEL:
 			for (auto& t : triangles) {
 				t.draw_p(color);
 			}

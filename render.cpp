@@ -2,10 +2,12 @@
 
 namespace bl {
 
-	std::vector<Entity> RenderBL::entities;
-	std::vector<Light*> RenderBL::lights;
+	std::vector<std::unique_ptr<Entity>> RenderBL::entities;
+	std::vector<std::unique_ptr<Light>> RenderBL::lights;
 	Vec3f RenderBL::light_ambient = vec3f_0;
 	int RenderBL::bg_color = 0;
+	std::vector<std::unique_ptr<Effect>> RenderBL::effects;
+	Vec3f* RenderBL::pixels_rgb = nullptr;
 	int* RenderBL::pixels = nullptr;
 	float* RenderBL::depth = nullptr;
 	Camera RenderBL::cam;
@@ -26,7 +28,9 @@ namespace bl {
 		mid[y] = sizey / 2;
 		bufferSize = sizex * sizey;
 		delete[] depth;
-		depth = new float[sizex * sizey];
+		depth = new float[bufferSize];
+		delete[] pixels_rgb;
+		pixels_rgb = new Vec3f[bufferSize];
 		setFov(90);
 	}
 
@@ -38,44 +42,32 @@ namespace bl {
 	
 	void RenderBL::renderFrame(float dtime) {
 		std::fill(pixels, pixels + bufferSize, bg_color);
+		std::fill(pixels_rgb, pixels_rgb + bufferSize, 0);
 		std::fill(depth, depth + bufferSize, zfar);
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();
 		//lights[0]->move(cam.getpos()); // temp
-		for (auto& e : entities) e.draw();
+		for (auto& e : entities) e->draw();
+		for (auto& e : effects) e->applyEffect();
+		for (int i = 0; i < bufferSize; i++) {
+			pixels[i] = rgbToDec(pixels_rgb[i]);
+		}
 	}
 
 
-	void RenderBL::addEntity(const char* objfilename, char shading, Vec3f pos, Vec3f color) {
-		if (!color[r] && !color[g] && !color[b]) color = vec3f_255;
-		entities.push_back(Entity(objfilename, pos, color, shading));
+	void RenderBL::addEntity(Entity* entity) {
+		entities.push_back(std::unique_ptr<Entity>(entity));
 	}
 
 
-	void RenderBL::addLight(char type, Vec3f pos, Vec3f color, float falloff, Vec3f dir, float width, float falloffExp) {
-		if (!color[r] && !color[g] && !color[b]) color = vec3f_255;
+	void RenderBL::addLight(Light* light) {
+		lights.push_back(std::unique_ptr<Light>(light));
+	}
 
-		Light* lt;
 
-		if (type == 'd') {
-			if (!pos[x] && !pos[y] && !pos[z]) pos[z] = -1.0f;
-			lt = new Light_Dir(color, pos);
-			lights.push_back(lt);
-		}
-
-		else if (type == 'p') {
-			if (falloff < 0.0f) falloff = 1.0f;
-			lt = new Light_Pt(color, pos, falloff);
-			lights.push_back(lt);
-		}
-
-		else if (type == 's') {
-			if (!dir[x] && !dir[y] && !dir[z]) dir[z] = 1.0f;
-			if (falloff < 0.0f) falloff = 0.1f;
-			lt = new Light_Sp(color, pos, dir, falloff, width, falloffExp);
-			lights.push_back(lt);
-		}
+	void RenderBL::addEffect(Effect* effect) {
+		effects.push_back(std::unique_ptr<Effect>(effect));
 	}
 
 
@@ -101,7 +93,6 @@ namespace bl {
 	void RenderBL::removeLight(unsigned int index) {
 		if (lights.size()) {
 			index %= lights.size();
-			delete lights[index];
 			lights.erase(lights.begin() + index);
 		}
 	}

@@ -448,7 +448,7 @@ namespace bl {
 				for (_x; _x < xmax; _x++) {
 					if (_z < RenderBL::depth[index]) {
 						RenderBL::depth[index] = _z;
-						RenderBL::pixels[index] = color;
+						RenderBL::pixels_rgb[index] = v.color;
 					}
 					index++;
 					_z += dz_x;
@@ -565,7 +565,7 @@ namespace bl {
 				for (_x; _x < xmax; _x++) {
 					if (_z < RenderBL::depth[index]) {
 						RenderBL::depth[index] = _z;
-						RenderBL::pixels[index] = rgbToDec(c);
+						RenderBL::pixels_rgb[index] = c;
 					}
 					index++;
 					_z += dz_x;
@@ -732,7 +732,7 @@ namespace bl {
 						c_min(v.color);
 						v.color -= color_e;
 						c_max(v.color, RenderBL::light_ambient);
-						RenderBL::pixels[index] = rgbToDec(v.color);
+						RenderBL::pixels_rgb[index] = v.color;// rgbToDec(v.color);
 					}
 					index++;
 					_z += dz_x;

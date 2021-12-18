@@ -2,17 +2,21 @@
 #define BL_RENDER_H
 
 #include <fstream>
+#include <memory>
 #include "entity.h"
 #include "camera.h"
 #include "light.h"
+#include "effects.h"
 
 namespace bl {
 
 	class RenderBL {
-		static std::vector<Entity> entities;
-		static std::vector<Light*> lights;
+		static std::vector<std::unique_ptr<Entity>> entities;
+		static std::vector<std::unique_ptr<Light>> lights;
+		static std::vector<std::unique_ptr<Effect>> effects;
 		static Vec3f light_ambient;
 		static int bg_color;
+		static Vec3f* pixels_rgb;
 		static int* pixels;
 		static float* depth;
 		static Camera cam;
@@ -29,12 +33,9 @@ namespace bl {
 		static void setFov(int fov);
 		static void renderFrame(float dtime = 0.0f);
 
-		static void addEntity(const char* objfilename, char shading = 'f', Vec3f pos = vec3f_0, Vec3f color = vec3f_0);
-		static void addLight(
-			char type = 'd', Vec3f pos = vec3f_0, Vec3f color = vec3f_0,		// for directional lights
-			float falloff = -1.0f,												// for point lights
-			Vec3f dir = vec3f_0, float width = 30.0f, float falloffExp = 50.0f	// for spot lights
-		);
+		static void addEntity(Entity* entity);
+		static void addLight(Light* light);
+		static void addEffect(Effect* effect);
 
 		static void setAmbientLightColor(Vec3f color);
 		static void setBackgroundColor(Vec3f color = light_ambient);
@@ -50,6 +51,11 @@ namespace bl {
 		friend class Triangle;
 		friend class Entity;
 		friend class Camera;
+
+		friend class ColorShift;
+		friend class Fog;
+		friend class Greyscale;
+		friend class Blur;
 	};
 
 }
