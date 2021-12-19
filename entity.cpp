@@ -28,7 +28,7 @@ namespace bl {
 
 			if (ltr == "v") {
 				Vertex temp;
-				stream >> temp.pos[x]>> temp.pos[y] >> temp.pos[z];
+				stream >> temp.pos[X]>> temp.pos[Y] >> temp.pos[Z];
 				temp.pos += pos;
 				vertices.push_back(temp);
 			}

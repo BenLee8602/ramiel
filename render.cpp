@@ -22,10 +22,10 @@ namespace bl {
 
 	void RenderBL::setBuffer(void* pixelBuffer, int sizex, int sizey) {
 		pixels = (int*)pixelBuffer;
-		size[x] = sizex;
-		size[y] = sizey;
-		mid[x] = sizex / 2;
-		mid[y] = sizey / 2;
+		size[X] = sizex;
+		size[Y] = sizey;
+		mid[X] = sizex / 2;
+		mid[Y] = sizey / 2;
 		bufferSize = sizex * sizey;
 		delete[] depth;
 		depth = new float[bufferSize];
@@ -99,7 +99,7 @@ namespace bl {
 
 
 	int RenderBL::coordsToIndex(const Vec2& in) {
-		return size[x] * in[y] + in[x];
+		return size[X] * in[Y] + in[X];
 	}
 
 
@@ -109,16 +109,16 @@ namespace bl {
 		Vec3f end_c = cam.getCameraCoord(end_w);
 
 		// clip z-axis
-		if (start_c[z] < znear && end_c[z] < znear) return;
-		if (start_c[z] < znear) {
-			start_c[x] = start_c[x] + (end_c[x] - start_c[x]) * (znear - start_c[z]) / (end_c[z] - start_c[z]);
-			start_c[y] = start_c[y] + (end_c[y] - start_c[y]) * (znear - start_c[z]) / (end_c[z] - start_c[z]);
-			start_c[z] = znear;
+		if (start_c[Z] < znear && end_c[Z] < znear) return;
+		if (start_c[Z] < znear) {
+			start_c[X] = start_c[X] + (end_c[X] - start_c[X]) * (znear - start_c[Z]) / (end_c[Z] - start_c[Z]);
+			start_c[Y] = start_c[Y] + (end_c[Y] - start_c[Y]) * (znear - start_c[Z]) / (end_c[Z] - start_c[Z]);
+			start_c[Z] = znear;
 		}
-		else if (end_c[z] < znear) {
-			end_c[x] = end_c[x] + (start_c[x] - end_c[x]) * (znear - end_c[z]) / (start_c[z] - end_c[z]);
-			end_c[y] = end_c[y] + (start_c[y] - end_c[y]) * (znear - end_c[z]) / (start_c[z] - end_c[z]);
-			end_c[z] = znear;
+		else if (end_c[Z] < znear) {
+			end_c[X] = end_c[X] + (start_c[X] - end_c[X]) * (znear - end_c[Z]) / (start_c[Z] - end_c[Z]);
+			end_c[Y] = end_c[Y] + (start_c[Y] - end_c[Y]) * (znear - end_c[Z]) / (start_c[Z] - end_c[Z]);
+			end_c[Z] = znear;
 		}
 
 		// get screen coords
@@ -130,96 +130,96 @@ namespace bl {
 	}
 
 	void RenderBL::drawLine(Vec2 start, Vec2 end, const Vec3f& color) {
-		if (start[y] > end[y]) std::swap(start, end);
-		else if (end[y] < 0 || start[y] > size[y]) return;
+		if (start[Y] > end[Y]) std::swap(start, end);
+		else if (end[Y] < 0 || start[Y] > size[Y]) return;
 
 		int* p;
 		int c = rgbToDec(color);
 
 		// horizontal line
-		if (start[y] == end[y]) {
-			if (start[x] > end[x]) std::swap(start, end);
-			if (start[x] > size[x] || end[x] < 0) return;
-			start[x] = std::max(start[x], 0);
-			end[x] = std::min(end[x], size[x]);
+		if (start[Y] == end[Y]) {
+			if (start[X] > end[X]) std::swap(start, end);
+			if (start[X] > size[X] || end[X] < 0) return;
+			start[X] = std::max(start[X], 0);
+			end[X] = std::min(end[X], size[X]);
 			p = pixels + coordsToIndex(start);
-			for (int _x = start[x]; _x < end[x]; _x++) {
+			for (int x = start[X]; x < end[X]; x++) {
 				*p++ = c;
 			}
 			return;
 		}
 
-		float dx_y = (float)(end[x] - start[x]) / (float)(end[y] - start[y]);
+		float dx_y = (float)(end[X] - start[X]) / (float)(end[Y] - start[Y]);
 
 		// clip y-axis
-		if (start[y] < 0) {
-			start[x] = start[x] - dx_y * start[y];
-			start[y] = 0;
+		if (start[Y] < 0) {
+			start[X] = start[X] - dx_y * start[Y];
+			start[Y] = 0;
 		}
-		if (end[y] > size[y]) {
-			end[x] = end[x] - dx_y * (end[y] - size[y]);
-			end[y] = size[y];
+		if (end[Y] > size[Y]) {
+			end[X] = end[X] - dx_y * (end[Y] - size[Y]);
+			end[Y] = size[Y];
 		}
 
-		float _x = 0.0f;
+		float x = 0.0f;
 
 		// +ve slope line
 		if (dx_y > 0.0f) {
 			// clip x-axis
-			if (start[x] > size[x] || end[x] < 0) return;
-			if (start[x] < 0) {
-				start[y] = start[y] - start[x] / dx_y;
-				start[x] = 0;
+			if (start[X] > size[X] || end[X] < 0) return;
+			if (start[X] < 0) {
+				start[Y] = start[Y] - start[X] / dx_y;
+				start[X] = 0;
 			}
-			if (end[x] > size[x]) {
-				end[y] = end[y] - (end[x] - size[x]) / dx_y;
-				end[x] = size[x];
+			if (end[X] > size[X]) {
+				end[Y] = end[Y] - (end[X] - size[X]) / dx_y;
+				end[X] = size[X];
 			}
 
 			// draw
 			p = pixels + coordsToIndex(start);
-			for (int _y = start[y]; _y < end[y]; _y++) {
+			for (int y = start[Y]; y < end[Y]; y++) {
 				*p = c;
-				for (_x; _x <= dx_y; _x++) {
+				for (x; x <= dx_y; x++) {
 					*p++ = c;
 				}
-				_x -= dx_y;
-				p += size[x];
+				x -= dx_y;
+				p += size[X];
 			}
 		}
 		
 		// -ve slope line
 		else if (dx_y < 0.0f) {
 			// clip x-axis
-			if (start[x] < 0 || end[x] > size[x]) return;
-			if (end[x] < 0) {
-				end[y] = end[y] - end[x] / dx_y;
-				end[x] = 0;
+			if (start[X] < 0 || end[X] > size[X]) return;
+			if (end[X] < 0) {
+				end[Y] = end[Y] - end[X] / dx_y;
+				end[X] = 0;
 			}
-			if (start[x] > size[x]) {
-				start[y] = start[y] - (start[x] - size[x]) / dx_y;
-				start[x] = size[x];
+			if (start[X] > size[X]) {
+				start[Y] = start[Y] - (start[X] - size[X]) / dx_y;
+				start[X] = size[X];
 			}
 
 			// draw
 			p = pixels + coordsToIndex(start);
-			for (int _y = start[y]; _y < end[y]; _y++) {
+			for (int y = start[Y]; y < end[Y]; y++) {
 				*p = c;
-				for (_x; _x >= dx_y; _x--) {
+				for (x; x >= dx_y; x--) {
 					*p-- = c;
 				}
-				_x -= dx_y;
-				p += size[x];
+				x -= dx_y;
+				p += size[X];
 			}
 		}
 
 		// vertical line
 		else {
-			if (start[x] > size[x] || end[x] < 0) return;
+			if (start[X] > size[X] || end[X] < 0) return;
 			p = pixels + coordsToIndex(start);
-			for (int _y = start[y]; _y < end[y]; _y++) {
+			for (int y = start[Y]; y < end[Y]; y++) {
 				*p = c;
-				p += size[x];
+				p += size[X];
 			}
 		}
 	}

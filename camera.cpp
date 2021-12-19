@@ -24,7 +24,7 @@ namespace bl {
 		pos = { 0.0f };
 		rot = { 0.0f };
 		calcTrigValues();
-		focalLen = RenderBL::size[x];
+		focalLen = RenderBL::size[X];
 	}
 
 	Camera::Camera(const Vec3f& pos, const Vec3f& rot, int fov) {
@@ -35,13 +35,13 @@ namespace bl {
 	}
 
 	void Camera::calcTrigValues() {
-		sin[x] = sinf(rot[x]);
-		sin[y] = sinf(rot[y]);
-		sin[z] = sinf(rot[z]);
+		sin[X] = sinf(rot[X]);
+		sin[Y] = sinf(rot[Y]);
+		sin[Z] = sinf(rot[Z]);
 
-		cos[x] = cosf(rot[x]);
-		cos[y] = cosf(rot[y]);
-		cos[z] = cosf(rot[z]);
+		cos[X] = cosf(rot[X]);
+		cos[Y] = cosf(rot[Y]);
+		cos[Z] = cosf(rot[Z]);
 	}
 
 	void Camera::reset() {
@@ -50,8 +50,8 @@ namespace bl {
 	}
 
 	void Camera::setFov(int fov) {
-		if (fov) focalLen = (RenderBL::size[x] / fov) * 90;
-		else focalLen = RenderBL::size[x];
+		if (fov) focalLen = (RenderBL::size[X] / fov) * 90;
+		else focalLen = RenderBL::size[X];
 	}
 
 	const Vec3f& Camera::getpos() const {
@@ -63,15 +63,15 @@ namespace bl {
 	}
 
 	void Camera::move(float _x, float _y, float _z) {
-		pos[x] += _x;
-		pos[y] += _y;
-		pos[z] += _z;
+		pos[X] += _x;
+		pos[Y] += _y;
+		pos[Z] += _z;
 	}
 
 	void Camera::rotate(float _x, float _y, float _z) {
-		rot[x] += _x;
-		rot[y] += _y;
-		rot[z] += _z;
+		rot[X] += _x;
+		rot[Y] += _y;
+		rot[Z] += _z;
 	}
 
 	Vec3f Camera::getCameraCoord(Vec3f in) const {
@@ -79,27 +79,27 @@ namespace bl {
 		Vec3f out = in -= pos;
 
 		// z rot
-		out[x] = in[x] * cos[z] + in[y] * -sin[z];
-		out[y] = in[x] * sin[z] + in[y] * cos[z];
+		out[X] = in[X] * cos[Z] + in[Y] * -sin[Z];
+		out[Y] = in[X] * sin[Z] + in[Y] * cos[Z];
 		in = out;
 
 		// y rot
-		out[x] = in[x] * cos[y] + in[z] * sin[y];
-		out[z] = in[x] * -sin[y] + in[z] * cos[y];
+		out[X] = in[X] * cos[Y] + in[Z] * sin[Y];
+		out[Z] = in[X] * -sin[Y] + in[Z] * cos[Y];
 		in = out;
 
 		// x rot
-		out[y] = in[y] * cos[x] + in[z] * -sin[x];
-		out[z] = in[y] * sin[x] + in[z] * cos[x];
+		out[Y] = in[Y] * cos[X] + in[Z] * -sin[X];
+		out[Z] = in[Y] * sin[X] + in[Z] * cos[X];
 
 		return out;
 	}
 
 	Vec2 Camera::getScreenCoord(const Vec3f& in) const {
 		Vec2 out = { 0 };
-		if (in[z] != 0.0f) {
-			out[x] = (int)(in[x] * focalLen / in[z] + RenderBL::mid[x]);
-			out[y] = (int)(in[y] * focalLen / in[z] + RenderBL::mid[y]);
+		if (in[Z] != 0.0f) {
+			out[X] = (int)(in[X] * focalLen / in[Z] + RenderBL::mid[X]);
+			out[Y] = (int)(in[Y] * focalLen / in[Z] + RenderBL::mid[Y]);
 		}
 		return out;
 	}
@@ -112,58 +112,58 @@ namespace bl {
 		
 		// move left
 		if (((unsigned short)GetKeyState(KEY_A)) >> 15) {
-			pos[x] -= RenderBL::dtime * CAM_POS_SPEED * cos[y];
-			pos[z] -= RenderBL::dtime * CAM_POS_SPEED * sin[y];
+			pos[X] -= RenderBL::dtime * CAM_POS_SPEED * cos[Y];
+			pos[Z] -= RenderBL::dtime * CAM_POS_SPEED * sin[Y];
 		}
 
 		// move right
 		if (((unsigned short)GetKeyState(KEY_D)) >> 15) {
-			pos[x] += RenderBL::dtime * CAM_POS_SPEED * cos[y];
-			pos[z] += RenderBL::dtime * CAM_POS_SPEED * sin[y];
+			pos[X] += RenderBL::dtime * CAM_POS_SPEED * cos[Y];
+			pos[Z] += RenderBL::dtime * CAM_POS_SPEED * sin[Y];
 		}
 
 		// move down
 		if (((unsigned short)GetKeyState(KEY_CTRL)) >> 15) {
-			pos[y] -= RenderBL::dtime * CAM_POS_SPEED;
+			pos[Y] -= RenderBL::dtime * CAM_POS_SPEED;
 		}
 
 		// move up
 		if (((unsigned short)GetKeyState(KEY_SPACE)) >> 15) {
-			pos[y] += RenderBL::dtime * CAM_POS_SPEED;
+			pos[Y] += RenderBL::dtime * CAM_POS_SPEED;
 		}
 
 		// move backward
 		if (((unsigned short)GetKeyState(KEY_S)) >> 15) {
-			pos[x] += RenderBL::dtime * CAM_POS_SPEED * sin[y];
-			pos[y] += RenderBL::dtime * CAM_POS_SPEED * -sin[x];
-			pos[z] -= RenderBL::dtime * CAM_POS_SPEED * cos[y];
+			pos[X] += RenderBL::dtime * CAM_POS_SPEED * sin[Y];
+			pos[Y] += RenderBL::dtime * CAM_POS_SPEED * -sin[X];
+			pos[Z] -= RenderBL::dtime * CAM_POS_SPEED * cos[Y];
 		}
 
 		// move forward
 		if (((unsigned short)GetKeyState(KEY_W)) >> 15) {
-			pos[x] -= RenderBL::dtime * CAM_POS_SPEED * sin[y];
-			pos[y] -= RenderBL::dtime * CAM_POS_SPEED * -sin[x];
-			pos[z] += RenderBL::dtime * CAM_POS_SPEED * cos[y];
+			pos[X] -= RenderBL::dtime * CAM_POS_SPEED * sin[Y];
+			pos[Y] -= RenderBL::dtime * CAM_POS_SPEED * -sin[X];
+			pos[Z] += RenderBL::dtime * CAM_POS_SPEED * cos[Y];
 		}
 
 		// turn right
 		if (((unsigned short)GetKeyState(KEY_RIGHT)) >> 15) {
-			rot[y] -= RenderBL::dtime * CAM_ROT_SPEED;
+			rot[Y] -= RenderBL::dtime * CAM_ROT_SPEED;
 		}
 
 		// turn left
 		if (((unsigned short)GetKeyState(KEY_LEFT)) >> 15) {
-			rot[y] += RenderBL::dtime * CAM_ROT_SPEED;
+			rot[Y] += RenderBL::dtime * CAM_ROT_SPEED;
 		}
 
 		// turn down
 		if (((unsigned short)GetKeyState(KEY_DOWN)) >> 15) {
-			if (rot[x] > -1.57079f) rot[x] -= RenderBL::dtime * CAM_ROT_SPEED;
+			if (rot[X] > -1.57079f) rot[X] -= RenderBL::dtime * CAM_ROT_SPEED;
 		}
 
 		// turn up
 		if (((unsigned short)GetKeyState(KEY_UP)) >> 15) {
-			if (rot[x] < 1.57079f) rot[x] += RenderBL::dtime * CAM_ROT_SPEED;
+			if (rot[X] < 1.57079f) rot[X] += RenderBL::dtime * CAM_ROT_SPEED;
 		}
 	}
 

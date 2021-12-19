@@ -11,6 +11,7 @@ namespace bl {
 		T arr[N];
 
 		// element retrieval
+		operator T* () { return arr; };
 		T& operator[](size_t index) { return arr[index]; }
 		const T& operator[](size_t index) const { return arr[index]; }
 
@@ -63,8 +64,8 @@ namespace bl {
 	typedef Vec<float, 3> Vec3f;			typedef Vec<double, 3> Vec3lf;
 
 
-	enum xyz : size_t { x, y, z };
-	enum rgb : size_t { r, g, b };
+	enum xyz : size_t { X, Y, Z };
+	enum rgb : size_t { R, G, B };
 
 	const Vec3f vec3f_0 = { 0.0f, 0.0f, 0.0f };
 	const Vec3f vec3f_255 = { 255.0f, 255.0f, 255.0f };

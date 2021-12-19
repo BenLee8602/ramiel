@@ -4,7 +4,7 @@
 namespace bl {
 
 	float getMagnitude(const Vec3f& v) {
-		return sqrtf(v[x] * v[x] + v[y] * v[y] + v[z] * v[z]);
+		return sqrtf(v[X] * v[X] + v[Y] * v[Y] + v[Z] * v[Z]);
 	}
 
 	Vec3f getNormalized(const Vec3f& v) {
@@ -12,14 +12,14 @@ namespace bl {
 	}
 
 	float dotProduct(const Vec3f& vec1, const Vec3f& vec2) {
-		return vec1[x] * vec2[x] + vec1[y] * vec2[y] + vec1[z] * vec2[z];
+		return vec1[X] * vec2[X] + vec1[Y] * vec2[Y] + vec1[Z] * vec2[Z];
 	}
 
 	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2) {
 		Vec3f out;
-		out[x] = vec1[y] * vec2[z] - vec1[z] * vec2[y];
-		out[y] = vec1[z] * vec2[x] - vec1[x] * vec2[z];
-		out[z] = vec1[x] * vec2[y] - vec1[y] * vec2[x];
+		out[X] = vec1[Y] * vec2[Z] - vec1[Z] * vec2[Y];
+		out[Y] = vec1[Z] * vec2[X] - vec1[X] * vec2[Z];
+		out[Z] = vec1[X] * vec2[Y] - vec1[Y] * vec2[X];
 		return out;
 	}
 
@@ -31,30 +31,30 @@ namespace bl {
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Vec3f& vec) {
-		return os << vec[x] << ", " << vec[y] << ", " << vec[z];
+		return os << vec[X] << ", " << vec[Y] << ", " << vec[Z];
 	}
 
 
 	void c_min(Vec3f& color, const Vec3f& min) {
-		color[r] = std::min(color[r], min[r]);
-		color[g] = std::min(color[g], min[g]);
-		color[b] = std::min(color[b], min[b]);
+		color[R] = std::min(color[R], min[R]);
+		color[G] = std::min(color[G], min[G]);
+		color[B] = std::min(color[B], min[B]);
 	}
 
 	void c_max(Vec3f& color, const Vec3f& max) {
-		color[r] = std::max(color[r], max[r]);
-		color[g] = std::max(color[g], max[g]);
-		color[b] = std::max(color[b], max[b]);
+		color[R] = std::max(color[R], max[R]);
+		color[G] = std::max(color[G], max[G]);
+		color[B] = std::max(color[B], max[B]);
 	}
 
 	void c_clamp(Vec3f& color) {
-		color[r] = std::min(std::max(color[r], 0.0f), 255.0f);
-		color[g] = std::min(std::max(color[g], 0.0f), 255.0f);
-		color[b] = std::min(std::max(color[b], 0.0f), 255.0f);
+		color[R] = std::min(std::max(color[R], 0.0f), 255.0f);
+		color[G] = std::min(std::max(color[G], 0.0f), 255.0f);
+		color[B] = std::min(std::max(color[B], 0.0f), 255.0f);
 	}
 
 	int rgbToDec(const Vec3f& color) {
-		return ((int)color[r] << 16) + ((int)color[g] << 8) + (int)color[b];
+		return ((int)color[R] << 16) + ((int)color[G] << 8) + (int)color[B];
 	}
 
 }

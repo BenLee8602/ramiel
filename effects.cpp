@@ -73,9 +73,9 @@ namespace bl {
 		if (!isEnabled()) return;
 		for (size_t i = 0; i < RenderBL::bufferSize; i++) {
 			RenderBL::pixels_rgb[i] = ((
-				RenderBL::pixels_rgb[i][r] +
-				RenderBL::pixels_rgb[i][g] +
-				RenderBL::pixels_rgb[i][b]) / 3.0f
+				RenderBL::pixels_rgb[i][R] +
+				RenderBL::pixels_rgb[i][G] +
+				RenderBL::pixels_rgb[i][B]) / 3.0f
 			);
 		}
 	}
@@ -86,25 +86,25 @@ namespace bl {
 		float r = 1.0f / (2 * rad + 1);
 		Vec3f* buff = new Vec3f[RenderBL::bufferSize]();
 
-		for (int _y = 0; _y < RenderBL::size[y]; _y++) {
-			int y_idx = _y * RenderBL::size[x];
+		for (int _y = 0; _y < RenderBL::size[Y]; _y++) {
+			int y_idx = _y * RenderBL::size[X];
 			Vec3f acc = RenderBL::pixels_rgb[y_idx] * rad;
 			for (int i = 0; i <= rad; i++) acc += RenderBL::pixels_rgb[y_idx + i];
-			for (int _x = 0; _x < RenderBL::size[x]; _x++) {
+			for (int _x = 0; _x < RenderBL::size[X]; _x++) {
 				buff[y_idx + _x] = acc * r;
 				acc -= RenderBL::pixels_rgb[y_idx + std::max(0, _x - rad)];
-				acc += RenderBL::pixels_rgb[y_idx + std::min(RenderBL::size[x] - 1, _x + rad + 1)];
+				acc += RenderBL::pixels_rgb[y_idx + std::min(RenderBL::size[X] - 1, _x + rad + 1)];
 			}
 		}
 
-		for (int _x = 0; _x < RenderBL::size[x]; _x++) {
+		for (int _x = 0; _x < RenderBL::size[X]; _x++) {
 			Vec3f acc = buff[_x] * rad;
-			for (int i = 0; i <= rad; i++) acc += buff[i * RenderBL::size[x] + _x];
-			for (int _y = 0; _y < RenderBL::size[y]; _y++) {
-				int y_idx = _y * RenderBL::size[x];
+			for (int i = 0; i <= rad; i++) acc += buff[i * RenderBL::size[X] + _x];
+			for (int _y = 0; _y < RenderBL::size[Y]; _y++) {
+				int y_idx = _y * RenderBL::size[X];
 				RenderBL::pixels_rgb[y_idx + _x] = acc * r;
-				acc -= buff[std::max(0, _y - rad) * RenderBL::size[x] + _x];
-				acc += buff[std::min(RenderBL::size[y] - 1, _y + rad + 1) * RenderBL::size[x] + _x];
+				acc -= buff[std::max(0, _y - rad) * RenderBL::size[X] + _x];
+				acc += buff[std::min(RenderBL::size[Y] - 1, _y + rad + 1) * RenderBL::size[X] + _x];
 			}
 		}
 
