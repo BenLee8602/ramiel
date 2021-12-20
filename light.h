@@ -20,7 +20,7 @@ namespace bl {
 	public:
 		Light_Dir(
 			Vec3f color = vec3f_255,
-			Vec3f dir = { -1.0f, 0.0f, 0.0f }
+			Vec3f dir = { 0.0f, 0.0f, -1.0f }
 		);
 		virtual void getLight(Vertex& v) const override;
 		virtual void move(const Vec3f& pos) override;
@@ -34,7 +34,7 @@ namespace bl {
 		Light_Pt(
 			Vec3f color = vec3f_255,
 			Vec3f pos = vec3f_0,
-			float falloff = 1.0
+			float falloff = 1.0f
 		);
 		virtual void getLight(Vertex& v) const override;
 		virtual void move(const Vec3f& pos) override;
@@ -48,7 +48,7 @@ namespace bl {
 		Light_Sp(
 			Vec3f color = vec3f_255,
 			Vec3f pos = vec3f_0,
-			Vec3f dir = { 1.0f, 0.0f, 0.0f },
+			Vec3f dir = { 0.0f, 0.0f, 1.0f },
 			float falloff = 0.1f,
 			float width = 30.0f,
 			float falloffExp = 50.0f

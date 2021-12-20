@@ -47,7 +47,7 @@ namespace bl {
 		RenderBL::dtime = dtime;
 		cam.getControls();
 		cam.calcTrigValues();
-		//lights[0]->move(cam.getpos()); // temp
+		lights[0]->move(cam.getpos()); // temp
 		for (auto& e : entities) e->draw();
 		for (auto& e : effects) e->applyEffect();
 		for (int i = 0; i < bufferSize; i++) {

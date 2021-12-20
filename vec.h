@@ -75,7 +75,6 @@ namespace bl {
 	Vec3f getNormalized(const Vec3f& v);
 	float dotProduct(const Vec3f& vec1, const Vec3f& vec2);
 	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2);
-	float dirSimilarity(const Vec3f& vec1, const Vec3f& vec2);
 	std::ostream& operator<<(std::ostream& os, const Vec3f& vec);
 
 

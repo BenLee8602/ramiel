@@ -16,7 +16,7 @@ namespace bl {
 	}
 
 	void Light_Dir::getLight(Vertex& v) const {
-		v.color += color * dirSimilarity(v.normal, dir);
+		v.color += color * std::max(0.0f, dotProduct(v.normal, dir));
 	}
 
 	void Light_Dir::move(const Vec3f& pos) {
@@ -34,7 +34,7 @@ namespace bl {
 		Vec3f vec = v.pos - pos;
 		float d = getMagnitude(vec);
 		float f = 1.0f / (falloff * d * d + 1.0f);
-		v.color += color * f * (1.0f - dirSimilarity(getNormalized(vec), v.normal));
+		v.color += color * f * std::max(0.0f, -dotProduct(getNormalized(vec), v.normal));
 	}
 
 	void Light_Pt::move(const Vec3f& pos) {
@@ -54,10 +54,10 @@ namespace bl {
 		Vec3f vec = v.pos - pos;
 		float d = getMagnitude(vec);
 		vec = getNormalized(vec);
-		float s = dirSimilarity(vec, dir);
+		float s = std::max(0.0f, dotProduct(vec, dir));
 		if (s < width) return;
 		float f = 1.0f / (falloff * d * d + 1.0f) * std::powf(s, falloffExp);
-		v.color += color * f * (1.0f - dirSimilarity(vec, v.normal));
+		v.color += color * f * std::max(0.0f, -dotProduct(vec, v.normal));
 	}
 
 	void Light_Sp::rotate(const Vec3f& dir) {
