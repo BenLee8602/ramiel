@@ -398,9 +398,8 @@ namespace bl {
 		for (auto& l : GraphicsBL::lights) {
 			l->getLight(v);
 		}
+		v.color *= color_e;
 		notBloom(v.color);
-		v.color -= color_e;
-		c_max(v.color);
 
 		// change in x per change in y
 		float dx1_y = (float)(triScreen[2][X] - triScreen[0][X]) / (float)(triScreen[2][Y] - triScreen[0][Y]);
@@ -731,9 +730,8 @@ namespace bl {
 						for (auto& l : GraphicsBL::lights) {
 							l->getLight(v);
 						}
+						v.color *= color_e;
 						notBloom(v.color);
-						v.color -= color_e;
-						c_max(v.color);
 						GraphicsBL::pixels_rgb[index] = v.color;
 					}
 					index++;

@@ -72,15 +72,19 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	//GraphicsBL::addLight(new Light_Pt({ 255, 0, 0 }));
 	//GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX));
 
-	/*  LIGHTING
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::FLAT, { -0.3, 0, 0 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, { 0.3, 0, 0 }));
-	//GraphicsBL::addEntity(new Entity("model/cube2.obj", ShadingType::VERTEX, { 0, 0, -1 }));
-	//GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::VERTEX));
-	//GraphicsBL::addLight(new Light_Pt({ 255, 0, 0 }));
-	GraphicsBL::addLight(new Light_Dir({ 255, 0, 0 }));
+	//*  LIGHTING
+	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
+	GraphicsBL::addLight(new Light_Dir({ 255, 0, 255 }));
 
+	const ShadingType st = ShadingType::PIXEL;
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -2.0, 0, 0 }, {  25,  25,  25 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -1.5, 0, 0 }, { 255,  25,  25 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -1.0, 0, 0 }, {  25, 255,  25 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -0.5, 0, 0 }, {  25,  25, 255 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  0.0, 0, 0 }, { 255, 255,  25 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  0.5, 0, 0 }, { 255,  25, 255 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  1.0, 0, 0 }, {  25, 255, 255 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  1.5, 0, 0 }, { 255, 255, 255 }));
 	//*/
 
 	/*  MOUNTAINS
@@ -91,11 +95,12 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 	//*/
 
-	//*  MOUNTAINS
-	GraphicsBL::setAmbientLightColor({ 100, 0, 100 });
-	GraphicsBL::addEffect(new Fog(20, 60, { 150, 50, 50 }, true));
-	GraphicsBL::addEffect(new Fog(60, 100, { 150, 150, 50 }, true));
-	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }));// , { 100, 0, 100 }));
+	/*  MOUNTAINS 2
+	GraphicsBL::setAmbientLightColor({ 50, 50, 50 });
+	GraphicsBL::addLight(new Light_Dir({ 100, 100, 100 }, { -3, 1, 0 }));
+	GraphicsBL::addEffect(new Fog(20, 50, { 150, 50, 50 }, true));
+	GraphicsBL::addEffect(new Fog(70, 100, { 150, 150, 50 }, true));
+	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }, { 150, 50, 150 }));
 	//*/
 	
 	// main loop

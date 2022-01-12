@@ -8,9 +8,8 @@ namespace bl {
 	Entity::Entity(const char* filename, ShadingType shading, Vec3f pos, Vec3f color) {
 		this->shading = shading;
 
-		this->color = vec3f_255;
-		this->color -= color;
-		c_clamp(this->color);
+		c_clamp(color);
+		this->color = color / 255.0f;
 
 		std::ifstream file(filename);
 		std::string line;
@@ -87,9 +86,8 @@ namespace bl {
 			for (auto& l : GraphicsBL::lights) {
 				l->getLight(v);
 			}
+			v.color *= color;
 			notBloom(v.color);
-			v.color -= color;
-			c_max(v.color);
 		}
 	}
 

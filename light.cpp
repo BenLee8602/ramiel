@@ -5,7 +5,7 @@ namespace bl {
 
 	Light::Light(Vec3f color) {
 		this->color = color;
-		c_clamp(this->color);
+		c_max(this->color);
 	}
 
 
