@@ -1,6 +1,5 @@
 #include <cmath>
-#include "light.h"
-#include "render.h"
+#include "graphics.h"
 
 namespace bl {
 

@@ -24,7 +24,7 @@ namespace bl {
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Vec3f& vec) {
-		return os << vec[X] << ", " << vec[Y] << ", " << vec[Z];
+		return os << "{ " << vec[X] << ", " << vec[Y] << ", " << vec[Z] << " }";
 	}
 
 
@@ -48,6 +48,29 @@ namespace bl {
 
 	int rgbToDec(const Vec3f& color) {
 		return ((int)color[R] << 16) + ((int)color[G] << 8) + (int)color[B];
+	}
+
+	void notBloom(Vec3f& in) {
+		// determine total extra
+		Vec3f extra = in - vec3f_255;
+		c_max(extra);
+		float totalExtra = extra[R] + extra[G] + extra[B];
+		if (!totalExtra) return;
+
+		// determine empty space
+		Vec3f room = vec3f_255 - in;
+		c_max(room);
+		float totalRoom = room[R] + room[G] + room[B];
+		if (!totalRoom) {
+			c_min(in);
+			return;
+		}
+		float trInv = 1.0f / totalRoom;
+
+		// process input pt
+		Vec3f roomRatio = room * trInv;
+		in += roomRatio * totalExtra;
+		c_min(in);
 	}
 
 }

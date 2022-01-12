@@ -1,9 +1,8 @@
 #include <windows.h>
 #include <chrono>
-#include "render.h"
+#include "graphics.h"
 using namespace bl;
 
-void* pixels;
 int winSizeX = 1280;
 int winSizeY = 720;
 bool run = true;
@@ -23,10 +22,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		winSizeY = rect.bottom - rect.top;
 		int bufferSize = winSizeX * winSizeY * sizeof(unsigned int);
 
-		if (pixels) VirtualFree(pixels, 0, MEM_RELEASE);
-		pixels = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-
-		RenderBL::setBuffer(pixels, winSizeX, winSizeY);
+		GraphicsBL::setBufferSize({ winSizeX, winSizeY });
 
 		bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 		bitmapInfo.bmiHeader.biWidth = winSizeX;
@@ -51,14 +47,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	// register window class
 	WNDCLASS winClass = {};
 	winClass.style = CS_HREDRAW | CS_VREDRAW;
-	winClass.lpszClassName = "Window";
+	winClass.lpszClassName = "GraphicsBL";
 	winClass.lpfnWndProc = WindowProc;
 	RegisterClass(&winClass);
 
 	// create window
 	HWND window = CreateWindowA(
 		winClass.lpszClassName,
-		"Window",
+		winClass.lpszClassName,
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		winSizeX, winSizeY, 0, 0,
@@ -73,8 +69,34 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	float dtime = 0.0f;
 
 	// add objects and lighting to scene
-	RenderBL::addLight(new Light_Sp());
-	RenderBL::addEntity(new Entity("model/cube2.obj", ShadingType::PIXEL, { 0, 0, 1 }));
+	//GraphicsBL::addLight(new Light_Pt({ 255, 0, 0 }));
+	//GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX));
+
+	/*  LIGHTING
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::FLAT, { -0.3, 0, 0 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, { 0.3, 0, 0 }));
+	//GraphicsBL::addEntity(new Entity("model/cube2.obj", ShadingType::VERTEX, { 0, 0, -1 }));
+	//GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::VERTEX));
+	//GraphicsBL::addLight(new Light_Pt({ 255, 0, 0 }));
+	GraphicsBL::addLight(new Light_Dir({ 255, 0, 0 }));
+
+	//*/
+
+	/*  MOUNTAINS
+	GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
+	GraphicsBL::setBackgroundColor({ 150, 110, 110 });
+	GraphicsBL::addLight(new Light_Dir({ 155, 40, 0 }, { -10, 1, 0 }));
+	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }));
+	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
+	//*/
+
+	//*  MOUNTAINS
+	GraphicsBL::setAmbientLightColor({ 100, 0, 100 });
+	GraphicsBL::addEffect(new Fog(20, 60, { 150, 50, 50 }, true));
+	GraphicsBL::addEffect(new Fog(60, 100, { 150, 150, 50 }, true));
+	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }));// , { 100, 0, 100 }));
+	//*/
 	
 	// main loop
 	while (run) {
@@ -88,7 +110,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		}
 
 		// render frame
-		RenderBL::renderFrame(dtime);
+		const void* output = GraphicsBL::renderFrame(dtime);
 
 		// update frame
 		StretchDIBits(
@@ -96,7 +118,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 			winSizeX, winSizeY,
 			0, 0,
 			winSizeX, winSizeY,
-			pixels, &bitmapInfo,
+			output, &bitmapInfo,
 			DIB_RGB_COLORS, SRCCOPY
 		);
 

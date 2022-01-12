@@ -55,6 +55,8 @@ namespace bl {
 		int rad;
 	public:
 		Blur(int rad, bool enabled = false) : Effect(enabled), rad(rad) {};
+		int getRad() const;
+		void setRad(int rad);
 		virtual void applyEffect() const override;
 	};
 

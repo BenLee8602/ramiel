@@ -1,6 +1,5 @@
 #include <algorithm>
-#include "triangle.h"
-#include "render.h"
+#include "graphics.h"
 
 namespace bl {
 
@@ -15,7 +14,7 @@ namespace bl {
 		// conv from world-space to camera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = RenderBL::cam.getCameraCoord(pts[a]->pos);
+			triCam[a] = GraphicsBL::cam.getCameraCoord(pts[a]->pos);
 		}
 
 		// only draw tris facing camera
@@ -30,7 +29,7 @@ namespace bl {
 		// conv from world-space to camera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = RenderBL::cam.getCameraCoord(pts[a]->pos);
+			triCam[a] = GraphicsBL::cam.getCameraCoord(pts[a]->pos);
 		}
 
 		// only draw tris facing camera
@@ -46,7 +45,7 @@ namespace bl {
 		// conv from world-space to camera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = RenderBL::cam.getCameraCoord(pts[a]->pos);
+			triCam[a] = GraphicsBL::cam.getCameraCoord(pts[a]->pos);
 		}
 
 		// only draw tris facing camera
@@ -74,8 +73,8 @@ namespace bl {
 
 		auto clip1 = [&]() {
 			// ratio of line clipped
-			float c1 = (RenderBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
-			float c2 = (RenderBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
+			float c1 = (GraphicsBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
+			float c2 = (GraphicsBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
 
 			// new tri formed from quad
 			Vec3f temp[3] = { 0.0f };
@@ -84,10 +83,10 @@ namespace bl {
 			// interpolate x and y
 			temp[0][X] = tri[1][X] + (tri[0][X] - tri[1][X]) * c1;
 			temp[0][Y] = tri[1][Y] + (tri[0][Y] - tri[1][Y]) * c1;
-			temp[0][Z] = RenderBL::znear;
+			temp[0][Z] = GraphicsBL::znear;
 			temp[1][X] = tri[1][X] + (tri[2][X] - tri[1][X]) * c2;
 			temp[1][Y] = tri[1][Y] + (tri[2][Y] - tri[1][Y]) * c2;
-			temp[1][Z] = RenderBL::znear;
+			temp[1][Z] = GraphicsBL::znear;
 			temp[2] = tri[2];
 
 			// update original tri
@@ -99,22 +98,22 @@ namespace bl {
 
 		auto clip2 = [&]() {
 			// ratio of line clipped
-			float c1 = (RenderBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
-			float c2 = (RenderBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
+			float c1 = (GraphicsBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
+			float c2 = (GraphicsBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
 
 			// interpolate x and y
 			tri[0][X] = tri[0][X] + (tri[1][X] - tri[0][X]) * c1;
 			tri[0][Y] = tri[0][Y] + (tri[1][Y] - tri[0][Y]) * c1;
-			tri[0][Z] = RenderBL::znear;
+			tri[0][Z] = GraphicsBL::znear;
 			tri[2][X] = tri[2][X] + (tri[1][X] - tri[2][X]) * c2;
 			tri[2][Y] = tri[2][Y] + (tri[1][Y] - tri[2][Y]) * c2;
-			tri[2][Z] = RenderBL::znear;
+			tri[2][Z] = GraphicsBL::znear;
 		};
 
-		if (tri[0][Z] < RenderBL::znear) {
-			if (tri[1][Z] < RenderBL::znear) {
+		if (tri[0][Z] < GraphicsBL::znear) {
+			if (tri[1][Z] < GraphicsBL::znear) {
 				// case 2
-				if (tri[2][Z] < RenderBL::znear) {
+				if (tri[2][Z] < GraphicsBL::znear) {
 					return false;
 				}
 				// case 6
@@ -124,7 +123,7 @@ namespace bl {
 				}
 			}
 			// case 8
-			else if (tri[2][Z] < RenderBL::znear) {
+			else if (tri[2][Z] < GraphicsBL::znear) {
 				clip2();
 			}
 			// case 3
@@ -134,9 +133,9 @@ namespace bl {
 			}
 		}
 
-		else if (tri[1][Z] < RenderBL::znear) {
+		else if (tri[1][Z] < GraphicsBL::znear) {
 			// case 7
-			if (tri[2][Z] < RenderBL::znear) {
+			if (tri[2][Z] < GraphicsBL::znear) {
 				std::swap(tri[1], tri[0]);
 				clip2();
 			}
@@ -147,7 +146,7 @@ namespace bl {
 		}
 
 		// case 5
-		else if (tri[2][Z] < RenderBL::znear) {
+		else if (tri[2][Z] < GraphicsBL::znear) {
 			std::swap(tri[1], tri[2]);
 			clip1();
 		}
@@ -162,8 +161,8 @@ namespace bl {
 
 		auto clip1 = [&]() {
 			// ratio of line clipped
-			float c1 = (RenderBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
-			float c2 = (RenderBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
+			float c1 = (GraphicsBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
+			float c2 = (GraphicsBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
 
 			// new tri formed from quad
 			Vec3f temp[3] = { 0.0f };
@@ -172,10 +171,10 @@ namespace bl {
 			// interpolate x and y
 			temp[0][X] = tri[1][X] + (tri[0][X] - tri[1][X]) * c1;
 			temp[0][Y] = tri[1][Y] + (tri[0][Y] - tri[1][Y]) * c1;
-			temp[0][Z] = RenderBL::znear;
+			temp[0][Z] = GraphicsBL::znear;
 			temp[1][X] = tri[1][X] + (tri[2][X] - tri[1][X]) * c2;
 			temp[1][Y] = tri[1][Y] + (tri[2][Y] - tri[1][Y]) * c2;
-			temp[1][Z] = RenderBL::znear;
+			temp[1][Z] = GraphicsBL::znear;
 			temp[2] = tri[2];
 
 			// interpolate color
@@ -193,26 +192,26 @@ namespace bl {
 
 		auto clip2 = [&]() {
 			// ratio of line clipped
-			float c1 = (RenderBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
-			float c2 = (RenderBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
+			float c1 = (GraphicsBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
+			float c2 = (GraphicsBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
 
 			// interpolate x and y
 			tri[0][X] = tri[0][X] + (tri[1][X] - tri[0][X]) * c1;
 			tri[0][Y] = tri[0][Y] + (tri[1][Y] - tri[0][Y]) * c1;
-			tri[0][Z] = RenderBL::znear;
+			tri[0][Z] = GraphicsBL::znear;
 			tri[2][X] = tri[2][X] + (tri[1][X] - tri[2][X]) * c2;
 			tri[2][Y] = tri[2][Y] + (tri[1][Y] - tri[2][Y]) * c2;
-			tri[2][Z] = RenderBL::znear;
+			tri[2][Z] = GraphicsBL::znear;
 
 			// interpolate color
 			tri_c[0] = tri_c[0] + (tri_c[1] - tri_c[0]) * c1;
 			tri_c[2] = tri_c[2] + (tri_c[1] - tri_c[2]) * c2;
 		};
 
-		if (tri[0][Z] < RenderBL::znear) {
-			if (tri[1][Z] < RenderBL::znear) {
+		if (tri[0][Z] < GraphicsBL::znear) {
+			if (tri[1][Z] < GraphicsBL::znear) {
 				// case 2
-				if (tri[2][Z] < RenderBL::znear) {
+				if (tri[2][Z] < GraphicsBL::znear) {
 					return false;
 				}
 				// case 6
@@ -223,7 +222,7 @@ namespace bl {
 				}
 			}
 			// case 8
-			else if (tri[2][Z] < RenderBL::znear) {
+			else if (tri[2][Z] < GraphicsBL::znear) {
 				clip2();
 			}
 			// case 3
@@ -234,9 +233,9 @@ namespace bl {
 			}
 		}
 
-		else if (tri[1][Z] < RenderBL::znear) {
+		else if (tri[1][Z] < GraphicsBL::znear) {
 			// case 7
-			if (tri[2][Z] < RenderBL::znear) {
+			if (tri[2][Z] < GraphicsBL::znear) {
 				std::swap(tri[1], tri[0]);
 				std::swap(tri_c[1], tri_c[0]);
 				clip2();
@@ -248,7 +247,7 @@ namespace bl {
 		}
 
 		// case 5
-		else if (tri[2][Z] < RenderBL::znear) {
+		else if (tri[2][Z] < GraphicsBL::znear) {
 			std::swap(tri[1], tri[2]);
 			std::swap(tri_c[1], tri_c[2]);
 			clip1();
@@ -264,8 +263,8 @@ namespace bl {
 
 		auto clip1 = [&]() {
 			// ratio of line clipped
-			float c1 = (RenderBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
-			float c2 = (RenderBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
+			float c1 = (GraphicsBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
+			float c2 = (GraphicsBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
 
 			// new tri formed from quad
 			Vec3f temp[3] = { 0.0f };
@@ -274,10 +273,10 @@ namespace bl {
 			// interpolate x and y
 			temp[0][X] = tri[1][X] + (tri[0][X] - tri[1][X]) * c1;
 			temp[0][Y] = tri[1][Y] + (tri[0][Y] - tri[1][Y]) * c1;
-			temp[0][Z] = RenderBL::znear;
+			temp[0][Z] = GraphicsBL::znear;
 			temp[1][X] = tri[1][X] + (tri[2][X] - tri[1][X]) * c2;
 			temp[1][Y] = tri[1][Y] + (tri[2][Y] - tri[1][Y]) * c2;
-			temp[1][Z] = RenderBL::znear;
+			temp[1][Z] = GraphicsBL::znear;
 			temp[2] = tri[2];
 
 			// interpolate vertices
@@ -299,16 +298,16 @@ namespace bl {
 
 		auto clip2 = [&]() {
 			// ratio of line clipped
-			float c1 = (RenderBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
-			float c2 = (RenderBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
+			float c1 = (GraphicsBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
+			float c2 = (GraphicsBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
 
 			// interpolate x and y
 			tri[0][X] = tri[0][X] + (tri[1][X] - tri[0][X]) * c1;
 			tri[0][Y] = tri[0][Y] + (tri[1][Y] - tri[0][Y]) * c1;
-			tri[0][Z] = RenderBL::znear;
+			tri[0][Z] = GraphicsBL::znear;
 			tri[2][X] = tri[2][X] + (tri[1][X] - tri[2][X]) * c2;
 			tri[2][Y] = tri[2][Y] + (tri[1][Y] - tri[2][Y]) * c2;
-			tri[2][Z] = RenderBL::znear;
+			tri[2][Z] = GraphicsBL::znear;
 
 			// interpolate vertices
 			tri_c[0].pos = tri_c[0].pos + (tri_c[1].pos - tri_c[0].pos) * c1;
@@ -318,10 +317,10 @@ namespace bl {
 			tri_c[2].normal = tri_c[2].normal + (tri_c[1].normal - tri_c[2].normal) * c2;
 		};
 
-		if (tri[0][Z] < RenderBL::znear) {
-			if (tri[1][Z] < RenderBL::znear) {
+		if (tri[0][Z] < GraphicsBL::znear) {
+			if (tri[1][Z] < GraphicsBL::znear) {
 				// case 2
-				if (tri[2][Z] < RenderBL::znear) {
+				if (tri[2][Z] < GraphicsBL::znear) {
 					return false;
 				}
 				// case 6
@@ -332,7 +331,7 @@ namespace bl {
 				}
 			}
 			// case 8
-			else if (tri[2][Z] < RenderBL::znear) {
+			else if (tri[2][Z] < GraphicsBL::znear) {
 				clip2();
 			}
 			// case 3
@@ -343,9 +342,9 @@ namespace bl {
 			}
 		}
 
-		else if (tri[1][Z] < RenderBL::znear) {
+		else if (tri[1][Z] < GraphicsBL::znear) {
 			// case 7
-			if (tri[2][Z] < RenderBL::znear) {
+			if (tri[2][Z] < GraphicsBL::znear) {
 				std::swap(tri[1], tri[0]);
 				std::swap(tri_c[1], tri_c[0]);
 				clip2();
@@ -357,7 +356,7 @@ namespace bl {
 		}
 
 		// case 5
-		else if (tri[2][Z] < RenderBL::znear) {
+		else if (tri[2][Z] < GraphicsBL::znear) {
 			std::swap(tri[1], tri[2]);
 			std::swap(tri_c[1], tri_c[2]);
 			clip1();
@@ -373,7 +372,7 @@ namespace bl {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
-			triScreen[a] = RenderBL::cam.getScreenCoord(tri[a]);
+			triScreen[a] = GraphicsBL::cam.getScreenCoord(tri[a]);
 		}
 
 		// sort tri pts by y ascending
@@ -391,18 +390,17 @@ namespace bl {
 		}
 
 		// early return if tri out of frame (y-axis)
-		if (triScreen[2][Y] < 0 || triScreen[0][Y] > RenderBL::size[Y]) return;
+		if (triScreen[2][Y] < 0 || triScreen[0][Y] > GraphicsBL::size[Y]) return;
 
 		// get color
 		Vec3f pos = (pts[0]->pos + pts[1]->pos + pts[2]->pos) / 3.0f;
-		Vertex v = { pos, getNormal(), RenderBL::light_ambient };
-		for (auto& l : RenderBL::lights) {
+		Vertex v = { pos, getNormal(), GraphicsBL::light_ambient };
+		for (auto& l : GraphicsBL::lights) {
 			l->getLight(v);
 		}
-		c_min(v.color);
+		notBloom(v.color);
 		v.color -= color_e;
-		c_max(v.color, RenderBL::light_ambient);
-		int color = rgbToDec(v.color);
+		c_max(v.color);
 
 		// change in x per change in y
 		float dx1_y = (float)(triScreen[2][X] - triScreen[0][X]) / (float)(triScreen[2][Y] - triScreen[0][Y]);
@@ -424,7 +422,7 @@ namespace bl {
 
 		// y value of scanline
 		int y = std::max(0, triScreen[0][Y]);
-		int ymax = std::min(triScreen[1][Y], RenderBL::size[Y]);
+		int ymax = std::min(triScreen[1][Y], GraphicsBL::size[Y]);
 
 		// start and end x values of scanline
 		float x1 = (float)triScreen[0][X] + dx1_y * (float)(y - triScreen[0][Y]);
@@ -438,17 +436,17 @@ namespace bl {
 		auto rasterSegment = [&]() {
 			for (y; y < ymax; y++) {
 				int x = std::max(0, (int)x1);
-				int xmax = std::min((int)x2, RenderBL::size[X]);
+				int xmax = std::min((int)x2, GraphicsBL::size[X]);
 
 				float dz_x = (z2 - z1) / (x2 - x1);
 				float z = z1 + dz_x * (x - (int)x1);
 
-				int index = RenderBL::coordsToIndex({ x, y });
+				int index = GraphicsBL::coordsToIndex({ x, y });
 
 				for (x; x < xmax; x++) {
-					if (z < RenderBL::depth[index]) {
-						RenderBL::depth[index] = z;
-						RenderBL::pixels_rgb[index] = v.color;
+					if (z < GraphicsBL::depth[index]) {
+						GraphicsBL::depth[index] = z;
+						GraphicsBL::pixels_rgb[index] = v.color;
 					}
 					index++;
 					z += dz_x;
@@ -465,7 +463,7 @@ namespace bl {
 		rasterSegment();
 
 		// update values for second segment
-		ymax = std::min(triScreen[2][Y], RenderBL::size[Y]);
+		ymax = std::min(triScreen[2][Y], GraphicsBL::size[Y]);
 
 		*dx_y = (float)(triScreen[2][X]- triScreen[1][X]) / (float)(triScreen[2][Y] - triScreen[1][Y]);
 		x1 = (float)triScreen[2][X] - dx1_y * (float)(triScreen[2][Y] - y);
@@ -484,7 +482,7 @@ namespace bl {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
-			triScreen[a] = RenderBL::cam.getScreenCoord(tri[a]);
+			triScreen[a] = GraphicsBL::cam.getScreenCoord(tri[a]);
 		}
 
 		// sort tri pts by y ascending
@@ -505,7 +503,7 @@ namespace bl {
 		}
 
 		// early return if tri out of frame (y-axis)
-		if (triScreen[2][Y] < 0 || triScreen[0][Y] > RenderBL::size[Y]) return;
+		if (triScreen[2][Y] < 0 || triScreen[0][Y] > GraphicsBL::size[Y]) return;
 
 		// change in x per change in y
 		float dx1_y = (float)(triScreen[2][X] - triScreen[0][X]) / (float)(triScreen[2][Y] - triScreen[0][Y]);
@@ -534,7 +532,7 @@ namespace bl {
 
 		// y value of scanline
 		int y = std::max(0, triScreen[0][Y]);
-		int ymax = std::min(triScreen[1][Y], RenderBL::size[Y]);
+		int ymax = std::min(triScreen[1][Y], GraphicsBL::size[Y]);
 
 		// start and end x values of scanline
 		float x1 = (float)triScreen[0][X] + dx1_y * (float)(y - triScreen[0][Y]);
@@ -552,20 +550,23 @@ namespace bl {
 		auto rasterSegment = [&]() {
 			for (y; y < ymax; y++) {
 				int x = std::max(0, (int)x1);
-				int xmax = std::min((int)x2, RenderBL::size[X]);
-
+				int xmax = std::min((int)x2, GraphicsBL::size[X]);
+				
 				float dz_x = (z2 - z1) / (x2 - x1);
 				float z = z1 + dz_x * (x - (int)x1);
 
 				Vec3f dc_x = (c2 - c1) / (x2 - x1);
 				Vec3f c = c1 + dc_x * (x - x1);
 
-				int index = RenderBL::coordsToIndex({ x, y });
+				//GraphicsBL::debug << dc_x << " = ( " << c2 << " - " << c1 << " ) * " << xlen << '\n';
+				//GraphicsBL::debug << dz_x << " = ( " << z2 << " - " << z1 << " ) * " << xlen << '\n';
+
+				int index = GraphicsBL::coordsToIndex({ x, y });
 
 				for (x; x < xmax; x++) {
-					if (z < RenderBL::depth[index]) {
-						RenderBL::depth[index] = z;
-						RenderBL::pixels_rgb[index] = c;
+					if (z < GraphicsBL::depth[index]) {
+						GraphicsBL::depth[index] = z;
+						GraphicsBL::pixels_rgb[index] = c;
 					}
 					index++;
 					z += dz_x;
@@ -580,13 +581,14 @@ namespace bl {
 				c1 += dc1_y;
 				c2 += dc2_y;
 			}
+			GraphicsBL::debug << '\n';
 		};
 
 		// draw first tri segment
 		rasterSegment();
 
 		// update values for second segment
-		ymax = std::min(triScreen[2][Y], RenderBL::size[Y]);
+		ymax = std::min(triScreen[2][Y], GraphicsBL::size[Y]);
 
 		*dx_y = (float)(triScreen[2][X] - triScreen[1][X]) / (float)(triScreen[2][Y] - triScreen[1][Y]);
 		x1 = (float)triScreen[2][X] - dx1_y * (float)(triScreen[2][Y] - y);
@@ -609,7 +611,7 @@ namespace bl {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
-			triScreen[a] = RenderBL::cam.getScreenCoord(tri[a]);
+			triScreen[a] = GraphicsBL::cam.getScreenCoord(tri[a]);
 		}
 
 		// sort tri pts by y ascending
@@ -630,7 +632,7 @@ namespace bl {
 		}
 
 		// early return if tri out of frame (y-axis)
-		if (triScreen[2][Y] < 0 || triScreen[0][Y] > RenderBL::size[Y]) return;
+		if (triScreen[2][Y] < 0 || triScreen[0][Y] > GraphicsBL::size[Y]) return;
 
 		// divide tri_c by z to account for perspective
 		float tri_zinv[3] = { 1.0f / tri[0][Z], 1.0f / tri[1][Z], 1.0f / tri[2][Z] };
@@ -680,7 +682,7 @@ namespace bl {
 
 		// y value of scanline
 		int y = std::max(0, triScreen[0][Y]);
-		int ymax = std::min(triScreen[1][Y], RenderBL::size[Y]);
+		int ymax = std::min(triScreen[1][Y], GraphicsBL::size[Y]);
 
 		// start and end x values of scanline
 		float x1 = (float)triScreen[0][X] + dx1_y * (float)(y - triScreen[0][Y]);
@@ -706,7 +708,7 @@ namespace bl {
 		auto rasterSegment = [&]() {
 			for (y; y < ymax; y++) {
 				int x = std::max(0, (int)x1);
-				int xmax = std::min((int)x2, RenderBL::size[X]);
+				int xmax = std::min((int)x2, GraphicsBL::size[X]);
 
 				float dz_x = (z2 - z1) / (x2 - x1);
 				float z = z1 + dz_x * (x - (int)x1);
@@ -720,19 +722,19 @@ namespace bl {
 				Vec3f dn_x = (n2 - n1) / (x2 - x1);
 				Vec3f n = n1 + dn_x * (x - (int)x1);
 
-				int index = RenderBL::coordsToIndex({ x, y });
+				int index = GraphicsBL::coordsToIndex({ x, y });
 
 				for (x; x < xmax; x++) {
-					if (z < RenderBL::depth[index]) {
-						RenderBL::depth[index] = z;
-						Vertex v = { p / zinv, getNormalized(n), RenderBL::light_ambient };
-						for (auto& l : RenderBL::lights) {
+					if (z < GraphicsBL::depth[index]) {
+						GraphicsBL::depth[index] = z;
+						Vertex v = { p / zinv, getNormalized(n), GraphicsBL::light_ambient };
+						for (auto& l : GraphicsBL::lights) {
 							l->getLight(v);
 						}
-						c_min(v.color);
+						notBloom(v.color);
 						v.color -= color_e;
-						c_max(v.color, RenderBL::light_ambient);
-						RenderBL::pixels_rgb[index] = v.color;// rgbToDec(v.color);
+						c_max(v.color);
+						GraphicsBL::pixels_rgb[index] = v.color;
 					}
 					index++;
 					z += dz_x;
@@ -761,7 +763,7 @@ namespace bl {
 		rasterSegment();
 
 		// update values for second segment
-		ymax = std::min(triScreen[2][Y], RenderBL::size[Y]);
+		ymax = std::min(triScreen[2][Y], GraphicsBL::size[Y]);
 
 		*dx_y = (float)(triScreen[2][X] - triScreen[1][X]) / (float)(triScreen[2][Y] - triScreen[1][Y]);
 		x1 = (float)triScreen[2][X] - dx1_y * (float)(triScreen[2][Y] - y);

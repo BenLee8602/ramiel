@@ -1,8 +1,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include "entity.h"
-#include "render.h"
+#include "graphics.h"
 
 namespace bl {
 
@@ -84,13 +83,13 @@ namespace bl {
 
 	void Entity::calcVertexColor() {
 		for (auto& v : vertices) {
-			v.color = RenderBL::light_ambient;
-			for (auto& l : RenderBL::lights) {
+			v.color = GraphicsBL::light_ambient;
+			for (auto& l : GraphicsBL::lights) {
 				l->getLight(v);
 			}
-			c_min(v.color);
+			notBloom(v.color);
 			v.color -= color;
-			c_max(v.color, RenderBL::light_ambient);
+			c_max(v.color);
 		}
 	}
 

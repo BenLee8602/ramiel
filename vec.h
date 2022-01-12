@@ -82,6 +82,7 @@ namespace bl {
 	void c_max(Vec3f& color, const Vec3f& max = vec3f_0);
 	void c_clamp(Vec3f& color);
 	int rgbToDec(const Vec3f& color);
+	void notBloom(Vec3f& in);
 
 
 	struct Vertex {

@@ -25,8 +25,8 @@ namespace bl {
 		const Vec3f& getpos() const;
 		const Vec3f& getrot() const;
 
-		void move(float _x, float _y, float _z);
-		void rotate(float _x, float _y, float _z);
+		void move(float x, float y, float z);
+		void rotate(float x, float y, float z);
 
 		Vec3f getCameraCoord(Vec3f in) const;
 		Vec2 getScreenCoord(const Vec3f& in) const;

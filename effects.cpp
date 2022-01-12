@@ -1,4 +1,4 @@
-#include "render.h"
+#include "graphics.h"
 
 namespace bl {
 
@@ -26,9 +26,9 @@ namespace bl {
 	void ColorShift::applyEffect() const {
 		float s2 = 1.0f - strength;
 		Vec3f c = color * strength;
-		for (size_t i = 0; i < RenderBL::bufferSize; i++) {
-			RenderBL::pixels_rgb[i] *= s2;
-			RenderBL::pixels_rgb[i] += c;
+		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
+			GraphicsBL::pixels_rgb[i] *= s2;
+			GraphicsBL::pixels_rgb[i] += c;
 		}
 	}
 
@@ -60,51 +60,54 @@ namespace bl {
 
 	void Fog::applyEffect() const {
 		if (!isEnabled()) return;
-		for (size_t i = 0; i < RenderBL::bufferSize; i++) {
-			if (RenderBL::depth[i] < start) continue;
-			float shift = std::min(1.0f, (RenderBL::depth[i] - start) * fac);
-			RenderBL::pixels_rgb[i] *= 1.0f - shift;
-			RenderBL::pixels_rgb[i] += this->color * shift;
+		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
+			if (GraphicsBL::depth[i] < start) continue;
+			float shift = std::min(1.0f, (GraphicsBL::depth[i] - start) * fac);
+			GraphicsBL::pixels_rgb[i] *= 1.0f - shift;
+			GraphicsBL::pixels_rgb[i] += this->color * shift;
 		}
 	}
 
 
 	void Greyscale::applyEffect() const {
 		if (!isEnabled()) return;
-		for (size_t i = 0; i < RenderBL::bufferSize; i++) {
-			RenderBL::pixels_rgb[i] = ((
-				RenderBL::pixels_rgb[i][R] +
-				RenderBL::pixels_rgb[i][G] +
-				RenderBL::pixels_rgb[i][B]) / 3.0f
+		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
+			GraphicsBL::pixels_rgb[i] = ((
+				GraphicsBL::pixels_rgb[i][R] +
+				GraphicsBL::pixels_rgb[i][G] +
+				GraphicsBL::pixels_rgb[i][B]) / 3.0f
 			);
 		}
 	}
 
 
+	int Blur::getRad() const { return rad; }
+	void Blur::setRad(int rad) { this->rad = rad; }
+
 	void Blur::applyEffect() const {
 		if (!isEnabled()) return;
 		float r = 1.0f / (2 * rad + 1);
-		Vec3f* buff = new Vec3f[RenderBL::bufferSize]();
+		Vec3f* buff = new Vec3f[GraphicsBL::bufferSize]();
 
-		for (int _y = 0; _y < RenderBL::size[Y]; _y++) {
-			int y_idx = _y * RenderBL::size[X];
-			Vec3f acc = RenderBL::pixels_rgb[y_idx] * rad;
-			for (int i = 0; i <= rad; i++) acc += RenderBL::pixels_rgb[y_idx + i];
-			for (int _x = 0; _x < RenderBL::size[X]; _x++) {
-				buff[y_idx + _x] = acc * r;
-				acc -= RenderBL::pixels_rgb[y_idx + std::max(0, _x - rad)];
-				acc += RenderBL::pixels_rgb[y_idx + std::min(RenderBL::size[X] - 1, _x + rad + 1)];
+		for (int y = 0; y < GraphicsBL::size[Y]; y++) {
+			int y_idx = y * GraphicsBL::size[X];
+			Vec3f acc = GraphicsBL::pixels_rgb[y_idx] * rad;
+			for (int i = 0; i <= rad; i++) acc += GraphicsBL::pixels_rgb[y_idx + i];
+			for (int x = 0; x < GraphicsBL::size[X]; x++) {
+				buff[y_idx + x] = acc * r;
+				acc -= GraphicsBL::pixels_rgb[y_idx + std::max(0, x - rad)];
+				acc += GraphicsBL::pixels_rgb[y_idx + std::min(GraphicsBL::size[X] - 1, x + rad + 1)];
 			}
 		}
 
-		for (int _x = 0; _x < RenderBL::size[X]; _x++) {
-			Vec3f acc = buff[_x] * rad;
-			for (int i = 0; i <= rad; i++) acc += buff[i * RenderBL::size[X] + _x];
-			for (int _y = 0; _y < RenderBL::size[Y]; _y++) {
-				int y_idx = _y * RenderBL::size[X];
-				RenderBL::pixels_rgb[y_idx + _x] = acc * r;
-				acc -= buff[std::max(0, _y - rad) * RenderBL::size[X] + _x];
-				acc += buff[std::min(RenderBL::size[Y] - 1, _y + rad + 1) * RenderBL::size[X] + _x];
+		for (int x = 0; x < GraphicsBL::size[X]; x++) {
+			Vec3f acc = buff[x] * rad;
+			for (int i = 0; i <= rad; i++) acc += buff[i * GraphicsBL::size[X] + x];
+			for (int y = 0; y < GraphicsBL::size[Y]; y++) {
+				int y_idx = y * GraphicsBL::size[X];
+				GraphicsBL::pixels_rgb[y_idx + x] = acc * r;
+				acc -= buff[std::max(0, y - rad) * GraphicsBL::size[X] + x];
+				acc += buff[std::min(GraphicsBL::size[Y] - 1, y + rad + 1) * GraphicsBL::size[X] + x];
 			}
 		}
 
