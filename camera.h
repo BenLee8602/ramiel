@@ -31,7 +31,7 @@ namespace bl {
 		Vec3f getCameraCoord(Vec3f in) const;
 		Vec2 getScreenCoord(const Vec3f& in) const;
 
-		void getControls();
+		void setControls(bool controls[12]);
 	};
 
 }

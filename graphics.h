@@ -11,26 +11,32 @@
 namespace bl {
 
 	class GraphicsBL {
+	public:
 		static float  dtime;
 		static Camera cam;
 
+	private:
 		static Vec2 size;
 		static Vec2 mid;
 		static int  bufferSize;
 
+	private:
 		static std::unique_ptr<int[]>   pixels;
 		static std::unique_ptr<Vec3f[]> pixels_rgb;
 		static std::unique_ptr<float[]> depth;
 
+	private:
 		static std::vector<std::unique_ptr<Entity>> entities;
 		static std::vector<std::unique_ptr<Light>>  lights;
 		static std::vector<std::unique_ptr<Effect>> effects;
 		static Vec3f light_ambient;
 		static Vec3f bg_color;
 		
+	public:
 		static const float znear;
 		static const float zfar;
 
+	private:
 		static std::ofstream debug;
 
 	public:

@@ -45,7 +45,6 @@ namespace bl {
 		std::fill(pixels_rgb.get(), pixels_rgb.get() + bufferSize, bg_color);
 		std::fill(depth.get(), depth.get() + bufferSize, zfar);
 		GraphicsBL::dtime = dtime;
-		cam.getControls();
 		cam.calcTrigValues();
 		//lights[0]->move(cam.getpos()); // temp
 		for (auto& e : entities) e->draw();

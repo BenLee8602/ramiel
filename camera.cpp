@@ -2,19 +2,6 @@
 #include <cmath>
 #include "graphics.h"
 
-#define KEY_Q     0x51
-#define KEY_W     0x57
-#define KEY_A     0x41
-#define KEY_S     0x53
-#define KEY_D     0x44
-#define KEY_UP    0x26
-#define KEY_DOWN  0x28
-#define KEY_LEFT  0x25
-#define KEY_RIGHT 0x27
-#define KEY_SHIFT 0x10
-#define KEY_CTRL  0x11
-#define KEY_SPACE 0x20
-
 
 namespace bl {
 
@@ -105,70 +92,71 @@ namespace bl {
 		return out;
 	}
 
-	void Camera::getControls() {
+
+	void Camera::setControls(bool controls[12]) {
 		float camPosSpeed_frame = camPosSpeed;
-		if (((unsigned short)GetKeyState(KEY_SHIFT)) >> 15) {
+		if (controls[0]) {
 			camPosSpeed_frame *= 10.0f;
 		}
 
 		// reset pos and rot
-		if (((unsigned short)GetKeyState(KEY_Q)) >> 15) {
+		if (controls[1]) {
 			reset();
 		}
-		
+
 		// move left
-		if (((unsigned short)GetKeyState(KEY_A)) >> 15) {
+		if (controls[2]) {
 			pos[X] -= GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
 			pos[Z] -= GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
 		}
 
 		// move right
-		if (((unsigned short)GetKeyState(KEY_D)) >> 15) {
+		if (controls[3]) {
 			pos[X] += GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
 			pos[Z] += GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
 		}
 
 		// move down
-		if (((unsigned short)GetKeyState(KEY_CTRL)) >> 15) {
+		if (controls[4]) {
 			pos[Y] -= GraphicsBL::dtime * camPosSpeed_frame;
 		}
 
 		// move up
-		if (((unsigned short)GetKeyState(KEY_SPACE)) >> 15) {
+		if (controls[5]) {
 			pos[Y] += GraphicsBL::dtime * camPosSpeed_frame;
 		}
 
 		// move backward
-		if (((unsigned short)GetKeyState(KEY_S)) >> 15) {
+		if (controls[6]) {
 			pos[X] += GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
 			pos[Y] += GraphicsBL::dtime * camPosSpeed_frame * -sin[X];
 			pos[Z] -= GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
 		}
 
 		// move forward
-		if (((unsigned short)GetKeyState(KEY_W)) >> 15) {
+		if (controls[7]) {
 			pos[X] -= GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
 			pos[Y] -= GraphicsBL::dtime * camPosSpeed_frame * -sin[X];
 			pos[Z] += GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
 		}
 
 		// turn right
-		if (((unsigned short)GetKeyState(KEY_RIGHT)) >> 15) {
+		if (controls[8]) {
 			rot[Y] -= GraphicsBL::dtime * camRotSpeed;
 		}
 
 		// turn left
-		if (((unsigned short)GetKeyState(KEY_LEFT)) >> 15) {
+		if (controls[9]) {
 			rot[Y] += GraphicsBL::dtime * camRotSpeed;
 		}
 
 		// turn down
-		if (((unsigned short)GetKeyState(KEY_DOWN)) >> 15) {
+		if (controls[10]) {
 			if (rot[X] > -1.57079f) rot[X] -= GraphicsBL::dtime * camRotSpeed;
 		}
 
 		// turn up
-		if (((unsigned short)GetKeyState(KEY_UP)) >> 15) {
+		if (controls[11]) {
 			if (rot[X] < 1.57079f) rot[X] += GraphicsBL::dtime * camRotSpeed;
 		}
 	}

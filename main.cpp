@@ -69,12 +69,10 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	float dtime = 0.0f;
 
 	// add objects and lighting to scene
-	//GraphicsBL::addLight(new Light_Pt({ 255, 0, 0 }));
-	//GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX));
 
 	//*  LIGHTING
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
-	GraphicsBL::addLight(new Light_Dir({ 255, 0, 255 }));
+	GraphicsBL::addLight(new Light_Dir({ 255, 0, 0 }));
 
 	const ShadingType st = ShadingType::PIXEL;
 	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -2.0, 0, 0 }, {  25,  25,  25 }));
@@ -113,6 +111,23 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
+
+		// set controls
+		bool keysPressed[12] = {
+			(unsigned short)GetKeyState(VK_SHIFT)   >> 15,  // move cam faster
+			(unsigned short)GetKeyState(0x51)       >> 15,  // reset pos and rot
+			(unsigned short)GetKeyState(0x41)       >> 15,  // move left
+			(unsigned short)GetKeyState(0x44)       >> 15,  // move right
+			(unsigned short)GetKeyState(VK_CONTROL) >> 15,  // move down
+			(unsigned short)GetKeyState(VK_SPACE)   >> 15,  // move up
+			(unsigned short)GetKeyState(0x53)       >> 15,  // move backward
+			(unsigned short)GetKeyState(0x57)       >> 15,  // move forward
+			(unsigned short)GetKeyState(VK_RIGHT)   >> 15,  // turn right
+			(unsigned short)GetKeyState(VK_LEFT)    >> 15,  // turn left
+			(unsigned short)GetKeyState(VK_DOWN)    >> 15,  // turn down
+			(unsigned short)GetKeyState(VK_UP)      >> 15   // turn up
+		};
+		GraphicsBL::cam.setControls(keysPressed);
 
 		// render frame
 		const void* output = GraphicsBL::renderFrame(dtime);
