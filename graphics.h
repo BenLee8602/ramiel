@@ -13,12 +13,13 @@ namespace bl {
 	class GraphicsBL {
 	public:
 		static float  dtime;
-		static Camera cam;
+		static Camera camera;
+		static Bloom  bloom;
 
 	private:
-		static Vec2 size;
-		static Vec2 mid;
-		static int  bufferSize;
+		static Vec2   size;
+		static Vec2   mid;
+		static size_t bufferSize;
 
 	private:
 		static std::unique_ptr<int[]>   pixels;
@@ -31,10 +32,6 @@ namespace bl {
 		static std::vector<std::unique_ptr<Effect>> effects;
 		static Vec3f light_ambient;
 		static Vec3f bg_color;
-		
-	public:
-		static const float znear;
-		static const float zfar;
 
 	private:
 		static std::ofstream debug;
@@ -67,6 +64,7 @@ namespace bl {
 		friend class Fog;
 		friend class Greyscale;
 		friend class Blur;
+		friend class Bloom;
 	};
 
 }

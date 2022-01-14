@@ -23,12 +23,11 @@ namespace bl {
 		this->strength = std::min(std::max(0.0f, strength), 1.0f);
 	}
 
-	void ColorShift::applyEffect() const {
+	void ColorShift::applyEffect(Vec3f* in, Vec3f* out) const {
 		float s2 = 1.0f - strength;
 		Vec3f c = color * strength;
 		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
-			GraphicsBL::pixels_rgb[i] *= s2;
-			GraphicsBL::pixels_rgb[i] += c;
+			out[i] = in[i] * s2 + c;
 		}
 	}
 
@@ -58,45 +57,40 @@ namespace bl {
 		this->color = color;
 	}
 
-	void Fog::applyEffect() const {
+	void Fog::applyEffect(Vec3f* in, Vec3f* out) const {
 		if (!isEnabled()) return;
 		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
 			if (GraphicsBL::depth[i] < start) continue;
 			float shift = std::min(1.0f, (GraphicsBL::depth[i] - start) * fac);
-			GraphicsBL::pixels_rgb[i] *= 1.0f - shift;
-			GraphicsBL::pixels_rgb[i] += this->color * shift;
+			out[i] = in[i] * (1.0f - shift) + color * shift;
 		}
 	}
 
 
-	void Greyscale::applyEffect() const {
+	void Greyscale::applyEffect(Vec3f* in, Vec3f* out) const {
 		if (!isEnabled()) return;
 		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
-			GraphicsBL::pixels_rgb[i] = ((
-				GraphicsBL::pixels_rgb[i][R] +
-				GraphicsBL::pixels_rgb[i][G] +
-				GraphicsBL::pixels_rgb[i][B]) / 3.0f
-			);
+			out[i] = ((in[i][R] + in[i][G] + in[i][B]) / 3.0f);
 		}
 	}
 
 
 	int Blur::getRad() const { return rad; }
-	void Blur::setRad(int rad) { this->rad = rad; }
+	void Blur::setRad(int rad) { this->rad = std::max(0, rad); }
 
-	void Blur::applyEffect() const {
-		if (!isEnabled()) return;
+	void Blur::applyEffect(Vec3f* in, Vec3f* out) const {
+		if (!(isEnabled() && rad)) return;
 		float r = 1.0f / (2 * rad + 1);
 		Vec3f* buff = new Vec3f[GraphicsBL::bufferSize]();
 
 		for (int y = 0; y < GraphicsBL::size[Y]; y++) {
 			int y_idx = y * GraphicsBL::size[X];
-			Vec3f acc = GraphicsBL::pixels_rgb[y_idx] * rad;
-			for (int i = 0; i <= rad; i++) acc += GraphicsBL::pixels_rgb[y_idx + i];
+			Vec3f acc = in[y_idx] * rad;
+			for (int i = 0; i <= rad; i++) acc += in[y_idx + i];
 			for (int x = 0; x < GraphicsBL::size[X]; x++) {
 				buff[y_idx + x] = acc * r;
-				acc -= GraphicsBL::pixels_rgb[y_idx + std::max(0, x - rad)];
-				acc += GraphicsBL::pixels_rgb[y_idx + std::min(GraphicsBL::size[X] - 1, x + rad + 1)];
+				acc -= in[y_idx + std::max(0, x - rad)];
+				acc += in[y_idx + std::min(GraphicsBL::size[X] - 1, x + rad + 1)];
 			}
 		}
 
@@ -105,13 +99,37 @@ namespace bl {
 			for (int i = 0; i <= rad; i++) acc += buff[i * GraphicsBL::size[X] + x];
 			for (int y = 0; y < GraphicsBL::size[Y]; y++) {
 				int y_idx = y * GraphicsBL::size[X];
-				GraphicsBL::pixels_rgb[y_idx + x] = acc * r;
+				out[y_idx + x] = acc * r;
 				acc -= buff[std::max(0, y - rad) * GraphicsBL::size[X] + x];
 				acc += buff[std::min(GraphicsBL::size[Y] - 1, y + rad + 1) * GraphicsBL::size[X] + x];
 			}
 		}
 
 		delete[] buff;
+	}
+
+
+	void Bloom::applyEffect(Vec3f* in, Vec3f* out) const {
+		if (!(isEnabled() && getRad())) return;
+
+		Vec3f* extra   = new Vec3f[GraphicsBL::bufferSize];
+		Vec3f* blurred = new Vec3f[GraphicsBL::bufferSize];
+
+		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
+			extra[i] = GraphicsBL::pixels_rgb[i] - 255.0f;
+			c_max(extra[i]);
+		}
+
+		Blur::applyEffect(extra, blurred);
+
+		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
+			if (!extra[i][R] && !extra[i][G] && !extra[i][G]) {
+				GraphicsBL::pixels_rgb[i] += blurred[i];
+			}
+		}
+
+		delete[] extra;
+		delete[] blurred;
 	}
 
 }

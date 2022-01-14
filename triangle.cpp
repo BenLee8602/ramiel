@@ -14,27 +14,27 @@ namespace bl {
 		// conv from world-space to camera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = GraphicsBL::cam.getCameraCoord(pts[a]->pos);
+			triCam[a] = GraphicsBL::camera.getCameraCoord(pts[a]->pos);
 		}
 
-		// only draw tris facing camera
-		Vec3f normalCam = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
-		if (dotProduct(triCam[0], normalCam) < 0.0f) {
+		// only draw tris facing cameraera
+		Vec3f normalcamera = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
+		if (dotProduct(triCam[0], normalcamera) < 0.0f) {
 			if (clip_f(triCam, color_e)) raster_f(triCam, color_e);
 		}
 	}
 
 
 	void Triangle::draw_v() const {
-		// conv from world-space to camera-space
+		// conv from world-space to cameraera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = GraphicsBL::cam.getCameraCoord(pts[a]->pos);
+			triCam[a] = GraphicsBL::camera.getCameraCoord(pts[a]->pos);
 		}
 
-		// only draw tris facing camera
-		Vec3f normalCam = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
-		if (dotProduct(triCam[0], normalCam) < 0.0f) {
+		// only draw tris facing cameraera
+		Vec3f normalcamera = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
+		if (dotProduct(triCam[0], normalcamera) < 0.0f) {
 			Vec3f tri_c[3] = { pts[0]->color, pts[1]->color, pts[2]->color }; // vertex colors
 			if (clip_v(triCam, tri_c)) raster_v(triCam, tri_c);
 		}
@@ -42,15 +42,15 @@ namespace bl {
 
 
 	void Triangle::draw_p(const Vec3f& color_e) const {
-		// conv from world-space to camera-space
+		// conv from world-space to cameraera-space
 		Vec3f triCam[3] = { 0.0f };
 		for (int a = 0; a < 3; a++) {
-			triCam[a] = GraphicsBL::cam.getCameraCoord(pts[a]->pos);
+			triCam[a] = GraphicsBL::camera.getCameraCoord(pts[a]->pos);
 		}
 
-		// only draw tris facing camera
-		Vec3f normalCam = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
-		if (dotProduct(triCam[0], normalCam) < 0.0f) {
+		// only draw tris facing cameraera
+		Vec3f normalcamera = crossProduct(triCam[1] - triCam[0], triCam[2] - triCam[0]);
+		if (dotProduct(triCam[0], normalcamera) < 0.0f) {
 			Vertex tri_c[3] = { *pts[0], *pts[1], *pts[2] };
 			if (clip_p(triCam, tri_c, color_e)) raster_p(triCam, tri_c, color_e);
 		}
@@ -73,8 +73,8 @@ namespace bl {
 
 		auto clip1 = [&]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
-			float c2 = (GraphicsBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
+			float c1 = (GraphicsBL::camera.znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
+			float c2 = (GraphicsBL::camera.znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
 
 			// new tri formed from quad
 			Vec3f temp[3] = { 0.0f };
@@ -83,10 +83,10 @@ namespace bl {
 			// interpolate x and y
 			temp[0][X] = tri[1][X] + (tri[0][X] - tri[1][X]) * c1;
 			temp[0][Y] = tri[1][Y] + (tri[0][Y] - tri[1][Y]) * c1;
-			temp[0][Z] = GraphicsBL::znear;
+			temp[0][Z] = GraphicsBL::camera.znear;
 			temp[1][X] = tri[1][X] + (tri[2][X] - tri[1][X]) * c2;
 			temp[1][Y] = tri[1][Y] + (tri[2][Y] - tri[1][Y]) * c2;
-			temp[1][Z] = GraphicsBL::znear;
+			temp[1][Z] = GraphicsBL::camera.znear;
 			temp[2] = tri[2];
 
 			// update original tri
@@ -98,22 +98,22 @@ namespace bl {
 
 		auto clip2 = [&]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
-			float c2 = (GraphicsBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
+			float c1 = (GraphicsBL::camera.znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
+			float c2 = (GraphicsBL::camera.znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
 
 			// interpolate x and y
 			tri[0][X] = tri[0][X] + (tri[1][X] - tri[0][X]) * c1;
 			tri[0][Y] = tri[0][Y] + (tri[1][Y] - tri[0][Y]) * c1;
-			tri[0][Z] = GraphicsBL::znear;
+			tri[0][Z] = GraphicsBL::camera.znear;
 			tri[2][X] = tri[2][X] + (tri[1][X] - tri[2][X]) * c2;
 			tri[2][Y] = tri[2][Y] + (tri[1][Y] - tri[2][Y]) * c2;
-			tri[2][Z] = GraphicsBL::znear;
+			tri[2][Z] = GraphicsBL::camera.znear;
 		};
 
-		if (tri[0][Z] < GraphicsBL::znear) {
-			if (tri[1][Z] < GraphicsBL::znear) {
+		if (tri[0][Z] < GraphicsBL::camera.znear) {
+			if (tri[1][Z] < GraphicsBL::camera.znear) {
 				// case 2
-				if (tri[2][Z] < GraphicsBL::znear) {
+				if (tri[2][Z] < GraphicsBL::camera.znear) {
 					return false;
 				}
 				// case 6
@@ -123,7 +123,7 @@ namespace bl {
 				}
 			}
 			// case 8
-			else if (tri[2][Z] < GraphicsBL::znear) {
+			else if (tri[2][Z] < GraphicsBL::camera.znear) {
 				clip2();
 			}
 			// case 3
@@ -133,9 +133,9 @@ namespace bl {
 			}
 		}
 
-		else if (tri[1][Z] < GraphicsBL::znear) {
+		else if (tri[1][Z] < GraphicsBL::camera.znear) {
 			// case 7
-			if (tri[2][Z] < GraphicsBL::znear) {
+			if (tri[2][Z] < GraphicsBL::camera.znear) {
 				std::swap(tri[1], tri[0]);
 				clip2();
 			}
@@ -146,7 +146,7 @@ namespace bl {
 		}
 
 		// case 5
-		else if (tri[2][Z] < GraphicsBL::znear) {
+		else if (tri[2][Z] < GraphicsBL::camera.znear) {
 			std::swap(tri[1], tri[2]);
 			clip1();
 		}
@@ -161,8 +161,8 @@ namespace bl {
 
 		auto clip1 = [&]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
-			float c2 = (GraphicsBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
+			float c1 = (GraphicsBL::camera.znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
+			float c2 = (GraphicsBL::camera.znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
 
 			// new tri formed from quad
 			Vec3f temp[3] = { 0.0f };
@@ -171,10 +171,10 @@ namespace bl {
 			// interpolate x and y
 			temp[0][X] = tri[1][X] + (tri[0][X] - tri[1][X]) * c1;
 			temp[0][Y] = tri[1][Y] + (tri[0][Y] - tri[1][Y]) * c1;
-			temp[0][Z] = GraphicsBL::znear;
+			temp[0][Z] = GraphicsBL::camera.znear;
 			temp[1][X] = tri[1][X] + (tri[2][X] - tri[1][X]) * c2;
 			temp[1][Y] = tri[1][Y] + (tri[2][Y] - tri[1][Y]) * c2;
-			temp[1][Z] = GraphicsBL::znear;
+			temp[1][Z] = GraphicsBL::camera.znear;
 			temp[2] = tri[2];
 
 			// interpolate color
@@ -192,26 +192,26 @@ namespace bl {
 
 		auto clip2 = [&]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
-			float c2 = (GraphicsBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
+			float c1 = (GraphicsBL::camera.znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
+			float c2 = (GraphicsBL::camera.znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
 
 			// interpolate x and y
 			tri[0][X] = tri[0][X] + (tri[1][X] - tri[0][X]) * c1;
 			tri[0][Y] = tri[0][Y] + (tri[1][Y] - tri[0][Y]) * c1;
-			tri[0][Z] = GraphicsBL::znear;
+			tri[0][Z] = GraphicsBL::camera.znear;
 			tri[2][X] = tri[2][X] + (tri[1][X] - tri[2][X]) * c2;
 			tri[2][Y] = tri[2][Y] + (tri[1][Y] - tri[2][Y]) * c2;
-			tri[2][Z] = GraphicsBL::znear;
+			tri[2][Z] = GraphicsBL::camera.znear;
 
 			// interpolate color
 			tri_c[0] = tri_c[0] + (tri_c[1] - tri_c[0]) * c1;
 			tri_c[2] = tri_c[2] + (tri_c[1] - tri_c[2]) * c2;
 		};
 
-		if (tri[0][Z] < GraphicsBL::znear) {
-			if (tri[1][Z] < GraphicsBL::znear) {
+		if (tri[0][Z] < GraphicsBL::camera.znear) {
+			if (tri[1][Z] < GraphicsBL::camera.znear) {
 				// case 2
-				if (tri[2][Z] < GraphicsBL::znear) {
+				if (tri[2][Z] < GraphicsBL::camera.znear) {
 					return false;
 				}
 				// case 6
@@ -222,7 +222,7 @@ namespace bl {
 				}
 			}
 			// case 8
-			else if (tri[2][Z] < GraphicsBL::znear) {
+			else if (tri[2][Z] < GraphicsBL::camera.znear) {
 				clip2();
 			}
 			// case 3
@@ -233,9 +233,9 @@ namespace bl {
 			}
 		}
 
-		else if (tri[1][Z] < GraphicsBL::znear) {
+		else if (tri[1][Z] < GraphicsBL::camera.znear) {
 			// case 7
-			if (tri[2][Z] < GraphicsBL::znear) {
+			if (tri[2][Z] < GraphicsBL::camera.znear) {
 				std::swap(tri[1], tri[0]);
 				std::swap(tri_c[1], tri_c[0]);
 				clip2();
@@ -247,7 +247,7 @@ namespace bl {
 		}
 
 		// case 5
-		else if (tri[2][Z] < GraphicsBL::znear) {
+		else if (tri[2][Z] < GraphicsBL::camera.znear) {
 			std::swap(tri[1], tri[2]);
 			std::swap(tri_c[1], tri_c[2]);
 			clip1();
@@ -263,8 +263,8 @@ namespace bl {
 
 		auto clip1 = [&]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
-			float c2 = (GraphicsBL::znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
+			float c1 = (GraphicsBL::camera.znear - tri[1][Z]) / (tri[0][Z] - tri[1][Z]);
+			float c2 = (GraphicsBL::camera.znear - tri[1][Z]) / (tri[2][Z] - tri[1][Z]);
 
 			// new tri formed from quad
 			Vec3f temp[3] = { 0.0f };
@@ -273,10 +273,10 @@ namespace bl {
 			// interpolate x and y
 			temp[0][X] = tri[1][X] + (tri[0][X] - tri[1][X]) * c1;
 			temp[0][Y] = tri[1][Y] + (tri[0][Y] - tri[1][Y]) * c1;
-			temp[0][Z] = GraphicsBL::znear;
+			temp[0][Z] = GraphicsBL::camera.znear;
 			temp[1][X] = tri[1][X] + (tri[2][X] - tri[1][X]) * c2;
 			temp[1][Y] = tri[1][Y] + (tri[2][Y] - tri[1][Y]) * c2;
-			temp[1][Z] = GraphicsBL::znear;
+			temp[1][Z] = GraphicsBL::camera.znear;
 			temp[2] = tri[2];
 
 			// interpolate vertices
@@ -298,16 +298,16 @@ namespace bl {
 
 		auto clip2 = [&]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
-			float c2 = (GraphicsBL::znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
+			float c1 = (GraphicsBL::camera.znear - tri[0][Z]) / (tri[1][Z] - tri[0][Z]);
+			float c2 = (GraphicsBL::camera.znear - tri[2][Z]) / (tri[1][Z] - tri[2][Z]);
 
 			// interpolate x and y
 			tri[0][X] = tri[0][X] + (tri[1][X] - tri[0][X]) * c1;
 			tri[0][Y] = tri[0][Y] + (tri[1][Y] - tri[0][Y]) * c1;
-			tri[0][Z] = GraphicsBL::znear;
+			tri[0][Z] = GraphicsBL::camera.znear;
 			tri[2][X] = tri[2][X] + (tri[1][X] - tri[2][X]) * c2;
 			tri[2][Y] = tri[2][Y] + (tri[1][Y] - tri[2][Y]) * c2;
-			tri[2][Z] = GraphicsBL::znear;
+			tri[2][Z] = GraphicsBL::camera.znear;
 
 			// interpolate vertices
 			tri_c[0].pos = tri_c[0].pos + (tri_c[1].pos - tri_c[0].pos) * c1;
@@ -317,10 +317,10 @@ namespace bl {
 			tri_c[2].normal = tri_c[2].normal + (tri_c[1].normal - tri_c[2].normal) * c2;
 		};
 
-		if (tri[0][Z] < GraphicsBL::znear) {
-			if (tri[1][Z] < GraphicsBL::znear) {
+		if (tri[0][Z] < GraphicsBL::camera.znear) {
+			if (tri[1][Z] < GraphicsBL::camera.znear) {
 				// case 2
-				if (tri[2][Z] < GraphicsBL::znear) {
+				if (tri[2][Z] < GraphicsBL::camera.znear) {
 					return false;
 				}
 				// case 6
@@ -331,7 +331,7 @@ namespace bl {
 				}
 			}
 			// case 8
-			else if (tri[2][Z] < GraphicsBL::znear) {
+			else if (tri[2][Z] < GraphicsBL::camera.znear) {
 				clip2();
 			}
 			// case 3
@@ -342,9 +342,9 @@ namespace bl {
 			}
 		}
 
-		else if (tri[1][Z] < GraphicsBL::znear) {
+		else if (tri[1][Z] < GraphicsBL::camera.znear) {
 			// case 7
-			if (tri[2][Z] < GraphicsBL::znear) {
+			if (tri[2][Z] < GraphicsBL::camera.znear) {
 				std::swap(tri[1], tri[0]);
 				std::swap(tri_c[1], tri_c[0]);
 				clip2();
@@ -356,7 +356,7 @@ namespace bl {
 		}
 
 		// case 5
-		else if (tri[2][Z] < GraphicsBL::znear) {
+		else if (tri[2][Z] < GraphicsBL::camera.znear) {
 			std::swap(tri[1], tri[2]);
 			std::swap(tri_c[1], tri_c[2]);
 			clip1();
@@ -372,7 +372,7 @@ namespace bl {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
-			triScreen[a] = GraphicsBL::cam.getScreenCoord(tri[a]);
+			triScreen[a] = GraphicsBL::camera.getScreenCoord(tri[a]);
 		}
 
 		// sort tri pts by y ascending
@@ -399,7 +399,6 @@ namespace bl {
 			l->getLight(v);
 		}
 		v.color *= color_e;
-		notBloom(v.color);
 
 		// change in x per change in y
 		float dx1_y = (float)(triScreen[2][X] - triScreen[0][X]) / (float)(triScreen[2][Y] - triScreen[0][Y]);
@@ -481,7 +480,7 @@ namespace bl {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
-			triScreen[a] = GraphicsBL::cam.getScreenCoord(tri[a]);
+			triScreen[a] = GraphicsBL::camera.getScreenCoord(tri[a]);
 		}
 
 		// sort tri pts by y ascending
@@ -610,7 +609,7 @@ namespace bl {
 		// project tri onto screen
 		Vec2 triScreen[3] = { 0 };
 		for (int a = 0; a < 3; a++) {
-			triScreen[a] = GraphicsBL::cam.getScreenCoord(tri[a]);
+			triScreen[a] = GraphicsBL::camera.getScreenCoord(tri[a]);
 		}
 
 		// sort tri pts by y ascending
@@ -731,7 +730,6 @@ namespace bl {
 							l->getLight(v);
 						}
 						v.color *= color_e;
-						notBloom(v.color);
 						GraphicsBL::pixels_rgb[index] = v.color;
 					}
 					index++;

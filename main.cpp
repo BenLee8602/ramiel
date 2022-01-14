@@ -70,7 +70,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// add objects and lighting to scene
 
-	//*  LIGHTING
+	//* BLOOM TEST
+	GraphicsBL::setAmbientLightColor({ 750, 750, 750 });
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, { -0.5, 0, 0 }, { 255,  25,  25 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, {  0.0, 0, 0 }, {  25, 255,  25 }));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, {  0.5, 0, 0 }, {  25,  25, 255 }));
+	//*/
+
+	/*  LIGHTING TEST
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
 	GraphicsBL::addLight(new Light_Dir({ 255, 0, 0 }));
 
@@ -127,7 +134,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 			(unsigned short)GetKeyState(VK_DOWN)    >> 15,  // turn down
 			(unsigned short)GetKeyState(VK_UP)      >> 15   // turn up
 		};
-		GraphicsBL::cam.setControls(keysPressed);
+		GraphicsBL::camera.setControls(keysPressed);
 
 		// render frame
 		const void* output = GraphicsBL::renderFrame(dtime);

@@ -15,8 +15,15 @@ namespace bl {
 		int focalLen;
 
 	public:
-		Camera();
-		Camera(const Vec3f& pos, const Vec3f& rot, int fov = 0);
+
+		float znear;
+		float zfar;
+
+		Camera(
+			int fov = 0,
+			float znear = 0.2f,
+			float zfar = 1000.0f
+		);
 		void calcTrigValues();
 		void reset();
 		

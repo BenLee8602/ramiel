@@ -1,4 +1,3 @@
-#include <windows.h>
 #include <cmath>
 #include "graphics.h"
 
@@ -8,18 +7,13 @@ namespace bl {
 	static float camPosSpeed = 2.0f;
 	static float camRotSpeed = 1.57079f;
 
-	Camera::Camera() {
-		pos = { 0.0f };
-		rot = { 0.0f };
-		calcTrigValues();
-		focalLen = GraphicsBL::size[X];
-	}
-
-	Camera::Camera(const Vec3f& pos, const Vec3f& rot, int fov) {
-		this->pos = pos;
-		this->rot = rot;
+	Camera::Camera(int fov, float znear, float zfar) {
+		this->pos = { 0.0f };
+		this->rot = { 0.0f };
 		calcTrigValues();
 		setFov(fov);
+		this->znear = znear;
+		this->zfar = zfar;
 	}
 
 	void Camera::calcTrigValues() {

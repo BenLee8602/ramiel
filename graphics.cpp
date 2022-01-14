@@ -3,11 +3,12 @@
 namespace bl {
 
 	float  GraphicsBL::dtime = 0.0f;
-	Camera GraphicsBL::cam;
+	Camera GraphicsBL::camera;
+	Bloom  GraphicsBL::bloom(50, true);
 
-	Vec2 GraphicsBL::size = { 0 };
-	Vec2 GraphicsBL::mid = { 0 };
-	int  GraphicsBL::bufferSize = 0;
+	Vec2   GraphicsBL::size = { 0 };
+	Vec2   GraphicsBL::mid = { 0 };
+	size_t GraphicsBL::bufferSize = 0;
 
 	std::unique_ptr<int[]>   GraphicsBL::pixels;
 	std::unique_ptr<Vec3f[]> GraphicsBL::pixels_rgb;
@@ -18,9 +19,6 @@ namespace bl {
 	std::vector<std::unique_ptr<Effect>> GraphicsBL::effects;
 	Vec3f GraphicsBL::light_ambient = vec3f_0;
 	Vec3f GraphicsBL::bg_color = vec3f_0;
-
-	const float GraphicsBL::znear = 0.2f;
-	const float GraphicsBL::zfar  = 1000.0f;
 
 	std::ofstream GraphicsBL::debug("output.txt");
 
@@ -37,21 +35,27 @@ namespace bl {
 
 
 	void GraphicsBL::setFov(int fov) {
-		cam.setFov(fov);
+		camera.setFov(fov);
 	}
 
 	
 	const void* GraphicsBL::renderFrame(float dtime) {
 		std::fill(pixels_rgb.get(), pixels_rgb.get() + bufferSize, bg_color);
-		std::fill(depth.get(), depth.get() + bufferSize, zfar);
+		std::fill(depth.get(), depth.get() + bufferSize, camera.zfar);
+
 		GraphicsBL::dtime = dtime;
-		cam.calcTrigValues();
+		camera.calcTrigValues();
 		//lights[0]->move(cam.getpos()); // temp
+
 		for (auto& e : entities) e->draw();
-		for (auto& e : effects) e->applyEffect();
-		for (int i = 0; i < bufferSize; i++) {
+		for (auto& e : effects) e->applyEffect(pixels_rgb.get(), pixels_rgb.get());
+		bloom.applyEffect(pixels_rgb.get(), pixels_rgb.get());
+
+		for (size_t i = 0; i < bufferSize; i++) {
+			notBloom(pixels_rgb[i]);
 			pixels[i] = rgbToDec(pixels_rgb[i]);
 		}
+
 		return (const void*)pixels.get();
 	}
 
@@ -72,12 +76,12 @@ namespace bl {
 
 
 	void GraphicsBL::setAmbientLightColor(Vec3f color) {
-		c_clamp(color);
+		c_max(color);
 		light_ambient = color;
 	}
 
 	void GraphicsBL::setBackgroundColor(Vec3f color) {
-		c_clamp(color);
+		c_max(color);
 		bg_color = color;
 	}
 
@@ -105,25 +109,25 @@ namespace bl {
 
 	void GraphicsBL::drawLine(const Vec3f& start_w, const Vec3f& end_w, const Vec3f& color) {
 		// get camera coords
-		Vec3f start_c = cam.getCameraCoord(start_w);
-		Vec3f end_c = cam.getCameraCoord(end_w);
+		Vec3f start_c = camera.getCameraCoord(start_w);
+		Vec3f end_c = camera.getCameraCoord(end_w);
 
 		// clip z-axis
-		if (start_c[Z] < znear && end_c[Z] < znear) return;
-		if (start_c[Z] < znear) {
-			start_c[X] = start_c[X] + (end_c[X] - start_c[X]) * (znear - start_c[Z]) / (end_c[Z] - start_c[Z]);
-			start_c[Y] = start_c[Y] + (end_c[Y] - start_c[Y]) * (znear - start_c[Z]) / (end_c[Z] - start_c[Z]);
-			start_c[Z] = znear;
+		if (start_c[Z] < camera.znear && end_c[Z] < camera.znear) return;
+		if (start_c[Z] < camera.znear) {
+			start_c[X] = start_c[X] + (end_c[X] - start_c[X]) * (camera.znear - start_c[Z]) / (end_c[Z] - start_c[Z]);
+			start_c[Y] = start_c[Y] + (end_c[Y] - start_c[Y]) * (camera.znear - start_c[Z]) / (end_c[Z] - start_c[Z]);
+			start_c[Z] = camera.znear;
 		}
-		else if (end_c[Z] < znear) {
-			end_c[X] = end_c[X] + (start_c[X] - end_c[X]) * (znear - end_c[Z]) / (start_c[Z] - end_c[Z]);
-			end_c[Y] = end_c[Y] + (start_c[Y] - end_c[Y]) * (znear - end_c[Z]) / (start_c[Z] - end_c[Z]);
-			end_c[Z] = znear;
+		else if (end_c[Z] < camera.znear) {
+			end_c[X] = end_c[X] + (start_c[X] - end_c[X]) * (camera.znear - end_c[Z]) / (start_c[Z] - end_c[Z]);
+			end_c[Y] = end_c[Y] + (start_c[Y] - end_c[Y]) * (camera.znear - end_c[Z]) / (start_c[Z] - end_c[Z]);
+			end_c[Z] = camera.znear;
 		}
 
 		// get screen coords
-		Vec2 start_s = cam.getScreenCoord(start_c);
-		Vec2 end_s = cam.getScreenCoord(end_c);
+		Vec2 start_s = camera.getScreenCoord(start_c);
+		Vec2 end_s = camera.getScreenCoord(end_c);
 
 		// draw
 		drawLine(start_s, end_s, color);

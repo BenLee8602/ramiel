@@ -87,7 +87,6 @@ namespace bl {
 				l->getLight(v);
 			}
 			v.color *= color;
-			notBloom(v.color);
 		}
 	}
 

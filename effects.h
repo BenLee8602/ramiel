@@ -3,8 +3,6 @@
 
 #include <memory>
 #include "vec.h"
-#undef min
-#undef max
 
 namespace bl {
 
@@ -14,7 +12,7 @@ namespace bl {
 		Effect(bool enabled) : enabled(enabled) {}
 		bool isEnabled() const;
 		void enable(bool enabled = true);
-		virtual void applyEffect() const = 0;
+		virtual void applyEffect(Vec3f* in, Vec3f* out) const = 0;
 	};
 
 	class ColorShift : public Effect {
@@ -26,7 +24,7 @@ namespace bl {
 		float getStrength() const;
 		void setColor(Vec3f color);
 		void setStrength(float strength);
-		virtual void applyEffect() const override;
+		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
 	};
 
 	class Fog : public Effect {
@@ -42,13 +40,13 @@ namespace bl {
 		void setStart(float start);
 		void setEnd(float end);
 		void setColor(Vec3f color);
-		virtual void applyEffect() const override;
+		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
 	};
 
 	class Greyscale : public Effect {
 	public:
 		Greyscale(bool enabled = false) : Effect(enabled) {}
-		virtual void applyEffect() const override;
+		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
 	};
 
 	class Blur : public Effect {
@@ -57,7 +55,13 @@ namespace bl {
 		Blur(int rad, bool enabled = false) : Effect(enabled), rad(rad) {};
 		int getRad() const;
 		void setRad(int rad);
-		virtual void applyEffect() const override;
+		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
+	};
+
+	class Bloom : public Blur {
+	public:
+		Bloom(int rad = 25, bool enabled = false) : Blur(rad, enabled) {};
+		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
 	};
 
 }
