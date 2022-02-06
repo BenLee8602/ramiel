@@ -5,6 +5,9 @@
 
 namespace bl {
 
+	size_t Entity::totalVerts = 0;
+	size_t Entity::totalTris = 0;
+	
 	Entity::Entity(const char* filename, ShadingType shading, Vec3f pos, Vec3f color) {
 		this->shading = shading;
 
@@ -14,8 +17,33 @@ namespace bl {
 		std::ifstream file(filename);
 		std::string line;
 
-		// get vertex data
-		while (getline(file, line)) {
+		// allocate memory
+		size_t nverts = 0;
+		size_t ntris = 0;
+
+		while (std::getline(file, line)) {
+			if (line[0] == 'v') ++nverts;
+
+			else if (line[0] == 'f') {
+				++ntris;
+				int v3 = 0;
+				int v4 = 0;
+				std::stringstream stream(line);
+				stream >> v3 >> v3 >> v3 >> v4;
+				if (v3 == v4) ++ntris;
+			}
+		}
+
+		totalVerts += nverts;
+		totalTris += ntris;
+		vertices.reserve(nverts);
+		triangles.reserve(ntris);
+
+		file.close();
+		file.open(filename);
+
+		// get vertex and triangle data
+		while (std::getline(file, line)) {
 			// insert line content into stream
 			std::stringstream stream;
 			stream << line;
@@ -24,27 +52,15 @@ namespace bl {
 			std::string ltr;
 			stream >> ltr;
 
+			// vertex data
 			if (ltr == "v") {
 				Vertex temp;
 				stream >> temp.pos[X] >> temp.pos[Y] >> temp.pos[Z];
 				temp.pos += pos;
 				vertices.push_back(temp);
 			}
-		}
 
-		file.close();
-		file.open(filename);
-
-		// get triangle data
-		while (getline(file, line)) {
-			// insert line content into stream
-			std::stringstream stream;
-			stream << line;
-
-			// determine type of data on current line
-			std::string ltr;
-			stream >> ltr;
-
+			// triangle data
 			if (ltr == "f") {
 				Vertex* temp[3];
 				int index;

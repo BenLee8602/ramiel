@@ -12,6 +12,8 @@ namespace bl {
 	};
 
 	class Entity {
+		static size_t totalVerts;
+		static size_t totalTris;
 	protected:
 		Vec3f color;
 		ShadingType shading;

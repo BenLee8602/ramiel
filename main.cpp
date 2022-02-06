@@ -74,15 +74,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// add objects and lighting to scene
 
-	//* MULTITHREADING TEST
+	//* ENTITY LOADING TEST
 	GraphicsBL::setAmbientLightColor({ 100, 100, 100 });
 	GraphicsBL::addLight(new Light_Dir());
-	for (float x = -1.0; x <= 1.0f; x += 0.5f) {
-		for (float y = -1.0; y <= 1.0f; y += 0.5f) {
-			for (float z = -1.0; z <= 1.0f; z += 0.5f) {
-				GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, { x, y, z }));
-			}
-		}
+	for (float x = -2.5f; x <= 2.5f; x += 2.5f) {
+		GraphicsBL::addEntity(new Entity("model/car.obj", ShadingType::FLAT, { x, 0.0f, 0.0f }));
 	}
 	//*/
 
