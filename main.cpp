@@ -68,28 +68,22 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	std::chrono::steady_clock::time_point frameEnd;
 	float dtime = 0.0f;
 
+	// framerate
+	auto start = std::chrono::steady_clock::now();
+	uint64_t framesRendered = 0;
+
 	// add objects and lighting to scene
 
-	//* BLOOM TEST
-	GraphicsBL::setAmbientLightColor({ 750, 750, 750 });
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, { -0.5, 0, 0 }, { 255,  25,  25 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, {  0.0, 0, 0 }, {  25, 255,  25 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, {  0.5, 0, 0 }, {  25,  25, 255 }));
-	//*/
-
-	/*  LIGHTING TEST
-	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
-	GraphicsBL::addLight(new Light_Dir({ 255, 0, 0 }));
-
-	const ShadingType st = ShadingType::PIXEL;
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -2.0, 0, 0 }, {  25,  25,  25 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -1.5, 0, 0 }, { 255,  25,  25 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -1.0, 0, 0 }, {  25, 255,  25 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, { -0.5, 0, 0 }, {  25,  25, 255 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  0.0, 0, 0 }, { 255, 255,  25 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  0.5, 0, 0 }, { 255,  25, 255 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  1.0, 0, 0 }, {  25, 255, 255 }));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", st, {  1.5, 0, 0 }, { 255, 255, 255 }));
+	//* MULTITHREADING TEST
+	GraphicsBL::setAmbientLightColor({ 100, 100, 100 });
+	GraphicsBL::addLight(new Light_Dir());
+	for (float x = -1.0; x <= 1.0f; x += 0.5f) {
+		for (float y = -1.0; y <= 1.0f; y += 0.5f) {
+			for (float z = -1.0; z <= 1.0f; z += 0.5f) {
+				GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL, { x, y, z }));
+			}
+		}
+	}
 	//*/
 
 	/*  MOUNTAINS
@@ -98,14 +92,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	GraphicsBL::addLight(new Light_Dir({ 155, 40, 0 }, { -10, 1, 0 }));
 	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }));
 	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
-	//*/
-
-	/*  MOUNTAINS 2
-	GraphicsBL::setAmbientLightColor({ 50, 50, 50 });
-	GraphicsBL::addLight(new Light_Dir({ 100, 100, 100 }, { -3, 1, 0 }));
-	GraphicsBL::addEffect(new Fog(20, 50, { 150, 50, 50 }, true));
-	GraphicsBL::addEffect(new Fog(70, 100, { 150, 150, 50 }, true));
-	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }, { 150, 50, 150 }));
+	GraphicsBL::addEffect(new Bloom(5, false));
 	//*/
 	
 	// main loop
@@ -138,6 +125,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 		// render frame
 		const void* output = GraphicsBL::renderFrame(dtime);
+		framesRendered++;
 
 		// update frame
 		StretchDIBits(
@@ -152,6 +140,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		frameEnd = std::chrono::steady_clock::now();
 		dtime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart).count() / 1000000.0f;
 	}
+
+	// framerate
+	auto end = std::chrono::steady_clock::now();
+	int time = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+	GraphicsBL::debug << "Average FPS: " << framesRendered / time << '\n';
 
 	return 0;
 }

@@ -26,7 +26,7 @@ namespace bl {
 
 			if (ltr == "v") {
 				Vertex temp;
-				stream >> temp.pos[X]>> temp.pos[Y] >> temp.pos[Z];
+				stream >> temp.pos[X] >> temp.pos[Y] >> temp.pos[Z];
 				temp.pos += pos;
 				vertices.push_back(temp);
 			}
@@ -61,7 +61,7 @@ namespace bl {
 				if (index != index2) {
 					Vertex* temp2[3] = { temp[2], &vertices[index2 - 1], temp[0] };
 					triangles.push_back(temp2);
-					
+
 					// vertex normals
 					Vec3f n = crossProduct(temp[1]->pos - temp[0]->pos, temp2[1]->pos - temp[0]->pos);
 					for (int a = 0; a < 3; a++) temp[a]->normal += n;

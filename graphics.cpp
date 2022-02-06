@@ -1,3 +1,4 @@
+#include <thread>
 #include "graphics.h"
 
 namespace bl {
@@ -47,7 +48,7 @@ namespace bl {
 		camera.calcTrigValues();
 		//lights[0]->move(cam.getpos()); // temp
 
-		for (auto& e : entities) e->draw();
+		drawEntities();
 		for (auto& e : effects) e->applyEffect(pixels_rgb.get(), pixels_rgb.get());
 		bloom.applyEffect(pixels_rgb.get(), pixels_rgb.get());
 
@@ -57,6 +58,31 @@ namespace bl {
 		}
 
 		return (const void*)pixels.get();
+	}
+
+
+	void GraphicsBL::drawEntities() {
+		const size_t nthreads = std::min(entities.size(), std::thread::hardware_concurrency());
+		const size_t ePerThread = entities.size() / nthreads;
+		std::thread* threads = new std::thread[nthreads];
+
+		auto drawPortion = [](size_t begin, size_t end) {
+			for (size_t i = begin; i < end; i++) {
+				entities[i]->draw();
+			}
+		};
+
+		size_t begin = 0;
+		for (size_t i = 0; i < nthreads - 1; i++) {
+			threads[i] = std::thread(drawPortion, begin, begin + ePerThread);
+			begin += ePerThread;
+		}
+		threads[nthreads - 1] = std::thread(drawPortion, begin, entities.size());
+		for (size_t i = 0; i < nthreads; i++) {
+			threads[i].join();
+		}
+
+		delete[] threads;
 	}
 
 

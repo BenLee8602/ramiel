@@ -33,13 +33,15 @@ namespace bl {
 		static Vec3f light_ambient;
 		static Vec3f bg_color;
 
-	private:
+	public:
 		static std::ofstream debug;
 
 	public:
 		static void setBufferSize(Vec2 newSize);
 		static void setFov(int fov);
+
 		static const void* renderFrame(float dtime = 0.0f);
+		static void drawEntities();
 
 		static void addEntity(Entity* entity);
 		static void addLight(Light* light);
