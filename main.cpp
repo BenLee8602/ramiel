@@ -74,12 +74,19 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// add objects and lighting to scene
 
-	//* ENTITY LOADING TEST
+	//* PHYSICS TEST
 	GraphicsBL::setAmbientLightColor({ 100, 100, 100 });
 	GraphicsBL::addLight(new Light_Dir());
-	for (float x = -2.5f; x <= 2.5f; x += 2.5f) {
-		GraphicsBL::addEntity(new Entity("model/car.obj", ShadingType::FLAT, { x, 0.0f, 0.0f }));
-	}
+	GraphicsBL::addEntity(new Entity_Dynamic(
+		"model/cube2.obj",
+		ShadingType::PIXEL,
+		{ 0, 0, 25 },
+		vec3f_255,
+		0.1f,
+		1.0f,
+		{ 0, 25, 0 },
+		{ 0, -9.8, 0 }
+	));
 	//*/
 
 	/*  MOUNTAINS

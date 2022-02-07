@@ -7,6 +7,9 @@ namespace bl {
 
 	size_t Entity::totalVerts = 0;
 	size_t Entity::totalTris = 0;
+
+	size_t Entity::getTotalVerts() { return totalVerts; }
+	size_t Entity::getTotalTris()  { return totalTris; }
 	
 	Entity::Entity(const char* filename, ShadingType shading, Vec3f pos, Vec3f color) {
 		this->shading = shading;
@@ -61,7 +64,7 @@ namespace bl {
 			}
 
 			// triangle data
-			if (ltr == "f") {
+			else if (ltr == "f") {
 				Vertex* temp[3];
 				int index;
 				for (int a = 0; a < 3; a++) {
@@ -127,6 +130,22 @@ namespace bl {
 		}
 
 		//for (auto& v : vertices) RenderBL::drawLine(v.pos, v.pos + v.normal / 20, { 0, 0, 255 });
+	}
+
+
+	void Entity_Static::draw() {
+		Entity::draw();
+	}
+
+
+	void Entity_Dynamic::draw() {
+		Vec3f dpos = velocity * GraphicsBL::dtime;
+		for (auto& v : vertices) {
+			v.pos += dpos;
+		}
+		hbxpos += dpos;
+		velocity += acceleration * GraphicsBL::dtime;
+		Entity::draw();
 	}
 
 }
