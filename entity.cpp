@@ -11,11 +11,13 @@ namespace bl {
 	size_t Entity::getTotalVerts() { return totalVerts; }
 	size_t Entity::getTotalTris()  { return totalTris; }
 	
-	Entity::Entity(const char* filename, ShadingType shading, Vec3f pos, Vec3f color) {
+	Entity::Entity(const char* filename, ShadingType shading, Vec3f color, Physics physics) {
 		this->shading = shading;
 
 		c_clamp(color);
 		this->color = color / 255.0f;
+
+		this->physics = physics;
 
 		std::ifstream file(filename);
 		std::string line;
@@ -59,7 +61,7 @@ namespace bl {
 			if (ltr == "v") {
 				Vertex temp;
 				stream >> temp.pos[X] >> temp.pos[Y] >> temp.pos[Z];
-				temp.pos += pos;
+				temp.pos += physics.pos;
 				vertices.push_back(temp);
 			}
 
@@ -111,6 +113,19 @@ namespace bl {
 
 
 	void Entity::draw() {
+		// physics
+		if (physics.movement) {
+			if (physics.velocity) {
+				Vec3f dpos = physics.velocity * GraphicsBL::dtime;
+				for (auto& v : vertices) {
+					v.pos += dpos;
+				}
+			}
+			physics.simulateMovement();
+		}
+		
+
+		// graphics
 		switch (shading) {
 		case ShadingType::FLAT:
 			for (auto& t : triangles) {
@@ -128,24 +143,6 @@ namespace bl {
 				t.draw_p(color);
 			}
 		}
-
-		//for (auto& v : vertices) RenderBL::drawLine(v.pos, v.pos + v.normal / 20, { 0, 0, 255 });
-	}
-
-
-	void Entity_Static::draw() {
-		Entity::draw();
-	}
-
-
-	void Entity_Dynamic::draw() {
-		Vec3f dpos = velocity * GraphicsBL::dtime;
-		for (auto& v : vertices) {
-			v.pos += dpos;
-		}
-		hbxpos += dpos;
-		velocity += acceleration * GraphicsBL::dtime;
-		Entity::draw();
 	}
 
 }

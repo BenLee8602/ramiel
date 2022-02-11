@@ -77,15 +77,17 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	//* PHYSICS TEST
 	GraphicsBL::setAmbientLightColor({ 100, 100, 100 });
 	GraphicsBL::addLight(new Light_Dir());
-	GraphicsBL::addEntity(new Entity_Dynamic(
-		"model/cube2.obj",
+	GraphicsBL::addEntity(new Entity(
+		"model/sphere.obj",
 		ShadingType::PIXEL,
-		{ 0, 0, 25 },
-		vec3f_255,
-		0.1f,
-		1.0f,
-		{ 0, 25, 0 },
-		{ 0, -9.8, 0 }
+		{ 255, 0, 0 },
+		Physics({ -0.5, 0, 16 }, 1.0)
+	));
+	GraphicsBL::addEntity(new Entity(
+		"model/sphere.obj",
+		ShadingType::PIXEL,
+		{ 0, 0, 255 },
+		Physics(true, true, 1.0, 1.0, { 0, 4, 16 }, { 0, 0, 0 }, { 0, -9.8, 0 })
 	));
 	//*/
 

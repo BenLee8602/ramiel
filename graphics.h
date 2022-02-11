@@ -42,6 +42,7 @@ namespace bl {
 
 		static const void* renderFrame(float dtime = 0.0f);
 		static void drawEntities();
+		static void getCollisions();
 
 		static void addEntity(Entity* entity);
 		static void addLight(Light* light);

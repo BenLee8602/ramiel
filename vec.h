@@ -11,9 +11,12 @@ namespace bl {
 		T arr[N];
 
 		// element retrieval
-		operator T* () { return arr; };
 		T& operator[](size_t index) { return arr[index]; }
 		const T& operator[](size_t index) const { return arr[index]; }
+
+		// typecasting
+		operator T* () { return arr; };
+		operator bool() const { for (size_t i = 0; i < N; i++) if (arr[i]) return true; return false; }
 
 		// assignment
 		template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] = v[i]; return *this; }

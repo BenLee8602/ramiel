@@ -49,6 +49,7 @@ namespace bl {
 		//lights[0]->move(cam.getpos()); // temp
 
 		drawEntities();
+		getCollisions();
 		for (auto& e : effects) e->applyEffect(pixels_rgb.get(), pixels_rgb.get());
 		bloom.applyEffect(pixels_rgb.get(), pixels_rgb.get());
 
@@ -83,6 +84,19 @@ namespace bl {
 		}
 
 		delete[] threads;
+	}
+
+
+	void GraphicsBL::getCollisions() {
+		for (size_t a = 0; a < entities.size() - 1; a++) {
+			if (entities[a]->physics.collision) {
+				for (size_t b = a + 1; b < entities.size(); b++) {
+					if (entities[b]->physics.collision) {
+						entities[a]->physics.simulateCollision(entities[b]->physics);
+					}
+				}
+			}
+		}
 	}
 
 
