@@ -74,28 +74,42 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// add objects and lighting to scene
 
-	//* PHYSICS TEST
+	/* TRI TEST
+	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
+	GraphicsBL::addLight(new Light_Dir());
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::FLAT,   vec3f_255, Physics(Vec3f{ -0.5, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX, vec3f_255, Physics(Vec3f{    0, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL,  vec3f_255, Physics(Vec3f{  0.5, 0, 2 })));
+	//*/
+
+	/* PHYSICS TEST
 	GraphicsBL::setAmbientLightColor({ 100, 100, 100 });
 	GraphicsBL::addLight(new Light_Dir());
 	GraphicsBL::addEntity(new Entity(
 		"model/sphere.obj",
-		ShadingType::PIXEL,
+		ShadingType::FLAT,
 		{ 255, 0, 0 },
-		Physics({ -0.5, 0, 16 }, 1.0)
+		Physics({ 0, 0, 32 }, 1.0)
 	));
 	GraphicsBL::addEntity(new Entity(
 		"model/sphere.obj",
-		ShadingType::PIXEL,
+		ShadingType::FLAT,
+		{ 0, 255, 0 },
+		Physics(true, true, 1.0, 1.0, { 0, 4, 32 }, { 0, 0, 0 }, { 0, -9.8, 0 })
+	));
+	GraphicsBL::addEntity(new Entity(
+		"model/sphere.obj",
+		ShadingType::FLAT,
 		{ 0, 0, 255 },
-		Physics(true, true, 1.0, 1.0, { 0, 4, 16 }, { 0, 0, 0 }, { 0, -9.8, 0 })
+		Physics(true, true, 1.0, 1.0, { 0.5, 16, 32 }, { 0, 0, 0 }, { 0, -9.8, 0 })
 	));
 	//*/
 
-	/*  MOUNTAINS
+	//*  MOUNTAINS
 	GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
 	GraphicsBL::setBackgroundColor({ 150, 110, 110 });
 	GraphicsBL::addLight(new Light_Dir({ 155, 40, 0 }, { -10, 1, 0 }));
-	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, { -64, 0, -64 }));
+	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, vec3f_255, Physics(Vec3f{ -64, 0, -64 })));
 	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 	GraphicsBL::addEffect(new Bloom(5, false));
 	//*/

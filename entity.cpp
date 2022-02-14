@@ -62,36 +62,41 @@ namespace bl {
 				Vertex temp;
 				stream >> temp.pos[X] >> temp.pos[Y] >> temp.pos[Z];
 				temp.pos += physics.pos;
+				temp.color = this->color;
 				vertices.push_back(temp);
 			}
 
 			// triangle data
 			else if (ltr == "f") {
-				Vertex* temp[3];
-				int index;
+				size_t temp[3];
+				size_t index;
 				for (int a = 0; a < 3; a++) {
 					stream >> index;
 					stream.ignore(1000, ' ');
-					temp[a] = &vertices[index - 1];
+					temp[a] = index - 1;
 				}
 				triangles.push_back(temp);
 
 				// triangulate quad faces
-				int index2 = index;
+				size_t index2 = index;
 				stream >> index2;
 				if (index != index2) {
-					Vertex* temp2[3] = { temp[2], &vertices[index2 - 1], temp[0] };
+					size_t temp2[3] = { temp[2], index2 - 1, temp[0] };
 					triangles.push_back(temp2);
 
 					// vertex normals
-					Vec3f n = crossProduct(temp[1]->pos - temp[0]->pos, temp2[1]->pos - temp[0]->pos);
-					for (int a = 0; a < 3; a++) temp[a]->normal += n;
-					temp2[1]->normal += n;
+					Vec3f v1 = vertices[temp[1]].pos - vertices[temp[0]].pos;
+					Vec3f v2 = vertices[temp2[1]].pos - vertices[temp[0]].pos;
+					Vec3f n = crossProduct(v1, v2);
+					for (int a = 0; a < 3; a++) vertices[temp[a]].normal += n;
+					vertices[temp2[1]].normal += n;
 				}
 				else {
 					// vertex normals
-					Vec3f n = crossProduct(temp[1]->pos - temp[0]->pos, temp[2]->pos - temp[0]->pos);
-					for (int a = 0; a < 3; a++) temp[a]->normal += n;
+					Vec3f v1 = vertices[temp[1]].pos - vertices[temp[0]].pos;
+					Vec3f v2 = vertices[temp[2]].pos - vertices[temp[0]].pos;
+					Vec3f n = crossProduct(v1, v2);
+					for (int a = 0; a < 3; a++) vertices[temp[a]].normal += n;
 				}
 			}
 		}
@@ -124,23 +129,34 @@ namespace bl {
 			physics.simulateMovement();
 		}
 		
+		// camera coords
+		std::vector<Vec3f> cameraCoords(vertices.size());
+		for (size_t i = 0; i < vertices.size(); i++) {
+			cameraCoords[i] = GraphicsBL::camera.getCameraCoord(vertices[i].pos);
+		}
 
 		// graphics
 		switch (shading) {
 		case ShadingType::FLAT:
 			for (auto& t : triangles) {
-				t.draw_f(color);
+				Vertex v[3] = { vertices[t[0]], vertices[t[1]], vertices[t[2]] };
+				Vec3f tricam[3] = { cameraCoords[t[0]], cameraCoords[t[1]], cameraCoords[t[2]] };
+				t.draw_f(v, tricam);
 			}
 			break;
 		case ShadingType::VERTEX:
 			calcVertexColor();
 			for (auto& t : triangles) {
-				t.draw_v();
+				Vertex v[3] = { vertices[t[0]], vertices[t[1]], vertices[t[2]] };
+				Vec3f tricam[3] = { cameraCoords[t[0]], cameraCoords[t[1]], cameraCoords[t[2]] };
+				t.draw_v(v, tricam);
 			}
 			break;
 		case ShadingType::PIXEL:
 			for (auto& t : triangles) {
-				t.draw_p(color);
+				Vertex v[3] = { vertices[t[0]], vertices[t[1]], vertices[t[2]] };
+				Vec3f tricam[3] = { cameraCoords[t[0]], cameraCoords[t[1]], cameraCoords[t[2]] };
+				t.draw_p(v, tricam);
 			}
 		}
 	}

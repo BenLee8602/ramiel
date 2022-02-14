@@ -123,7 +123,7 @@ namespace bl {
 		Blur::applyEffect(extra, blurred);
 
 		for (size_t i = 0; i < GraphicsBL::bufferSize; i++) {
-			if (!extra[i][R] && !extra[i][G] && !extra[i][G]) {
+			if (!extra[i][R] && !extra[i][G] && !extra[i][B]) {
 				GraphicsBL::pixels_rgb[i] += blurred[i];
 			}
 		}

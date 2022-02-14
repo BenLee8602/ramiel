@@ -7,21 +7,19 @@
 namespace bl {
 
 	class Triangle {
-	protected:
-		Vertex* pts[3];
-		bool clip_f(Vec3f* tri, const Vec3f& color_e) const;
-		bool clip_v(Vec3f* tri, Vec3f* tri_c) const;
-		bool clip_p(Vec3f* tri, Vertex* tri_c, const Vec3f& color_e) const;
-		void raster_f(Vec3f* tri, const Vec3f& color_e) const;
-		void raster_v(Vec3f* tri, Vec3f* tri_c) const;
-		void raster_p(Vec3f* tri, Vertex* tri_c, const Vec3f& color_e) const;
+		size_t pts[3];
+		bool clip_f(Vertex v[3], Vec3f tricam[3]) const;
+		bool clip_v(Vertex v[3], Vec3f tricam[3]) const;
+		bool clip_p(Vertex v[3], Vec3f tricam[3]) const;
+		void raster_f(Vertex v[3], Vec3f tricam[3]) const;
+		void raster_v(Vertex v[3], Vec3f tricam[3]) const;
+		void raster_p(Vertex v[3], Vec3f tricam[3]) const;
 	public:
-		Triangle(Vertex** pts);
-		void draw_f(const Vec3f& color_e) const;
-		void draw_v() const;
-		void draw_p(const Vec3f& color_e) const;
-		Vec3f getNormal() const;
-		Vertex* operator[](int index) const;
+		Triangle(size_t pts[3]);
+		void draw_f(Vertex v[3], Vec3f tricam[3]) const;
+		void draw_v(Vertex v[3], Vec3f tricam[3]) const;
+		void draw_p(Vertex v[3], Vec3f tricam[3]) const;
+		size_t operator[](size_t index) const;
 	};
 
 }

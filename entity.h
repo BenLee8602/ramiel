@@ -36,7 +36,7 @@ namespace bl {
 			Vec3f color = vec3f_255,
 			Physics physics = Physics()
 		);
-		virtual void draw();
+		void draw();
 	};
 
 }
