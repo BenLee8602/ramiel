@@ -5,7 +5,7 @@ namespace bl {
 
 	float  GraphicsBL::dtime = 0.0f;
 	Camera GraphicsBL::camera;
-	Bloom  GraphicsBL::bloom(50, true);
+	Bloom  GraphicsBL::bloom(50);
 
 	Vec2   GraphicsBL::size = { 0 };
 	Vec2   GraphicsBL::mid = { 0 };

@@ -68,6 +68,11 @@ namespace bl {
 		friend class Greyscale;
 		friend class Blur;
 		friend class Bloom;
+
+		friend class Draw;
+		friend class DrawFlat;
+		friend class DrawVertex;
+		friend class DrawPixel;
 	};
 
 }

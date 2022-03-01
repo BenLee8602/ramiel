@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include "graphics.h"
+#include "draw.h"
+
 
 namespace bl {
 
@@ -46,7 +48,7 @@ namespace bl {
 
 		file.close();
 		file.open(filename);
-
+		
 		// get vertex and triangle data
 		while (std::getline(file, line)) {
 			// insert line content into stream
@@ -117,6 +119,27 @@ namespace bl {
 	}
 
 
+	template<class D>
+	void drawTris(std::vector<Vertex>& vertices, std::vector<Triangle>& triangles) {
+
+		// get camera coords
+		std::vector<Vec3f> cameraCoords(vertices.size());
+		for (size_t i = 0; i < vertices.size(); i++) {
+			cameraCoords[i] = GraphicsBL::camera.getCameraCoord(vertices[i].pos);
+		}
+
+		// draw all triangles
+		D draw;
+		for (auto& t : triangles) {
+			for (size_t i = 0; i < 3; i++) {
+				draw.v[i] = vertices[t[i]];
+				draw.tricam[i] = cameraCoords[t[i]];
+			}
+			t.draw<GraphicsBL>(draw);
+		}
+	}
+
+
 	void Entity::draw() {
 		// physics
 		if (physics.movement) {
@@ -129,35 +152,19 @@ namespace bl {
 			physics.simulateMovement();
 		}
 		
-		// camera coords
-		std::vector<Vec3f> cameraCoords(vertices.size());
-		for (size_t i = 0; i < vertices.size(); i++) {
-			cameraCoords[i] = GraphicsBL::camera.getCameraCoord(vertices[i].pos);
-		}
-
 		// graphics
 		switch (shading) {
-		case ShadingType::FLAT:
-			for (auto& t : triangles) {
-				Vertex v[3] = { vertices[t[0]], vertices[t[1]], vertices[t[2]] };
-				Vec3f tricam[3] = { cameraCoords[t[0]], cameraCoords[t[1]], cameraCoords[t[2]] };
-				t.draw_f(v, tricam);
-			}
-			break;
-		case ShadingType::VERTEX:
-			calcVertexColor();
-			for (auto& t : triangles) {
-				Vertex v[3] = { vertices[t[0]], vertices[t[1]], vertices[t[2]] };
-				Vec3f tricam[3] = { cameraCoords[t[0]], cameraCoords[t[1]], cameraCoords[t[2]] };
-				t.draw_v(v, tricam);
-			}
-			break;
-		case ShadingType::PIXEL:
-			for (auto& t : triangles) {
-				Vertex v[3] = { vertices[t[0]], vertices[t[1]], vertices[t[2]] };
-				Vec3f tricam[3] = { cameraCoords[t[0]], cameraCoords[t[1]], cameraCoords[t[2]] };
-				t.draw_p(v, tricam);
-			}
+			case ShadingType::FLAT:
+				drawTris<DrawFlat>(vertices, triangles);
+				break;
+			case ShadingType::VERTEX:
+				calcVertexColor();
+				drawTris<DrawVertex>(vertices, triangles);
+				break;
+			case ShadingType::PIXEL:
+				drawTris<DrawPixel>(vertices, triangles);
+				break;
+			default: throw std::string("Error in determining shading type");
 		}
 	}
 
