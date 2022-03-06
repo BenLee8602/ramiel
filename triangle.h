@@ -78,7 +78,9 @@ namespace bl {
 					// case 6
 					else {
 						std::swap(draw.v[1], draw.v[2]);
+						std::swap(draw.v[0], draw.v[2]);
 						std::swap(draw.tricam[1], draw.tricam[2]);
+						std::swap(draw.tricam[0], draw.tricam[2]);
 						clip2();
 					}
 				}
@@ -89,7 +91,9 @@ namespace bl {
 				// case 3
 				else {
 					std::swap(draw.v[1], draw.v[0]);
+					std::swap(draw.v[2], draw.v[0]);
 					std::swap(draw.tricam[1], draw.tricam[0]);
+					std::swap(draw.tricam[2], draw.tricam[0]);
 					clip1();
 				}
 			}
@@ -98,7 +102,9 @@ namespace bl {
 				// case 7
 				if (draw.tricam[2][Z] < GraphicsBL::camera.znear) {
 					std::swap(draw.v[1], draw.v[0]);
+					std::swap(draw.v[2], draw.v[0]);
 					std::swap(draw.tricam[1], draw.tricam[0]);
+					std::swap(draw.tricam[2], draw.tricam[0]);
 					clip2();
 				}
 				// case 4
@@ -110,7 +116,9 @@ namespace bl {
 			// case 5
 			else if (draw.tricam[2][Z] < GraphicsBL::camera.znear) {
 				std::swap(draw.v[1], draw.v[2]);
+				std::swap(draw.v[0], draw.v[2]);
 				std::swap(draw.tricam[1], draw.tricam[2]);
+				std::swap(draw.tricam[0], draw.tricam[2]);
 				clip1();
 			}
 

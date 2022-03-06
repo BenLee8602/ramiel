@@ -9,7 +9,8 @@ namespace bl {
 	enum class ShadingType : char {
 		FLAT,
 		VERTEX,
-		PIXEL
+		PIXEL,
+		PIXEL_S
 	};
 
 	class Entity {

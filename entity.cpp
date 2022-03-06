@@ -164,6 +164,9 @@ namespace bl {
 			case ShadingType::PIXEL:
 				drawTris<DrawPixel>(vertices, triangles);
 				break;
+			case ShadingType::PIXEL_S:
+				drawTris<DrawPixel_S>(vertices, triangles);
+				break;
 			default: throw std::string("Error in determining shading type");
 		}
 	}

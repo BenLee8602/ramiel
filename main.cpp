@@ -77,9 +77,10 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	//* DRAW TEST
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
 	GraphicsBL::addLight(new Light_Dir());
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::FLAT,   { 255, 25, 25 }, Physics(Vec3f{ -0.5, 0, 2 })));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX, { 25, 255, 25 }, Physics(Vec3f{ 0, 0, 2 })));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL,  { 25, 25, 255 }, Physics(Vec3f{ 0.5, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::FLAT,    { 255,  25,  25 }, Physics(Vec3f{ -0.75, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX,  {  25, 255,  25 }, Physics(Vec3f{ -0.25, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL,   {  25,  25, 255 }, Physics(Vec3f{  0.25, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL_S, { 255,  25, 255 }, Physics(Vec3f{  0.75, 0, 2 })));
 	//*/
 
 	/* PHYSICS TEST
