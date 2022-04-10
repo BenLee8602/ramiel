@@ -74,13 +74,19 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// add objects and lighting to scene
 
-	//* DRAW TEST
+	//* CUBE WITH SPOTLIGHT
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
-	GraphicsBL::addLight(new Light_Dir());
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::FLAT,    { 255,  25,  25 }, Physics(Vec3f{ -0.75, 0, 2 })));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::VERTEX,  {  25, 255,  25 }, Physics(Vec3f{ -0.25, 0, 2 })));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL,   {  25,  25, 255 }, Physics(Vec3f{  0.25, 0, 2 })));
-	GraphicsBL::addEntity(new Entity("model/teapot.obj", ShadingType::PIXEL_S, { 255,  25, 255 }, Physics(Vec3f{  0.75, 0, 2 })));
+	GraphicsBL::addEntity(new Entity("model/cube.obj", ShadingType::PIXEL));
+	GraphicsBL::addLight(new Light_Sp(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 }));
+	//*/
+
+	/* DRAW TEST
+	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
+	GraphicsBL::addLight(new Light_Pt(vec3f_255, { 0, 2, 0 }, 0.4));
+	GraphicsBL::addEntity(new Entity("model/cube.obj", ShadingType::FLAT,    { 255,  25,  25 }, Physics(Vec3f{  0.75, 0,  0.75 })));
+	GraphicsBL::addEntity(new Entity("model/cube.obj", ShadingType::VERTEX,  {  25, 255,  25 }, Physics(Vec3f{  0.75, 0, -0.75 })));
+	GraphicsBL::addEntity(new Entity("model/cube.obj", ShadingType::PIXEL,   {  25,  25, 255 }, Physics(Vec3f{ -0.75, 0,  0.75 })));
+	GraphicsBL::addEntity(new Entity("model/cube.obj", ShadingType::PIXEL_S, { 255,  25, 255 }, Physics(Vec3f{ -0.75, 0, -0.75 })));
 	//*/
 
 	/* PHYSICS TEST
@@ -110,7 +116,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
 	GraphicsBL::setBackgroundColor({ 150, 110, 110 });
 	GraphicsBL::addLight(new Light_Dir({ 155, 40, 0 }, { -10, 1, 0 }));
-	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::VERTEX, vec3f_255, Physics(Vec3f{ -64, 0, -64 })));
+	GraphicsBL::addEntity(new Entity("model/terrain3.obj", ShadingType::FLAT, vec3f_255, Physics(Vec3f{ -64, 0, -64 })));
 	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 	GraphicsBL::addEffect(new Bloom(5, false));
 	//*/

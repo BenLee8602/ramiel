@@ -96,26 +96,11 @@ namespace bl {
 		for (int a = 0; a < 3; a++) {
 			triscreen[a] = GraphicsBL::camera.getScreenCoord(tricam[a]);
 		}
-
-		// sort tri pts by y ascending
-		if (triscreen[0][Y] > triscreen[1][Y]) {
-			std::swap(triscreen[0], triscreen[1]);
-			std::swap(tricam[0], tricam[1]);
-			std::swap(v[0], v[1]);
-		}
-		if (triscreen[0][Y] > triscreen[2][Y]) {
-			std::swap(triscreen[0], triscreen[2]);
-			std::swap(tricam[0], tricam[2]);
-			std::swap(v[0], v[2]);
-		}
-		if (triscreen[1][Y] > triscreen[2][Y]) {
-			std::swap(triscreen[1], triscreen[2]);
-			std::swap(tricam[1], tricam[2]);
-			std::swap(v[1], v[2]);
-		}
 	}
 
 	void DrawFlat::init() {
+		Draw::init();
+
 		Vec3f pos = (v[0].pos + v[1].pos + v[2].pos) / 3.0f;
 		Vec3f n = getNormalized(crossProduct(v[1].pos - v[0].pos, v[2].pos - v[0].pos));
 		Vertex c = { pos, n, GraphicsBL::light_ambient };
@@ -123,8 +108,6 @@ namespace bl {
 			l->getLight(c);
 		}
 		color = c.color * v[0].color;
-
-		Draw::init();
 	}
 
 	void DrawVertex::init() {
@@ -132,12 +115,38 @@ namespace bl {
 	}
 
 	void DrawPixel::init() {
-		n = getNormalized(crossProduct(v[1].pos - v[0].pos, v[2].pos - v[0].pos));
 		DrawSuper::init();
+
+		for (int i = 0; i < 3; i++) v[i].pos *= trizinv[i];
+		n = getNormalized(crossProduct(v[1].pos - v[0].pos, v[2].pos - v[0].pos));
 	}
 
 	void DrawPixel_S::init() {
 		DrawPixel::init();
+	}
+
+	void Draw::swapv(size_t i1, size_t i2) {
+		std::swap(triscreen[i1], triscreen[i2]);
+		std::swap(tricam[i1], tricam[i2]);
+	}
+
+	void DrawFlat::swapv(size_t i1, size_t i2) {
+		Draw::swapv(i1, i2);
+	}
+
+	void DrawVertex::swapv(size_t i1, size_t i2) {
+		Draw::swapv(i1, i2);
+		std::swap(v[i1].color, v[i2].color);
+	}
+
+	void DrawPixel::swapv(size_t i1, size_t i2) {
+		DrawSuper::swapv(i1, i2);
+		std::swap(v[i1].pos, v[i2].pos);
+	}
+
+	void DrawPixel_S::swapv(size_t i1, size_t i2) {
+		DrawPixel::swapv(i1, i2);
+		std::swap(v[i1].normal, v[i2].normal);
 	}
 
 	void Draw::calcd_y() {

@@ -38,6 +38,7 @@ namespace bl {
 		void clip2(float c1, float c2);
 
 		void init();
+		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();
 		void clipy();
@@ -58,6 +59,7 @@ namespace bl {
 		void clip2(float c1, float c2);
 
 		void init();
+		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();
 		void clipy();
@@ -81,6 +83,7 @@ namespace bl {
 		void clip2(float c1, float c2);
 
 		void init();
+		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();
 		void clipy();
@@ -118,13 +121,12 @@ namespace bl {
 
 		void init() {
 			DrawSuper::init();
+			for (int i = 0; i < 3; i++) trizinv[i] = 1.0f / tricam[i][Z];
+		}
 
-			// divide v by z to account for perspective
-			for (int i = 0; i < 3; i++) {
-				trizinv[i] = 1.0f / tricam[i][Z];
-				v[i].pos *= trizinv[i];
-				v[i].normal *= trizinv[i];
-			}
+		void swapv(size_t i1, size_t i2) {
+			DrawSuper::swapv(i1, i2);
+			std::swap(trizinv[i1], trizinv[i2]);
 		}
 
 		void calcd_y() {
@@ -203,6 +205,7 @@ namespace bl {
 		void clip2(float c1, float c2);
 
 		void init();
+		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();
 		void clipy();
@@ -225,6 +228,7 @@ namespace bl {
 		void clip2(float c1, float c2);
 
 		void init();
+		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();
 		void clipy();
@@ -235,6 +239,118 @@ namespace bl {
 		void incy();
 		void segmentswitch();
 	};
+
+
+	template<class DrawSuper>
+	class DrawTX : public DrawSuper {
+	public:
+		using DrawSuper::v;
+		using DrawSuper::tricam;
+		using DrawSuper::triscreen;
+		using DrawSuper::trizinv;
+
+		using DrawSuper::x;
+		using DrawSuper::y;
+		using DrawSuper::x1;
+		using DrawSuper::x2;
+
+		Vec2f tritxt;
+	private:
+		Vec2f du1_y, du2_y, * du_y;
+		Vec2f u1, u2;
+		Vec2f du_x;
+		Vec2f u;
+
+	public:
+		void clip1(float c1, float c2, DrawTX<DrawSuper>& other) {
+			DrawSuper::clip1(c1, c2, other);
+
+			other.tritxt[0] = tritxt[1] + (tritxt[0] - tritxt[1]) * c1;
+			other.tritxt[1] = tritxt[1] + (tritxt[2] - tritxt[1]) * c2;
+			other.tritxt[2] = tritxt[2];
+
+			tritxt[1] = other.tritxt[0];
+		}
+
+		void clip2(float c1, float c2) {
+			DrawSuper::clip2(c1, c2);
+
+			tritxt[0] = tritxt[0] + (tritxt[1] - tritxt[0]) * c1;
+			tritxt[2] = tritxt[2] + (tritxt[1] - tritxt[2]) * c2;
+		}
+
+		void init() {
+			DrawSuper::init();
+			for (int i = 0; i < 3; i++) tritxt[i] *= trizinv[i];
+		}
+
+		void swapv(size_t i1, size_t i2) {
+			DrawSuper::swapv(i1, i2);
+			std::swap(tritxt[i1], tritxt[i2]);
+		}
+
+		void calcd_y() {
+			DrawSuper::calcd_y();
+
+			du1_y = (tritxt[2] - tritxt[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
+			du2_y = (tritxt[1] - tritxt[0]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
+			du_y = &du2_y;
+		}
+
+		void swapdy() {
+			DrawSuper::swapdy();
+
+			std::swap(du1_y, du2_y);
+			du_y = &du1_y;
+		}
+
+		void clipy() {
+			DrawSuper::clipy();
+
+			u1 = tritxt[0] + du1_y * (float)(y - triscreen[0][Y]);
+			u2 = tritxt[0] + du2_y * (float)(y - triscreen[0][Y]);
+		}
+
+		void calcd_x() {
+			DrawSuper::calcd_x();
+			du_x = (u2 - u1) / (x2 - x1);
+		}
+
+		void clipx() {
+			DrawSuper::clipx();
+			u = u1 + du_x * (x - (int)x1);
+		}
+
+		void drawpixel() {
+			DrawSuper::drawpixel();
+		}
+
+		void incx() {
+			DrawSuper::incx();
+			u += du_x;
+		}
+
+		void incy() {
+			DrawSuper::incy();
+
+			u1 += du1_y;
+			u2 += du2_y;
+		}
+
+		void segmentswitch() {
+			DrawSuper::segmentswitch();
+
+			*du_y = (tritxt[2] - tritxt[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
+			u1 = tritxt[2] - du1_y * (float)(triscreen[2][Y] - y);
+			u2 = tritxt[2] - du2_y * (float)(triscreen[2][Y] - y);
+		}
+	};
+
+
+	typedef DrawTX<DrawPS<DrawFlat>> DrawFlat_TX;
+	typedef DrawTX<DrawPS<DrawVertex>> DrawVertex_TX;
+	typedef DrawTX<DrawPixel> DrawPixel_TX;
+	typedef DrawTX<DrawPixel_S> DrawPixel_S_TX;
 
 }
 

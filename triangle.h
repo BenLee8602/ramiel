@@ -17,6 +17,11 @@ namespace bl {
 		template<class GraphicsBL, class Draw>
 		void raster(Draw& draw) {
 			draw.init();
+
+			if (draw.triscreen[0][Y] > draw.triscreen[1][Y]) draw.swapv(0, 1);
+			if (draw.triscreen[0][Y] > draw.triscreen[2][Y]) draw.swapv(0, 2);
+			if (draw.triscreen[1][Y] > draw.triscreen[2][Y]) draw.swapv(1, 2);
+
 			draw.calcd_y();
 			if (draw.dx1_y > draw.dx2_y) draw.swapdy();
 			draw.clipy();
