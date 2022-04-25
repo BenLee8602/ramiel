@@ -117,8 +117,8 @@ namespace bl {
 	void DrawPixel::init() {
 		DrawSuper::init();
 
-		for (int i = 0; i < 3; i++) v[i].pos *= trizinv[i];
 		n = getNormalized(crossProduct(v[1].pos - v[0].pos, v[2].pos - v[0].pos));
+		for (int i = 0; i < 3; i++) v[i].pos *= trizinv[i];
 	}
 
 	void DrawPixel_S::init() {
