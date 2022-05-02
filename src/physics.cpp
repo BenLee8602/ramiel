@@ -1,4 +1,5 @@
-#include "graphics.h"
+#include "graphicsbl_p.h"
+using GraphicsBL = bl::GraphicsBL_p;
 
 namespace bl {
 

@@ -31,13 +31,6 @@
 *.out
 *.app
 
-# VS stuff
-.vs/
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
-Debug/
-Release/
-
-output.txt
+.vscode/
+build/
+model/

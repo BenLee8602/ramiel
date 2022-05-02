@@ -1,5 +1,6 @@
 #include "draw.h"
-#include "graphics.h"
+#include "graphicsbl_p.h"
+using GraphicsBL = bl::GraphicsBL_p;
 
 namespace bl { 
 
@@ -321,12 +322,12 @@ namespace bl {
 
 	void DrawFlat::drawpixel() {
 		GraphicsBL::depth[index] = z;
-		GraphicsBL::pixels_rgb[index] = color;
+		GraphicsBL::pixels[index] = color;
 	}
 
 	void DrawVertex::drawpixel() {
 		GraphicsBL::depth[index] = z;
-		GraphicsBL::pixels_rgb[index] = c;
+		GraphicsBL::pixels[index] = c;
 	}
 
 	void DrawPixel::drawpixel() {
@@ -336,7 +337,7 @@ namespace bl {
 			l->getLight(c);
 		}
 		c.color *= v[0].color;
-		GraphicsBL::pixels_rgb[index] = c.color;
+		GraphicsBL::pixels[index] = c.color;
 	}
 
 	void DrawPixel_S::drawpixel() {

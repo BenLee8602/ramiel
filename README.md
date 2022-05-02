@@ -8,23 +8,22 @@ A mountain scene made using the following entities, lighting, and effects:
 ```cpp
 GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
 GraphicsBL::setBackgroundColor({ 150, 110, 110 });
-GraphicsBL::addLight(new Light_Dir({ 155, 40, 0 }, { -10, 1, 0 }));
-GraphicsBL::addEntity(new Entity(
-	"model/terrain3.obj",
-	ShadingType::FLAT,
+GraphicsBL::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
+GraphicsBL::addEntity(
+	"model/terrain.obj",
+	ShadingType::PIXEL,
 	vec3f_255,
-	Physics(Vec3f{ -64, 0, -64 })
-));
+	{ -64, 0, -64 }
+);
 GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
-GraphicsBL::addEffect(new Bloom(5, false));
 ```
 
 ![Lighting Test](https://github.com/BenLee8602/3D-Graphics-Engine/blob/master/screenshots/cube.PNG?raw=true)
 A test scene showing per-pixel lighting, spotlight, and a cube:
 ```cpp
 GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
-GraphicsBL::addEntity(new Entity("model/cube.obj", ShadingType::PIXEL));
-GraphicsBL::addLight(new Light_Sp(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 }));	
+GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL);
+GraphicsBL::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
 ```
 
 
