@@ -43,7 +43,11 @@ namespace bl {
 
 		totalVerts += nverts;
 		totalTris += ntris;
-		vertices.reserve(nverts);
+
+		v_pos.reserve(nverts);
+		//if (shading == ShadingType_::VERTEX || shading == ShadingType_::PIXEL_S) {
+			v_normal = std::vector<Vec3f>(nverts);
+		//}
 		triangles.reserve(ntris);
 
 		file.close();
@@ -61,21 +65,20 @@ namespace bl {
 
 			// vertex data
 			if (ltr == "v") {
-				Vertex temp;
-				stream >> temp.pos[X] >> temp.pos[Y] >> temp.pos[Z];
-				temp.pos += physics.pos;
-				temp.color = this->color;
-				vertices.push_back(temp);
+				Vec3f temp;
+				stream >> temp[X] >> temp[Y] >> temp[Z];
+				temp += physics.pos;
+				v_pos.push_back(temp);
 			}
 
 			// triangle data
 			else if (ltr == "f") {
 				size_t temp[3];
 				size_t index;
-				for (int a = 0; a < 3; a++) {
+				for (int i = 0; i < 3; ++i) {
 					stream >> index;
 					stream.ignore(1000, ' ');
-					temp[a] = index - 1;
+					temp[i] = index - 1;
 				}
 				triangles.push_back(temp);
 
@@ -87,55 +90,34 @@ namespace bl {
 					triangles.push_back(temp2);
 
 					// vertex normals
-					Vec3f v1 = vertices[temp[1]].pos - vertices[temp[0]].pos;
-					Vec3f v2 = vertices[temp2[1]].pos - vertices[temp[0]].pos;
+					Vec3f v1 = v_pos[temp[1]]  - v_pos[temp[0]];
+					Vec3f v2 = v_pos[temp2[1]] - v_pos[temp[0]];
 					Vec3f n = crossProduct(v1, v2);
-					for (int a = 0; a < 3; a++) vertices[temp[a]].normal += n;
-					vertices[temp2[1]].normal += n;
+					for (int i = 0; i < 3; ++i) v_normal[temp[i]] += n;
+					v_normal[temp2[1]] += n;
 				}
 				else {
 					// vertex normals
-					Vec3f v1 = vertices[temp[1]].pos - vertices[temp[0]].pos;
-					Vec3f v2 = vertices[temp[2]].pos - vertices[temp[0]].pos;
+					Vec3f v1 = v_pos[temp[1]] - v_pos[temp[0]];
+					Vec3f v2 = v_pos[temp[2]] - v_pos[temp[0]];
 					Vec3f n = crossProduct(v1, v2);
-					for (int a = 0; a < 3; a++) vertices[temp[a]].normal += n;
+					for (int i = 0; i < 3; ++i) v_normal[temp[i]] += n;
 				}
 			}
 		}
-
+		
 		file.close();
-		for (auto& v : vertices) v.normal = getNormalized(v.normal);
+		for (auto& v : v_normal) v = getNormalized(v);
 	}
 
 
-	void Entity::calcVertexColor() {
-		for (auto& v : vertices) {
-			v.color = GraphicsBL::light_ambient;
+	void Entity::calcVertexColor(std::vector<Vec3f>& v_color) {
+		for (size_t i = 0; i < v_color.size(); ++i) {
+			v_color[i] = GraphicsBL::light_ambient;
 			for (auto& l : GraphicsBL::lights) {
-				l->getLight(v);
+				v_color[i] += l->getLight(v_pos[i], v_normal[i]);
 			}
-			v.color *= color;
-		}
-	}
-
-
-	template<class D>
-	void drawTris(std::vector<Vertex>& vertices, std::vector<Triangle>& triangles) {
-
-		// get camera coords
-		std::vector<Vec3f> cameraCoords(vertices.size());
-		for (size_t i = 0; i < vertices.size(); i++) {
-			cameraCoords[i] = GraphicsBL::camera.getCameraCoord(vertices[i].pos);
-		}
-
-		// draw all triangles
-		D draw;
-		for (auto& t : triangles) {
-			for (size_t i = 0; i < 3; i++) {
-				draw.v[i] = vertices[t[i]];
-				draw.tricam[i] = cameraCoords[t[i]];
-			}
-			t.draw<GraphicsBL>(draw);
+			v_color[i] *= color; // rember to change this later
 		}
 	}
 
@@ -145,28 +127,77 @@ namespace bl {
 		if (physics.movement) {
 			if (physics.velocity) {
 				Vec3f dpos = physics.velocity * GraphicsBL::dtime;
-				for (auto& v : vertices) {
-					v.pos += dpos;
+				for (auto& v : v_pos) {
+					v += dpos;
 				}
 			}
 			physics.simulateMovement();
 		}
+
+		// get camera coords
+		std::vector<Vec3f> cameraCoords(v_pos.size());
+		for (size_t i = 0; i < v_pos.size(); i++) {
+			cameraCoords[i] = GraphicsBL::camera.getCameraCoord(v_pos[i]);
+		}
 		
 		// graphics
 		switch (shading) {
-			case ShadingType_::FLAT:
-				drawTris<DrawFlat>(vertices, triangles);
+			case ShadingType_::FLAT: {
+				DrawFlat draw;
+				draw.surfaceColor = color;
+				for (auto& t : triangles) {
+					for (size_t i = 0; i < 3; i++) {
+						draw.v_pos[i] = v_pos[t[i]];
+						draw.tricam[i] = cameraCoords[t[i]];
+					}
+					t.draw<GraphicsBL>(draw);
+				}
 				break;
-			case ShadingType_::VERTEX:
-				calcVertexColor();
-				drawTris<DrawVertex>(vertices, triangles);
+			}
+
+			case ShadingType_::VERTEX: {
+				std::vector<Vec3f> v_color(v_pos.size());
+				calcVertexColor(v_color);
+				DrawVertex draw;
+				draw.surfaceColor = color;
+				for (auto& t : triangles) {
+					for (size_t i = 0; i < 3; i++) {
+						draw.v_pos[i] = v_pos[t[i]];
+						draw.v_color[i] = v_color[t[i]];
+						draw.tricam[i] = cameraCoords[t[i]];
+					}
+					t.draw<GraphicsBL>(draw);
+				}
 				break;
-			case ShadingType_::PIXEL:
-				drawTris<DrawPixel>(vertices, triangles);
+			}
+
+			case ShadingType_::PIXEL: {
+				DrawPixel draw;
+				draw.surfaceColor = color;
+				for (auto& t : triangles) {
+					for (size_t i = 0; i < 3; i++) {
+						draw.v_pos[i] = v_pos[t[i]];
+						draw.tricam[i] = cameraCoords[t[i]];
+					}
+					t.draw<GraphicsBL>(draw);
+				}
 				break;
-			case ShadingType_::PIXEL_S:
-				drawTris<DrawPixel_S>(vertices, triangles);
+			}
+
+			case ShadingType_::PIXEL_S: {
+				DrawPixel_S draw;
+				draw.surfaceColor = color;
+				for (auto& t : triangles) {
+					for (size_t i = 0; i < 3; i++) {
+						draw.v_pos[i] = v_pos[t[i]];
+						draw.v_normal[i] = v_normal[t[i]];
+						draw.tricam[i] = cameraCoords[t[i]];
+					}
+					t.draw<GraphicsBL>(draw);
+				}
 				break;
+			}
+
 			default: throw std::string("Error in determining shading type");
 		}
 	}

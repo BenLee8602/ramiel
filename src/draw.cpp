@@ -25,31 +25,33 @@ namespace bl {
 		Draw::clip1(c1, c2, other);
 
 		// interpolate color
-		other.v[0].color = v[1].color + (v[0].color - v[1].color) * c1;
-		other.v[1].color = v[1].color + (v[2].color - v[1].color) * c2;
-		other.v[2].color = v[2].color;
+		other.v_color[0] = v_color[1] + (v_color[0] - v_color[1]) * c1;
+		other.v_color[1] = v_color[1] + (v_color[2] - v_color[1]) * c2;
+		other.v_color[2] = v_color[2];
 
-		v[1] = other.v[0];
+		v_color[1] = other.v_color[0];
 	}
 
 	void DrawPixel::clip1(float c1, float c2, DrawPixel& other) {
 		DrawSuper::clip1(c1, c2, other);
 
 		// interpolate pos
-		other.v[0].pos = v[1].pos + (v[0].pos - v[1].pos) * c1;
-		other.v[1].pos = v[1].pos + (v[2].pos - v[1].pos) * c2;
-		other.v[2].pos = v[2].pos;
+		other.v_pos[0] = v_pos[1] + (v_pos[0] - v_pos[1]) * c1;
+		other.v_pos[1] = v_pos[1] + (v_pos[2] - v_pos[1]) * c2;
+		other.v_pos[2] = v_pos[2];
 
-		v[1] = other.v[0];
+		v_pos[1] = other.v_pos[0];
 	}
 
 	void DrawPixel_S::clip1(float c1, float c2, DrawPixel_S& other) {
-		// interpolate normal
-		other.v[0].normal = v[1].normal + (v[0].normal - v[1].normal) * c1;
-		other.v[1].normal = v[1].normal + (v[2].normal - v[1].normal) * c2;
-		other.v[2].normal = v[2].normal;
-
 		DrawPixel::clip1(c1, c2, other);
+
+		// interpolate normal
+		other.v_normal[0] = v_normal[1] + (v_normal[0] - v_normal[1]) * c1;
+		other.v_normal[1] = v_normal[1] + (v_normal[2] - v_normal[1]) * c2;
+		other.v_normal[2] = v_normal[2];
+
+		v_normal[1] = other.v_normal[0];
 	}
 
 
@@ -71,24 +73,24 @@ namespace bl {
 		Draw::clip2(c1, c2);
 
 		// interpolate color
-		v[0].color = v[0].color + (v[1].color - v[0].color) * c1;
-		v[2].color = v[2].color + (v[1].color - v[2].color) * c2;
+		v_color[0] = v_color[0] + (v_color[1] - v_color[0]) * c1;
+		v_color[2] = v_color[2] + (v_color[1] - v_color[2]) * c2;
 	}
 
 	void DrawPixel::clip2(float c1, float c2) {
 		DrawSuper::clip2(c1, c2);
 
 		// interpolate pos
-		v[0].pos = v[0].pos + (v[1].pos - v[0].pos) * c1;
-		v[2].pos = v[2].pos + (v[1].pos - v[2].pos) * c2;
+		v_pos[0] = v_pos[0] + (v_pos[1] - v_pos[0]) * c1;
+		v_pos[2] = v_pos[2] + (v_pos[1] - v_pos[2]) * c2;
 	}
 
 	void DrawPixel_S::clip2(float c1, float c2) {
 		DrawPixel::clip2(c1, c2);
 
 		// interpolate normal
-		v[0].normal = v[0].normal + (v[1].normal - v[0].normal) * c1;
-		v[2].normal = v[2].normal + (v[1].normal - v[2].normal) * c2;
+		v_normal[0] = v_normal[0] + (v_normal[1] - v_normal[0]) * c1;
+		v_normal[2] = v_normal[2] + (v_normal[1] - v_normal[2]) * c2;
 	}
 
 
@@ -102,13 +104,13 @@ namespace bl {
 	void DrawFlat::init() {
 		Draw::init();
 
-		Vec3f pos = (v[0].pos + v[1].pos + v[2].pos) / 3.0f;
-		Vec3f n = getNormalized(crossProduct(v[1].pos - v[0].pos, v[2].pos - v[0].pos));
-		Vertex c = { pos, n, GraphicsBL::light_ambient };
+		Vec3f pos = (v_pos[0] + v_pos[1] + v_pos[2]) / 3.0f;
+		Vec3f normal = getNormalized(crossProduct(v_pos[1] - v_pos[0], v_pos[2] - v_pos[0]));
+		color = GraphicsBL::light_ambient;
 		for (auto& l : GraphicsBL::lights) {
-			l->getLight(c);
+			color += l->getLight(pos, normal);
 		}
-		color = c.color * v[0].color;
+		color *= surfaceColor;
 	}
 
 	void DrawVertex::init() {
@@ -118,8 +120,8 @@ namespace bl {
 	void DrawPixel::init() {
 		DrawSuper::init();
 
-		n = getNormalized(crossProduct(v[1].pos - v[0].pos, v[2].pos - v[0].pos));
-		for (int i = 0; i < 3; i++) v[i].pos *= trizinv[i];
+		n = getNormalized(crossProduct(v_pos[1] - v_pos[0], v_pos[2] - v_pos[0]));
+		for (int i = 0; i < 3; i++) v_pos[i] *= trizinv[i];
 	}
 
 	void DrawPixel_S::init() {
@@ -137,17 +139,17 @@ namespace bl {
 
 	void DrawVertex::swapv(size_t i1, size_t i2) {
 		Draw::swapv(i1, i2);
-		std::swap(v[i1].color, v[i2].color);
+		std::swap(v_color[i1], v_color[i2]);
 	}
 
 	void DrawPixel::swapv(size_t i1, size_t i2) {
 		DrawSuper::swapv(i1, i2);
-		std::swap(v[i1].pos, v[i2].pos);
+		std::swap(v_pos[i1], v_pos[i2]);
 	}
 
 	void DrawPixel_S::swapv(size_t i1, size_t i2) {
 		DrawPixel::swapv(i1, i2);
-		std::swap(v[i1].normal, v[i2].normal);
+		std::swap(v_normal[i1], v_normal[i2]);
 	}
 
 	void Draw::calcd_y() {
@@ -170,8 +172,8 @@ namespace bl {
 		Draw::calcd_y();
 
 		// change in color per change in y
-		dc1_y = (v[2].color - v[0].color) / (float)(triscreen[2][Y] - triscreen[0][Y]);
-		dc2_y = (v[1].color - v[0].color) / (float)(triscreen[1][Y] - triscreen[0][Y]);
+		dc1_y = (v_color[2] - v_color[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
+		dc2_y = (v_color[1] - v_color[0]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
 		dc_y = &dc2_y;
 	}
 
@@ -179,8 +181,8 @@ namespace bl {
 		DrawSuper::calcd_y();
 
 		// change in pos per change in y
-		dp1_y = (v[2].pos - v[0].pos) / (float)(triscreen[2][Y] - triscreen[0][Y]);
-		dp2_y = (v[1].pos - v[0].pos) / (float)(triscreen[1][Y] - triscreen[0][Y]);
+		dp1_y = (v_pos[2] - v_pos[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
+		dp2_y = (v_pos[1] - v_pos[0]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
 		dp_y = &dp2_y;
 	}
 
@@ -188,8 +190,8 @@ namespace bl {
 		DrawPixel::calcd_y();
 
 		// change in normal per change in y
-		dn1_y = (v[2].normal - v[0].normal) / (float)(triscreen[2][Y] - triscreen[0][Y]);
-		dn2_y = (v[1].normal - v[0].normal) / (float)(triscreen[1][Y] - triscreen[0][Y]);
+		dn1_y = (v_normal[2] - v_normal[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
+		dn2_y = (v_normal[1] - v_normal[0]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
 		dn_y = &dn2_y;
 	}
 
@@ -247,24 +249,24 @@ namespace bl {
 		Draw::clipy();
 
 		// start and end color values of scanline
-		c1 = v[0].color + dc1_y * (float)(y - triscreen[0][Y]);
-		c2 = v[0].color + dc2_y * (float)(y - triscreen[0][Y]);
+		c1 = v_color[0] + dc1_y * (float)(y - triscreen[0][Y]);
+		c2 = v_color[0] + dc2_y * (float)(y - triscreen[0][Y]);
 	}
 
 	void DrawPixel::clipy() {
 		DrawSuper::clipy();
 
 		// start and end pos values of scanline
-		p1 = v[0].pos + dp1_y * (float)(y - triscreen[0][Y]);
-		p2 = v[0].pos + dp2_y * (float)(y - triscreen[0][Y]);
+		p1 = v_pos[0] + dp1_y * (float)(y - triscreen[0][Y]);
+		p2 = v_pos[0] + dp2_y * (float)(y - triscreen[0][Y]);
 	}
 
 	void DrawPixel_S::clipy() {
 		DrawPixel::clipy();
 
 		// start and end normal values of scanline
-		n1 = v[0].normal + dn1_y * (float)(y - triscreen[0][Y]);
-		n2 = v[0].normal + dn2_y * (float)(y - triscreen[0][Y]);
+		n1 = v_normal[0] + dn1_y * (float)(y - triscreen[0][Y]);
+		n2 = v_normal[0] + dn2_y * (float)(y - triscreen[0][Y]);
 	}
 
 	void Draw::calcd_x() {
@@ -332,12 +334,13 @@ namespace bl {
 
 	void DrawPixel::drawpixel() {
 		GraphicsBL::depth[index] = z;
-		Vertex c = { p / zinv, getNormalized(n), GraphicsBL::light_ambient };
+		Vec3f pos = p / zinv;
+		Vec3f normal = getNormalized(n);
+		Vec3f color = GraphicsBL::light_ambient;
 		for (auto& l : GraphicsBL::lights) {
-			l->getLight(c);
+			color += l->getLight(pos, normal);
 		}
-		c.color *= v[0].color;
-		GraphicsBL::pixels[index] = c.color;
+		GraphicsBL::pixels[index] = color * surfaceColor;
 	}
 
 	void DrawPixel_S::drawpixel() {
@@ -420,25 +423,25 @@ namespace bl {
 	void DrawVertex::segmentswitch() {
 		Draw::segmentswitch();
 
-		*dc_y = (v[2].color - v[1].color) / (float)(triscreen[2][Y] - triscreen[1][Y]);
-		c1 = v[2].color - dc1_y * (float)(triscreen[2][Y] - y);
-		c2 = v[2].color - dc2_y * (float)(triscreen[2][Y] - y);
+		*dc_y = (v_color[2] - v_color[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
+		c1 = v_color[2] - dc1_y * (float)(triscreen[2][Y] - y);
+		c2 = v_color[2] - dc2_y * (float)(triscreen[2][Y] - y);
 	}
 
 	void DrawPixel::segmentswitch() {
 		DrawSuper::segmentswitch();
 
-		*dp_y = (v[2].pos - v[1].pos) / (float)(triscreen[2][Y] - triscreen[1][Y]);
-		p1 = v[2].pos - dp1_y * (float)(triscreen[2][Y] - y);
-		p2 = v[2].pos - dp2_y * (float)(triscreen[2][Y] - y);
+		*dp_y = (v_pos[2] - v_pos[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
+		p1 = v_pos[2] - dp1_y * (float)(triscreen[2][Y] - y);
+		p2 = v_pos[2] - dp2_y * (float)(triscreen[2][Y] - y);
 	}
 
 	void DrawPixel_S::segmentswitch() {
 		DrawPixel::segmentswitch();
 
-		*dn_y = (v[2].normal - v[1].normal) / (float)(triscreen[2][Y] - triscreen[1][Y]);
-		n1 = v[2].normal - dn1_y * (float)(triscreen[2][Y] - y);
-		n2 = v[2].normal - dn2_y * (float)(triscreen[2][Y] - y);
+		*dn_y = (v_normal[2] - v_normal[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
+		n1 = v_normal[2] - dn1_y * (float)(triscreen[2][Y] - y);
+		n2 = v_normal[2] - dn2_y * (float)(triscreen[2][Y] - y);
 	}
 
 }

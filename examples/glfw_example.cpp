@@ -8,7 +8,7 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	//*
+	/*
 	GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
 	GraphicsBL::setBackgroundColor({ 150, 110, 110 });
 	GraphicsBL::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
@@ -25,6 +25,15 @@ void initScene() {
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
 	GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL);
 	GraphicsBL::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
+	//*/
+
+	//*
+	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
+	GraphicsBL::addPointLight(vec3f_255, vec3f_0, 0.1f);
+	GraphicsBL::addEntity("model/cube.obj", ShadingType::FLAT,    vec3f_255, { -3, 0, 4 });
+	GraphicsBL::addEntity("model/cube.obj", ShadingType::VERTEX,  vec3f_255, { -1, 0, 4 });
+	GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL,   vec3f_255, {  1, 0, 4 });
+	GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL_S, vec3f_255, {  3, 0, 4 });
 	//*/
 }
 

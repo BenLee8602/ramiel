@@ -17,7 +17,8 @@ namespace bl {
 		static size_t totalVerts;
 		static size_t totalTris;
 
-		std::vector<Vertex> vertices;
+		std::vector<Vec3f> v_pos;
+		std::vector<Vec3f> v_normal;
 		std::vector<Triangle> triangles;
 		
 	public:
@@ -26,7 +27,7 @@ namespace bl {
 		Physics physics;
 
 	private:
-		void calcVertexColor();
+		void calcVertexColor(std::vector<Vec3f>& v_color);
 
 	public:
 		static size_t getTotalVerts();

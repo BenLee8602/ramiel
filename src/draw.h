@@ -7,9 +7,10 @@ namespace bl {
 
 	class Draw {
 	public:
+		Vec3f surfaceColor;
 
 		// triangle vertex data
-		Vertex v[3];
+		Vec3f v_pos[3];
 		Vec3f tricam[3];
 		Vec2 triscreen[3];
 
@@ -73,6 +74,10 @@ namespace bl {
 
 
 	class DrawVertex : public Draw {
+	public:
+		Vec3f v_color[3];
+
+	private:
 		Vec3f dc1_y, dc2_y, *dc_y;
 		Vec3f c1, c2;
 		Vec3f dc_x;
@@ -99,7 +104,10 @@ namespace bl {
 	template<class DrawSuper>
 	class DrawPS : public DrawSuper {
 	public:
-		using DrawSuper::v;
+		using DrawSuper::v_pos;
+		//using DrawSuper::v_normal;
+		//using DrawSuper::v_color;
+
 		using DrawSuper::tricam;
 		using DrawSuper::triscreen;
 
@@ -190,7 +198,7 @@ namespace bl {
 
 
 	class DrawPixel : public DrawPS<Draw> {
-		typedef DrawPS<Draw> DrawSuper; 
+		typedef DrawPS<Draw> DrawSuper;
 
 		Vec3f dp1_y, dp2_y, *dp_y;
 		Vec3f p1, p2;
@@ -219,6 +227,10 @@ namespace bl {
 
 
 	class DrawPixel_S : public DrawPixel {
+	public:
+		Vec3f v_normal[3];
+
+	private:
 		Vec3f dn1_y, dn2_y, * dn_y;
 		Vec3f n1, n2;
 		Vec3f dn_x;
@@ -244,7 +256,10 @@ namespace bl {
 	template<class DrawSuper>
 	class DrawTX : public DrawSuper {
 	public:
-		using DrawSuper::v;
+		//using DrawSuper::v_pos;
+		//using DrawSuper::v_normal;
+		//using DrawSuper::v_color;
+
 		using DrawSuper::tricam;
 		using DrawSuper::triscreen;
 		using DrawSuper::trizinv;

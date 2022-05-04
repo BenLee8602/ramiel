@@ -14,8 +14,8 @@ namespace bl {
 		this->dir = getNormalized(dir);
 	}
 
-	void Light_Dir::getLight(Vertex& v) const {
-		v.color += color * std::max(0.0f, dotProduct(v.normal, dir));
+	Vec3f Light_Dir::getLight(Vec3f& pos, Vec3f& normal) const {
+		return this->color * std::max(0.0f, dotProduct(normal, this->dir));
 	}
 
 	void Light_Dir::move(const Vec3f& pos) {
@@ -29,11 +29,11 @@ namespace bl {
 		this->falloff = falloff;
 	}
 
-	void Light_Pt::getLight(Vertex& v) const {
-		Vec3f vec = v.pos - pos;
+	Vec3f Light_Pt::getLight(Vec3f& pos, Vec3f& normal) const {
+		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
 		float f = 1.0f / (falloff * d * d + 1.0f);
-		v.color += color * f * std::max(0.0f, -dotProduct(getNormalized(vec), v.normal));
+		return this->color * f * std::max(0.0f, -dotProduct(getNormalized(vec), normal));
 	}
 
 	void Light_Pt::move(const Vec3f& pos) {
@@ -49,14 +49,14 @@ namespace bl {
 		this->falloffExp = falloffExp;
 	}
 
-	void Light_Sp::getLight(Vertex& v) const {
-		Vec3f vec = v.pos - pos;
+	Vec3f Light_Sp::getLight(Vec3f& pos, Vec3f& normal) const {
+		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
 		vec = getNormalized(vec);
-		float s = std::max(0.0f, dotProduct(vec, dir));
-		if (s < width) return;
-		float f = 1.0f / (falloff * d * d + 1.0f) * std::pow(s, falloffExp);
-		v.color += color * f * std::max(0.0f, -dotProduct(vec, v.normal));
+		float s = std::max(0.0f, dotProduct(vec, this->dir));
+		if (s < width) return vec3f_0;
+		float f = 1.0f / (this->falloff * d * d + 1.0f) * std::pow(s, this->falloffExp);
+		return this->color * f * std::max(0.0f, -dotProduct(vec, normal));
 	}
 
 	void Light_Sp::rotate(const Vec3f& dir) {
