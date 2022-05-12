@@ -1,7 +1,7 @@
-#ifndef BL_DRAW_H
-#define BL_DRAW_H
+#pragma once
 
 #include "vec.h"
+#include "texture.h"
 
 namespace bl {
 
@@ -104,9 +104,8 @@ namespace bl {
 	template<class DrawSuper>
 	class DrawPS : public DrawSuper {
 	public:
+		using DrawSuper::surfaceColor;
 		using DrawSuper::v_pos;
-		//using DrawSuper::v_normal;
-		//using DrawSuper::v_color;
 
 		using DrawSuper::tricam;
 		using DrawSuper::triscreen;
@@ -206,7 +205,7 @@ namespace bl {
 		Vec3f p;
 
 	protected:
-		Vec3f n;
+		Vec3f normal;
 
 	public:
 		void clip1(float c1, float c2, DrawPixel& other);
@@ -234,6 +233,7 @@ namespace bl {
 		Vec3f dn1_y, dn2_y, * dn_y;
 		Vec3f n1, n2;
 		Vec3f dn_x;
+		Vec3f n;
 
 	public:
 		void clip1(float c1, float c2, DrawPixel_S& other);
@@ -256,9 +256,7 @@ namespace bl {
 	template<class DrawSuper>
 	class DrawTX : public DrawSuper {
 	public:
-		//using DrawSuper::v_pos;
-		//using DrawSuper::v_normal;
-		//using DrawSuper::v_color;
+		using DrawSuper::surfaceColor;
 
 		using DrawSuper::tricam;
 		using DrawSuper::triscreen;
@@ -269,7 +267,10 @@ namespace bl {
 		using DrawSuper::x1;
 		using DrawSuper::x2;
 
-		Vec2f tritxt;
+		using DrawSuper::zinv;
+
+		Texture* texture;
+		Vec2f v_txt[3];
 	private:
 		Vec2f du1_y, du2_y, * du_y;
 		Vec2f u1, u2;
@@ -280,35 +281,37 @@ namespace bl {
 		void clip1(float c1, float c2, DrawTX<DrawSuper>& other) {
 			DrawSuper::clip1(c1, c2, other);
 
-			other.tritxt[0] = tritxt[1] + (tritxt[0] - tritxt[1]) * c1;
-			other.tritxt[1] = tritxt[1] + (tritxt[2] - tritxt[1]) * c2;
-			other.tritxt[2] = tritxt[2];
+			other.v_txt[0] = v_txt[1] + (v_txt[0] - v_txt[1]) * c1;
+			other.v_txt[1] = v_txt[1] + (v_txt[2] - v_txt[1]) * c2;
+			other.v_txt[2] = v_txt[2];
 
-			tritxt[1] = other.tritxt[0];
+			v_txt[1] = other.v_txt[0];
 		}
 
 		void clip2(float c1, float c2) {
 			DrawSuper::clip2(c1, c2);
 
-			tritxt[0] = tritxt[0] + (tritxt[1] - tritxt[0]) * c1;
-			tritxt[2] = tritxt[2] + (tritxt[1] - tritxt[2]) * c2;
+			v_txt[0] = v_txt[0] + (v_txt[1] - v_txt[0]) * c1;
+			v_txt[2] = v_txt[2] + (v_txt[1] - v_txt[2]) * c2;
 		}
 
 		void init() {
 			DrawSuper::init();
-			for (int i = 0; i < 3; i++) tritxt[i] *= trizinv[i];
+			for (int i = 0; i < 3; i++) {
+				v_txt[i] *= trizinv[i];
+			}
 		}
 
 		void swapv(size_t i1, size_t i2) {
 			DrawSuper::swapv(i1, i2);
-			std::swap(tritxt[i1], tritxt[i2]);
+			std::swap(v_txt[i1], v_txt[i2]);
 		}
 
 		void calcd_y() {
 			DrawSuper::calcd_y();
 
-			du1_y = (tritxt[2] - tritxt[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
-			du2_y = (tritxt[1] - tritxt[0]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
+			du1_y = (v_txt[2] - v_txt[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
+			du2_y = (v_txt[1] - v_txt[0]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
 			du_y = &du2_y;
 		}
 
@@ -322,8 +325,8 @@ namespace bl {
 		void clipy() {
 			DrawSuper::clipy();
 
-			u1 = tritxt[0] + du1_y * (float)(y - triscreen[0][Y]);
-			u2 = tritxt[0] + du2_y * (float)(y - triscreen[0][Y]);
+			u1 = v_txt[0] + du1_y * (float)(y - triscreen[0][Y]);
+			u2 = v_txt[0] + du2_y * (float)(y - triscreen[0][Y]);
 		}
 
 		void calcd_x() {
@@ -337,6 +340,7 @@ namespace bl {
 		}
 
 		void drawpixel() {
+			surfaceColor = texture->get(u / zinv);
 			DrawSuper::drawpixel();
 		}
 
@@ -355,9 +359,9 @@ namespace bl {
 		void segmentswitch() {
 			DrawSuper::segmentswitch();
 
-			*du_y = (tritxt[2] - tritxt[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
-			u1 = tritxt[2] - du1_y * (float)(triscreen[2][Y] - y);
-			u2 = tritxt[2] - du2_y * (float)(triscreen[2][Y] - y);
+			*du_y = (v_txt[2] - v_txt[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
+			u1 = v_txt[2] - du1_y * (float)(triscreen[2][Y] - y);
+			u2 = v_txt[2] - du2_y * (float)(triscreen[2][Y] - y);
 		}
 	};
 
@@ -368,5 +372,3 @@ namespace bl {
 	typedef DrawTX<DrawPixel_S> DrawPixel_S_TX;
 
 }
-
-#endif

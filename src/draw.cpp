@@ -105,12 +105,15 @@ namespace bl {
 		Draw::init();
 
 		Vec3f pos = (v_pos[0] + v_pos[1] + v_pos[2]) / 3.0f;
-		Vec3f normal = getNormalized(crossProduct(v_pos[1] - v_pos[0], v_pos[2] - v_pos[0]));
+
+		Vec3f v1 = v_pos[1] - v_pos[0];
+		Vec3f v2 = v_pos[2] - v_pos[0];
+		Vec3f normal = getNormalized(crossProduct(v1, v2));
+
 		color = GraphicsBL::light_ambient;
 		for (auto& l : GraphicsBL::lights) {
 			color += l->getLight(pos, normal);
 		}
-		color *= surfaceColor;
 	}
 
 	void DrawVertex::init() {
@@ -120,7 +123,9 @@ namespace bl {
 	void DrawPixel::init() {
 		DrawSuper::init();
 
-		n = getNormalized(crossProduct(v_pos[1] - v_pos[0], v_pos[2] - v_pos[0]));
+		Vec3f v1 = v_pos[1] - v_pos[0];
+		Vec3f v2 = v_pos[2] - v_pos[0];
+		normal = getNormalized(crossProduct(v1, v2));
 		for (int i = 0; i < 3; i++) v_pos[i] *= trizinv[i];
 	}
 
@@ -324,18 +329,17 @@ namespace bl {
 
 	void DrawFlat::drawpixel() {
 		GraphicsBL::depth[index] = z;
-		GraphicsBL::pixels[index] = color;
+		GraphicsBL::pixels[index] = color * surfaceColor;
 	}
 
 	void DrawVertex::drawpixel() {
 		GraphicsBL::depth[index] = z;
-		GraphicsBL::pixels[index] = c;
+		GraphicsBL::pixels[index] = c * surfaceColor;
 	}
 
 	void DrawPixel::drawpixel() {
 		GraphicsBL::depth[index] = z;
 		Vec3f pos = p / zinv;
-		Vec3f normal = getNormalized(n);
 		Vec3f color = GraphicsBL::light_ambient;
 		for (auto& l : GraphicsBL::lights) {
 			color += l->getLight(pos, normal);
@@ -344,6 +348,7 @@ namespace bl {
 	}
 
 	void DrawPixel_S::drawpixel() {
+		normal = getNormalized(n);
 		DrawPixel::drawpixel();
 	}
 

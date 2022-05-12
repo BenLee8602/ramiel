@@ -1,7 +1,7 @@
 # 3D Graphics Engine
 
-This repos contains a 3D graphics engine, written from scratch, without the use of any graphics 
-libraries. Currently only runs on CPU.
+This repos contains a 3D graphics + physics library. All graphics + physics related functionality 
+was written without the use of any external libraries or frameworks.
 
 ![Mountains](https://github.com/BenLee8602/3D-Graphics-Engine/blob/master/screenshots/perlin_mountain.PNG?raw=true)
 A mountain scene made using the following entities, lighting, and effects:
@@ -41,8 +41,8 @@ a class for each drawing type:
 * Pixel: colors are calculated for each pixel, giving the most realistic look
 
 There are also templated draw classes for modifying the main 3 ^, for things like perspective 
-correction, and texturing (WIP). Each class is responsible for clipping and interpolating vertex 
-data across the triangle, drawing pixels, and executing any required setup for that drawing type.
+correction, and texturing. Each class is responsible for clipping and interpolating vertex data 
+across the triangle, drawing pixels, and executing any required setup for that drawing type.
 These functions are called by a Triangle class instance.
 
 ## Effects
@@ -50,32 +50,32 @@ Defines classes for applying effects to a frame. Effects are applied to a frame 
 entities have been rendered. Some examples include blur, black and white, and fog.
 
 ## Entity
-An entity is a 3D object. It contains arrays for vertices and triangles. It also defines the 
-object's shading type, physics properties, and color.
+An entity is a 3D object. It stores vertices and triangles. It also defines the object's shading 
+type, physics properties, and color/texture.
 
-## Graphics
-The main graphics class, contains things like window dimensions, pixel buffers, entities, lighting, 
-and effects. Also contains functions for modifying these fields, and rendering a frame.
+## GraphicsBL
+The main graphics class, contains things like screen dimensions, pixel buffers, entities, 
+lighting, and effects. Also contains functions for modifying these fields, and rendering a frame.
 
 ## Light
 Defines classes for lighting. This includes directional lighting (ex. the sun), point lighting, 
 (ex. a light bulb) and spotlight (a flashlight). Each class implements a function to calculate the 
 lighting on a given vertex.
 
-## Main
-Example client code: uses windows.h to open a window, adds entities, lights, effects to the scene, 
-and contains the main loop. This main loop keeps track of user input, time elapsed between frames, 
-then renders the frame and displays it in the window.
+## ObjReader
+Functions for loading 3D geometry data from wavefront obj files.
 
 ## Physics
 Contains the physics properties of an entity, such as collisions and movement. It keeps track of 
 things such as hitbox size, mass, velocity, and acceleration. It is also responsible for simulating 
 entity movement and collisions for each frame.
 
+## Texture
+Loads an image using stb_image and stores the texture in memory. Can return the color of the 
+texture at a given normalized 2D coordinate.
+
 ## Triangle
-The Triangle class defines a triangle using 3 integers. These integers represent indices in the 
-vertices array in the Entity class. It also contains functions for clipping and rastering a 
-triangle.
+Functions for clipping and rastering a triangle, based on the given Draw object and vertex data.
 
 ## Vec
 Contains a class template, Vec<T, N> which contains a statically allocated array of type T and 

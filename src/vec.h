@@ -1,5 +1,4 @@
-#ifndef BL_VEC_H
-#define BL_VEC_H
+#pragma once
 
 #include <fstream>
 #include <cmath>
@@ -16,41 +15,44 @@ namespace bl {
 
 		// typecasting
 		operator T* () { return arr; };
-		operator bool() const { for (size_t i = 0; i < N; i++) if (arr[i]) return true; return false; }
+		operator bool() const { for (size_t i = 0; i < N; ++i) if (arr[i]) return true; return false; }
+
+		// comparison
+		template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (arr[i] != v[i]) return false; return true; }
 
 		// assignment
-		template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] = v[i]; return *this; }
-		template<typename U> Vec<T, N>& operator=(U num) { for (size_t i = 0; i < N; i++) arr[i] = num; return *this; }
+		template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] = v[i]; return *this; }
+		template<typename U> Vec<T, N>& operator=(U num) { for (size_t i = 0; i < N; ++i) arr[i] = num; return *this; }
 
 		// scalar arithmetic assignment
-		template<typename U> Vec<T, N>& operator+=(U num) { for (size_t i = 0; i < N; i++) arr[i] += num; return *this; }
-		template<typename U> Vec<T, N>& operator-=(U num) { for (size_t i = 0; i < N; i++) arr[i] -= num; return *this; }
-		template<typename U> Vec<T, N>& operator*=(U num) { for (size_t i = 0; i < N; i++) arr[i] *= num; return *this; }
-		template<typename U> Vec<T, N>& operator/=(U num) { for (size_t i = 0; i < N; i++) arr[i] /= num; return *this; }
+		template<typename U> Vec<T, N>& operator+=(U num) { for (size_t i = 0; i < N; ++i) arr[i] += num; return *this; }
+		template<typename U> Vec<T, N>& operator-=(U num) { for (size_t i = 0; i < N; ++i) arr[i] -= num; return *this; }
+		template<typename U> Vec<T, N>& operator*=(U num) { for (size_t i = 0; i < N; ++i) arr[i] *= num; return *this; }
+		template<typename U> Vec<T, N>& operator/=(U num) { for (size_t i = 0; i < N; ++i) arr[i] /= num; return *this; }
 
 		// vector arithmetic assigment
-		template<typename U> Vec<T, N>& operator+=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] += v[i]; return *this; }
-		template<typename U> Vec<T, N>& operator-=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] -= v[i]; return *this; }
-		template<typename U> Vec<T, N>& operator*=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] *= v[i]; return *this; }
-		template<typename U> Vec<T, N>& operator/=(const Vec<U, N>& v) { for (size_t i = 0; i < N; i++) arr[i] /= v[i]; return *this; }
+		template<typename U> Vec<T, N>& operator+=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] += v[i]; return *this; }
+		template<typename U> Vec<T, N>& operator-=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] -= v[i]; return *this; }
+		template<typename U> Vec<T, N>& operator*=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] *= v[i]; return *this; }
+		template<typename U> Vec<T, N>& operator/=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] /= v[i]; return *this; }
 
 		// scalar arithmetic
-		template<typename U> Vec<T, N> operator+(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] + num; return temp; }
-		template<typename U> Vec<T, N> operator-(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] - num; return temp; }
-		template<typename U> Vec<T, N> operator*(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] * num; return temp; }
-		template<typename U> Vec<T, N> operator/(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] / num; return temp; }
+		template<typename U> Vec<T, N> operator+(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] + num; return temp; }
+		template<typename U> Vec<T, N> operator-(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] - num; return temp; }
+		template<typename U> Vec<T, N> operator*(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * num; return temp; }
+		template<typename U> Vec<T, N> operator/(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] / num; return temp; }
 
 		// vector arithmetic
-		template<typename U> Vec<T, N> operator+(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] + v[i]; return temp; }
-		template<typename U> Vec<T, N> operator-(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] - v[i]; return temp; }
-		template<typename U> Vec<T, N> operator*(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] * v[i]; return temp; }
-		template<typename U> Vec<T, N> operator/(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; i++) temp[i] = arr[i] / v[i]; return temp; }
+		template<typename U> Vec<T, N> operator+(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] + v[i]; return temp; }
+		template<typename U> Vec<T, N> operator-(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] - v[i]; return temp; }
+		template<typename U> Vec<T, N> operator*(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * v[i]; return temp; }
+		template<typename U> Vec<T, N> operator/(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] / v[i]; return temp; }
 	};
 
 	template<typename T, size_t N>
 	std::ostream& operator<<(std::ostream& os, const Vec<T, N>& vec) {
 		os << "{ ";
-		for (size_t i = 0; i < N - 1; i++) {
+		for (size_t i = 0; i < N - 1; ++i) {
 			os << vec[i] << ", ";
 		}
 		return os << vec[N - 1] << " }";
@@ -78,6 +80,7 @@ namespace bl {
 
 	enum xyz : size_t { X, Y, Z };
 	enum rgb : size_t { R, G, B };
+	enum uv  : size_t { U, V };
 
 	const Vec3f vec3f_0 = { 0.0f, 0.0f, 0.0f };
 	const Vec3f vec3f_255 = { 255.0f, 255.0f, 255.0f };
@@ -96,5 +99,3 @@ namespace bl {
 	void notBloom(Vec3f& in);
 
 }
-
-#endif

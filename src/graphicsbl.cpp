@@ -1,4 +1,5 @@
 #include <thread>
+#include <fstream>
 #include "graphicsbl_p.h"
 #include "../include/graphicsbl.h"
 
@@ -12,12 +13,14 @@ namespace bl {
 	Vec2   GraphicsBL_p::mid = { 0 };
 	size_t GraphicsBL_p::bufferSize = 0;
 
-	std::unique_ptr<Vec3f[]> GraphicsBL_p::pixels;
-	std::unique_ptr<float[]> GraphicsBL_p::depth;
+	std::vector<Vec3f> GraphicsBL_p::pixels;
+	std::vector<float> GraphicsBL_p::depth;
 
-	std::vector<std::unique_ptr<Entity>> GraphicsBL_p::entities;
-	std::vector<std::unique_ptr<Light>>  GraphicsBL_p::lights;
-	std::vector<std::unique_ptr<Effect>> GraphicsBL_p::effects;
+	std::unordered_map<std::string, Texture*> GraphicsBL_p::textures;
+
+	std::vector<Entity*> GraphicsBL_p::entities;
+	std::vector<Light*>  GraphicsBL_p::lights;
+	std::vector<Effect*> GraphicsBL_p::effects;
 	Vec3f GraphicsBL_p::light_ambient = vec3f_0;
 	Vec3f GraphicsBL_p::bg_color = vec3f_0;
 
@@ -26,8 +29,8 @@ namespace bl {
 		size = newSize;
 		mid = size / 2;
 		bufferSize = size[X] * size[Y];
-		pixels.reset(new Vec3f[bufferSize]);
-		depth.reset(new float[bufferSize]);
+		pixels = std::vector<Vec3f>(bufferSize);
+		depth = std::vector<float>(bufferSize);
 		setFov(90);
 	}
 
@@ -36,19 +39,30 @@ namespace bl {
 		camera.setFov(fov);
 	}
 
+
+	void GraphicsBL_p::setAmbientLightColor(Vec3f color) {
+		c_max(color);
+		light_ambient = color;
+	}
+
+	void GraphicsBL_p::setBackgroundColor(Vec3f color) {
+		c_max(color);
+		bg_color = color;
+	}
+
 	
 	void GraphicsBL_p::renderFrame(float dtime) {
-		std::fill(pixels.get(), pixels.get() + bufferSize, bg_color);
-		std::fill(depth.get(), depth.get() + bufferSize, camera.zfar);
-
+		std::fill(pixels.begin(), pixels.end(), bg_color);
+		std::fill(depth.begin(), depth.end(), camera.zfar);
+		
 		GraphicsBL_p::dtime = dtime;
 		camera.calcTrigValues();
-
+		
 		drawEntities();
 		getCollisions();
 
-		for (auto& e : effects) e->applyEffect(pixels.get(), pixels.get());
-		bloom.applyEffect(pixels.get(), pixels.get());
+		for (auto& e : effects) e->applyEffect(&pixels[0], &pixels[0]);
+		bloom.applyEffect(&pixels[0], &pixels[0]);
 		for (size_t i = 0; i < bufferSize; i++) notBloom(pixels[i]);
 	}
 
@@ -108,29 +122,23 @@ namespace bl {
 	}
 
 
+	void GraphicsBL_p::loadTexture(const char* name, const char* filename) {
+		textures[std::string(name)] = new Texture(filename);
+	}
+
+
 	void GraphicsBL_p::addEntity(Entity* entity) {
-		entities.push_back(std::unique_ptr<Entity>(entity));
+		entities.push_back(entity);
 	}
 
 
 	void GraphicsBL_p::addLight(Light* light) {
-		lights.push_back(std::unique_ptr<Light>(light));
+		lights.push_back(light);
 	}
 
 
 	void GraphicsBL_p::addEffect(Effect* effect) {
-		effects.push_back(std::unique_ptr<Effect>(effect));
-	}
-
-
-	void GraphicsBL_p::setAmbientLightColor(Vec3f color) {
-		c_max(color);
-		light_ambient = color;
-	}
-
-	void GraphicsBL_p::setBackgroundColor(Vec3f color) {
-		c_max(color);
-		bg_color = color;
+		effects.push_back(effect);
 	}
 
 
@@ -182,6 +190,16 @@ namespace bl {
 	}
 
 	
+	void GraphicsBL::setAmbientLightColor(Vec3f color) {
+		GraphicsBL_p::setAmbientLightColor(color);
+	}
+
+	
+	void GraphicsBL::setBackgroundColor(Vec3f color) {
+		GraphicsBL_p::setBackgroundColor(color);
+	}
+
+	
 	void GraphicsBL::renderFrame(float dtime) {
 		GraphicsBL_p::renderFrame(dtime);
 	}
@@ -197,6 +215,13 @@ namespace bl {
 	}
 
 
+	bool GraphicsBL::loadTexture(const char* name, const char* filename) {
+		if (!std::ifstream(filename).good()) return false;
+		GraphicsBL_p::loadTexture(name, filename);
+		return true;
+	}
+
+
 	ShadingType_ mapShadingType(ShadingType shading) {
 		switch (shading) {
 			case ShadingType::FLAT:    return ShadingType_::FLAT;
@@ -208,11 +233,12 @@ namespace bl {
 	}
 
 	
-	void GraphicsBL::addEntity(
+	bool GraphicsBL::addEntity(
 		const char* filename, ShadingType shading, Vec3f color, Vec3f pos,
 		bool collision, float hbxrad, float mass,
 		bool movement, Vec3f velocity, Vec3f acceleration
 	) {
+		if (!std::ifstream(filename).good()) return false;
 		GraphicsBL_p::addEntity(new Entity(
 			filename,
 			mapShadingType(shading),
@@ -227,6 +253,32 @@ namespace bl {
 				acceleration
 			)
 		));
+		return true;
+	}
+
+
+	bool GraphicsBL::addEntity(
+		const char* model, const char* texture, ShadingType shading, Vec3f pos,
+		bool collision, float hbxrad, float mass,
+		bool movement, Vec3f velocity, Vec3f acceleration
+	) {
+		if (!std::ifstream(model).good()) return false;
+		GraphicsBL_p::addEntity(new Entity(
+			model,
+			mapShadingType(shading),
+			vec3f_255,
+			Physics(
+				pos,
+				collision,
+				hbxrad,
+				mass,
+				movement,
+				velocity,
+				acceleration
+			),
+			GraphicsBL_p::textures[texture]
+		));
+		return true;
 	}
 
 	
@@ -253,16 +305,6 @@ namespace bl {
 	
 	void GraphicsBL::addEffect(Effect* effect) { // temp
 		GraphicsBL_p::addEffect(effect);
-	}
-
-	
-	void GraphicsBL::setAmbientLightColor(Vec3f color) {
-		GraphicsBL_p::setAmbientLightColor(color);
-	}
-
-	
-	void GraphicsBL::setBackgroundColor(Vec3f color) {
-		GraphicsBL_p::setBackgroundColor(color);
 	}
 
 	

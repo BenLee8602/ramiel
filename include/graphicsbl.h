@@ -26,18 +26,33 @@ namespace bl {
 		static void setFov(unsigned fov);
 		static void setControls(bool controls[12]);
 
+		static void setAmbientLightColor(Vec3f color);
+		static void setBackgroundColor(Vec3f color);
+
 		static void renderFrame(float dtime = 0.0f);
 
 		static void getFrameDEC(int* frame);
 		static void getFrameRGB(uint8_t* frame);
 
-		static void setAmbientLightColor(Vec3f color);
-		static void setBackgroundColor(Vec3f color);
+		static bool loadTexture(const char* name, const char* filename);
 
-		static void addEntity(
+		static bool addEntity(
 			const char* filename,
 			ShadingType shading = ShadingType::FLAT,
 			Vec3f color = vec3f_255,
+			// physics
+			Vec3f pos          = vec3f_0,
+			bool  collision    = false,
+			float hbxrad       = 0.5f,
+			float mass         = 1.0f,
+			bool  movement     = false,
+			Vec3f velocity     = vec3f_0,
+			Vec3f acceleration = vec3f_0
+		);
+		static bool addEntity(
+			const char* model,
+			const char* texture,
+			ShadingType shading = ShadingType::FLAT,
 			// physics
 			Vec3f pos          = vec3f_0,
 			bool  collision    = false,

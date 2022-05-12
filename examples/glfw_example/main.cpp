@@ -13,7 +13,7 @@ void initScene() {
 	GraphicsBL::setBackgroundColor({ 150, 110, 110 });
 	GraphicsBL::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
 	GraphicsBL::addEntity(
-		"model/terrain.obj",
+		"examples/assets/models/terrain.obj",
 		ShadingType::PIXEL,
 		vec3f_255,
 		{ -64, 0, -64 }
@@ -21,19 +21,14 @@ void initScene() {
 	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 	//*/
 
-	/*
-	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
-	GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL);
-	GraphicsBL::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
-	//*/
-
 	//*
+	GraphicsBL::loadTexture("grass", "examples/assets/textures/grass.jpg");
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
 	GraphicsBL::addPointLight(vec3f_255, vec3f_0, 0.1f);
-	GraphicsBL::addEntity("model/cube.obj", ShadingType::FLAT,    vec3f_255, { -3, 0, 4 });
-	GraphicsBL::addEntity("model/cube.obj", ShadingType::VERTEX,  vec3f_255, { -1, 0, 4 });
-	GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL,   vec3f_255, {  1, 0, 4 });
-	GraphicsBL::addEntity("model/cube.obj", ShadingType::PIXEL_S, vec3f_255, {  3, 0, 4 });
+	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::FLAT,    { -3, 0, 4 });
+	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::VERTEX,  { -1, 0, 4 });
+	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::PIXEL,   {  1, 0, 4 });
+	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::PIXEL_S, {  3, 0, 4 });
 	//*/
 }
 
@@ -74,7 +69,7 @@ int main() {
 	double frameStart = glfwGetTime();
 	double frameEnd = glfwGetTime();
 	double dtime = frameEnd - frameStart;
-
+	
 	while (!glfwWindowShouldClose(window)) {
 		frameStart = glfwGetTime();
 		
@@ -90,7 +85,7 @@ int main() {
 		frameEnd = glfwGetTime();
 		dtime = frameEnd - frameStart;
 	}
-
+	
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	delete[] frame;
