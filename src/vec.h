@@ -14,11 +14,12 @@ namespace bl {
 		const T& operator[](size_t index) const { return arr[index]; }
 
 		// typecasting
-		operator T* () { return arr; };
+		explicit operator T* () { return arr; }
 		operator bool() const { for (size_t i = 0; i < N; ++i) if (arr[i]) return true; return false; }
 
 		// comparison
 		template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (arr[i] != v[i]) return false; return true; }
+		template<typename U> bool equals(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (std::abs(arr[i] - v[i]) > (T)0.001) return false; return true; }
 
 		// assignment
 		template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] = v[i]; return *this; }

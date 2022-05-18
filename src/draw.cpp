@@ -1,6 +1,5 @@
 #include "draw.h"
 #include "graphicsbl_p.h"
-using GraphicsBL = bl::GraphicsBL_p;
 
 namespace bl { 
 
@@ -235,7 +234,7 @@ namespace bl {
 	void Draw::clipy() {
 		// y value of scanline
 		y = std::max(0, triscreen[0][Y]);
-		ymax = std::min(triscreen[1][Y], GraphicsBL::size[Y]);
+		ymax = std::min<int>(triscreen[1][Y], GraphicsBL::size[Y]);
 
 		// start and end x values of scanline
 		x1 = (float)triscreen[0][X] + dx1_y * (float)(y - triscreen[0][Y]);
@@ -298,7 +297,7 @@ namespace bl {
 	}
 
 	void Draw::clipx() {
-		xmax = std::min((int)x2, GraphicsBL::size[X]);
+		xmax = std::min<int>(x2, GraphicsBL::size[X]);
 		x = std::max(0, (int)x1);
 		z = z1 + dz_x * (x - (int)x1);
 		index = GraphicsBL::coordsToIndex({ x, y });
@@ -410,7 +409,7 @@ namespace bl {
 	}
 
 	void Draw::segmentswitch() {
-		ymax = std::min(triscreen[2][Y], GraphicsBL::size[Y]);
+		ymax = std::min<int>(triscreen[2][Y], GraphicsBL::size[Y]);
 
 		*dx_y = (float)(triscreen[2][X] - triscreen[1][X]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
 		x1 = (float)triscreen[2][X] - dx1_y * (float)(triscreen[2][Y] - y);

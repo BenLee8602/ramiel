@@ -1,5 +1,4 @@
-#ifndef BL_EFFECTS_H
-#define BL_EFFECTS_H
+#pragma once
 
 #include <memory>
 #include "vec.h"
@@ -50,20 +49,18 @@ namespace bl {
 	};
 
 	class Blur : public Effect {
-		int rad;
+		unsigned rad;
 	public:
-		Blur(int rad, bool enabled = false) : Effect(enabled), rad(rad) {};
-		int getRad() const;
-		void setRad(int rad);
+		Blur(unsigned rad, bool enabled = false) : Effect(enabled), rad(rad) {};
+		unsigned getRad() const;
+		void setRad(unsigned rad);
 		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
 	};
 
 	class Bloom : public Blur {
 	public:
-		Bloom(int rad = 25, bool enabled = false) : Blur(rad, enabled) {};
+		Bloom(unsigned rad = 25, bool enabled = false) : Blur(rad, enabled) {};
 		virtual void applyEffect(Vec3f* in, Vec3f* out) const override;
 	};
 
 }
-
-#endif

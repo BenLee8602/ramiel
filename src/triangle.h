@@ -1,11 +1,11 @@
 #pragma once
 
 #include <vector>
-#include "vec.h"
+#include "graphicsbl_p.h"
 
 namespace bl::triangle {
 	
-	template<class GraphicsBL, class Draw>
+	template<class Draw>
 	void raster(Draw& draw) {
 		draw.init();
 
@@ -37,7 +37,7 @@ namespace bl::triangle {
 	}
 
 
-	template<class GraphicsBL, class Draw>
+	template<class Draw>
 	static bool clip(Draw& draw) {
 		
 		auto clip1 = [&draw]() {
@@ -50,7 +50,7 @@ namespace bl::triangle {
 
 			// clip and raster new tri
 			draw.clip1(c1, c2, draw2);
-			raster<GraphicsBL>(draw2);
+			raster(draw2);
 		};
 
 		auto clip2 = [&draw]() {
@@ -112,7 +112,7 @@ namespace bl::triangle {
 	}
 
 
-	template<class GraphicsBL, class Draw>
+	template<class Draw>
 	void draw(Draw& draw) {
 		// backface culling
 		Vec3f v1 = draw.tricam[1] - draw.tricam[0];
@@ -121,7 +121,7 @@ namespace bl::triangle {
 		if (dotProduct(draw.tricam[0], tricamNormal) >= 0.0f) return;
 
 		// clip and raster
-		if (clip<GraphicsBL>(draw)) raster<GraphicsBL>(draw);
+		if (clip(draw)) raster(draw);
 	}
 
 }

@@ -1,13 +1,12 @@
 #include <cmath>
 #include "graphicsbl_p.h"
-using GraphicsBL = bl::GraphicsBL_p;
 
 namespace bl {
 
 	static float camPosSpeed = 2.0f;
 	static float camRotSpeed = 1.57079f;
 
-	Camera::Camera(int fov, float znear, float zfar) {
+	Camera::Camera(unsigned fov, float znear, float zfar) {
 		this->pos = { 0.0f };
 		this->rot = { 0.0f };
 		calcTrigValues();
@@ -31,8 +30,8 @@ namespace bl {
 		rot = { 0.0f };
 	}
 
-	void Camera::setFov(int fov) {
-		if (fov) focalLen = (GraphicsBL::size[X] / fov) * 90;
+	void Camera::setFov(unsigned fov) {
+		if (fov) focalLen = (float)GraphicsBL::size[X] / (float)fov * 90.0f;
 		else focalLen = GraphicsBL::size[X];
 	}
 
@@ -42,6 +41,14 @@ namespace bl {
 
 	const Vec3f& Camera::getrot() const {
 		return rot;
+	}
+
+	void Camera::setpos(const Vec3f& pos) {
+		this->pos = pos;
+	}
+
+	void Camera::setrot(const Vec3f& rot) {
+		this->rot = rot;
 	}
 
 	void Camera::move(float x, float y, float z) {

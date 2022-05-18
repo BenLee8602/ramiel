@@ -1,5 +1,4 @@
-#ifndef BL_LIGHT_H
-#define BL_LIGHT_H
+#pragma once
 
 #include "vec.h"
 
@@ -7,6 +6,9 @@ namespace bl {
 
 	class Light {
 	protected:
+	#ifdef BL_TEST
+	public:
+	#endif
 		Vec3f color;
 	public:
 		Light(Vec3f color);
@@ -16,6 +18,9 @@ namespace bl {
 
 	class Light_Dir : public Light {
 	protected:
+	#ifdef BL_TEST
+	public:
+	#endif
 		Vec3f dir;
 	public:
 		Light_Dir(
@@ -28,6 +33,9 @@ namespace bl {
 
 	class Light_Pt : public Light {
 	protected:
+	#ifdef BL_TEST
+	public:
+	#endif
 		Vec3f pos;
 		float falloff;
 	public:
@@ -41,6 +49,9 @@ namespace bl {
 	};
 
 	class Light_Sp : public Light_Pt {
+	#ifdef BL_TEST
+	public:
+	#endif
 		Vec3f dir;
 		float width;
 		float falloffExp;
@@ -58,5 +69,3 @@ namespace bl {
 	};
 
 }
-
-#endif

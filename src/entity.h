@@ -1,6 +1,5 @@
 #pragma once
 
-#include "triangle.h"
 #include "physics.h"
 #include "texture.h"
 

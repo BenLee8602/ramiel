@@ -7,54 +7,30 @@
 #include "effects.h"
 
 
-namespace bl {
+namespace bl::GraphicsBL {
+	
+	extern float  dtime;
+	extern Camera camera;
+	extern Bloom  bloom;
 
-	class GraphicsBL_p {
-	public:
-		static float  dtime;
-		static Camera camera;
-		static Bloom  bloom;
+	extern Vec2u  size;
+	extern Vec2u  mid;
+	extern size_t bufferSize;
 
-		static Vec2   size;
-		static Vec2   mid;
-		static size_t bufferSize;
+	extern std::vector<Vec3f> pixels;
+	extern std::vector<float> depth;
 
-		static std::vector<Vec3f> pixels;
-		static std::vector<float> depth;
+	extern std::unordered_map<std::string, Texture*> textures;
 
+	extern std::vector<Entity*> entities;
+	extern std::vector<Light*>  lights;
+	extern std::vector<Effect*> effects;
+	extern Vec3f light_ambient;
+	extern Vec3f bg_color;
 
-		static std::unordered_map<std::string, Texture*> textures;
+	void drawEntities();
+	void getCollisions();
 
-		static std::vector<Entity*> entities;
-		static std::vector<Light*>  lights;
-		static std::vector<Effect*> effects;
-		static Vec3f light_ambient;
-		static Vec3f bg_color;
-
-		static void setBufferSize(Vec2 newSize);
-		static void setFov(unsigned fov);
-
-		static void setAmbientLightColor(Vec3f color = bg_color);
-		static void setBackgroundColor(Vec3f color = light_ambient);
-
-		static void renderFrame(float dtime = 0.0f);
-		static void drawEntities();
-		static void getCollisions();
-
-		static void getFrameDEC(int* frame);
-		static void getFrameRGB(uint8_t* frame);
-
-		static void loadTexture(const char* name, const char* filename);
-
-		static void addEntity(Entity* entity);
-		static void addLight(Light* light);
-		static void addEffect(Effect* effect);
-
-		static void removeEntity(size_t index);
-		static void removeLight(size_t index);
-		static void removeEffect(size_t index);
-
-		static int coordsToIndex(const Vec2& in);
-	};
+	int coordsToIndex(const Vec2& in);
 
 }

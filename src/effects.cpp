@@ -1,5 +1,4 @@
 #include "graphicsbl_p.h"
-using GraphicsBL = bl::GraphicsBL_p;
 
 namespace bl {
 
@@ -76,8 +75,8 @@ namespace bl {
 	}
 
 
-	int Blur::getRad() const { return rad; }
-	void Blur::setRad(int rad) { this->rad = std::max(0, rad); }
+	unsigned Blur::getRad() const { return rad; }
+	void Blur::setRad(unsigned rad) { this->rad = std::max(0U, rad); }
 
 	void Blur::applyEffect(Vec3f* in, Vec3f* out) const {
 		if (!(isEnabled() && rad)) return;
@@ -90,7 +89,7 @@ namespace bl {
 			for (int i = 0; i <= rad; i++) acc += in[y_idx + i];
 			for (int x = 0; x < GraphicsBL::size[X]; x++) {
 				buff[y_idx + x] = acc * r;
-				acc -= in[y_idx + std::max(0, x - rad)];
+				acc -= in[y_idx + std::max(0U, x - rad)];
 				acc += in[y_idx + std::min(GraphicsBL::size[X] - 1, x + rad + 1)];
 			}
 		}
@@ -101,7 +100,7 @@ namespace bl {
 			for (int y = 0; y < GraphicsBL::size[Y]; y++) {
 				int y_idx = y * GraphicsBL::size[X];
 				out[y_idx + x] = acc * r;
-				acc -= buff[std::max(0, y - rad) * GraphicsBL::size[X] + x];
+				acc -= buff[std::max(0U, y - rad) * GraphicsBL::size[X] + x];
 				acc += buff[std::min(GraphicsBL::size[Y] - 1, y + rad + 1) * GraphicsBL::size[X] + x];
 			}
 		}

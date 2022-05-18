@@ -20,23 +20,23 @@ namespace bl {
 	};
 
 
-    class GraphicsBL {
-	public:
-		static void setBufferSize(Vec2 size);
-		static void setFov(unsigned fov);
-		static void setControls(bool controls[12]);
+    namespace GraphicsBL {
 
-		static void setAmbientLightColor(Vec3f color);
-		static void setBackgroundColor(Vec3f color);
+		void setBufferSize(Vec2u size);
+		void setFov(unsigned fov);
+		void setControls(bool controls[12]);
 
-		static void renderFrame(float dtime = 0.0f);
+		void setAmbientLightColor(Vec3f color);
+		void setBackgroundColor(Vec3f color);
 
-		static void getFrameDEC(int* frame);
-		static void getFrameRGB(uint8_t* frame);
+		void renderFrame(float dtime = 0.0f);
 
-		static bool loadTexture(const char* name, const char* filename);
+		void getFrameDEC(int* frame);
+		void getFrameRGB(uint8_t* frame);
 
-		static bool addEntity(
+		bool loadTexture(const char* name, const char* filename);
+
+		bool addEntity(
 			const char* filename,
 			ShadingType shading = ShadingType::FLAT,
 			Vec3f color = vec3f_255,
@@ -49,7 +49,7 @@ namespace bl {
 			Vec3f velocity     = vec3f_0,
 			Vec3f acceleration = vec3f_0
 		);
-		static bool addEntity(
+		bool addEntity(
 			const char* model,
 			const char* texture,
 			ShadingType shading = ShadingType::FLAT,
@@ -63,16 +63,16 @@ namespace bl {
 			Vec3f acceleration = vec3f_0
 		);
 
-		static void addDirLight(
+		void addDirLight(
 			Vec3f color = vec3f_255,
 			Vec3f dir = { 0.0f, 0.0f, -1.0f }
 		);
-		static void addPointLight(
+		void addPointLight(
 			Vec3f color = vec3f_255,
 			Vec3f pos = vec3f_0,
 			float falloff = 1.0f
 		);
-		static void addSpotLight(
+		void addSpotLight(
 			Vec3f color = vec3f_255,
 			Vec3f pos = vec3f_0,
 			Vec3f dir = { 0.0f, 0.0f, 1.0f },
@@ -81,11 +81,12 @@ namespace bl {
 			float falloffExp = 50.0f
 		);
 
-		static void addEffect(Effect* effect); // temp
+		void addEffect(Effect* effect); // temp
 
-		static void removeEntity(size_t index);
-		static void removeLight(size_t index);
-		static void removeEffect(size_t index);
-	};
+		void removeEntity(size_t index);
+		void removeLight(size_t index);
+		void removeEffect(size_t index);
+		
+	}
 
 }

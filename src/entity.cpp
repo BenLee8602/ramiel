@@ -1,7 +1,7 @@
 #include "draw.h"
+#include "triangle.h"
 #include "objloader.h"
 #include "graphicsbl_p.h"
-using GraphicsBL = bl::GraphicsBL_p;
 
 namespace bl {
 	
@@ -77,7 +77,7 @@ namespace bl {
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 							draw.v_txt[j] = v_txt[tri_txt[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -94,7 +94,7 @@ namespace bl {
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 							draw.v_txt[j] = v_txt[tri_txt[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -108,7 +108,7 @@ namespace bl {
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 							draw.v_txt[j] = v_txt[tri_txt[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -123,7 +123,7 @@ namespace bl {
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 							draw.v_txt[j] = v_txt[tri_txt[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -141,7 +141,7 @@ namespace bl {
 							draw.v_pos[j] = v_pos[tri[i][j]];
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -157,7 +157,7 @@ namespace bl {
 							draw.v_color[j] = v_color[tri[i][j]];
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -170,7 +170,7 @@ namespace bl {
 							draw.v_pos[j] = v_pos[tri[i][j]];
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}
@@ -184,7 +184,7 @@ namespace bl {
 							draw.v_normal[j] = v_normal[tri[i][j]];
 							draw.tricam[j] = cameraCoords[tri[i][j]];
 						}
-						triangle::draw<GraphicsBL>(draw);
+						triangle::draw(draw);
 					}
 					break;
 				}

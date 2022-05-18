@@ -10,7 +10,7 @@ namespace bl {
 
 
 	Light_Dir::Light_Dir(Vec3f color, Vec3f dir) : Light(color) {
-		if (!dir[X] && !dir[Y] && !dir[Z]) dir[Z] = -1.0f;
+		if (!dir) dir[Z] = -1.0f;
 		this->dir = getNormalized(dir);
 	}
 
@@ -43,7 +43,7 @@ namespace bl {
 
 	Light_Sp::Light_Sp(Vec3f color, Vec3f pos, Vec3f dir, float falloff, float width, float falloffExp) : Light_Pt(color, pos, falloff) {
 		if (!dir[X] && !dir[Y] && !dir[Z]) dir[Z] = 1.0f;
-		if (falloff < 0.0f) falloff = 0.1f;
+		if (falloff < 0.0f) this->falloff = 0.1f;
 		this->dir = getNormalized(dir);
 		this->width = 1.0f - (width / 360.0f);
 		this->falloffExp = falloffExp;
