@@ -12,7 +12,7 @@ namespace bl {
 		Vec3f color;
 	public:
 		Light(Vec3f color);
-		virtual Vec3f getLight(Vec3f& pos, Vec3f& normal) const = 0;
+		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const = 0;
 		virtual void move(const Vec3f& pos) = 0;
 	};
 
@@ -27,7 +27,7 @@ namespace bl {
 			Vec3f color = vec3f_255,
 			Vec3f dir = { 0.0f, 0.0f, -1.0f }
 		);
-		virtual Vec3f getLight(Vec3f& pos, Vec3f& normal) const override;
+		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const override;
 		virtual void move(const Vec3f& pos) override;
 	};
 
@@ -44,7 +44,7 @@ namespace bl {
 			Vec3f pos = vec3f_0,
 			float falloff = 1.0f
 		);
-		virtual Vec3f getLight(Vec3f& pos, Vec3f& normal) const override;
+		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const override;
 		virtual void move(const Vec3f& pos) override;
 	};
 
@@ -64,7 +64,7 @@ namespace bl {
 			float width = 30.0f,
 			float falloffExp = 50.0f
 		);
-		virtual Vec3f getLight(Vec3f& pos, Vec3f& normal) const override;
+		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const override;
 		void rotate(const Vec3f& dir);
 	};
 

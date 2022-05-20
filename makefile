@@ -1,5 +1,5 @@
-build/libgraphicsbl.a: build/camera.o build/draw.o build/effects.o build/entity.o build/graphicsbl.o build/light.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
-	ar ru build/libgraphicsbl.a build/camera.o build/draw.o build/effects.o build/entity.o build/graphicsbl.o build/light.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
+build/libgraphicsbl.a: build/camera.o build/draw.o build/effects.o build/entity.o build/graphicsbl.o build/light.o build/model.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
+	ar ru build/libgraphicsbl.a build/camera.o build/draw.o build/effects.o build/entity.o build/graphicsbl.o build/light.o build/model.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
 
 build/camera.o: src/camera.h src/camera.cpp
 	g++ -Ideps -c -O3 src/camera.cpp -o build/camera.o
@@ -18,6 +18,9 @@ build/graphicsbl.o: include/graphicsbl.h src/graphicsbl_p.h src/graphicsbl.cpp
 
 build/light.o: src/light.h src/light.cpp
 	g++ -Ideps -c -O3 src/light.cpp -o build/light.o
+
+build/model.o: src/model.h src/model.cpp
+	g++ -Ideps -c -O3 src/model.cpp -o build/model.o
 
 build/objloader.o: src/objloader.h src/objloader.cpp
 	g++ -Ideps -c -O3 src/objloader.cpp -o build/objloader.o

@@ -20,6 +20,7 @@ namespace bl::GraphicsBL {
 	extern std::vector<Vec3f> pixels;
 	extern std::vector<float> depth;
 
+	extern std::unordered_map<std::string, Model*>   models;
 	extern std::unordered_map<std::string, Texture*> textures;
 
 	extern std::vector<Entity*> entities;

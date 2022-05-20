@@ -14,7 +14,7 @@ namespace bl {
 		this->dir = getNormalized(dir);
 	}
 
-	Vec3f Light_Dir::getLight(Vec3f& pos, Vec3f& normal) const {
+	Vec3f Light_Dir::getLight(const Vec3f& pos, const Vec3f& normal) const {
 		return this->color * std::max(0.0f, dotProduct(normal, this->dir));
 	}
 
@@ -29,7 +29,7 @@ namespace bl {
 		this->falloff = falloff;
 	}
 
-	Vec3f Light_Pt::getLight(Vec3f& pos, Vec3f& normal) const {
+	Vec3f Light_Pt::getLight(const Vec3f& pos, const Vec3f& normal) const {
 		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
 		float f = 1.0f / (falloff * d * d + 1.0f);
@@ -49,7 +49,7 @@ namespace bl {
 		this->falloffExp = falloffExp;
 	}
 
-	Vec3f Light_Sp::getLight(Vec3f& pos, Vec3f& normal) const {
+	Vec3f Light_Sp::getLight(const Vec3f& pos, const Vec3f& normal) const {
 		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
 		vec = getNormalized(vec);

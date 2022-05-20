@@ -4,8 +4,10 @@ namespace bl {
 
 	void Physics::simulateMovement() {
 		if (!movement) return;
-		pos += velocity * GraphicsBL::dtime;
-		velocity += acceleration * GraphicsBL::dtime;
+		pos += posVel * GraphicsBL::dtime;
+		rot += rotVel * GraphicsBL::dtime;
+		posVel += posAcc * GraphicsBL::dtime;
+		rotVel += rotAcc * GraphicsBL::dtime;
 	}
 
 
@@ -21,8 +23,8 @@ namespace bl {
 
 			// both moveable
 			if (other.movement) {
-				Vec3f& v1 = velocity;
-				Vec3f& v2 = other.velocity;
+				Vec3f& v1 = posVel;
+				Vec3f& v2 = other.posVel;
 				float& m1 = mass;
 				float& m2 = other.mass;
 				const float m = 2.0f / (mass + other.mass);
@@ -36,7 +38,7 @@ namespace bl {
 
 			// this moveable
 			else {
-				velocity -= n * 2.0f * dotProduct(velocity, n);
+				posVel -= n * 2.0f * dotProduct(posVel, n);
 			}
 				
 		}
@@ -44,7 +46,7 @@ namespace bl {
 		// other moveable
 		else if (other.movement) {
 			n *= -1.0f;
-			other.velocity -= n * 2.0f * dotProduct(other.velocity, n);
+			other.posVel -= n * 2.0f * dotProduct(other.posVel, n);
 		}
 	}
 

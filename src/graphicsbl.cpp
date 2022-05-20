@@ -16,6 +16,7 @@ namespace bl {
 	std::vector<Vec3f> GraphicsBL::pixels;
 	std::vector<float> GraphicsBL::depth;
 
+	std::unordered_map<std::string, Model*>   GraphicsBL::models;
 	std::unordered_map<std::string, Texture*> GraphicsBL::textures;
 
 	std::vector<Entity*> GraphicsBL::entities;
@@ -128,6 +129,13 @@ namespace bl {
 	}
 
 
+	bool GraphicsBL::loadModel(const char* name, const char* filename, Vec3f pos, Vec3f rot) {
+		if (!std::ifstream(filename).good()) return false;
+		models[std::string(name)] = new Model(filename, pos, rot);
+		return true;
+	}
+
+
 	bool GraphicsBL::loadTexture(const char* name, const char* filename) {
 		if (!std::ifstream(filename).good()) return false;
 		textures[std::string(name)] = new Texture(filename);
@@ -147,23 +155,27 @@ namespace bl {
 
 	
 	bool GraphicsBL::addEntity(
-		const char* filename, ShadingType shading, Vec3f color, Vec3f pos,
+		const char* model, Vec3f color, ShadingType shading, Vec3f pos, Vec3f rot,
 		bool collision, float hbxrad, float mass,
-		bool movement, Vec3f velocity, Vec3f acceleration
+		bool movement, Vec3f posVel, Vec3f posAcc, Vec3f rotVel, Vec3f rotAcc
 	) {
-		if (!std::ifstream(filename).good()) return false;
+		if (!models[model]) return false;
 		entities.push_back(new Entity(
-			filename,
+			models[model],
+			nullptr,
 			mapShadingType(shading),
 			color,
 			Physics(
 				pos,
+				rot,
 				collision,
 				hbxrad,
 				mass,
 				movement,
-				velocity,
-				acceleration
+				posVel,
+				posAcc,
+				rotVel,
+				rotAcc
 			)
 		));
 		return true;
@@ -171,25 +183,28 @@ namespace bl {
 
 
 	bool GraphicsBL::addEntity(
-		const char* model, const char* texture, ShadingType shading, Vec3f pos,
+		const char* model, const char* texture, ShadingType shading, Vec3f pos, Vec3f rot,
 		bool collision, float hbxrad, float mass,
-		bool movement, Vec3f velocity, Vec3f acceleration
+		bool movement, Vec3f posVel, Vec3f posAcc, Vec3f rotVel, Vec3f rotAcc
 	) {
-		if (!std::ifstream(model).good()) return false;
+		if (!models[model]) return false;
 		entities.push_back(new Entity(
-			model,
+			models[model],
+			textures[texture],
 			mapShadingType(shading),
 			vec3f_255,
 			Physics(
 				pos,
+				rot,
 				collision,
 				hbxrad,
 				mass,
 				movement,
-				velocity,
-				acceleration
-			),
-			textures[texture]
+				posVel,
+				posAcc,
+				rotVel,
+				rotAcc
+			)
 		));
 		return true;
 	}

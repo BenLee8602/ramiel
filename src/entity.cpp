@@ -5,41 +5,21 @@
 
 namespace bl {
 	
-	Entity::Entity(const char* filename, ShadingType_ shading, Vec3f color, Physics physics, Texture* texture) {
+	Entity::Entity(Model* model, Texture* texture, ShadingType_ shading, Vec3f color, Physics physics) {
 		this->shading = shading;
 		c_clamp(color);
 		this->color = color / 255.0f;
 		this->physics = physics;
 		this->texture = texture;
-
-		// allocate memory
-		size_t n_v, n_vt, n_f;
-		objloader::count(filename, n_v, n_vt, n_f);
-		v_pos.reserve(n_v);
-		v_normal = std::vector<Vec3f>(n_v);
-		tri.reserve(n_f);
-		if (n_vt) {
-			v_txt.reserve(n_vt);
-			tri_txt.reserve(n_f);
-		}
-		
-		// get obj data
-		objloader::load(filename, v_pos, v_txt, tri, tri_txt);
-		for (auto& v : v_pos) v += physics.pos;
-
-		// calc vertex normals
-		std::vector<Vec3f> tri_normals(tri.size());
-		for (auto& t : tri) {
-			Vec3f v1 = v_pos[t[1]] - v_pos[t[0]];
-			Vec3f v2 = v_pos[t[2]] - v_pos[t[0]];
-			Vec3f normal = crossProduct(v1, v2);
-			for (int i = 0; i < 3; ++i) v_normal[t[i]] += normal;
-		}
-		for (auto& n : v_normal) n = getNormalized(n);
+		this->model = model;
 	}
 
 
-	void Entity::calcVertexColor(std::vector<Vec3f>& v_color) {
+	void Entity::calcVertexColor(
+		std::vector<Vec3f>& v_color,
+		const std::vector<Vec3f>& v_pos,
+		const std::vector<Vec3f> v_normal
+	) {
 		for (size_t i = 0; i < v_color.size(); ++i) {
 			v_color[i] = GraphicsBL::light_ambient;
 			for (auto& l : GraphicsBL::lights) {
@@ -50,14 +30,16 @@ namespace bl {
 
 
 	void Entity::draw() {
+		// get model info
+		std::vector<Vec3f> v_pos, v_normal;
+		model->getVPos(v_pos, physics.pos, physics.rot);
+		model->getVNormal(v_normal, physics.rot);
+		const std::vector<Vec2f>& v_txt   = model->getVTxt();
+		const std::vector<Vec3u>& tri     = model->getTri();
+		const std::vector<Vec3u>& tri_txt = model->getTriTxt();
+
 		// physics
-		if (physics.movement) {
-			if (physics.velocity) {
-				Vec3f dpos = physics.velocity * GraphicsBL::dtime;
-				for (auto& v : v_pos) v += dpos;
-			}
-			physics.simulateMovement();
-		}
+		if (physics.movement) physics.simulateMovement();
 
 		// get camera coords
 		std::vector<Vec3f> cameraCoords(v_pos.size());
@@ -84,7 +66,7 @@ namespace bl {
 
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
-					calcVertexColor(v_color);
+					calcVertexColor(v_color, v_pos, v_normal);
 					DrawVertex_TX draw;
 					draw.texture = texture;
 					for (size_t i = 0; i < tri.size(); ++i) {
@@ -148,7 +130,7 @@ namespace bl {
 
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
-					calcVertexColor(v_color);
+					calcVertexColor(v_color, v_pos, v_normal);
 					DrawVertex draw;
 					draw.surfaceColor = color;
 					for (size_t i = 0; i < tri.size(); ++i) {

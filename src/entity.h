@@ -1,6 +1,7 @@
 #pragma once
 
 #include "physics.h"
+#include "model.h"
 #include "texture.h"
 
 namespace bl {
@@ -13,31 +14,28 @@ namespace bl {
 	};
 
 	class Entity {
-		std::vector<Vec3f> v_pos;
-		std::vector<Vec3f> v_normal;
-		std::vector<Vec2f> v_txt;
-
-		std::vector<Vec3u> tri;
-		std::vector<Vec3u> tri_txt;
-		
-	public:
 		ShadingType_ shading;
 		Vec3f color;
-		Physics physics;
+		Model* model;
 		Texture* texture;
+		
+	public:
+		Physics physics;
 
 	private:
-		void calcVertexColor(std::vector<Vec3f>& v_color);
+		void calcVertexColor(
+			std::vector<Vec3f>& v_color,
+			const std::vector<Vec3f>& v_pos,
+			const std::vector<Vec3f> n_normal
+		);
 
 	public:
-		static size_t getTotalVerts();
-		static size_t getTotalTris();
 		Entity(
-			const char* filename,
+			Model* model,
+			Texture* texture = nullptr,
 			ShadingType_ shading = ShadingType_::FLAT,
 			Vec3f color = vec3f_255,
-			Physics physics = Physics(),
-			Texture* texture = nullptr
+			Physics physics = Physics()
 		);
 		void draw();
 	};

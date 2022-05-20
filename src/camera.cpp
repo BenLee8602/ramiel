@@ -16,13 +16,13 @@ namespace bl {
 	}
 
 	void Camera::calcTrigValues() {
-		sin[X] = sinf(rot[X]);
-		sin[Y] = sinf(rot[Y]);
-		sin[Z] = sinf(rot[Z]);
+		sin[X] = std::sin(rot[X]);
+		sin[Y] = std::sin(rot[Y]);
+		sin[Z] = std::sin(rot[Z]);
 
-		cos[X] = cosf(rot[X]);
-		cos[Y] = cosf(rot[Y]);
-		cos[Z] = cosf(rot[Z]);
+		cos[X] = std::cos(rot[X]);
+		cos[Y] = std::cos(rot[Y]);
+		cos[Z] = std::cos(rot[Z]);
 	}
 
 	void Camera::reset() {

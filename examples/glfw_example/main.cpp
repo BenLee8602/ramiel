@@ -8,27 +8,24 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	/*
+	//*
+	GraphicsBL::loadModel("terrain", "examples/assets/models/terrain.obj", { -64, 0, -64 });
 	GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
 	GraphicsBL::setBackgroundColor({ 150, 110, 110 });
 	GraphicsBL::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
-	GraphicsBL::addEntity(
-		"examples/assets/models/terrain.obj",
-		ShadingType::PIXEL,
-		vec3f_255,
-		{ -64, 0, -64 }
-	);
+	GraphicsBL::addEntity("terrain", vec3f_255, ShadingType::PIXEL);
 	GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 	//*/
 
-	//*
+	/*
+	GraphicsBL::loadModel("cube", "examples/assets/models/cube.obj");
 	GraphicsBL::loadTexture("grass", "examples/assets/textures/grass.jpg");
 	GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
 	GraphicsBL::addPointLight(vec3f_255, vec3f_0, 0.1f);
-	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::FLAT,    { -3, 0, 4 });
-	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::VERTEX,  { -1, 0, 4 });
-	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::PIXEL,   {  1, 0, 4 });
-	GraphicsBL::addEntity("examples/assets/models/cube.obj", "grass", ShadingType::PIXEL_S, {  3, 0, 4 });
+	GraphicsBL::addEntity("cube", "grass", ShadingType::FLAT,    { -3, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0, 0.1, 0 });
+	GraphicsBL::addEntity("cube", "grass", ShadingType::VERTEX,  { -1, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0.1, 0.1, 0 });
+	GraphicsBL::addEntity("cube", "grass", ShadingType::PIXEL,   {  1, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0, 0.1, 0.1 });
+	GraphicsBL::addEntity("cube", "grass", ShadingType::PIXEL_S, {  3, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0.1, 0.1, 0.1 });
 	//*/
 }
 
