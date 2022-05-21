@@ -1,6 +1,6 @@
 #include "catch2/catch2.hpp"
 #include <vec.h>
-using namespace bl;
+using namespace ramiel;
 
 
 TEST_CASE("boolean conversion", "[vec][bool]") {

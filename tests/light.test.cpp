@@ -1,8 +1,8 @@
 #include "catch2/catch2.hpp"
 
-#define BL_TEST
+#define RAMIEL_TEST
 #include <light.h>
-using namespace bl;
+using namespace ramiel;
 
 
 TEST_CASE("construct directional light", "[light][construct][dirlight]") {

@@ -1,12 +1,12 @@
 #include "catch2/catch2.hpp"
 
 #include <physics.h>
-#include <graphicsbl_p.h>
-using namespace bl;
+#include <ramiel_p.h>
+using namespace ramiel;
 
 
 TEST_CASE("simulate movement", "[physics]") {
-    GraphicsBL::dtime = 1.0f;
+    graphics::dtime = 1.0f;
     Physics physics(vec3f_0, vec3f_0, false, 0.5f, 1.0f, true,
         {  5.9f,  2.8f,  3.1f },  // position velocity
         {  9.3f, -1.8f, -8.5f },  // position acceleration

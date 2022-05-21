@@ -3,7 +3,7 @@
 #include "vec.h"
 #include "texture.h"
 
-namespace bl {
+namespace ramiel {
 
 	class Draw {
 	public:

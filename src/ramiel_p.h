@@ -7,7 +7,7 @@
 #include "effects.h"
 
 
-namespace bl::GraphicsBL {
+namespace ramiel::graphics {
 	
 	extern float  dtime;
 	extern Camera camera;

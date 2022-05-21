@@ -2,10 +2,10 @@
 
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
 	class Camera {
-	#ifdef BL_TEST
+	#ifdef RAMIEL_TEST
 	public:
 	#endif
 		Vec3f pos; 

@@ -1,26 +1,26 @@
-# 3D Graphics Engine
+# ramiel
 
-This repos contains a 3D graphics + physics library. All graphics + physics related functionality 
-was written without the use of any external libraries or frameworks.
+ramiel is a 3D graphics + physics library. All graphics + physics related functionality was 
+written without the use of any external libraries or frameworks.
 
-![Mountains](https://github.com/BenLee8602/3D-Graphics-Engine/blob/master/screenshots/perlin_mountain.PNG?raw=true)
+![Mountains](https://github.com/BenLee8602/ramiel/blob/master/screenshots/perlin_mountain.PNG?raw=true)
 A mountain scene made using the following entities, lighting, and effects:
 ```cpp
-GraphicsBL::loadModel("terrain", "examples/assets/models/terrain.obj", { -64, 0, -64 });
-GraphicsBL::setAmbientLightColor({ 100, 80, 100 });
-GraphicsBL::setBackgroundColor({ 150, 110, 110 });
-GraphicsBL::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
-GraphicsBL::addEntity("terrain", vec3f_255, ShadingType::PIXEL);
-GraphicsBL::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
+graphics::loadModel("terrain", "examples/assets/models/terrain.obj", { -64, 0, -64 });
+graphics::setAmbientLightColor({ 100, 80, 100 });
+graphics::setBackgroundColor({ 150, 110, 110 });
+graphics::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
+graphics::addEntity("terrain", vec3f_255, ShadingType::PIXEL);
+graphics::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 ```
 
-![Lighting Test](https://github.com/BenLee8602/3D-Graphics-Engine/blob/master/screenshots/cube.PNG?raw=true)
+![Lighting Test](https://github.com/BenLee8602/ramiel/blob/master/screenshots/cube.PNG?raw=true)
 A test scene showing per-pixel lighting, spotlight, and a cube:
 ```cpp
-GraphicsBL::loadModel("cube", "examples/assets/models/cube.obj");
-GraphicsBL::setAmbientLightColor({ 25, 25, 25 });
-GraphicsBL::addEntity("cube", vec3f_255, ShadingType::PIXEL);
-GraphicsBL::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
+graphics::loadModel("cube", "examples/assets/models/cube.obj");
+graphics::setAmbientLightColor({ 25, 25, 25 });
+graphics::addEntity("cube", vec3f_255, ShadingType::PIXEL);
+graphics::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
 ```
 
 
@@ -50,8 +50,8 @@ entities have been rendered. Some examples include blur, black and white, and fo
 An entity is a 3D object. It references a Model and Texture. Also contains shading type, physical 
 properties, and a color if no texture is referenced.
 
-## GraphicsBL
-Contains the GraphicsBL namespace. Public header contains the API, and the private header contains 
+## Ramiel
+Contains the graphics namespace. Public header contains the API, and the private header contains 
 variables for things like entities, lighting, effects, models, textures, and more.
 
 ## Light

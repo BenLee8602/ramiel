@@ -1,13 +1,13 @@
-#include "graphicsbl_p.h"
+#include "ramiel_p.h"
 
-namespace bl {
+namespace ramiel {
 
 	void Physics::simulateMovement() {
 		if (!movement) return;
-		pos += posVel * GraphicsBL::dtime;
-		rot += rotVel * GraphicsBL::dtime;
-		posVel += posAcc * GraphicsBL::dtime;
-		rotVel += rotAcc * GraphicsBL::dtime;
+		pos += posVel * graphics::dtime;
+		rot += rotVel * graphics::dtime;
+		posVel += posAcc * graphics::dtime;
+		rotVel += rotAcc * graphics::dtime;
 	}
 
 

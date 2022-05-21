@@ -3,7 +3,7 @@
 
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
 	struct Physics {
 		Vec3f pos       = vec3f_0;

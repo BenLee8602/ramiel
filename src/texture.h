@@ -3,7 +3,7 @@
 #include <vector>
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
     class Texture {
         Vec2 size;

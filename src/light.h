@@ -2,11 +2,11 @@
 
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
 	class Light {
 	protected:
-	#ifdef BL_TEST
+	#ifdef RAMIEL_TEST
 	public:
 	#endif
 		Vec3f color;
@@ -18,7 +18,7 @@ namespace bl {
 
 	class Light_Dir : public Light {
 	protected:
-	#ifdef BL_TEST
+	#ifdef RAMIEL_TEST
 	public:
 	#endif
 		Vec3f dir;
@@ -33,7 +33,7 @@ namespace bl {
 
 	class Light_Pt : public Light {
 	protected:
-	#ifdef BL_TEST
+	#ifdef RAMIEL_TEST
 	public:
 	#endif
 		Vec3f pos;
@@ -49,7 +49,7 @@ namespace bl {
 	};
 
 	class Light_Sp : public Light_Pt {
-	#ifdef BL_TEST
+	#ifdef RAMIEL_TEST
 	public:
 	#endif
 		Vec3f dir;

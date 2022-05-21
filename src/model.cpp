@@ -2,7 +2,7 @@
 #include "model.h"
 #include "objloader.h"
 
-namespace bl {
+namespace ramiel {
 
     inline void rotate(Vec3f& v, const Vec3f& sin, const Vec3f& cos) {
         Vec3f out = v;

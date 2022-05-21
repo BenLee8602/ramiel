@@ -1,5 +1,5 @@
-build/libgraphicsbl.a: build/camera.o build/draw.o build/effects.o build/entity.o build/graphicsbl.o build/light.o build/model.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
-	ar ru build/libgraphicsbl.a build/camera.o build/draw.o build/effects.o build/entity.o build/graphicsbl.o build/light.o build/model.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
+build/libramiel.a: build/camera.o build/draw.o build/effects.o build/entity.o build/ramiel.o build/light.o build/model.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
+	ar ru build/libramiel.a build/camera.o build/draw.o build/effects.o build/entity.o build/ramiel.o build/light.o build/model.o build/objloader.o build/physics.o build/texture.o build/triangle.o build/vec.o
 
 build/camera.o: src/camera.h src/camera.cpp
 	g++ -Ideps -c -O3 src/camera.cpp -o build/camera.o
@@ -13,8 +13,8 @@ build/effects.o: src/effects.h src/effects.cpp
 build/entity.o: src/entity.h src/entity.cpp src/objloader.h
 	g++ -Ideps -c -O3 src/entity.cpp -o build/entity.o
 
-build/graphicsbl.o: include/graphicsbl.h src/graphicsbl_p.h src/graphicsbl.cpp
-	g++ -Ideps -c -O3 src/graphicsbl.cpp -o build/graphicsbl.o
+build/ramiel.o: include/ramiel.h src/ramiel_p.h src/ramiel.cpp
+	g++ -Ideps -c -O3 src/ramiel.cpp -o build/ramiel.o
 
 build/light.o: src/light.h src/light.cpp
 	g++ -Ideps -c -O3 src/light.cpp -o build/light.o

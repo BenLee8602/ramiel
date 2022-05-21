@@ -3,7 +3,7 @@
 #include <memory>
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
 	class Effect {
 		bool enabled;

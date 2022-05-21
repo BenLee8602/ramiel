@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "graphicsbl_p.h"
+#include "ramiel_p.h"
 
-namespace bl::triangle {
+namespace ramiel::triangle {
 	
 	template<class Draw>
 	void raster(Draw& draw) {
@@ -22,7 +22,7 @@ namespace bl::triangle {
 				draw.calcd_x();
 				draw.clipx();
 				for (draw.x; draw.x < draw.xmax; draw.x++) {
-					if (draw.z < GraphicsBL::depth[draw.index]) {
+					if (draw.z < graphics::depth[draw.index]) {
 						draw.drawpixel();
 					}
 					draw.incx();
@@ -42,8 +42,8 @@ namespace bl::triangle {
 		
 		auto clip1 = [&draw]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::camera.znear - draw.tricam[1][Z]) / (draw.tricam[0][Z] - draw.tricam[1][Z]);
-			float c2 = (GraphicsBL::camera.znear - draw.tricam[1][Z]) / (draw.tricam[2][Z] - draw.tricam[1][Z]);
+			float c1 = (graphics::camera.znear - draw.tricam[1][Z]) / (draw.tricam[0][Z] - draw.tricam[1][Z]);
+			float c2 = (graphics::camera.znear - draw.tricam[1][Z]) / (draw.tricam[2][Z] - draw.tricam[1][Z]);
 
 			// new tri formed from quad
 			Draw draw2 = draw;
@@ -55,17 +55,17 @@ namespace bl::triangle {
 
 		auto clip2 = [&draw]() {
 			// ratio of line clipped
-			float c1 = (GraphicsBL::camera.znear - draw.tricam[0][Z]) / (draw.tricam[1][Z] - draw.tricam[0][Z]);
-			float c2 = (GraphicsBL::camera.znear - draw.tricam[2][Z]) / (draw.tricam[1][Z] - draw.tricam[2][Z]);
+			float c1 = (graphics::camera.znear - draw.tricam[0][Z]) / (draw.tricam[1][Z] - draw.tricam[0][Z]);
+			float c2 = (graphics::camera.znear - draw.tricam[2][Z]) / (draw.tricam[1][Z] - draw.tricam[2][Z]);
 
 			// clip
 			draw.clip2(c1, c2);
 		};
 
-		if (draw.tricam[0][Z] < GraphicsBL::camera.znear) {
-			if (draw.tricam[1][Z] < GraphicsBL::camera.znear) {
+		if (draw.tricam[0][Z] < graphics::camera.znear) {
+			if (draw.tricam[1][Z] < graphics::camera.znear) {
 				// case 2
-				if (draw.tricam[2][Z] < GraphicsBL::camera.znear) {
+				if (draw.tricam[2][Z] < graphics::camera.znear) {
 					return false;
 				}
 				// case 6
@@ -76,7 +76,7 @@ namespace bl::triangle {
 				}
 			}
 			// case 8
-			else if (draw.tricam[2][Z] < GraphicsBL::camera.znear) {
+			else if (draw.tricam[2][Z] < graphics::camera.znear) {
 				clip2();
 			}
 			// case 3
@@ -87,9 +87,9 @@ namespace bl::triangle {
 			}
 		}
 
-		else if (draw.tricam[1][Z] < GraphicsBL::camera.znear) {
+		else if (draw.tricam[1][Z] < graphics::camera.znear) {
 			// case 7
-			if (draw.tricam[2][Z] < GraphicsBL::camera.znear) {
+			if (draw.tricam[2][Z] < graphics::camera.znear) {
 				draw.swapv(1, 0);
 				draw.swapv(2, 0);
 				clip2();
@@ -101,7 +101,7 @@ namespace bl::triangle {
 		}
 
 		// case 5
-		else if (draw.tricam[2][Z] < GraphicsBL::camera.znear) {
+		else if (draw.tricam[2][Z] < graphics::camera.znear) {
 			draw.swapv(1, 2);
 			draw.swapv(0, 2);
 			clip1();

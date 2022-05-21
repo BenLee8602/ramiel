@@ -4,7 +4,7 @@
 #include "model.h"
 #include "texture.h"
 
-namespace bl {
+namespace ramiel {
 
 	enum class ShadingType_ : uint8_t {
 		FLAT,

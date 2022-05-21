@@ -1,9 +1,9 @@
 #include "draw.h"
 #include "triangle.h"
 #include "objloader.h"
-#include "graphicsbl_p.h"
+#include "ramiel_p.h"
 
-namespace bl {
+namespace ramiel {
 	
 	Entity::Entity(Model* model, Texture* texture, ShadingType_ shading, Vec3f color, Physics physics) {
 		this->shading = shading;
@@ -21,8 +21,8 @@ namespace bl {
 		const std::vector<Vec3f> v_normal
 	) {
 		for (size_t i = 0; i < v_color.size(); ++i) {
-			v_color[i] = GraphicsBL::light_ambient;
-			for (auto& l : GraphicsBL::lights) {
+			v_color[i] = graphics::light_ambient;
+			for (auto& l : graphics::lights) {
 				v_color[i] += l->getLight(v_pos[i], v_normal[i]);
 			}
 		}
@@ -44,7 +44,7 @@ namespace bl {
 		// get camera coords
 		std::vector<Vec3f> cameraCoords(v_pos.size());
 		for (size_t i = 0; i < v_pos.size(); i++) {
-			cameraCoords[i] = GraphicsBL::camera.getCameraCoord(v_pos[i]);
+			cameraCoords[i] = graphics::camera.getCameraCoord(v_pos[i]);
 		}
 		
 		// graphics

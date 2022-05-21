@@ -4,7 +4,7 @@
 #include <vector>
 #include "vec.h"
 
-namespace bl::objloader {
+namespace ramiel::objloader {
 
     std::vector<size_t> splitv(const std::string& in);
     void count(const char* filename, size_t& v, size_t& vt, size_t& f);

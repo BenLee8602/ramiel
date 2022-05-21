@@ -1,7 +1,7 @@
 #include <utility>
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
 	float getMagnitude(const Vec3f& v) {
 		return sqrtf(v[X] * v[X] + v[Y] * v[Y] + v[Z] * v[Z]);

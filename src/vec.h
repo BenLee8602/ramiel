@@ -3,7 +3,7 @@
 #include <fstream>
 #include <cmath>
 
-namespace bl {
+namespace ramiel {
 
 	template<typename T, size_t N>
 	struct Vec {

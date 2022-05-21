@@ -1,9 +1,9 @@
 #include "catch2/catch2.hpp"
 
-#define BL_TEST
+#define RAMIEL_TEST
 #include <camera.h>
-#include "../include/graphicsbl.h"
-using namespace bl;
+#include "../include/ramiel.h"
+using namespace ramiel;
 
 
 TEST_CASE("camera rot trig calculations", "[camera]") {
@@ -19,7 +19,7 @@ TEST_CASE("camera rot trig calculations", "[camera]") {
 
 TEST_CASE("set camera fov", "[camera]") {
     Camera camera;
-    GraphicsBL::setBufferSize({ 10, 10 });
+    graphics::setBufferSize({ 10, 10 });
 
     camera.setFov(75);
     REQUIRE(camera.focalLen == Approx(12.0f).epsilon(0.001f));
@@ -70,25 +70,25 @@ TEST_CASE("screen coordinates", "[camera]") {
     Vec3f in;
     Vec2 expected;
 
-    GraphicsBL::setBufferSize({ 720, 480 });
+    graphics::setBufferSize({ 720, 480 });
     camera.setFov(60);
     in = { -4.8f, 2.3f, 7.6f };
     expected = { -322, 566 };
     REQUIRE(camera.getScreenCoord(in) == expected);
 
-    GraphicsBL::setBufferSize({ 1280, 720 });
+    graphics::setBufferSize({ 1280, 720 });
     camera.setFov(75);
     in = { 10.1f, 6.5f, 8.5f };
     expected = { 2465, 1534 };
     REQUIRE(camera.getScreenCoord(in) == expected);
 
-    GraphicsBL::setBufferSize({ 1920, 1080 });
+    graphics::setBufferSize({ 1920, 1080 });
     camera.setFov(90);
     in = { -7.9f, 15.3f, 2.1f };
     expected = { -6262, 14528 };
     REQUIRE(camera.getScreenCoord(in) == expected);
 
-    GraphicsBL::setBufferSize({ 2560, 1440 });
+    graphics::setBufferSize({ 2560, 1440 });
     camera.setFov(120);
     in = { -2.0f, 5.6f, 12.0f };
     expected = { 960, 1616 };

@@ -2,7 +2,7 @@
 #include <sstream>
 #include "objloader.h"
 
-namespace bl::objloader {
+namespace ramiel::objloader {
 
     std::vector<size_t> splitv(const std::string& in) {
         std::stringstream stream(in);

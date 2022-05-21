@@ -1,7 +1,7 @@
 #include <cmath>
-#include "graphicsbl_p.h"
+#include "ramiel_p.h"
 
-namespace bl {
+namespace ramiel {
 
 	static float camPosSpeed = 2.0f;
 	static float camRotSpeed = 1.57079f;
@@ -31,8 +31,8 @@ namespace bl {
 	}
 
 	void Camera::setFov(unsigned fov) {
-		if (fov) focalLen = (float)GraphicsBL::size[X] / (float)fov * 90.0f;
-		else focalLen = GraphicsBL::size[X];
+		if (fov) focalLen = (float)graphics::size[X] / (float)fov * 90.0f;
+		else focalLen = graphics::size[X];
 	}
 
 	const Vec3f& Camera::getpos() const {
@@ -87,8 +87,8 @@ namespace bl {
 	Vec2 Camera::getScreenCoord(const Vec3f& in) const {
 		Vec2 out = { 0 };
 		if (in[Z] != 0.0f) {
-			out[X] = (int)(in[X] * focalLen / in[Z] + GraphicsBL::mid[X]);
-			out[Y] = (int)(in[Y] * focalLen / in[Z] + GraphicsBL::mid[Y]);
+			out[X] = (int)(in[X] * focalLen / in[Z] + graphics::mid[X]);
+			out[Y] = (int)(in[Y] * focalLen / in[Z] + graphics::mid[Y]);
 		}
 		return out;
 	}
@@ -107,58 +107,58 @@ namespace bl {
 
 		// move left
 		if (controls[2]) {
-			pos[X] -= GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
-			pos[Z] -= GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
+			pos[X] -= graphics::dtime * camPosSpeed_frame * cos[Y];
+			pos[Z] -= graphics::dtime * camPosSpeed_frame * sin[Y];
 		}
 
 		// move right
 		if (controls[3]) {
-			pos[X] += GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
-			pos[Z] += GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
+			pos[X] += graphics::dtime * camPosSpeed_frame * cos[Y];
+			pos[Z] += graphics::dtime * camPosSpeed_frame * sin[Y];
 		}
 
 		// move down
 		if (controls[4]) {
-			pos[Y] -= GraphicsBL::dtime * camPosSpeed_frame;
+			pos[Y] -= graphics::dtime * camPosSpeed_frame;
 		}
 
 		// move up
 		if (controls[5]) {
-			pos[Y] += GraphicsBL::dtime * camPosSpeed_frame;
+			pos[Y] += graphics::dtime * camPosSpeed_frame;
 		}
 
 		// move backward
 		if (controls[6]) {
-			pos[X] += GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
-			pos[Y] += GraphicsBL::dtime * camPosSpeed_frame * -sin[X];
-			pos[Z] -= GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
+			pos[X] += graphics::dtime * camPosSpeed_frame * sin[Y];
+			pos[Y] += graphics::dtime * camPosSpeed_frame * -sin[X];
+			pos[Z] -= graphics::dtime * camPosSpeed_frame * cos[Y];
 		}
 
 		// move forward
 		if (controls[7]) {
-			pos[X] -= GraphicsBL::dtime * camPosSpeed_frame * sin[Y];
-			pos[Y] -= GraphicsBL::dtime * camPosSpeed_frame * -sin[X];
-			pos[Z] += GraphicsBL::dtime * camPosSpeed_frame * cos[Y];
+			pos[X] -= graphics::dtime * camPosSpeed_frame * sin[Y];
+			pos[Y] -= graphics::dtime * camPosSpeed_frame * -sin[X];
+			pos[Z] += graphics::dtime * camPosSpeed_frame * cos[Y];
 		}
 
 		// turn right
 		if (controls[8]) {
-			rot[Y] -= GraphicsBL::dtime * camRotSpeed;
+			rot[Y] -= graphics::dtime * camRotSpeed;
 		}
 
 		// turn left
 		if (controls[9]) {
-			rot[Y] += GraphicsBL::dtime * camRotSpeed;
+			rot[Y] += graphics::dtime * camRotSpeed;
 		}
 
 		// turn down
 		if (controls[10]) {
-			if (rot[X] > -1.57079f) rot[X] -= GraphicsBL::dtime * camRotSpeed;
+			if (rot[X] > -1.57079f) rot[X] -= graphics::dtime * camRotSpeed;
 		}
 
 		// turn up
 		if (controls[11]) {
-			if (rot[X] < 1.57079f) rot[X] += GraphicsBL::dtime * camRotSpeed;
+			if (rot[X] < 1.57079f) rot[X] += graphics::dtime * camRotSpeed;
 		}
 	}
 

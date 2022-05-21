@@ -2,7 +2,7 @@
 #include <stb_image/stb_image.h>
 #include "texture.h"
 
-namespace bl {
+namespace ramiel {
 
     Texture::Texture(const char* filename) {
         uint8_t* buffer;

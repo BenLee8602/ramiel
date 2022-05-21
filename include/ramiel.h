@@ -3,7 +3,7 @@
 #include "../src/vec.h"
 #include "../src/effects.h" // temp
 
-namespace bl {
+namespace ramiel {
 
 	enum class ShadingType : uint8_t {
 		FLAT,
@@ -20,7 +20,7 @@ namespace bl {
 	};
 
 
-    namespace GraphicsBL {
+    namespace graphics {
 
 		void setBufferSize(Vec2u size);
 		void setFov(unsigned fov);

@@ -3,7 +3,7 @@
 #include <vector>
 #include "vec.h"
 
-namespace bl {
+namespace ramiel {
 
     class Model {
         std::vector<Vec3f> v_pos;

@@ -1,6 +1,6 @@
 #include "catch2/catch2.hpp"
 #include <model.h>
-using namespace bl;
+using namespace ramiel;
 
 
 TEST_CASE("model constructor", "[model]") {

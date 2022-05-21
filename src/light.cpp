@@ -1,7 +1,7 @@
 #include <cmath>
 #include "light.h"
 
-namespace bl {
+namespace ramiel {
 
 	Light::Light(Vec3f color) {
 		this->color = color;

@@ -1,16 +1,16 @@
 #include "draw.h"
-#include "graphicsbl_p.h"
+#include "ramiel_p.h"
 
-namespace bl { 
+namespace ramiel { 
 
 	void Draw::clip1(float c1, float c2, Draw& other) {
 		// interpolate x and y
 		other.tricam[0][X] = tricam[1][X] + (tricam[0][X] - tricam[1][X]) * c1;
 		other.tricam[0][Y] = tricam[1][Y] + (tricam[0][Y] - tricam[1][Y]) * c1;
-		other.tricam[0][Z] = GraphicsBL::camera.znear;
+		other.tricam[0][Z] = graphics::camera.znear;
 		other.tricam[1][X] = tricam[1][X] + (tricam[2][X] - tricam[1][X]) * c2;
 		other.tricam[1][Y] = tricam[1][Y] + (tricam[2][Y] - tricam[1][Y]) * c2;
-		other.tricam[1][Z] = GraphicsBL::camera.znear;
+		other.tricam[1][Z] = graphics::camera.znear;
 		other.tricam[2] = tricam[2];
 
 		tricam[1] = other.tricam[0];
@@ -58,10 +58,10 @@ namespace bl {
 		// interpolate x and y
 		tricam[0][X] = tricam[0][X] + (tricam[1][X] - tricam[0][X]) * c1;
 		tricam[0][Y] = tricam[0][Y] + (tricam[1][Y] - tricam[0][Y]) * c1;
-		tricam[0][Z] = GraphicsBL::camera.znear;
+		tricam[0][Z] = graphics::camera.znear;
 		tricam[2][X] = tricam[2][X] + (tricam[1][X] - tricam[2][X]) * c2;
 		tricam[2][Y] = tricam[2][Y] + (tricam[1][Y] - tricam[2][Y]) * c2;
-		tricam[2][Z] = GraphicsBL::camera.znear;
+		tricam[2][Z] = graphics::camera.znear;
 	}
 
 	void DrawFlat::clip2(float c1, float c2) {
@@ -96,7 +96,7 @@ namespace bl {
 	void Draw::init() {
 		// project tri onto screen
 		for (int a = 0; a < 3; a++) {
-			triscreen[a] = GraphicsBL::camera.getScreenCoord(tricam[a]);
+			triscreen[a] = graphics::camera.getScreenCoord(tricam[a]);
 		}
 	}
 
@@ -109,8 +109,8 @@ namespace bl {
 		Vec3f v2 = v_pos[2] - v_pos[0];
 		Vec3f normal = getNormalized(crossProduct(v1, v2));
 
-		color = GraphicsBL::light_ambient;
-		for (auto& l : GraphicsBL::lights) {
+		color = graphics::light_ambient;
+		for (auto& l : graphics::lights) {
 			color += l->getLight(pos, normal);
 		}
 	}
@@ -234,7 +234,7 @@ namespace bl {
 	void Draw::clipy() {
 		// y value of scanline
 		y = std::max(0, triscreen[0][Y]);
-		ymax = std::min<int>(triscreen[1][Y], GraphicsBL::size[Y]);
+		ymax = std::min<int>(triscreen[1][Y], graphics::size[Y]);
 
 		// start and end x values of scanline
 		x1 = (float)triscreen[0][X] + dx1_y * (float)(y - triscreen[0][Y]);
@@ -297,10 +297,10 @@ namespace bl {
 	}
 
 	void Draw::clipx() {
-		xmax = std::min<int>(x2, GraphicsBL::size[X]);
+		xmax = std::min<int>(x2, graphics::size[X]);
 		x = std::max(0, (int)x1);
 		z = z1 + dz_x * (x - (int)x1);
-		index = GraphicsBL::coordsToIndex({ x, y });
+		index = graphics::coordsToIndex({ x, y });
 	}
 
 	void DrawFlat::clipx() {
@@ -327,23 +327,23 @@ namespace bl {
 	}
 
 	void DrawFlat::drawpixel() {
-		GraphicsBL::depth[index] = z;
-		GraphicsBL::pixels[index] = color * surfaceColor;
+		graphics::depth[index] = z;
+		graphics::pixels[index] = color * surfaceColor;
 	}
 
 	void DrawVertex::drawpixel() {
-		GraphicsBL::depth[index] = z;
-		GraphicsBL::pixels[index] = c * surfaceColor;
+		graphics::depth[index] = z;
+		graphics::pixels[index] = c * surfaceColor;
 	}
 
 	void DrawPixel::drawpixel() {
-		GraphicsBL::depth[index] = z;
+		graphics::depth[index] = z;
 		Vec3f pos = p / zinv;
-		Vec3f color = GraphicsBL::light_ambient;
-		for (auto& l : GraphicsBL::lights) {
+		Vec3f color = graphics::light_ambient;
+		for (auto& l : graphics::lights) {
 			color += l->getLight(pos, normal);
 		}
-		GraphicsBL::pixels[index] = color * surfaceColor;
+		graphics::pixels[index] = color * surfaceColor;
 	}
 
 	void DrawPixel_S::drawpixel() {
@@ -409,7 +409,7 @@ namespace bl {
 	}
 
 	void Draw::segmentswitch() {
-		ymax = std::min<int>(triscreen[2][Y], GraphicsBL::size[Y]);
+		ymax = std::min<int>(triscreen[2][Y], graphics::size[Y]);
 
 		*dx_y = (float)(triscreen[2][X] - triscreen[1][X]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
 		x1 = (float)triscreen[2][X] - dx1_y * (float)(triscreen[2][Y] - y);

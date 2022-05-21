@@ -1,6 +1,6 @@
 #include "catch2/catch2.hpp"
 #include <texture.h>
-using namespace bl;
+using namespace ramiel;
 
 TEST_CASE("texture size", "[texture]") {
     Texture texture("../data/colortest.png");
