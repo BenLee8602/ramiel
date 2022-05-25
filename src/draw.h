@@ -254,7 +254,7 @@ namespace ramiel {
 
 
 	template<class DrawSuper>
-	class DrawTX : public DrawSuper {
+	class DrawUV : public DrawSuper {
 	public:
 		using DrawSuper::surfaceColor;
 
@@ -269,16 +269,14 @@ namespace ramiel {
 
 		using DrawSuper::zinv;
 
-		Texture* texture;
 		Vec2f v_txt[3];
-	private:
 		Vec2f du1_y, du2_y, * du_y;
 		Vec2f u1, u2;
 		Vec2f du_x;
 		Vec2f u;
 
 	public:
-		void clip1(float c1, float c2, DrawTX<DrawSuper>& other) {
+		void clip1(float c1, float c2, DrawUV<DrawSuper>& other) {
 			DrawSuper::clip1(c1, c2, other);
 
 			other.v_txt[0] = v_txt[1] + (v_txt[0] - v_txt[1]) * c1;
@@ -340,7 +338,6 @@ namespace ramiel {
 		}
 
 		void drawpixel() {
-			surfaceColor = texture->get(u / zinv);
 			DrawSuper::drawpixel();
 		}
 
@@ -366,9 +363,72 @@ namespace ramiel {
 	};
 
 
-	typedef DrawTX<DrawPS<DrawFlat>> DrawFlat_TX;
-	typedef DrawTX<DrawPS<DrawVertex>> DrawVertex_TX;
-	typedef DrawTX<DrawPixel> DrawPixel_TX;
-	typedef DrawTX<DrawPixel_S> DrawPixel_S_TX;
+	template<class DrawSuper_>
+	class DrawTexture : public DrawUV<DrawSuper_> {
+		typedef DrawUV<DrawSuper_> DrawSuper;
+	public:
+		using DrawSuper::surfaceColor;
+		using DrawSuper::u;
+		using DrawSuper::zinv;
+		
+		Texture* texture;
+
+		void drawpixel() {
+			surfaceColor = texture->get(u / zinv);
+			DrawSuper::drawpixel();
+		}
+	};
+
+	typedef DrawTexture<DrawPS<DrawFlat>>   DrawFlat_Textured;
+	typedef DrawTexture<DrawPS<DrawVertex>> DrawVertex_Textured;
+	typedef DrawTexture<DrawPixel>          DrawPixel_Textured;
+	typedef DrawTexture<DrawPixel_S>        DrawPixel_S_Textured;
+
+
+	template<class DrawSuper>
+	class DrawNormalmap : public DrawSuper {
+	public:
+		using DrawSuper::v_pos;
+		using DrawSuper::v_txt;
+		using DrawSuper::normal;
+		using DrawSuper::u;
+		using DrawSuper::zinv;
+
+		Texture* normalMap;
+	private:
+		Vec3f tri_normal;
+		Vec3f tri_tangent;
+		Vec3f tri_bitangent;
+
+	public:
+		void init() {
+			const Vec3f dpos1 = v_pos[1] - v_pos[0];
+			const Vec3f dpos2 = v_pos[2] - v_pos[0];
+			const Vec2f dtex1 = v_txt[1] - v_txt[0];
+			const Vec2f dtex2 = v_txt[2] - v_txt[0];
+
+			const float f = 1.0f / (dtex1[X] * dtex2[Y] + dtex2[X] * dtex1[Y]);
+			tri_normal    = crossProduct(dpos1, dpos2);
+			tri_tangent   = (dpos1 * dtex2[Y] - dpos2 * dtex1[Y]) * f;
+			tri_bitangent = (dpos2 * dtex1[X] - dpos1 * dtex2[X]) * f;
+
+			tri_normal = getNormalized(tri_normal);
+			tri_tangent = getNormalized(tri_tangent);
+			tri_bitangent = getNormalized(tri_bitangent);
+
+			DrawSuper::init();
+		}
+
+		void drawpixel() {
+			Vec3f normal_in = normalMap->get(u / zinv);
+			normal = tri_tangent * normal_in[X] + tri_bitangent * normal_in[Y] + tri_normal * normal_in[Z];
+			//normal = getNormalized(normal);
+			std::cout << getMagnitude(normal);
+			DrawSuper::drawpixel();
+		}
+	};
+
+	typedef DrawNormalmap<DrawUV<DrawPixel>>  DrawPixel_NormalMapped;
+	typedef DrawNormalmap<DrawPixel_Textured> DrawPixel_Textured_NormalMapped;
 
 }

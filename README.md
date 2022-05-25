@@ -10,7 +10,7 @@ graphics::loadModel("terrain", "examples/assets/models/terrain.obj", { -64, 0, -
 graphics::setAmbientLightColor({ 100, 80, 100 });
 graphics::setBackgroundColor({ 150, 110, 110 });
 graphics::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
-graphics::addEntity("terrain", vec3f_255, ShadingType::PIXEL);
+graphics::addEntity("terrain", vec3f_255, nullptr, nullptr, ShadingType::PIXEL);
 graphics::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 ```
 
@@ -19,8 +19,44 @@ A test scene showing per-pixel lighting, spotlight, and a cube:
 ```cpp
 graphics::loadModel("cube", "examples/assets/models/cube.obj");
 graphics::setAmbientLightColor({ 25, 25, 25 });
-graphics::addEntity("cube", vec3f_255, ShadingType::PIXEL);
+graphics::addEntity("cube", vec3f_255, nullptr, nullptr, ShadingType::PIXEL);
 graphics::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
+```
+
+![Texture Mapping](https://github.com/BenLee8602/ramiel/blob/master/screenshots/cube_brick.png?raw=true)
+A test scene showing a brick texture + normal map applied to cubes in various combinations.
+Screenshot shows cube with both texture and normal map:
+```cpp
+graphics::loadTexture("brick_texture", "examples/assets/textures/brickwall_texture.jpg", 'c');
+graphics::loadTexture("brick_normal", "examples/assets/textures/brickwall_normal.jpg", 'n');
+graphics::loadModel("cube", "examples/assets/models/cube.obj");
+
+// no texture or normal map
+graphics::addEntity(
+    "cube", { 100, 90, 70 }, nullptr, nullptr, ShadingType::PIXEL, { -1,  0,  1 },
+    vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, { -0.1,  0.1,  0.1 }
+);
+
+// normal map only
+graphics::addEntity(
+    "cube", { 100, 90, 70 }, nullptr, "brick_normal", ShadingType::PIXEL, {  1,  0,  1 },
+    vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, {  0.1,  0.1,  0.1 }
+);
+
+// texture only
+graphics::addEntity(
+    "cube", vec3f_255, "brick_texture", nullptr, ShadingType::PIXEL, { -1,  0, -1 },
+    vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, { -0.1,  0.1, -0.1 }
+);
+
+// both texture and normal map
+graphics::addEntity(
+    "cube", vec3f_255, "brick_texture", "brick_normal", ShadingType::PIXEL, {  1,  0, -1 },
+    vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, {  0.1,  0.1, -0.1 }
+);
+
+graphics::setAmbientLightColor({ 25, 25, 25 });
+graphics::addPointLight(vec3f_255, { 0, 1, 0 }, 0.2);
 ```
 
 
@@ -72,7 +108,7 @@ entity movement and collisions for each frame.
 
 ## Texture
 Loads an image using stb_image and stores the texture in memory. Can return the color of the 
-texture at a given normalized 2D coordinate.
+texture at a given normalized 2D coordinate. Also used for surface normal mapping.
 
 ## Triangle
 Functions for clipping and rastering a triangle, based on the given Draw object and vertex data.

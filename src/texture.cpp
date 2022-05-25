@@ -4,7 +4,7 @@
 
 namespace ramiel {
 
-    Texture::Texture(const char* filename) {
+    Texture::Texture(const char* filename, char type) {
         uint8_t* buffer;
         int bitsPerPixel;
         buffer = stbi_load(filename, &size[X], &size[Y], &bitsPerPixel, 3);
@@ -15,8 +15,19 @@ namespace ramiel {
             data[i][R] = *b++;
             data[i][G] = *b++;
             data[i][B] = *b++;
-            data[i] /= 255.0f;
         }
+
+        if (type == 'c') {
+            for (size_t i = 0; i < data.size(); ++i) {
+                data[i] /= 255.0f;
+            }
+        }
+        else if (type == 'n') {
+            for (size_t i = 0; i < data.size(); ++i) {
+                data[i] = data[i] / 127.5f - 1.0f;
+            }
+        }
+
         delete[] buffer;
     }
 

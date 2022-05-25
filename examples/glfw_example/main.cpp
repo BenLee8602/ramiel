@@ -8,32 +8,10 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	/*
-	graphics::loadModel("terrain", "examples/assets/models/terrain.obj", { -64, 0, -64 });
-	graphics::setAmbientLightColor({ 100, 80, 100 });
-	graphics::setBackgroundColor({ 150, 110, 110 });
-	graphics::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
-	graphics::addEntity("terrain", vec3f_255, ShadingType::PIXEL);
-	graphics::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
-	//*/
-
-	//*
-	graphics::loadModel("cube", "examples/assets/models/cube.obj");
+	graphics::loadModel("ramiel", "examples/assets/models/ramiel.obj", { 0, 0, 2 });
 	graphics::setAmbientLightColor({ 25, 25, 25 });
-	graphics::addEntity("cube", vec3f_255, ShadingType::PIXEL, vec3f_0, vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, { 1, 1, 1 });
-	graphics::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
-	//*/
-
-	/*
-	graphics::loadModel("cube", "examples/assets/models/cube.obj");
-	graphics::loadTexture("grass", "examples/assets/textures/grass.jpg");
-	graphics::setAmbientLightColor({ 25, 25, 25 });
-	graphics::addPointLight(vec3f_255, vec3f_0, 0.1f);
-	graphics::addEntity("cube", "grass", ShadingType::FLAT,    { -3, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0, 0.1, 0 });
-	graphics::addEntity("cube", "grass", ShadingType::VERTEX,  { -1, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0.1, 0.1, 0 });
-	graphics::addEntity("cube", "grass", ShadingType::PIXEL,   {  1, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0, 0.1, 0.1 });
-	graphics::addEntity("cube", "grass", ShadingType::PIXEL_S, {  3, 0, 4 }, vec3f_0, false, 0.5f, 1.0f, true, vec3f_0, vec3f_0, vec3f_0, { 0.1, 0.1, 0.1 });
-	//*/
+	graphics::addEntity("ramiel", { 25, 55, 255 }, nullptr, nullptr, ShadingType::PIXEL);
+	graphics::addPointLight(vec3f_255, { 1, 1.2, 0 }, 0.2f);
 }
 
 

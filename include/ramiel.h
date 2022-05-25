@@ -40,29 +40,18 @@ namespace ramiel {
 			Vec3f pos = vec3f_0,
 			Vec3f rot = vec3f_0
 		);
-		bool loadTexture(const char* name, const char* filename);
+		bool loadTexture(
+			const char* name,
+			const char* filename,
+			char type = 'c'
+		);
 
 		bool addEntity(
-			const char* filename,
-			Vec3f color = vec3f_255,
-			ShadingType shading = ShadingType::FLAT,
-			// physics
-			Vec3f pos       = vec3f_0,
-			Vec3f rot       = vec3f_0,
-			bool  collision = false,
-			float hbxrad    = 0.5f,
-			float mass      = 1.0f,
-			bool  movement  = false,
-			Vec3f posVel    = vec3f_0,
-			Vec3f posAcc    = vec3f_0,
-			Vec3f rotVel    = vec3f_0,
-			Vec3f rotAcc    = vec3f_0
-		);
-		bool addEntity(
 			const char* model,
-			const char* texture,
+			Vec3f color = vec3f_255,
+			const char* texture = nullptr,
+			const char* normalMap = nullptr,
 			ShadingType shading = ShadingType::FLAT,
-			// physics
 			Vec3f pos       = vec3f_0,
 			Vec3f rot       = vec3f_0,
 			bool  collision = false,

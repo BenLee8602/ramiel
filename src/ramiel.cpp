@@ -136,9 +136,10 @@ namespace ramiel {
 	}
 
 
-	bool graphics::loadTexture(const char* name, const char* filename) {
+	bool graphics::loadTexture(const char* name, const char* filename, char type) {
 		if (!std::ifstream(filename).good()) return false;
-		textures[std::string(name)] = new Texture(filename);
+		if (type != 'c' && type != 'n') return false;
+		textures[std::string(name)] = new Texture(filename, type);
 		return true;
 	}
 
@@ -153,46 +154,24 @@ namespace ramiel {
 		return ShadingType_::FLAT;
 	}
 
-	
+
 	bool graphics::addEntity(
-		const char* model, Vec3f color, ShadingType shading, Vec3f pos, Vec3f rot,
+		const char* model, Vec3f color,
+		const char* texture, const char* normalMap, 
+		ShadingType shading,
+		Vec3f pos, Vec3f rot,
 		bool collision, float hbxrad, float mass,
-		bool movement, Vec3f posVel, Vec3f posAcc, Vec3f rotVel, Vec3f rotAcc
+		bool movement,
+		Vec3f posVel, Vec3f posAcc,
+		Vec3f rotVel, Vec3f rotAcc
 	) {
 		if (!models[model]) return false;
 		entities.push_back(new Entity(
 			models[model],
-			nullptr,
+			texture ? textures[texture] : nullptr,
+			normalMap ? textures[normalMap] : nullptr,
 			mapShadingType(shading),
 			color,
-			Physics(
-				pos,
-				rot,
-				collision,
-				hbxrad,
-				mass,
-				movement,
-				posVel,
-				posAcc,
-				rotVel,
-				rotAcc
-			)
-		));
-		return true;
-	}
-
-
-	bool graphics::addEntity(
-		const char* model, const char* texture, ShadingType shading, Vec3f pos, Vec3f rot,
-		bool collision, float hbxrad, float mass,
-		bool movement, Vec3f posVel, Vec3f posAcc, Vec3f rotVel, Vec3f rotAcc
-	) {
-		if (!models[model]) return false;
-		entities.push_back(new Entity(
-			models[model],
-			textures[texture],
-			mapShadingType(shading),
-			vec3f_255,
 			Physics(
 				pos,
 				rot,

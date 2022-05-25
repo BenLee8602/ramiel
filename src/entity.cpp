@@ -5,12 +5,13 @@
 
 namespace ramiel {
 	
-	Entity::Entity(Model* model, Texture* texture, ShadingType_ shading, Vec3f color, Physics physics) {
+	Entity::Entity(Model* model, Texture* texture, Texture* normalMap, ShadingType_ shading, Vec3f color, Physics physics) {
 		this->shading = shading;
 		c_clamp(color);
 		this->color = color / 255.0f;
 		this->physics = physics;
 		this->texture = texture;
+		this->normalMap = normalMap;
 		this->model = model;
 	}
 
@@ -51,7 +52,7 @@ namespace ramiel {
 		if (texture && tri_txt.size() == tri.size()) {
 			switch (shading) {
 				case ShadingType_::FLAT: {
-					DrawFlat_TX draw;
+					DrawFlat_Textured draw;
 					draw.texture = texture;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
@@ -67,7 +68,7 @@ namespace ramiel {
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
 					calcVertexColor(v_color, v_pos, v_normal);
-					DrawVertex_TX draw;
+					DrawVertex_Textured draw;
 					draw.texture = texture;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
@@ -82,21 +83,36 @@ namespace ramiel {
 				}
 
 				case ShadingType_::PIXEL: {
-					DrawPixel_TX draw;
-					draw.texture = texture;
-					for (size_t i = 0; i < tri.size(); ++i) {
-						for (size_t j = 0; j < 3; ++j) {
-							draw.v_pos[j] = v_pos[tri[i][j]];
-							draw.tricam[j] = cameraCoords[tri[i][j]];
-							draw.v_txt[j] = v_txt[tri_txt[i][j]];
+					if (normalMap) {
+						DrawPixel_Textured_NormalMapped draw;
+						draw.texture = texture;
+						draw.normalMap = normalMap;
+						for (size_t i = 0; i < tri.size(); ++i) {
+							for (size_t j = 0; j < 3; ++j) {
+								draw.v_pos[j] = v_pos[tri[i][j]];
+								draw.tricam[j] = cameraCoords[tri[i][j]];
+								draw.v_txt[j] = v_txt[tri_txt[i][j]];
+							}
+							triangle::draw(draw);
 						}
-						triangle::draw(draw);
+					}
+					else {
+						DrawPixel_Textured draw;
+						draw.texture = texture;
+						for (size_t i = 0; i < tri.size(); ++i) {
+							for (size_t j = 0; j < 3; ++j) {
+								draw.v_pos[j] = v_pos[tri[i][j]];
+								draw.tricam[j] = cameraCoords[tri[i][j]];
+								draw.v_txt[j] = v_txt[tri_txt[i][j]];
+							}
+							triangle::draw(draw);
+						}
 					}
 					break;
 				}
 
 				case ShadingType_::PIXEL_S: {
-					DrawPixel_S_TX draw;
+					DrawPixel_S_Textured draw;
 					draw.texture = texture;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
@@ -145,15 +161,31 @@ namespace ramiel {
 				}
 
 				case ShadingType_::PIXEL: {
-					DrawPixel draw;
-					draw.surfaceColor = color;
-					for (size_t i = 0; i < tri.size(); ++i) {
-						for (size_t j = 0; j < 3; ++j) {
-							draw.v_pos[j] = v_pos[tri[i][j]];
-							draw.tricam[j] = cameraCoords[tri[i][j]];
+					if (normalMap && tri_txt.size() == tri.size()) {
+						DrawPixel_NormalMapped draw;
+						draw.surfaceColor = color;
+						draw.normalMap = normalMap;
+						for (size_t i = 0; i < tri.size(); ++i) {
+							for (size_t j = 0; j < 3; ++j) {
+								draw.v_pos[j] = v_pos[tri[i][j]];
+								draw.tricam[j] = cameraCoords[tri[i][j]];
+								draw.v_txt[j] = v_txt[tri_txt[i][j]];
+							}
+							triangle::draw(draw);
 						}
-						triangle::draw(draw);
 					}
+					else {
+						DrawPixel draw;
+						draw.surfaceColor = color;
+						for (size_t i = 0; i < tri.size(); ++i) {
+							for (size_t j = 0; j < 3; ++j) {
+								draw.v_pos[j] = v_pos[tri[i][j]];
+								draw.tricam[j] = cameraCoords[tri[i][j]];
+							}
+							triangle::draw(draw);
+						}
+					}
+					
 					break;
 				}
 

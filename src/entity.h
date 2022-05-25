@@ -18,6 +18,7 @@ namespace ramiel {
 		Vec3f color;
 		Model* model;
 		Texture* texture;
+		Texture* normalMap;
 		
 	public:
 		Physics physics;
@@ -33,6 +34,7 @@ namespace ramiel {
 		Entity(
 			Model* model,
 			Texture* texture = nullptr,
+			Texture* normalMap = nullptr,
 			ShadingType_ shading = ShadingType_::FLAT,
 			Vec3f color = vec3f_255,
 			Physics physics = Physics()
