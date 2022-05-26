@@ -109,10 +109,7 @@ namespace ramiel {
 		Vec3f v2 = v_pos[2] - v_pos[0];
 		Vec3f normal = getNormalized(crossProduct(v1, v2));
 
-		color = graphics::light_ambient;
-		for (auto& l : graphics::lights) {
-			color += l->getLight(pos, normal);
-		}
+		color = graphics::getAllLights(pos, normal);
 	}
 
 	void DrawVertex::init() {
@@ -339,10 +336,7 @@ namespace ramiel {
 	void DrawPixel::drawpixel() {
 		graphics::depth[index] = z;
 		Vec3f pos = p / zinv;
-		Vec3f color = graphics::light_ambient;
-		for (auto& l : graphics::lights) {
-			color += l->getLight(pos, normal);
-		}
+		Vec3f color = graphics::getAllLights(pos, normal);
 		graphics::pixels[index] = color * surfaceColor;
 	}
 

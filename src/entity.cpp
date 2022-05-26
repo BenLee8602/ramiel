@@ -16,20 +16,6 @@ namespace ramiel {
 	}
 
 
-	void Entity::calcVertexColor(
-		std::vector<Vec3f>& v_color,
-		const std::vector<Vec3f>& v_pos,
-		const std::vector<Vec3f> v_normal
-	) {
-		for (size_t i = 0; i < v_color.size(); ++i) {
-			v_color[i] = graphics::light_ambient;
-			for (auto& l : graphics::lights) {
-				v_color[i] += l->getLight(v_pos[i], v_normal[i]);
-			}
-		}
-	}
-
-
 	void Entity::draw() {
 		// get model info
 		std::vector<Vec3f> v_pos, v_normal;
@@ -67,7 +53,9 @@ namespace ramiel {
 
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
-					calcVertexColor(v_color, v_pos, v_normal);
+					for (size_t i = 0; i < v_color.size(); ++i) {
+						v_color[i] = graphics::getAllLights(v_pos[i], v_normal[i]);
+					}
 					DrawVertex_Textured draw;
 					draw.texture = texture;
 					for (size_t i = 0; i < tri.size(); ++i) {
@@ -146,7 +134,9 @@ namespace ramiel {
 
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
-					calcVertexColor(v_color, v_pos, v_normal);
+					for (size_t i = 0; i < v_color.size(); ++i) {
+						v_color[i] = graphics::getAllLights(v_pos[i], v_normal[i]);
+					}
 					DrawVertex draw;
 					draw.surfaceColor = color;
 					for (size_t i = 0; i < tri.size(); ++i) {

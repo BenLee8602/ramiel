@@ -32,6 +32,8 @@ namespace ramiel::graphics {
 	void drawEntities();
 	void getCollisions();
 
+	Vec3f getAllLights(const Vec3f& pos, const Vec3f& normal);
+
 	int coordsToIndex(const Vec2& in);
 
 }

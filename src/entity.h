@@ -23,14 +23,6 @@ namespace ramiel {
 	public:
 		Physics physics;
 
-	private:
-		void calcVertexColor(
-			std::vector<Vec3f>& v_color,
-			const std::vector<Vec3f>& v_pos,
-			const std::vector<Vec3f> n_normal
-		);
-
-	public:
 		Entity(
 			Model* model,
 			Texture* texture = nullptr,

@@ -239,6 +239,15 @@ namespace ramiel {
 	}
 
 
+	Vec3f graphics::getAllLights(const Vec3f& pos, const Vec3f& normal) {
+		Vec3f color = light_ambient;
+		for (auto& l : lights) {
+			color += l->getLight(pos, normal);
+		}
+		return color;
+	}
+
+
 	int graphics::coordsToIndex(const Vec2& in) {
 		return size[X] * in[Y] + in[X];
 	}

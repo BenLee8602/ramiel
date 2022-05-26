@@ -14,6 +14,10 @@ namespace ramiel {
 		Vec3f tricam[3];
 		Vec2 triscreen[3];
 
+		// lighting
+		unsigned specularExponent;
+		float specularIntensity;
+
 		// x y clipping
 		int x, xmax;
 		int y, ymax;
@@ -422,8 +426,6 @@ namespace ramiel {
 		void drawpixel() {
 			Vec3f normal_in = normalMap->get(u / zinv);
 			normal = tri_tangent * normal_in[X] + tri_bitangent * normal_in[Y] + tri_normal * normal_in[Z];
-			//normal = getNormalized(normal);
-			std::cout << getMagnitude(normal);
 			DrawSuper::drawpixel();
 		}
 	};
