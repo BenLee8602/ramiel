@@ -1,5 +1,5 @@
 #include <cmath>
-#include "light.h"
+#include "ramiel_p.h"
 
 namespace ramiel {
 
@@ -14,8 +14,25 @@ namespace ramiel {
 		this->dir = getNormalized(dir);
 	}
 
-	Vec3f Light_Dir::getLight(const Vec3f& pos, const Vec3f& normal) const {
-		return this->color * std::max(0.0f, dotProduct(normal, this->dir));
+	Vec3f Light_Dir::getLight(
+		const Vec3f& pos, const Vec3f& normal,
+		unsigned specularExponent, float specularIntensity
+	) const {
+		// precalculate
+		float dot = dotProduct(normal, this->dir);
+
+		// diffuse
+		float diffuse = std::max(0.0f, -dot);
+
+		// specular
+		Vec3f cameraVec = getNormalized(graphics::camera.getpos() - pos);
+		Vec3f reflectedVec = this->dir - normal * dot * 2.0f;
+		float specular = specularIntensity * std::pow(
+			std::max(0.0f, dotProduct(reflectedVec, cameraVec)),
+			specularExponent
+		);
+
+		return this->color * (diffuse + specular);
 	}
 
 	void Light_Dir::move(const Vec3f& pos) {
@@ -29,11 +46,31 @@ namespace ramiel {
 		this->falloff = falloff;
 	}
 
-	Vec3f Light_Pt::getLight(const Vec3f& pos, const Vec3f& normal) const {
+	Vec3f Light_Pt::getLight(
+		const Vec3f& pos, const Vec3f& normal,
+		unsigned specularExponent, float specularIntensity
+	) const {
+		// precalculate
 		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
-		float f = 1.0f / (falloff * d * d + 1.0f);
-		return this->color * f * std::max(0.0f, -dotProduct(getNormalized(vec), normal));
+		vec *= 1.0f / d; // normalize
+
+		float dot = dotProduct(vec, normal);
+
+		float falloff = 1.0f / (this->falloff * d * d + 1.0f);
+
+		// diffuse
+		float diffuse = std::max(0.0f, -dot);
+
+		// specular
+		Vec3f cameraVec = getNormalized(graphics::camera.getpos() - pos);
+		Vec3f reflectedVec = vec - normal * dot * 2.0f;
+		float specular = specularIntensity * std::pow(
+			std::max(0.0f, dotProduct(reflectedVec, cameraVec)),
+			specularExponent
+		);
+
+		return this->color * falloff * (diffuse + specular);
 	}
 
 	void Light_Pt::move(const Vec3f& pos) {
@@ -49,14 +86,34 @@ namespace ramiel {
 		this->falloffExp = falloffExp;
 	}
 
-	Vec3f Light_Sp::getLight(const Vec3f& pos, const Vec3f& normal) const {
+	Vec3f Light_Sp::getLight(
+		const Vec3f& pos, const Vec3f& normal,
+		unsigned specularExponent, float specularIntensity
+	) const {
+		// precalculate
 		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
-		vec = getNormalized(vec);
+		vec *= 1.0f / d; // normalize
+
 		float s = std::max(0.0f, dotProduct(vec, this->dir));
 		if (s < width) return vec3f_0;
-		float f = 1.0f / (this->falloff * d * d + 1.0f) * std::pow(s, this->falloffExp);
-		return this->color * f * std::max(0.0f, -dotProduct(vec, normal));
+
+		float dot = dotProduct(vec, normal);
+
+		float falloff = 1.0f / (this->falloff * d * d + 1.0f) * std::pow(s, this->falloffExp);
+
+		// diffuse
+		float diffuse = std::max(0.0f, -dot);
+
+		// specular
+		Vec3f cameraVec = getNormalized(graphics::camera.getpos() - pos);
+		Vec3f reflectedVec = vec - normal * dot * 2.0f;
+		float specular = specularIntensity * std::pow(
+			std::max(0.0f, dotProduct(reflectedVec, cameraVec)),
+			specularExponent
+		);
+
+		return this->color * falloff * (diffuse + specular);
 	}
 
 	void Light_Sp::rotate(const Vec3f& dir) {

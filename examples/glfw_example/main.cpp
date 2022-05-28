@@ -8,10 +8,10 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	graphics::loadModel("ramiel", "examples/assets/models/ramiel.obj", { 0, 0, 2 });
-	graphics::setAmbientLightColor({ 25, 25, 25 });
-	graphics::addEntity("ramiel", { 25, 55, 255 }, nullptr, nullptr, ShadingType::PIXEL);
-	graphics::addPointLight(vec3f_255, { 1, 1.2, 0 }, 0.2f);
+	graphics::loadModel("ramiel", "examples/assets/models/ramiel.obj");
+	graphics::setAmbientLightColor({ 50, 50, 50 });
+	graphics::addEntity("ramiel", { 70, 135, 255 }, nullptr, nullptr, ShadingType::PIXEL, 256, 1.0f, { 0, 0, 4 });
+	graphics::addSpotLight(vec3f_255, { -1, 2, 3 }, { 1, -2, 1 });
 }
 
 

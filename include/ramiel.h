@@ -52,6 +52,8 @@ namespace ramiel {
 			const char* texture = nullptr,
 			const char* normalMap = nullptr,
 			ShadingType shading = ShadingType::FLAT,
+			unsigned specularExponent = 0U,
+			float specularIntensity = 0.0f,
 			Vec3f pos       = vec3f_0,
 			Vec3f rot       = vec3f_0,
 			bool  collision = false,
@@ -66,7 +68,7 @@ namespace ramiel {
 
 		void addDirLight(
 			Vec3f color = vec3f_255,
-			Vec3f dir = { 0.0f, 0.0f, -1.0f }
+			Vec3f dir = { 0.0f, 0.0f, 1.0f }
 		);
 		void addPointLight(
 			Vec3f color = vec3f_255,

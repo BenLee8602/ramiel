@@ -14,18 +14,21 @@ graphics::addEntity("terrain", vec3f_255, nullptr, nullptr, ShadingType::PIXEL);
 graphics::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
 ```
 
-![Lighting Test](https://github.com/BenLee8602/ramiel/blob/master/screenshots/cube.PNG?raw=true)
-A test scene showing per-pixel lighting, spotlight, and a cube:
+![Lighting Test](https://github.com/BenLee8602/ramiel/blob/master/screenshots/ramiel.PNG?raw=true)
+A test scene showing per-pixel lighting, a spotlight, specular reflection, and an octahedron:
 ```cpp
-graphics::loadModel("cube", "examples/assets/models/cube.obj");
-graphics::setAmbientLightColor({ 25, 25, 25 });
-graphics::addEntity("cube", vec3f_255, nullptr, nullptr, ShadingType::PIXEL);
-graphics::addSpotLight(vec3f_255, { 0.8, 1, -2 }, { -0.25, -0.25, 1 });
+graphics::loadModel("ramiel", "examples/assets/models/ramiel.obj");
+graphics::setAmbientLightColor({ 50, 50, 50 });
+graphics::addEntity("ramiel", { 70, 135, 255 }, nullptr, nullptr, ShadingType::PIXEL, 256, 1.0f, { 0, 0, 4 });
+graphics::addSpotLight(vec3f_255, { -1, 2, 3 }, { 1, -2, 1 });
 ```
 
-![Texture Mapping](https://github.com/BenLee8602/ramiel/blob/master/screenshots/cube_brick.png?raw=true)
-A test scene showing a brick texture + normal map applied to cubes in various combinations.
-Screenshot shows cube with both texture and normal map:
+![Texture Mapping](https://github.com/BenLee8602/ramiel/blob/master/screenshots/brick.PNG?raw=true)
+A test scene showing 4 cubes, with textures and normal mapping.
+* Top: no texture or normal map
+* Left: textured only
+* Right: normal mapped only
+* Bottom: textured and normal mapped
 ```cpp
 graphics::loadTexture("brick_texture", "examples/assets/textures/brickwall_texture.jpg", 'c');
 graphics::loadTexture("brick_normal", "examples/assets/textures/brickwall_normal.jpg", 'n');
@@ -33,25 +36,25 @@ graphics::loadModel("cube", "examples/assets/models/cube.obj");
 
 // no texture or normal map
 graphics::addEntity(
-    "cube", { 100, 90, 70 }, nullptr, nullptr, ShadingType::PIXEL, { -1,  0,  1 },
+    "cube", { 100, 90, 70 }, nullptr, nullptr, ShadingType::PIXEL, 4, 0.1f, { -1,  0,  1 },
     vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, { -0.1,  0.1,  0.1 }
 );
 
 // normal map only
 graphics::addEntity(
-    "cube", { 100, 90, 70 }, nullptr, "brick_normal", ShadingType::PIXEL, {  1,  0,  1 },
+    "cube", { 100, 90, 70 }, nullptr, "brick_normal", ShadingType::PIXEL, 4, 0.1f, {  1,  0,  1 },
     vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, {  0.1,  0.1,  0.1 }
 );
 
 // texture only
 graphics::addEntity(
-    "cube", vec3f_255, "brick_texture", nullptr, ShadingType::PIXEL, { -1,  0, -1 },
+    "cube", vec3f_255, "brick_texture", nullptr, ShadingType::PIXEL, 4, 0.1f, { -1,  0, -1 },
     vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, { -0.1,  0.1, -0.1 }
 );
 
 // both texture and normal map
 graphics::addEntity(
-    "cube", vec3f_255, "brick_texture", "brick_normal", ShadingType::PIXEL, {  1,  0, -1 },
+    "cube", vec3f_255, "brick_texture", "brick_normal", ShadingType::PIXEL, 4, 0.1f, {  1,  0, -1 },
     vec3f_0, false, 0, 0, true, vec3f_0, vec3f_0, {  0.1,  0.1, -0.1 }
 );
 
@@ -91,9 +94,9 @@ Contains the graphics namespace. Public header contains the API, and the private
 variables for things like entities, lighting, effects, models, textures, and more.
 
 ## Light
-Defines classes for diffuse lighting. This includes directional lighting (ex. the sun), point 
-lighting, (ex. a light bulb) and spotlight (a flashlight). Each class implements a function to 
-calculate the lighting on a given vertex.
+Defines classes for diffuse + specular lighting. This includes directional lighting (ex. the sun), 
+point lighting, (ex. a light bulb) and spotlight (a flashlight). Each class implements a function 
+to calculate the lighting on a given vertex.
 
 ## Model
 Stores vertex geometry+texture, and polygon data for a 3D model.

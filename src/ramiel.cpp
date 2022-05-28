@@ -157,8 +157,9 @@ namespace ramiel {
 
 	bool graphics::addEntity(
 		const char* model, Vec3f color,
-		const char* texture, const char* normalMap, 
+		const char* texture, const char* normalMap,
 		ShadingType shading,
+		unsigned specularExponent, float specularIntensity,
 		Vec3f pos, Vec3f rot,
 		bool collision, float hbxrad, float mass,
 		bool movement,
@@ -172,6 +173,8 @@ namespace ramiel {
 			normalMap ? textures[normalMap] : nullptr,
 			mapShadingType(shading),
 			color,
+			specularExponent,
+			specularIntensity,
 			Physics(
 				pos,
 				rot,
@@ -239,10 +242,13 @@ namespace ramiel {
 	}
 
 
-	Vec3f graphics::getAllLights(const Vec3f& pos, const Vec3f& normal) {
+	Vec3f graphics::getAllLights(
+		const Vec3f& pos, const Vec3f& normal,
+		unsigned specularExponent, float specularIntensity
+	) {
 		Vec3f color = light_ambient;
 		for (auto& l : lights) {
-			color += l->getLight(pos, normal);
+			color += l->getLight(pos, normal, specularExponent, specularIntensity);
 		}
 		return color;
 	}

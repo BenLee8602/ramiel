@@ -5,7 +5,16 @@
 
 namespace ramiel {
 	
-	Entity::Entity(Model* model, Texture* texture, Texture* normalMap, ShadingType_ shading, Vec3f color, Physics physics) {
+	Entity::Entity(
+		Model* model,
+		Texture* texture,
+		Texture* normalMap,
+		ShadingType_ shading,
+		Vec3f color,
+		unsigned specularExponent,
+		float specularIntensity,
+		Physics physics
+	) {
 		this->shading = shading;
 		c_clamp(color);
 		this->color = color / 255.0f;
@@ -13,6 +22,8 @@ namespace ramiel {
 		this->texture = texture;
 		this->normalMap = normalMap;
 		this->model = model;
+		this->specularExponent = specularExponent;
+		this->specularIntensity = specularIntensity;
 	}
 
 
@@ -40,6 +51,8 @@ namespace ramiel {
 				case ShadingType_::FLAT: {
 					DrawFlat_Textured draw;
 					draw.texture = texture;
+					draw.specularExponent = specularExponent;
+					draw.specularIntensity = specularIntensity;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
 							draw.v_pos[j] = v_pos[tri[i][j]];
@@ -54,10 +67,15 @@ namespace ramiel {
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
 					for (size_t i = 0; i < v_color.size(); ++i) {
-						v_color[i] = graphics::getAllLights(v_pos[i], v_normal[i]);
+						v_color[i] = graphics::getAllLights(
+							v_pos[i], v_normal[i],
+							specularExponent, specularIntensity
+						);
 					}
 					DrawVertex_Textured draw;
 					draw.texture = texture;
+					draw.specularExponent = specularExponent;
+					draw.specularIntensity = specularIntensity;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
 							draw.v_pos[j] = v_pos[tri[i][j]];
@@ -75,6 +93,8 @@ namespace ramiel {
 						DrawPixel_Textured_NormalMapped draw;
 						draw.texture = texture;
 						draw.normalMap = normalMap;
+						draw.specularExponent = specularExponent;
+						draw.specularIntensity = specularIntensity;
 						for (size_t i = 0; i < tri.size(); ++i) {
 							for (size_t j = 0; j < 3; ++j) {
 								draw.v_pos[j] = v_pos[tri[i][j]];
@@ -87,6 +107,8 @@ namespace ramiel {
 					else {
 						DrawPixel_Textured draw;
 						draw.texture = texture;
+						draw.specularExponent = specularExponent;
+						draw.specularIntensity = specularIntensity;
 						for (size_t i = 0; i < tri.size(); ++i) {
 							for (size_t j = 0; j < 3; ++j) {
 								draw.v_pos[j] = v_pos[tri[i][j]];
@@ -102,6 +124,8 @@ namespace ramiel {
 				case ShadingType_::PIXEL_S: {
 					DrawPixel_S_Textured draw;
 					draw.texture = texture;
+					draw.specularExponent = specularExponent;
+					draw.specularIntensity = specularIntensity;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
 							draw.v_pos[j] = v_pos[tri[i][j]];
@@ -122,6 +146,8 @@ namespace ramiel {
 				case ShadingType_::FLAT: {
 					DrawFlat draw;
 					draw.surfaceColor = color;
+					draw.specularExponent = specularExponent;
+					draw.specularIntensity = specularIntensity;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
 							draw.v_pos[j] = v_pos[tri[i][j]];
@@ -135,10 +161,15 @@ namespace ramiel {
 				case ShadingType_::VERTEX: {
 					std::vector<Vec3f> v_color(v_pos.size());
 					for (size_t i = 0; i < v_color.size(); ++i) {
-						v_color[i] = graphics::getAllLights(v_pos[i], v_normal[i]);
+						v_color[i] = graphics::getAllLights(
+							v_pos[i], v_normal[i],
+							specularExponent, specularIntensity
+						);
 					}
 					DrawVertex draw;
 					draw.surfaceColor = color;
+					draw.specularExponent = specularExponent;
+					draw.specularIntensity = specularIntensity;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
 							draw.v_pos[j] = v_pos[tri[i][j]];
@@ -155,6 +186,8 @@ namespace ramiel {
 						DrawPixel_NormalMapped draw;
 						draw.surfaceColor = color;
 						draw.normalMap = normalMap;
+						draw.specularExponent = specularExponent;
+						draw.specularIntensity = specularIntensity;
 						for (size_t i = 0; i < tri.size(); ++i) {
 							for (size_t j = 0; j < 3; ++j) {
 								draw.v_pos[j] = v_pos[tri[i][j]];
@@ -167,6 +200,8 @@ namespace ramiel {
 					else {
 						DrawPixel draw;
 						draw.surfaceColor = color;
+						draw.specularExponent = specularExponent;
+						draw.specularIntensity = specularIntensity;
 						for (size_t i = 0; i < tri.size(); ++i) {
 							for (size_t j = 0; j < 3; ++j) {
 								draw.v_pos[j] = v_pos[tri[i][j]];
@@ -182,6 +217,8 @@ namespace ramiel {
 				case ShadingType_::PIXEL_S: {
 					DrawPixel_S draw;
 					draw.surfaceColor = color;
+					draw.specularExponent = specularExponent;
+					draw.specularIntensity = specularIntensity;
 					for (size_t i = 0; i < tri.size(); ++i) {
 						for (size_t j = 0; j < 3; ++j) {
 							draw.v_pos[j] = v_pos[tri[i][j]];

@@ -19,6 +19,8 @@ namespace ramiel {
 		Model* model;
 		Texture* texture;
 		Texture* normalMap;
+		unsigned specularExponent;
+		float specularIntensity;
 		
 	public:
 		Physics physics;
@@ -29,6 +31,8 @@ namespace ramiel {
 			Texture* normalMap = nullptr,
 			ShadingType_ shading = ShadingType_::FLAT,
 			Vec3f color = vec3f_255,
+			unsigned specularExponent = 0U,
+			float specularIntensity = 0.0f,
 			Physics physics = Physics()
 		);
 		void draw();

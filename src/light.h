@@ -12,7 +12,10 @@ namespace ramiel {
 		Vec3f color;
 	public:
 		Light(Vec3f color);
-		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const = 0;
+		virtual Vec3f getLight(
+			const Vec3f& pos, const Vec3f& normal,
+			unsigned specularExponent, float specularIntensity
+		) const = 0;
 		virtual void move(const Vec3f& pos) = 0;
 	};
 
@@ -25,9 +28,12 @@ namespace ramiel {
 	public:
 		Light_Dir(
 			Vec3f color = vec3f_255,
-			Vec3f dir = { 0.0f, 0.0f, -1.0f }
+			Vec3f dir = { 0.0f, 0.0f, 1.0f }
 		);
-		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const override;
+		virtual Vec3f getLight(
+			const Vec3f& pos, const Vec3f& normal,
+			unsigned specularExponent, float specularIntensity
+		) const override;
 		virtual void move(const Vec3f& pos) override;
 	};
 
@@ -44,7 +50,10 @@ namespace ramiel {
 			Vec3f pos = vec3f_0,
 			float falloff = 1.0f
 		);
-		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const override;
+		virtual Vec3f getLight(
+			const Vec3f& pos, const Vec3f& normal,
+			unsigned specularExponent, float specularIntensity
+		) const override;
 		virtual void move(const Vec3f& pos) override;
 	};
 
@@ -64,7 +73,10 @@ namespace ramiel {
 			float width = 30.0f,
 			float falloffExp = 50.0f
 		);
-		virtual Vec3f getLight(const Vec3f& pos, const Vec3f& normal) const override;
+		virtual Vec3f getLight(
+			const Vec3f& pos, const Vec3f& normal,
+			unsigned specularExponent, float specularIntensity
+		) const override;
 		void rotate(const Vec3f& dir);
 	};
 
