@@ -16,7 +16,7 @@ namespace ramiel::objloader {
     }
 
 
-    void count(const char* filename, size_t& v, size_t& vt, size_t& f) {
+    void count(std::string filename, size_t& v, size_t& vt, size_t& f) {
         v = 0;
         vt = 0;
         f = 0;
@@ -42,7 +42,7 @@ namespace ramiel::objloader {
     }
 
 
-    void load(const char* filename, std::vector<Vec3f>& v, std::vector<Vec2f>& v_txt, std::vector<Vec3u>& tri, std::vector<Vec3u>& tri_txt) {
+    void load(std::string filename, std::vector<Vec3f>& v, std::vector<Vec2f>& v_txt, std::vector<Vec3u>& tri, std::vector<Vec3u>& tri_txt) {
         std::fstream file(filename);
         if (!file.is_open()) throw std::string("bl::objloader::load - file " + std::string(filename) + " not found");
 

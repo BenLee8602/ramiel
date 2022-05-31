@@ -1,0 +1,16 @@
+add_library(${PROJECT_NAME} STATIC 
+    camera.cpp camera.h 
+    draw.cpp draw.h 
+    effects.cpp effects.h 
+    entity.cpp entity.h 
+    light.cpp light.h 
+    model.cpp model.h 
+    objloader.cpp objloader.h 
+    physics.cpp physics.h 
+    ${CMAKE_SOURCE_DIR}/include/ramiel.h
+    ramiel_p.h ramiel.cpp 
+    texture.cpp texture.h 
+    triangle.h 
+    vec.cpp vec.h
+)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)

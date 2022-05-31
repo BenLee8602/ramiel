@@ -23,7 +23,7 @@ namespace ramiel {
         v = out;
     }
 
-    Model::Model(const char* filename, Vec3f pos, Vec3f rot) {
+    Model::Model(std::string filename, Vec3f pos, Vec3f rot) {
         // allocate memory
 		size_t n_v, n_vt, n_f;
 		objloader::count(filename, n_v, n_vt, n_f);

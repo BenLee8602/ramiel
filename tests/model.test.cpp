@@ -4,7 +4,7 @@ using namespace ramiel;
 
 
 TEST_CASE("model constructor", "[model]") {
-    Model model("../data/cube_withquads.obj", { -8.5f, -6.8f, 0.4f }, { -3.9f, 7.9f, -9.6f });
+    Model model(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj", { -8.5f, -6.8f, 0.4f }, { -3.9f, 7.9f, -9.6f });
     std::vector<Vec3f> v_pos_expected = {
         { -9.02613f, -6.71181f, 1.08221f },
         { -8.02719f, -6.68017f, 1.1156f },
@@ -33,7 +33,7 @@ TEST_CASE("model constructor", "[model]") {
 }
 
 TEST_CASE("get vpos", "[model]") {
-    Model model("../data/cube_withquads.obj");
+    Model model(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj");
     std::vector<Vec3f> v_pos;
     std::vector<Vec3f> v_pos_expected = {
         { 8.94298f, 9.75606f, 4.31044f },
@@ -54,7 +54,7 @@ TEST_CASE("get vpos", "[model]") {
 }
 
 TEST_CASE("get vnormal", "[model]") {
-    Model model("../data/cube_withquads.obj");
+    Model model(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj");
     std::vector<Vec3f> v_normal;
     std::vector<Vec3f> v_normal_expected = {
         { -0.813276f, 0.351836f, -0.463459f },

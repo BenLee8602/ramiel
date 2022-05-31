@@ -201,7 +201,7 @@ namespace ramiel {
 
 
 	class DrawPixel : public DrawPS<Draw> {
-		typedef DrawPS<Draw> DrawSuper;
+		using DrawSuper_ = DrawPS<Draw>;
 
 		Vec3f dp1_y, dp2_y, *dp_y;
 		Vec3f p1, p2;
@@ -367,19 +367,19 @@ namespace ramiel {
 	};
 
 
-	template<class DrawSuper_>
-	class DrawTexture : public DrawUV<DrawSuper_> {
-		typedef DrawUV<DrawSuper_> DrawSuper;
+	template<class DrawSuper>
+	class DrawTexture : public DrawUV<DrawSuper> {
+		using DrawSuper_ = DrawUV<DrawSuper>;
 	public:
-		using DrawSuper::surfaceColor;
-		using DrawSuper::u;
-		using DrawSuper::zinv;
+		using DrawSuper_::surfaceColor;
+		using DrawSuper_::u;
+		using DrawSuper_::zinv;
 		
 		Texture* texture;
 
 		void drawpixel() {
 			surfaceColor = texture->get(u / zinv);
-			DrawSuper::drawpixel();
+			DrawSuper_::drawpixel();
 		}
 	};
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include "vec.h"
 
@@ -14,7 +15,7 @@ namespace ramiel {
 		std::vector<Vec3u> tri_txt;
 
     public:
-        Model(const char* filename, Vec3f pos = vec3f_0, Vec3f rot = vec3f_0);
+        Model(std::string filename, Vec3f pos = vec3f_0, Vec3f rot = vec3f_0);
 
         void getVPos(std::vector<Vec3f>& v_pos, Vec3f pos = vec3f_0, Vec3f rot = vec3f_0) const;
         void getVNormal(std::vector<Vec3f>& v_normal, Vec3f rot) const;

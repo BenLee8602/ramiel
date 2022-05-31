@@ -45,7 +45,7 @@ TEST_CASE("counting non existent file throws", "[count][filenotfound]") {
 
 TEST_CASE("count file", "[count]") {
     size_t v, vt, f;
-    objloader::count("../data/cube_tris.obj", v, vt, f);
+    objloader::count(std::string(ramiel_TEST_DATA_DIR) + "/cube_tris.obj", v, vt, f);
     REQUIRE(v == 8);
     REQUIRE(vt == 4);
     REQUIRE(f == 12);
@@ -53,7 +53,7 @@ TEST_CASE("count file", "[count]") {
 
 TEST_CASE("count file containing quads", "[count]") {
     size_t v, vt, f;
-    objloader::count("../data/cube_withquads.obj", v, vt, f);
+    objloader::count(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj", v, vt, f);
     REQUIRE(v == 8);
     REQUIRE(vt == 4);
     REQUIRE(f == 12);
@@ -75,7 +75,7 @@ TEST_CASE("load file", "[load]") {
     std::vector<Vec2f> v_txt;
     std::vector<Vec3u> tri;
     std::vector<Vec3u> tri_txt;
-    objloader::load("../data/cube_withquads.obj", v_pos, v_txt, tri, tri_txt);
+    objloader::load(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj", v_pos, v_txt, tri, tri_txt);
 
     std::vector<Vec3f> v_pos_expected = {
         { -0.5, -0.5, -0.5 },

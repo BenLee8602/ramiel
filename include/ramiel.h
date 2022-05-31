@@ -12,13 +12,6 @@ namespace ramiel {
 		PIXEL_S
 	};
 
-	enum class EffectType : uint8_t { // temp
-		COLORSHIFT,
-		FOG,
-		GREYSCALE,
-		BLUR
-	};
-
 
     namespace graphics {
 

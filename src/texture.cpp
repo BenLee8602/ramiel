@@ -4,10 +4,10 @@
 
 namespace ramiel {
 
-    Texture::Texture(const char* filename, char type) {
+    Texture::Texture(std::string filename, char type) {
         uint8_t* buffer;
         int bitsPerPixel;
-        buffer = stbi_load(filename, &size[X], &size[Y], &bitsPerPixel, 3);
+        buffer = stbi_load(filename.c_str(), &size[X], &size[Y], &bitsPerPixel, 3);
         data = std::vector<Vec3f>(size[X] * size[Y]);
         maxIdx = data.size() - 1;
         uint8_t* b = buffer;

@@ -3,13 +3,13 @@
 using namespace ramiel;
 
 TEST_CASE("texture size", "[texture]") {
-    Texture texture("../data/colortest.png");
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png");
     Vec2 expected = { 640, 480 };
     REQUIRE(texture.getSize() == expected);
 }
 
 TEST_CASE("texture get color", "[texture]") {
-    Texture texture("../data/colortest.png", 'c');
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", 'c');
 
     const float n = 254.0f / 255.0f;
     const Vec3f white   = { n, n, n };
@@ -32,7 +32,7 @@ TEST_CASE("texture get color", "[texture]") {
 }
 
 TEST_CASE("texture get normal vector", "[texture]") {
-    Texture texture("../data/colortest.png", 'n');
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", 'n');
     Vec3f expected;
     const float n = 0.992157f;
     const Vec3f expected1 = { -1.0f, -1.0f, -1.0f };

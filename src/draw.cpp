@@ -32,7 +32,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::clip1(float c1, float c2, DrawPixel& other) {
-		DrawSuper::clip1(c1, c2, other);
+		DrawSuper_::clip1(c1, c2, other);
 
 		// interpolate pos
 		other.v_pos[0] = v_pos[1] + (v_pos[0] - v_pos[1]) * c1;
@@ -77,7 +77,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::clip2(float c1, float c2) {
-		DrawSuper::clip2(c1, c2);
+		DrawSuper_::clip2(c1, c2);
 
 		// interpolate pos
 		v_pos[0] = v_pos[0] + (v_pos[1] - v_pos[0]) * c1;
@@ -117,7 +117,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::init() {
-		DrawSuper::init();
+		DrawSuper_::init();
 
 		Vec3f v1 = v_pos[1] - v_pos[0];
 		Vec3f v2 = v_pos[2] - v_pos[0];
@@ -144,7 +144,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::swapv(size_t i1, size_t i2) {
-		DrawSuper::swapv(i1, i2);
+		DrawSuper_::swapv(i1, i2);
 		std::swap(v_pos[i1], v_pos[i2]);
 	}
 
@@ -179,7 +179,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::calcd_y() {
-		DrawSuper::calcd_y();
+		DrawSuper_::calcd_y();
 
 		// change in pos per change in y
 		dp1_y = (v_pos[2] - v_pos[0]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
@@ -215,7 +215,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::swapdy() {
-		DrawSuper::swapdy();
+		DrawSuper_::swapdy();
 
 		std::swap(dp1_y, dp2_y);
 		dp_y = &dp1_y;
@@ -255,7 +255,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::clipy() {
-		DrawSuper::clipy();
+		DrawSuper_::clipy();
 
 		// start and end pos values of scanline
 		p1 = v_pos[0] + dp1_y * (float)(y - triscreen[0][Y]);
@@ -284,7 +284,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::calcd_x() {
-		DrawSuper::calcd_x();
+		DrawSuper_::calcd_x();
 		dp_x = (p2 - p1) / (x2 - x1);
 	}
 
@@ -310,7 +310,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::clipx() {
-		DrawSuper::clipx();
+		DrawSuper_::clipx();
 		p = p1 + dp_x * (x - (int)x1);
 	}
 
@@ -360,7 +360,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::incx() {
-		DrawSuper::incx();
+		DrawSuper_::incx();
 		p += dp_x;
 	}
 
@@ -389,7 +389,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::incy() {
-		DrawSuper::incy();
+		DrawSuper_::incy();
 
 		p1 += dp1_y;
 		p2 += dp2_y;
@@ -427,7 +427,7 @@ namespace ramiel {
 	}
 
 	void DrawPixel::segmentswitch() {
-		DrawSuper::segmentswitch();
+		DrawSuper_::segmentswitch();
 
 		*dp_y = (v_pos[2] - v_pos[1]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
 		p1 = v_pos[2] - dp1_y * (float)(triscreen[2][Y] - y);
