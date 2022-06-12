@@ -2,6 +2,11 @@
 #include <texture.h>
 using namespace ramiel;
 
+#ifndef ramiel_TEST_DATA_DIR
+#define ramiel_TEST_DATA_DIR "."
+#endif
+
+
 TEST_CASE("texture size", "[texture]") {
     Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png");
     Vec2 expected = { 640, 480 };

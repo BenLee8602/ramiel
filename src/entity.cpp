@@ -13,12 +13,12 @@ namespace ramiel {
 		Vec3f color,
 		unsigned specularExponent,
 		float specularIntensity,
-		Physics physics
+		PhysicsObj* physicsObj
 	) {
 		this->shading = shading;
 		c_clamp(color);
 		this->color = color / 255.0f;
-		this->physics = physics;
+		this->physicsObj = physicsObj;
 		this->texture = texture;
 		this->normalMap = normalMap;
 		this->model = model;
@@ -27,17 +27,19 @@ namespace ramiel {
 	}
 
 
+	Entity::~Entity() {
+		delete physicsObj;
+	}
+
+
 	void Entity::draw() {
 		// get model info
 		std::vector<Vec3f> v_pos, v_normal;
-		model->getVPos(v_pos, physics.pos, physics.rot);
-		model->getVNormal(v_normal, physics.rot);
+		model->getVPos(v_pos, physicsObj->getPos(), physicsObj->getRot());
+		model->getVNormal(v_normal, physicsObj->getRot());
 		const std::vector<Vec2f>& v_txt   = model->getVTxt();
 		const std::vector<Vec3u>& tri     = model->getTri();
 		const std::vector<Vec3u>& tri_txt = model->getTriTxt();
-
-		// physics
-		if (physics.movement) physics.simulateMovement();
 
 		// get camera coords
 		std::vector<Vec3f> cameraCoords(v_pos.size());

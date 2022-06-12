@@ -4,7 +4,6 @@ add_executable("${PROJECT_NAME}_test"
     light.test.cpp 
     model.test.cpp 
     objloader.test.cpp 
-    physics.test.cpp 
     texture.test.cpp 
     vec.test.cpp
 )

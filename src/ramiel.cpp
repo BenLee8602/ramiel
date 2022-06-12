@@ -1,6 +1,7 @@
 #include <thread>
 #include <fstream>
 #include "ramiel_p.h"
+#include "physics.h"
 #include "../include/ramiel.h"
 
 namespace ramiel {
@@ -65,8 +66,8 @@ namespace ramiel {
 		graphics::dtime = dtime;
 		camera.calcTrigValues();
 		
+		physics::simulatePhysics();
 		drawEntities();
-		getCollisions();
 
 		for (auto& e : effects) e->applyEffect(&pixels[0], &pixels[0]);
 		bloom.applyEffect(&pixels[0], &pixels[0]);
@@ -96,19 +97,6 @@ namespace ramiel {
 		}
 
 		delete[] threads;
-	}
-
-
-	void graphics::getCollisions() {
-		for (size_t a = 0; a < entities.size() - 1; a++) {
-			if (entities[a]->physics.collision) {
-				for (size_t b = a + 1; b < entities.size(); b++) {
-					if (entities[b]->physics.collision) {
-						entities[a]->physics.simulateCollision(entities[b]->physics);
-					}
-				}
-			}
-		}
 	}
 
 	
@@ -155,38 +143,42 @@ namespace ramiel {
 	}
 
 
-	bool graphics::addEntity(
-		const char* model, Vec3f color,
-		const char* texture, const char* normalMap,
-		ShadingType shading,
-		unsigned specularExponent, float specularIntensity,
-		Vec3f pos, Vec3f rot,
-		bool collision, float hbxrad, float mass,
-		bool movement,
-		Vec3f posVel, Vec3f posAcc,
-		Vec3f rotVel, Vec3f rotAcc
-	) {
-		if (!models[model]) return false;
+	bool graphics::addEntity(GraphicsArgs ga, DynamicsArgs da, CollisionArgs ca) {
+		if (!models[ga.model]) return false;
+		
+		PhysicsObj* physicsObj;
+		switch(ca.colliderType) {
+			case ColliderType::NONE: {
+				physicsObj = new PhysicsObj(
+					da.dynamic,
+					da.pos, da.rot,
+					da.posVel, da.rotVel,
+					da.posAcc, da.rotAcc,
+					ca.mass
+				);
+				break;
+			}
+			case ColliderType::SPHERE: {
+				physicsObj = new SphereCollider(
+					da.dynamic,
+					da.pos, da.rot,
+					da.posVel, da.rotVel,
+					da.posAcc, da.rotAcc,
+					ca.mass, ca.hbxrad
+				);
+				break;
+			}
+		}
+
 		entities.push_back(new Entity(
-			models[model],
-			texture ? textures[texture] : nullptr,
-			normalMap ? textures[normalMap] : nullptr,
-			mapShadingType(shading),
-			color,
-			specularExponent,
-			specularIntensity,
-			Physics(
-				pos,
-				rot,
-				collision,
-				hbxrad,
-				mass,
-				movement,
-				posVel,
-				posAcc,
-				rotVel,
-				rotAcc
-			)
+			models[ga.model],
+			ga.texture ? textures[ga.texture] : nullptr,
+			ga.normalMap ? textures[ga.normalMap] : nullptr,
+			mapShadingType(ga.shading),
+			ga.color,
+			ga.specularExponent,
+			ga.specularIntensity,
+			physicsObj
 		));
 		return true;
 	}
@@ -219,24 +211,24 @@ namespace ramiel {
 
 	
 	void graphics::removeEntity(size_t index) {
-		if (entities.size()) {
-			index %= entities.size();
+		if (index < entities.size()) {
+			delete entities[index];
 			entities.erase(entities.begin() + index);
 		}
 	}
 
 	
 	void graphics::removeLight(size_t index) {
-		if (lights.size()) {
-			index %= lights.size();
+		if (index < lights.size()) {
+			delete entities[index];
 			lights.erase(lights.begin() + index);
 		}
 	}
 
 
 	void graphics::removeEffect(size_t index) {
-		if (effects.size()) {
-			index %= effects.size();
+		if (index < effects.size()) {
+			delete entities[index];
 			effects.erase(effects.begin() + index);
 		}
 	}

@@ -30,7 +30,6 @@ namespace ramiel::graphics {
 	extern Vec3f bg_color;
 
 	void drawEntities();
-	void getCollisions();
 
 	Vec3f getAllLights(
 		const Vec3f& pos, const Vec3f& normal,

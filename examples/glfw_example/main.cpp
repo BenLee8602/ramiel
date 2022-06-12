@@ -8,10 +8,42 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	graphics::loadModel("ramiel", "examples/assets/models/ramiel.obj");
-	graphics::setAmbientLightColor({ 50, 50, 50 });
-	graphics::addEntity("ramiel", { 70, 135, 255 }, nullptr, nullptr, ShadingType::PIXEL, 256, 1.0f, { 0, 0, 4 });
-	graphics::addSpotLight(vec3f_255, { -1, 2, 3 }, { 1, -2, 1 });
+	graphics::loadModel("sphere", "examples/assets/models/sphere.obj");
+	graphics::setAmbientLightColor({ 100, 100, 100 });
+	graphics::addDirLight();
+
+	//*
+	graphics::addEntity(
+		GraphicsArgs("sphere", ShadingType::FLAT, { 255, 25, 25 }),
+		DynamicsArgs({ 0, 0, 32 }),
+		CollisionArgs(ColliderType::SPHERE, 1.0f, 1.0f)
+	);
+	graphics::addEntity(
+		GraphicsArgs("sphere",  ShadingType::FLAT, { 25, 255, 25 }),
+		DynamicsArgs({ 0, 4, 32 }, vec3f_0, true, vec3f_0, vec3f_0, { 0, -9.8, 0 }),
+		CollisionArgs(ColliderType::SPHERE, 1.0f, 1.0f));
+	graphics::addEntity(
+		GraphicsArgs("sphere", ShadingType::FLAT, { 25, 25, 255 }),
+		DynamicsArgs({ 0.5, 16, 32 }, vec3f_0, true, vec3f_0, vec3f_0, { 0, -9.8, 0 }),
+		CollisionArgs(ColliderType::SPHERE, 1.0f, 1.0f)
+	);
+	//*/
+
+	/*
+	graphics::loadModel("sphere", "examples/assets/models/sphere.obj");
+	graphics::addEntity("sphere", { 25, 255, 255 }, nullptr, nullptr, ShadingType::FLAT, 64, 0.5, { -2, 0, 32 }, vec3f_0, true, 1, 1, true, { 2, 0, 0 }, vec3f_0);
+	graphics::addEntity("sphere", { 255, 25, 255 }, nullptr, nullptr, ShadingType::FLAT, 64, 0.5, {  2, 0, 32 }, vec3f_0, true, 1, 1, true, { 1, 0, 0 }, vec3f_0);
+	//*/
+
+	/*
+	graphics::addEntity("sphere", { 25, 255, 255 }, nullptr, nullptr, ShadingType::FLAT, 64, 0.5, { -32, 0, 32 }, vec3f_0, true, 1, 1, true, {  64, 0, 0 }, vec3f_0);
+	graphics::addEntity("sphere", { 255, 25, 255 }, nullptr, nullptr, ShadingType::FLAT, 64, 0.5, {  32, 0, 32 }, vec3f_0, true, 1, 1, true, { -64, 0, 0 }, vec3f_0);
+	//*/
+
+	/*
+	graphics::addEntity("sphere", { 25, 255, 255 }, nullptr, nullptr, ShadingType::FLAT, 64, 0.5, { -0.5, 0, 32 }, vec3f_0, true, 1, 1, true, {  4, 0, 0 }, vec3f_0);
+	graphics::addEntity("sphere", { 255, 25, 255 }, nullptr, nullptr, ShadingType::FLAT, 64, 0.5, {  0.5, 0, 32 }, vec3f_0, true, 1, 1, true, { -4, 0, 0 }, vec3f_0);
+	//*/
 }
 
 

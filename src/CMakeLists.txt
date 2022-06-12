@@ -1,5 +1,6 @@
 add_library(${PROJECT_NAME} STATIC 
     camera.cpp camera.h 
+    collision.cpp collision.h 
     draw.cpp draw.h 
     effects.cpp effects.h 
     entity.cpp entity.h 
@@ -7,6 +8,7 @@ add_library(${PROJECT_NAME} STATIC
     model.cpp model.h 
     objloader.cpp objloader.h 
     physics.cpp physics.h 
+    physicsobj.cpp physicsobj.h 
     ${CMAKE_SOURCE_DIR}/include/ramiel.h
     ramiel_p.h ramiel.cpp 
     texture.cpp texture.h 

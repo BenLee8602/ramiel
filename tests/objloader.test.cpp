@@ -2,6 +2,10 @@
 #include <objloader.h>
 using namespace ramiel;
 
+#ifndef ramiel_TEST_DATA_DIR
+#define ramiel_TEST_DATA_DIR "."
+#endif
+
 
 // objloader::splitv
 

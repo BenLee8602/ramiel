@@ -1,6 +1,6 @@
 #pragma once
 
-#include "physics.h"
+#include "physicsobj.h"
 #include "model.h"
 #include "texture.h"
 
@@ -21,10 +21,9 @@ namespace ramiel {
 		Texture* normalMap;
 		unsigned specularExponent;
 		float specularIntensity;
+		PhysicsObj* physicsObj;
 		
 	public:
-		Physics physics;
-
 		Entity(
 			Model* model,
 			Texture* texture = nullptr,
@@ -33,8 +32,9 @@ namespace ramiel {
 			Vec3f color = vec3f_255,
 			unsigned specularExponent = 0U,
 			float specularIntensity = 0.0f,
-			Physics physics = Physics()
+			PhysicsObj* physicsObj = nullptr
 		);
+		~Entity();
 		void draw();
 	};
 

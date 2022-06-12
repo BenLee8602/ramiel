@@ -13,6 +13,87 @@ namespace ramiel {
 	};
 
 
+	struct GraphicsArgs {
+		const char* model;
+		ShadingType shading;
+		Vec3f color;
+		const char* texture;
+		const char* normalMap;
+		unsigned specularExponent;
+		float specularIntensity;
+
+		GraphicsArgs(
+			const char* model,
+			ShadingType shading = ShadingType::FLAT,
+			Vec3f color = vec3f_255,
+			const char* texture = nullptr,
+			const char* normalMap = nullptr,
+			unsigned specularExponent = 8U,
+			float specularIntensity = 0.2f
+		) : 
+			model(model),
+			shading(shading),
+			color(color),
+			texture(texture),
+			normalMap(normalMap),
+			specularExponent(specularExponent),
+			specularIntensity(specularIntensity)
+		{}
+	};
+
+
+	struct DynamicsArgs {
+		Vec3f pos;
+		Vec3f rot;
+		bool dynamic;
+		Vec3f posVel;
+		Vec3f rotVel;
+		Vec3f posAcc;
+		Vec3f rotAcc;
+
+		DynamicsArgs(
+			Vec3f pos    = vec3f_0,
+			Vec3f rot    = vec3f_0,
+			bool dynamic = false,
+			Vec3f posVel = vec3f_0,
+			Vec3f rotVel = vec3f_0,
+			Vec3f posAcc = vec3f_0,
+			Vec3f rotAcc = vec3f_0
+		) : 
+			pos(pos),
+			rot(rot),
+			dynamic(dynamic),
+			posVel(posVel),
+			rotVel(rotVel),
+			posAcc(posAcc),
+			rotAcc(rotAcc)
+		{}
+	};
+
+
+	enum class ColliderType : uint8_t {
+		NONE,
+		SPHERE
+	};
+
+
+	struct CollisionArgs {
+		ColliderType colliderType;
+		float mass;
+		float hbxrad;
+
+		CollisionArgs(
+			ColliderType colliderType = ColliderType::NONE,
+			float mass = 1.0f,
+			float hbxrad = 0.5f
+		) : 
+			colliderType(colliderType),
+			mass(mass),
+			hbxrad(hbxrad)
+		{}
+	};
+
+
     namespace graphics {
 
 		void setBufferSize(Vec2u size);
@@ -40,23 +121,9 @@ namespace ramiel {
 		);
 
 		bool addEntity(
-			const char* model,
-			Vec3f color = vec3f_255,
-			const char* texture = nullptr,
-			const char* normalMap = nullptr,
-			ShadingType shading = ShadingType::FLAT,
-			unsigned specularExponent = 0U,
-			float specularIntensity = 0.0f,
-			Vec3f pos       = vec3f_0,
-			Vec3f rot       = vec3f_0,
-			bool  collision = false,
-			float hbxrad    = 0.5f,
-			float mass      = 1.0f,
-			bool  movement  = false,
-			Vec3f posVel    = vec3f_0,
-			Vec3f posAcc    = vec3f_0,
-			Vec3f rotVel    = vec3f_0,
-			Vec3f rotAcc    = vec3f_0
+			GraphicsArgs ga,
+			DynamicsArgs da = DynamicsArgs(),
+			CollisionArgs ca = CollisionArgs()
 		);
 
 		void addDirLight(
