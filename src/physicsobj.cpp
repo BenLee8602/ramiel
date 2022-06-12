@@ -3,7 +3,7 @@
 #include "physicsobj.h"
 #include "collision.h"
 #include "physics.h"
-#include "ramiel_p.h"
+#include "graphics.h"
 
 namespace ramiel {
 
@@ -42,10 +42,10 @@ namespace ramiel {
 
 
     void PhysicsObj::step() {
-        pos    += posVel * graphics::dtime;
-        rot    += rotVel * graphics::dtime;
-        posVel += posAcc * graphics::dtime;
-        rotVel += rotAcc * graphics::dtime;
+        pos    += posVel * physics::dtime;
+        rot    += rotVel * physics::dtime;
+        posVel += posAcc * physics::dtime;
+        rotVel += rotAcc * physics::dtime;
     }
 
 

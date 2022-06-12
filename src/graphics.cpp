@@ -1,12 +1,9 @@
 #include <thread>
-#include <fstream>
-#include "ramiel_p.h"
-#include "physics.h"
-#include "../include/ramiel.h"
+#include <ramiel.h>
+#include "graphics.h"
 
 namespace ramiel {
 
-	float  graphics::dtime = 0.0f;
 	Camera graphics::camera;
 	Bloom  graphics::bloom(50);
 
@@ -25,6 +22,48 @@ namespace ramiel {
 	std::vector<Effect*> graphics::effects;
 	Vec3f graphics::light_ambient = vec3f_0;
 	Vec3f graphics::bg_color = vec3f_0;
+
+
+    void graphics::drawEntities() {
+		const size_t nthreads = std::min<size_t>(entities.size(), std::thread::hardware_concurrency());
+		const size_t ePerThread = entities.size() / nthreads;
+		std::thread* threads = new std::thread[nthreads];
+
+		auto drawPortion = [](size_t begin, size_t end) {
+			for (size_t i = begin; i < end; i++) {
+				entities[i]->draw();
+			}
+		};
+
+		size_t begin = 0;
+		for (size_t i = 0; i < nthreads - 1; i++) {
+			threads[i] = std::thread(drawPortion, begin, begin + ePerThread);
+			begin += ePerThread;
+		}
+		threads[nthreads - 1] = std::thread(drawPortion, begin, entities.size());
+		for (size_t i = 0; i < nthreads; i++) {
+			threads[i].join();
+		}
+
+		delete[] threads;
+	}
+
+
+	Vec3f graphics::getAllLights(
+		const Vec3f& pos, const Vec3f& normal,
+		unsigned specularExponent, float specularIntensity
+	) {
+		Vec3f color = light_ambient;
+		for (auto& l : lights) {
+			color += l->getLight(pos, normal, specularExponent, specularIntensity);
+		}
+		return color;
+	}
+
+
+	int graphics::coordsToIndex(const Vec2& in) {
+		return size[X] * in[Y] + in[X];
+	}
 
 
 	void graphics::setBufferSize(Vec2u size) {
@@ -59,44 +98,16 @@ namespace ramiel {
 	}
 
 	
-	void graphics::renderFrame(float dtime) {
+	void graphics::renderFrame() {
 		std::fill(pixels.begin(), pixels.end(), bg_color);
 		std::fill(depth.begin(), depth.end(), camera.zfar);
 		
-		graphics::dtime = dtime;
 		camera.calcTrigValues();
-		
-		physics::simulatePhysics();
 		drawEntities();
 
 		for (auto& e : effects) e->applyEffect(&pixels[0], &pixels[0]);
 		bloom.applyEffect(&pixels[0], &pixels[0]);
 		for (size_t i = 0; i < bufferSize; i++) notBloom(pixels[i]);
-	}
-
-
-	void graphics::drawEntities() {
-		const size_t nthreads = std::min<size_t>(entities.size(), std::thread::hardware_concurrency());
-		const size_t ePerThread = entities.size() / nthreads;
-		std::thread* threads = new std::thread[nthreads];
-
-		auto drawPortion = [](size_t begin, size_t end) {
-			for (size_t i = begin; i < end; i++) {
-				entities[i]->draw();
-			}
-		};
-
-		size_t begin = 0;
-		for (size_t i = 0; i < nthreads - 1; i++) {
-			threads[i] = std::thread(drawPortion, begin, begin + ePerThread);
-			begin += ePerThread;
-		}
-		threads[nthreads - 1] = std::thread(drawPortion, begin, entities.size());
-		for (size_t i = 0; i < nthreads; i++) {
-			threads[i].join();
-		}
-
-		delete[] threads;
 	}
 
 	
@@ -220,7 +231,7 @@ namespace ramiel {
 	
 	void graphics::removeLight(size_t index) {
 		if (index < lights.size()) {
-			delete entities[index];
+			delete lights[index];
 			lights.erase(lights.begin() + index);
 		}
 	}
@@ -228,26 +239,9 @@ namespace ramiel {
 
 	void graphics::removeEffect(size_t index) {
 		if (index < effects.size()) {
-			delete entities[index];
+			delete effects[index];
 			effects.erase(effects.begin() + index);
 		}
-	}
-
-
-	Vec3f graphics::getAllLights(
-		const Vec3f& pos, const Vec3f& normal,
-		unsigned specularExponent, float specularIntensity
-	) {
-		Vec3f color = light_ambient;
-		for (auto& l : lights) {
-			color += l->getLight(pos, normal, specularExponent, specularIntensity);
-		}
-		return color;
-	}
-
-
-	int graphics::coordsToIndex(const Vec2& in) {
-		return size[X] * in[Y] + in[X];
 	}
 
 }

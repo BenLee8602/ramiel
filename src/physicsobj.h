@@ -32,7 +32,7 @@ namespace ramiel {
             Vec3f rotAcc = vec3f_0,
             float mass = 1.0f
         );
-        ~PhysicsObj();
+        virtual ~PhysicsObj();
 
         // dynamics
         void step();
@@ -61,7 +61,7 @@ namespace ramiel {
             float mass = 1.0f,
             float hbxrad = 0.5f
         );
-        ~SphereCollider();
+        virtual ~SphereCollider();
 
         virtual void collideWith(PhysicsObj* other) override;
         virtual void collideWith(SphereCollider* other) override;

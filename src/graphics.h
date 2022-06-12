@@ -9,7 +9,6 @@
 
 namespace ramiel::graphics {
 	
-	extern float  dtime;
 	extern Camera camera;
 	extern Bloom  bloom;
 

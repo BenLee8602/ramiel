@@ -9,10 +9,11 @@ add_library(${PROJECT_NAME} STATIC
     objloader.cpp objloader.h 
     physics.cpp physics.h 
     physicsobj.cpp physicsobj.h 
-    ${CMAKE_SOURCE_DIR}/include/ramiel.h
-    ramiel_p.h ramiel.cpp 
+    ${CMAKE_SOURCE_DIR}/include/ramiel.h 
+    graphics.cpp graphics.h 
     texture.cpp texture.h 
     triangle.h 
     vec.cpp vec.h
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)

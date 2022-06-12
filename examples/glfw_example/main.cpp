@@ -89,7 +89,8 @@ int main() {
 		
 		getControls(window, controls);
 		graphics::setControls(controls);
-		graphics::renderFrame(dtime);
+		physics::simulatePhysics(dtime);
+		graphics::renderFrame();
 		graphics::getFrameRGB(frame);
 
 		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, frame);

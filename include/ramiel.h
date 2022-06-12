@@ -93,8 +93,8 @@ namespace ramiel {
 		{}
 	};
 
-
-    namespace graphics {
+	
+	namespace graphics {
 
 		void setBufferSize(Vec2u size);
 		void setFov(unsigned fov);
@@ -103,7 +103,7 @@ namespace ramiel {
 		void setAmbientLightColor(Vec3f color);
 		void setBackgroundColor(Vec3f color);
 
-		void renderFrame(float dtime = 0.0f);
+		void renderFrame();
 
 		void getFrameDEC(int* frame);
 		void getFrameRGB(uint8_t* frame);
@@ -149,7 +149,14 @@ namespace ramiel {
 		void removeEntity(size_t index);
 		void removeLight(size_t index);
 		void removeEffect(size_t index);
-		
+
+	}
+
+	
+	namespace physics {
+
+		void simulatePhysics(float dtime = 0.0f);
+
 	}
 
 }

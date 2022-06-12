@@ -1,16 +1,12 @@
+#include <ramiel.h>
 #include "physics.h"
 
 namespace ramiel {
 
+    float physics::dtime = 0.0f;
     std::vector<PhysicsObj*> physics::physicsObjs;
     std::vector<PhysicsObj*> physics::dynamicObjs;
     std::vector<PhysicsObj*> physics::collidableObjs;
-
-
-    void physics::simulatePhysics() {
-        simulateDynamics();
-        simulateCollisions();
-    }
 
 
     void physics::simulateDynamics() {
@@ -26,6 +22,13 @@ namespace ramiel {
                 collidableObjs[i]->collideWith(collidableObjs[j]);
             }
         }
+    }
+
+
+    void physics::simulatePhysics(float dtime) {
+        physics::dtime = dtime;
+        simulateDynamics();
+        simulateCollisions();
     }
 
 }

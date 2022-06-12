@@ -1,7 +1,7 @@
 #include "draw.h"
 #include "triangle.h"
 #include "objloader.h"
-#include "ramiel_p.h"
+#include "graphics.h"
 
 namespace ramiel {
 	
