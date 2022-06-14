@@ -1,4 +1,5 @@
 #include <thread>
+#include <iostream>
 #include <ramiel.h>
 #include "graphics.h"
 
@@ -26,6 +27,7 @@ namespace ramiel {
 
     void graphics::drawEntities() {
 		const size_t nthreads = std::min<size_t>(entities.size(), std::thread::hardware_concurrency());
+		if (!nthreads) return;
 		const size_t ePerThread = entities.size() / nthreads;
 		std::thread* threads = new std::thread[nthreads];
 
@@ -128,14 +130,14 @@ namespace ramiel {
 	}
 
 
-	bool graphics::loadModel(const char* name, const char* filename, Vec3f pos, Vec3f rot) {
+	bool graphics::loadModel(std::string name, std::string filename, Vec3f pos, Vec3f rot) {
 		if (!std::ifstream(filename).good()) return false;
 		models[std::string(name)] = new Model(filename, pos, rot);
 		return true;
 	}
 
 
-	bool graphics::loadTexture(const char* name, const char* filename, char type) {
+	bool graphics::loadTexture(std::string name, std::string filename, char type) {
 		if (!std::ifstream(filename).good()) return false;
 		if (type != 'c' && type != 'n') return false;
 		textures[std::string(name)] = new Texture(filename, type);
@@ -154,41 +156,126 @@ namespace ramiel {
 	}
 
 
-	bool graphics::addEntity(GraphicsArgs ga, DynamicsArgs da, CollisionArgs ca) {
-		if (!models[ga.model]) return false;
+	template<typename T>
+	void getArg(Args& args, const std::string& key, T& out) {
+		auto i = args.find(key);
+		if (i != args.end()) {
+			out = std::get<T>(i->second);
+		}
+	}
+
+
+	bool graphics::addEntity(Args args) {
+		if (args.find("model") == args.end()) return false;
+
+		// defaults
+		std::string model;
+		ShadingType shading = ShadingType::FLAT;
+		Vec3f color = vec3f_255;
+		std::string texture;
+		std::string normalMap;
+		unsigned specularExponent = 0U;
+		float specularIntensity = 0.0f;
+		Vec3f pos    = vec3f_0;
+		Vec3f rot    = vec3f_0;
+		bool dynamic = false;
+		Vec3f posVel = vec3f_0;
+		Vec3f rotVel = vec3f_0;
+		Vec3f posAcc = vec3f_0;
+		Vec3f rotAcc = vec3f_0;
+		ColliderType colliderType = ColliderType::NONE;
+		float mass = 1.0f;
+		float hbxrad = 0.5f;
+		
+		// get args
+		try {
+			getArg(args, "model", model);
+			getArg(args, "shading", shading);
+			getArg(args, "color", color);
+			getArg(args, "texture", texture);
+			getArg(args, "normalMap", normalMap);
+			getArg(args, "specularExponent", specularExponent);
+			getArg(args, "specularIntensity", specularIntensity);
+			getArg(args, "pos", pos);
+			getArg(args, "rot", rot);
+			getArg(args, "dynamic", dynamic);
+			getArg(args, "posVel", posVel);
+			getArg(args, "rotVel", rotVel);
+			getArg(args, "posAcc", posAcc);
+			getArg(args, "rotAcc", rotAcc);
+			getArg(args, "colliderType", colliderType);
+			getArg(args, "mass", mass);
+			if (colliderType == ColliderType::SPHERE) {
+				getArg(args, "hbxrad", hbxrad);
+			}
+		} catch (std::bad_variant_access e) {
+			std::cerr << "bad argument types - ramiel::graphics::addEntity(Args)\n";
+			return false;
+		}
+
+		return addEntity(
+			model, shading,
+			color, texture, normalMap,
+			specularExponent, specularIntensity,
+			pos, rot,
+			dynamic,
+			posVel, rotVel,
+			posAcc, rotAcc,
+			colliderType,
+			mass, hbxrad
+		);
+	}
+
+
+	bool graphics::addEntity(
+		std::string model,
+		ShadingType shading,
+		Vec3f color,
+		std::string texture,
+		std::string normalMap,
+		unsigned specularExponent,
+		float specularIntensity,
+		Vec3f pos, Vec3f rot,
+		bool dynamic,
+		Vec3f posVel, Vec3f rotVel,
+		Vec3f posAcc, Vec3f rotAcc,
+		ColliderType colliderType,
+		float mass, float hbxrad
+	) {
+		if (!models[model]) return false;
 		
 		PhysicsObj* physicsObj;
-		switch(ca.colliderType) {
+		switch(colliderType) {
 			case ColliderType::NONE: {
 				physicsObj = new PhysicsObj(
-					da.dynamic,
-					da.pos, da.rot,
-					da.posVel, da.rotVel,
-					da.posAcc, da.rotAcc,
-					ca.mass
+					dynamic,
+					pos, rot,
+					posVel, rotVel,
+					posAcc, rotAcc,
+					mass
 				);
 				break;
 			}
 			case ColliderType::SPHERE: {
 				physicsObj = new SphereCollider(
-					da.dynamic,
-					da.pos, da.rot,
-					da.posVel, da.rotVel,
-					da.posAcc, da.rotAcc,
-					ca.mass, ca.hbxrad
+					dynamic,
+					pos, rot,
+					posVel, rotVel,
+					posAcc, rotAcc,
+					mass, hbxrad
 				);
 				break;
 			}
 		}
 
 		entities.push_back(new Entity(
-			models[ga.model],
-			ga.texture ? textures[ga.texture] : nullptr,
-			ga.normalMap ? textures[ga.normalMap] : nullptr,
-			mapShadingType(ga.shading),
-			ga.color,
-			ga.specularExponent,
-			ga.specularIntensity,
+			models[model],
+			texture.length() ? textures[texture] : nullptr,
+			normalMap.length() ? textures[normalMap] : nullptr,
+			mapShadingType(shading),
+			color,
+			specularExponent,
+			specularIntensity,
 			physicsObj
 		));
 		return true;
