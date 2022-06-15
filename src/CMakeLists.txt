@@ -1,4 +1,6 @@
 add_library(${PROJECT_NAME} STATIC 
+    ${CMAKE_SOURCE_DIR}/include/ramiel/ramiel.h 
+    ${CMAKE_SOURCE_DIR}/include/ramiel/args.h
     camera.cpp camera.h 
     collision.cpp collision.h 
     draw.cpp draw.h 
@@ -9,7 +11,6 @@ add_library(${PROJECT_NAME} STATIC
     objloader.cpp objloader.h 
     physics.cpp physics.h 
     physicsobj.cpp physicsobj.h 
-    ${CMAKE_SOURCE_DIR}/include/ramiel.h 
     graphics.cpp graphics.h 
     texture.cpp texture.h 
     triangle.h 

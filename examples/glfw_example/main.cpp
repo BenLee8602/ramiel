@@ -1,6 +1,9 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
-#include <ramiel.h>
+
+#define RAMIEL_ARGS_IMPLEMENTATION
+#include <ramiel/args.h>
+#include <ramiel/ramiel.h>
 using namespace ramiel;
 
 constexpr size_t width = 1280;

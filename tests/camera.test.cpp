@@ -2,7 +2,7 @@
 
 #define RAMIEL_TEST
 #include <camera.h>
-#include <ramiel.h>
+#include <ramiel/ramiel.h>
 using namespace ramiel;
 
 

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <map>
-#include <string>
-#include <variant>
-
 #include "../src/vec.h"
 #include "../src/effects.h" // temp
 
@@ -21,11 +17,11 @@ namespace ramiel {
 		SPHERE
 	};
 
-
-	typedef std::map<std::string, std::variant<
-		bool, float, unsigned, std::string,
-		Vec3f, ShadingType, ColliderType
-	>> Args;
+	enum class LightType : uint8_t {
+		DIR,
+		POINT,
+		SPOT
+	};
 
 	
 	namespace graphics {
@@ -54,7 +50,6 @@ namespace ramiel {
 			char type = 'c'
 		);
 
-		bool addEntity(Args args);
 		bool addEntity(
 			std::string model,
 			ShadingType shading = ShadingType::FLAT,
