@@ -7,7 +7,7 @@ using namespace ramiel;
 
 TEST_CASE("construct directional light", "[light][construct][dirlight]") {
     Light_Dir light1(vec3f_255, vec3f_0);
-    Vec3f dir1_expected = { 0.0f, 0.0f, -1.0f };
+    Vec3f dir1_expected = { 0.0f, 0.0f, 1.0f };
     REQUIRE(light1.dir.equals(dir1_expected));
 
     Light_Dir light2(vec3f_255, { 11, -54, 52 });

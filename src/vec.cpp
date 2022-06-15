@@ -11,6 +11,10 @@ namespace ramiel {
 		return v / getMagnitude(v);
 	}
 
+	Vec3f getNormalized(const Vec3f& v, float magnitude) {
+		return v / magnitude;
+	}
+
 	float dotProduct(const Vec3f& vec1, const Vec3f& vec2) {
 		return vec1[X] * vec2[X] + vec1[Y] * vec2[Y] + vec1[Z] * vec2[Z];
 	}

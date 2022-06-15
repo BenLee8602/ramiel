@@ -29,7 +29,11 @@ namespace ramiel {
 		template<typename U> Vec<T, N>& operator+=(U num) { for (size_t i = 0; i < N; ++i) arr[i] += num; return *this; }
 		template<typename U> Vec<T, N>& operator-=(U num) { for (size_t i = 0; i < N; ++i) arr[i] -= num; return *this; }
 		template<typename U> Vec<T, N>& operator*=(U num) { for (size_t i = 0; i < N; ++i) arr[i] *= num; return *this; }
-		template<typename U> Vec<T, N>& operator/=(U num) { for (size_t i = 0; i < N; ++i) arr[i] /= num; return *this; }
+		template<typename U> Vec<T, N>& operator/=(U num) { __ascii_tolower('A');
+			float inum = 1.0f / num;
+			for (size_t i = 0; i < N; ++i) arr[i] *= inum;
+			return *this;
+		}
 
 		// vector arithmetic assigment
 		template<typename U> Vec<T, N>& operator+=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) arr[i] += v[i]; return *this; }
@@ -41,13 +45,21 @@ namespace ramiel {
 		template<typename U> Vec<T, N> operator+(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] + num; return temp; }
 		template<typename U> Vec<T, N> operator-(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] - num; return temp; }
 		template<typename U> Vec<T, N> operator*(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * num; return temp; }
-		template<typename U> Vec<T, N> operator/(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] / num; return temp; }
+		template<typename U> Vec<T, N> operator/(U num) const {
+			Vec<T, N> temp;
+			float inum = 1.0f / num;
+			for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * inum;
+			return temp;
+		}
 
 		// vector arithmetic
 		template<typename U> Vec<T, N> operator+(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] + v[i]; return temp; }
 		template<typename U> Vec<T, N> operator-(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] - v[i]; return temp; }
 		template<typename U> Vec<T, N> operator*(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * v[i]; return temp; }
 		template<typename U> Vec<T, N> operator/(const Vec<U, N>& v) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] / v[i]; return temp; }
+
+		// negate
+		Vec<T, N> operator-() const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = -arr[i]; return temp; }
 	};
 
 	template<typename T, size_t N>
@@ -89,6 +101,7 @@ namespace ramiel {
 
 	float getMagnitude(const Vec3f& v);
 	Vec3f getNormalized(const Vec3f& v);
+	Vec3f getNormalized(const Vec3f& v, float magnitude);
 	float dotProduct(const Vec3f& vec1, const Vec3f& vec2);
 	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2);
 
