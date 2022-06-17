@@ -42,10 +42,10 @@ namespace ramiel {
 
 
     void PhysicsObj::step() {
-        pos    += posVel * physics::dtime;
-        rot    += rotVel * physics::dtime;
         posVel += posAcc * physics::dtime;
         rotVel += rotAcc * physics::dtime;
+        pos    += posVel * physics::dtime;
+        rot    += rotVel * physics::dtime;
     }
 
 

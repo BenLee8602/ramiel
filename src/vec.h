@@ -29,8 +29,8 @@ namespace ramiel {
 		template<typename U> Vec<T, N>& operator+=(U num) { for (size_t i = 0; i < N; ++i) arr[i] += num; return *this; }
 		template<typename U> Vec<T, N>& operator-=(U num) { for (size_t i = 0; i < N; ++i) arr[i] -= num; return *this; }
 		template<typename U> Vec<T, N>& operator*=(U num) { for (size_t i = 0; i < N; ++i) arr[i] *= num; return *this; }
-		template<typename U> Vec<T, N>& operator/=(U num) { __ascii_tolower('A');
-			float inum = 1.0f / num;
+		template<typename U, typename F = float> Vec<T, N>& operator/=(U num) {
+			F inum = (F)1 / num;
 			for (size_t i = 0; i < N; ++i) arr[i] *= inum;
 			return *this;
 		}
@@ -45,9 +45,9 @@ namespace ramiel {
 		template<typename U> Vec<T, N> operator+(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] + num; return temp; }
 		template<typename U> Vec<T, N> operator-(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] - num; return temp; }
 		template<typename U> Vec<T, N> operator*(U num) const { Vec<T, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * num; return temp; }
-		template<typename U> Vec<T, N> operator/(U num) const {
+		template<typename U, typename F = float> Vec<T, N> operator/(U num) const {
 			Vec<T, N> temp;
-			float inum = 1.0f / num;
+			F inum = (F)1 / num;
 			for (size_t i = 0; i < N; ++i) temp[i] = arr[i] * inum;
 			return temp;
 		}

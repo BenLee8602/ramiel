@@ -3,40 +3,53 @@
 namespace ramiel {
 
     void collideSphereSphere(SphereCollider& o1, SphereCollider& o2) {
-        if (&o1 == &o2) return;
+        //if (&o1 == &o2) return; // check for self collision, not needed
 
-		Vec3f n = o1.pos - o2.pos;
-		float n_len = dotProduct(n, n);
+		// collision detection
+		Vec3f pos_r = o2.pos - o1.pos;
+		float dist = dotProduct(pos_r, pos_r); // dist^2
 		float r = o1.hbxrad + o2.hbxrad;
-		if (n_len > r * r) return;
-		
-		n_len = std::sqrt(n_len);
-		//float depth = r - n_len;
-		n *= 1.0f / n_len; // normalize
+		if (dist > r * r) return;
 
+		// calculate time of collision
+		float depth = r - std::sqrt(dist);
+		float time = depth / getMagnitude(o2.posVel - o1.posVel);
+
+		// collision response
 		if (o1.dynamic) {
 
 			// both dynamic
 			if (o2.dynamic) {
+				o1.pos -= o1.posVel * time;
+				o2.pos -= o2.posVel * time;
+				Vec3f n = getNormalized(o2.pos - o1.pos);
+
 				const float m = 2.0f / (o1.mass + o2.mass);
 				Vec3f v1_p = o1.posVel - n * o2.mass * m * dotProduct(o1.posVel - o2.posVel, n);
-				n *= -1.0f;
 				Vec3f v2_p = o2.posVel - n * o1.mass * m * dotProduct(o2.posVel - o1.posVel, n);
 				o1.posVel = v1_p;
 				o2.posVel = v2_p;
+
+				o1.pos += o1.posVel * time;
+				o2.pos += o2.posVel * time;
 			}
 
-			// this dynamic
+			// o1 dynamic
 			else {
+				o1.pos -= o1.posVel * time;
+				Vec3f n = getNormalized(o2.pos - o1.pos);
 				o1.posVel -= n * 2.0f * dotProduct(o1.posVel, n);
+				o1.pos += o1.posVel * time;
 			}
 				
 		}
 
-		// other dynamic
+		// o2 dynamic
 		else if (o2.dynamic) {
-			n *= -1.0f;
+			o2.pos -= o2.posVel * time;
+			Vec3f n = getNormalized(o2.pos - o1.pos);
 			o2.posVel -= n * 2.0f * dotProduct(o2.posVel, n);
+			o2.pos += o2.posVel * time;
 		}
     }
 
