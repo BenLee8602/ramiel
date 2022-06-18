@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "ramiel_p.h"
+#include "graphics.h"
 
 namespace ramiel::triangle {
 	

@@ -1,6 +1,9 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
-#include <ramiel.h>
+
+#define RAMIEL_ARGS_IMPLEMENTATION
+#include <ramiel/args.h>
+#include <ramiel/ramiel.h>
 using namespace ramiel;
 
 constexpr size_t width = 1280;
@@ -8,10 +11,35 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	graphics::loadModel("ramiel", "examples/assets/models/ramiel.obj");
-	graphics::setAmbientLightColor({ 50, 50, 50 });
-	graphics::addEntity("ramiel", { 70, 135, 255 }, nullptr, nullptr, ShadingType::PIXEL, 256, 1.0f, { 0, 0, 4 });
-	graphics::addSpotLight(vec3f_255, { -1, 2, 3 }, { 1, -2, 1 });
+	graphics::loadModel("sphere", "examples/assets/models/sphere.obj");
+	graphics::setAmbientLightColor({ 100, 100, 100 });
+	graphics::addDirLight();
+
+	graphics::addEntity({
+		{ "model", "sphere" },
+		{ "color", Vec3f{ 255, 25, 25 } },
+		{ "pos", Vec3f{ 0, 0, 32 } },
+		{ "colliderType", ColliderType::SPHERE },
+		{ "hbxrad", 1.0f }
+	});
+	graphics::addEntity({
+		{ "model", std::string("sphere") },
+		{ "color", Vec3f{ 25, 255, 25 } },
+		{ "pos", Vec3f{ 0, 4, 32 } },
+		{ "dynamic", true },
+		{ "posAcc", Vec3f{ 0, -9.8, 0 } },
+		{ "colliderType", ColliderType::SPHERE },
+		{ "hbxrad", 1.0f }
+	});
+	graphics::addEntity({
+		{ "model", std::string("sphere") },
+		{ "color", Vec3f{ 25, 25, 255 } },
+		{ "pos", Vec3f{ 0.5, 16, 32 } },
+		{ "dynamic", true },
+		{ "posAcc", Vec3f{ 0, -9.8, 0 } },
+		{ "colliderType", ColliderType::SPHERE },
+		{ "hbxrad", 1.0f }
+	});
 }
 
 
@@ -57,7 +85,8 @@ int main() {
 		
 		getControls(window, controls);
 		graphics::setControls(controls);
-		graphics::renderFrame(dtime);
+		physics::simulatePhysics(dtime);
+		graphics::renderFrame();
 		graphics::getFrameRGB(frame);
 
 		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, frame);

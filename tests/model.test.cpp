@@ -2,6 +2,10 @@
 #include <model.h>
 using namespace ramiel;
 
+#ifndef ramiel_TEST_DATA_DIR
+#define ramiel_TEST_DATA_DIR "."
+#endif
+
 
 TEST_CASE("model constructor", "[model]") {
     Model model(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj", { -8.5f, -6.8f, 0.4f }, { -3.9f, 7.9f, -9.6f });

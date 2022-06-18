@@ -9,7 +9,6 @@
 
 namespace ramiel::graphics {
 	
-	extern float  dtime;
 	extern Camera camera;
 	extern Bloom  bloom;
 
@@ -30,7 +29,6 @@ namespace ramiel::graphics {
 	extern Vec3f bg_color;
 
 	void drawEntities();
-	void getCollisions();
 
 	Vec3f getAllLights(
 		const Vec3f& pos, const Vec3f& normal,

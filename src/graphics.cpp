@@ -1,11 +1,10 @@
 #include <thread>
-#include <fstream>
-#include "ramiel_p.h"
-#include "../include/ramiel.h"
+#include <iostream>
+#include <ramiel/ramiel.h>
+#include "graphics.h"
 
 namespace ramiel {
 
-	float  graphics::dtime = 0.0f;
 	Camera graphics::camera;
 	Bloom  graphics::bloom(50);
 
@@ -24,6 +23,49 @@ namespace ramiel {
 	std::vector<Effect*> graphics::effects;
 	Vec3f graphics::light_ambient = vec3f_0;
 	Vec3f graphics::bg_color = vec3f_0;
+
+
+    void graphics::drawEntities() {
+		const size_t nthreads = std::min<size_t>(entities.size(), std::thread::hardware_concurrency());
+		if (!nthreads) return;
+		const size_t ePerThread = entities.size() / nthreads;
+		std::thread* threads = new std::thread[nthreads];
+
+		auto drawPortion = [](size_t begin, size_t end) {
+			for (size_t i = begin; i < end; i++) {
+				entities[i]->draw();
+			}
+		};
+
+		size_t begin = 0;
+		for (size_t i = 0; i < nthreads - 1; i++) {
+			threads[i] = std::thread(drawPortion, begin, begin + ePerThread);
+			begin += ePerThread;
+		}
+		threads[nthreads - 1] = std::thread(drawPortion, begin, entities.size());
+		for (size_t i = 0; i < nthreads; i++) {
+			threads[i].join();
+		}
+
+		delete[] threads;
+	}
+
+
+	Vec3f graphics::getAllLights(
+		const Vec3f& pos, const Vec3f& normal,
+		unsigned specularExponent, float specularIntensity
+	) {
+		Vec3f color = light_ambient;
+		for (auto& l : lights) {
+			color += l->getLight(pos, normal, specularExponent, specularIntensity);
+		}
+		return color;
+	}
+
+
+	int graphics::coordsToIndex(const Vec2& in) {
+		return size[X] * in[Y] + in[X];
+	}
 
 
 	void graphics::setBufferSize(Vec2u size) {
@@ -58,57 +100,16 @@ namespace ramiel {
 	}
 
 	
-	void graphics::renderFrame(float dtime) {
+	void graphics::renderFrame() {
 		std::fill(pixels.begin(), pixels.end(), bg_color);
 		std::fill(depth.begin(), depth.end(), camera.zfar);
 		
-		graphics::dtime = dtime;
 		camera.calcTrigValues();
-		
 		drawEntities();
-		getCollisions();
 
 		for (auto& e : effects) e->applyEffect(&pixels[0], &pixels[0]);
 		bloom.applyEffect(&pixels[0], &pixels[0]);
 		for (size_t i = 0; i < bufferSize; i++) notBloom(pixels[i]);
-	}
-
-
-	void graphics::drawEntities() {
-		const size_t nthreads = std::min<size_t>(entities.size(), std::thread::hardware_concurrency());
-		const size_t ePerThread = entities.size() / nthreads;
-		std::thread* threads = new std::thread[nthreads];
-
-		auto drawPortion = [](size_t begin, size_t end) {
-			for (size_t i = begin; i < end; i++) {
-				entities[i]->draw();
-			}
-		};
-
-		size_t begin = 0;
-		for (size_t i = 0; i < nthreads - 1; i++) {
-			threads[i] = std::thread(drawPortion, begin, begin + ePerThread);
-			begin += ePerThread;
-		}
-		threads[nthreads - 1] = std::thread(drawPortion, begin, entities.size());
-		for (size_t i = 0; i < nthreads; i++) {
-			threads[i].join();
-		}
-
-		delete[] threads;
-	}
-
-
-	void graphics::getCollisions() {
-		for (size_t a = 0; a < entities.size() - 1; a++) {
-			if (entities[a]->physics.collision) {
-				for (size_t b = a + 1; b < entities.size(); b++) {
-					if (entities[b]->physics.collision) {
-						entities[a]->physics.simulateCollision(entities[b]->physics);
-					}
-				}
-			}
-		}
 	}
 
 	
@@ -129,14 +130,14 @@ namespace ramiel {
 	}
 
 
-	bool graphics::loadModel(const char* name, const char* filename, Vec3f pos, Vec3f rot) {
+	bool graphics::loadModel(std::string name, std::string filename, Vec3f pos, Vec3f rot) {
 		if (!std::ifstream(filename).good()) return false;
 		models[std::string(name)] = new Model(filename, pos, rot);
 		return true;
 	}
 
 
-	bool graphics::loadTexture(const char* name, const char* filename, char type) {
+	bool graphics::loadTexture(std::string name, std::string filename, char type) {
 		if (!std::ifstream(filename).good()) return false;
 		if (type != 'c' && type != 'n') return false;
 		textures[std::string(name)] = new Texture(filename, type);
@@ -156,37 +157,54 @@ namespace ramiel {
 
 
 	bool graphics::addEntity(
-		const char* model, Vec3f color,
-		const char* texture, const char* normalMap,
+		std::string model,
 		ShadingType shading,
-		unsigned specularExponent, float specularIntensity,
+		Vec3f color,
+		std::string texture,
+		std::string normalMap,
+		unsigned specularExponent,
+		float specularIntensity,
 		Vec3f pos, Vec3f rot,
-		bool collision, float hbxrad, float mass,
-		bool movement,
-		Vec3f posVel, Vec3f posAcc,
-		Vec3f rotVel, Vec3f rotAcc
+		bool dynamic,
+		Vec3f posVel, Vec3f rotVel,
+		Vec3f posAcc, Vec3f rotAcc,
+		ColliderType colliderType,
+		float mass, float hbxrad
 	) {
 		if (!models[model]) return false;
+		
+		PhysicsObj* physicsObj;
+		switch(colliderType) {
+			case ColliderType::NONE: {
+				physicsObj = new PhysicsObj(
+					dynamic,
+					pos, rot,
+					posVel, rotVel,
+					posAcc, rotAcc
+				);
+				break;
+			}
+			case ColliderType::SPHERE: {
+				physicsObj = new SphereCollider(
+					dynamic,
+					pos, rot,
+					posVel, rotVel,
+					posAcc, rotAcc,
+					mass, hbxrad
+				);
+				break;
+			}
+		}
+
 		entities.push_back(new Entity(
 			models[model],
-			texture ? textures[texture] : nullptr,
-			normalMap ? textures[normalMap] : nullptr,
+			texture.length() ? textures[texture] : nullptr,
+			normalMap.length() ? textures[normalMap] : nullptr,
 			mapShadingType(shading),
 			color,
 			specularExponent,
 			specularIntensity,
-			Physics(
-				pos,
-				rot,
-				collision,
-				hbxrad,
-				mass,
-				movement,
-				posVel,
-				posAcc,
-				rotVel,
-				rotAcc
-			)
+			physicsObj
 		));
 		return true;
 	}
@@ -219,43 +237,26 @@ namespace ramiel {
 
 	
 	void graphics::removeEntity(size_t index) {
-		if (entities.size()) {
-			index %= entities.size();
+		if (index < entities.size()) {
+			delete entities[index];
 			entities.erase(entities.begin() + index);
 		}
 	}
 
 	
 	void graphics::removeLight(size_t index) {
-		if (lights.size()) {
-			index %= lights.size();
+		if (index < lights.size()) {
+			delete lights[index];
 			lights.erase(lights.begin() + index);
 		}
 	}
 
 
 	void graphics::removeEffect(size_t index) {
-		if (effects.size()) {
-			index %= effects.size();
+		if (index < effects.size()) {
+			delete effects[index];
 			effects.erase(effects.begin() + index);
 		}
-	}
-
-
-	Vec3f graphics::getAllLights(
-		const Vec3f& pos, const Vec3f& normal,
-		unsigned specularExponent, float specularIntensity
-	) {
-		Vec3f color = light_ambient;
-		for (auto& l : lights) {
-			color += l->getLight(pos, normal, specularExponent, specularIntensity);
-		}
-		return color;
-	}
-
-
-	int graphics::coordsToIndex(const Vec2& in) {
-		return size[X] * in[Y] + in[X];
 	}
 
 }

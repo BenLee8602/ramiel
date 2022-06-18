@@ -1,5 +1,6 @@
 #include <cmath>
-#include "ramiel_p.h"
+#include "graphics.h"
+#include "physics.h"
 
 namespace ramiel {
 
@@ -107,58 +108,58 @@ namespace ramiel {
 
 		// move left
 		if (controls[2]) {
-			pos[X] -= graphics::dtime * camPosSpeed_frame * cos[Y];
-			pos[Z] -= graphics::dtime * camPosSpeed_frame * sin[Y];
+			pos[X] -= physics::dtime * camPosSpeed_frame * cos[Y];
+			pos[Z] -= physics::dtime * camPosSpeed_frame * sin[Y];
 		}
 
 		// move right
 		if (controls[3]) {
-			pos[X] += graphics::dtime * camPosSpeed_frame * cos[Y];
-			pos[Z] += graphics::dtime * camPosSpeed_frame * sin[Y];
+			pos[X] += physics::dtime * camPosSpeed_frame * cos[Y];
+			pos[Z] += physics::dtime * camPosSpeed_frame * sin[Y];
 		}
 
 		// move down
 		if (controls[4]) {
-			pos[Y] -= graphics::dtime * camPosSpeed_frame;
+			pos[Y] -= physics::dtime * camPosSpeed_frame;
 		}
 
 		// move up
 		if (controls[5]) {
-			pos[Y] += graphics::dtime * camPosSpeed_frame;
+			pos[Y] += physics::dtime * camPosSpeed_frame;
 		}
 
 		// move backward
 		if (controls[6]) {
-			pos[X] += graphics::dtime * camPosSpeed_frame * sin[Y];
-			pos[Y] += graphics::dtime * camPosSpeed_frame * -sin[X];
-			pos[Z] -= graphics::dtime * camPosSpeed_frame * cos[Y];
+			pos[X] += physics::dtime * camPosSpeed_frame * sin[Y];
+			pos[Y] += physics::dtime * camPosSpeed_frame * -sin[X];
+			pos[Z] -= physics::dtime * camPosSpeed_frame * cos[Y];
 		}
 
 		// move forward
 		if (controls[7]) {
-			pos[X] -= graphics::dtime * camPosSpeed_frame * sin[Y];
-			pos[Y] -= graphics::dtime * camPosSpeed_frame * -sin[X];
-			pos[Z] += graphics::dtime * camPosSpeed_frame * cos[Y];
+			pos[X] -= physics::dtime * camPosSpeed_frame * sin[Y];
+			pos[Y] -= physics::dtime * camPosSpeed_frame * -sin[X];
+			pos[Z] += physics::dtime * camPosSpeed_frame * cos[Y];
 		}
 
 		// turn right
 		if (controls[8]) {
-			rot[Y] -= graphics::dtime * camRotSpeed;
+			rot[Y] -= physics::dtime * camRotSpeed;
 		}
 
 		// turn left
 		if (controls[9]) {
-			rot[Y] += graphics::dtime * camRotSpeed;
+			rot[Y] += physics::dtime * camRotSpeed;
 		}
 
 		// turn down
 		if (controls[10]) {
-			if (rot[X] > -1.57079f) rot[X] -= graphics::dtime * camRotSpeed;
+			if (rot[X] > -1.57079f) rot[X] -= physics::dtime * camRotSpeed;
 		}
 
 		// turn up
 		if (controls[11]) {
-			if (rot[X] < 1.57079f) rot[X] += graphics::dtime * camRotSpeed;
+			if (rot[X] < 1.57079f) rot[X] += physics::dtime * camRotSpeed;
 		}
 	}
 

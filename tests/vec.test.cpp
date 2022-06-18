@@ -170,6 +170,13 @@ TEST_CASE("operator/(vec)", "[vec][vector]") {
     REQUIRE(res == expected);
 }
 
+TEST_CASE("operator-()", "[vec]") {
+    Vec3f v = { 0.2f, 5.5f, -5.7f };
+    Vec3f res = -v;
+    Vec3f expected = { -0.2f, -5.5f, 5.7f };
+    REQUIRE(res.equals(expected));
+}
+
 TEST_CASE("magnitude", "[vec]") {
     Vec3f v = { -8.9f, -7.7f, -5.4f };
     float res = getMagnitude(v);
@@ -181,6 +188,13 @@ TEST_CASE("normalize", "[vec]") {
     Vec3f v = { -5.2f, 3.3f, 8.5f };
     Vec3f res = getNormalized(v);
     Vec3f expected = { -0.495395f, 0.314386f, 0.809781f };
+    REQUIRE(res.equals(expected));
+}
+
+TEST_CASE("normalize, magnitude given", "[vec]") {
+    Vec3f v = { -3.2f, -1.4f, 8.8f };
+    Vec3f res = getNormalized(v, 9.46784f);
+    Vec3f expected = { -0.33799f, -0.14786f, 0.92946f };
     REQUIRE(res.equals(expected));
 }
 

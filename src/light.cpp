@@ -1,5 +1,5 @@
 #include <cmath>
-#include "ramiel_p.h"
+#include "graphics.h"
 
 namespace ramiel {
 
@@ -10,7 +10,7 @@ namespace ramiel {
 
 
 	Light_Dir::Light_Dir(Vec3f color, Vec3f dir) : Light(color) {
-		if (!dir) dir[Z] = -1.0f;
+		if (!dir) dir[Z] = 1.0f;
 		this->dir = getNormalized(dir);
 	}
 
