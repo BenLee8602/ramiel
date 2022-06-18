@@ -1,6 +1,7 @@
 add_executable("${PROJECT_NAME}_test" 
     catch2/main.cpp
     camera.test.cpp 
+    collision.test.cpp 
     light.test.cpp 
     model.test.cpp 
     objloader.test.cpp 

@@ -9,8 +9,11 @@ namespace ramiel {
 
     class PhysicsObj {
     protected:
+    #ifdef RAMIEL_TEST
+    public:
+    #endif
         // dynamics
-        float dynamic;
+        bool dynamic;
         Vec3f pos;
         Vec3f rot;
         Vec3f posVel;
@@ -23,7 +26,7 @@ namespace ramiel {
 
     public:
         PhysicsObj(
-            float dynamic = false,
+            bool dynamic = false,
             Vec3f pos = vec3f_0,
             Vec3f rot = vec3f_0,
             Vec3f posVel = vec3f_0,
@@ -51,7 +54,7 @@ namespace ramiel {
         float hbxrad;
     public:
         SphereCollider(
-            float dynamic = false,
+            bool dynamic = false,
             Vec3f pos = vec3f_0,
             Vec3f rot = vec3f_0,
             Vec3f posVel = vec3f_0,
