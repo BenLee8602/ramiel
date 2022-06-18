@@ -180,8 +180,7 @@ namespace ramiel {
 					dynamic,
 					pos, rot,
 					posVel, rotVel,
-					posAcc, rotAcc,
-					mass
+					posAcc, rotAcc
 				);
 				break;
 			}

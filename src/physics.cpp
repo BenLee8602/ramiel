@@ -6,7 +6,7 @@ namespace ramiel {
     float physics::dtime = 0.0f;
     std::vector<PhysicsObj*> physics::physicsObjs;
     std::vector<PhysicsObj*> physics::dynamicObjs;
-    std::vector<PhysicsObj*> physics::collidableObjs;
+    std::vector<Collider*>   physics::collidableObjs;
 
 
     void physics::simulateDynamics() {

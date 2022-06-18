@@ -11,8 +11,7 @@ namespace ramiel {
         bool dynamic,
         Vec3f pos, Vec3f rot,
         Vec3f posVel, Vec3f rotVel,
-        Vec3f posAcc, Vec3f rotAcc,
-        float mass
+        Vec3f posAcc, Vec3f rotAcc
     ) {
         this->dynamic = dynamic;
         this->pos = pos;
@@ -21,7 +20,6 @@ namespace ramiel {
         this->rotVel = rotVel;
         this->posAcc = posAcc;
         this->rotAcc = rotAcc;
-        this->mass = mass;
 
         physics::physicsObjs.push_back(this);
         if (dynamic) physics::dynamicObjs.push_back(this);
@@ -49,42 +47,41 @@ namespace ramiel {
     }
 
 
-    void PhysicsObj::collideWith(PhysicsObj* other) {
-        throw std::string("PhysicsObj::collideWith called without collider");
-    }
-
-
-    void PhysicsObj::collideWith(SphereCollider* other) {
-        throw std::string("PhysicsObj::collideWith called without collider");
-    }
-
-
-    SphereCollider::SphereCollider(
+    Collider::Collider(
         bool dynamic,
         Vec3f pos, Vec3f rot,
         Vec3f posVel, Vec3f rotVel,
         Vec3f posAcc, Vec3f rotAcc,
-        float mass, float hbxrad
+        float mass
     ) : PhysicsObj(
         dynamic,
         pos, rot,
         posVel, rotVel,
-        posAcc, rotAcc,
-        mass
+        posAcc, rotAcc
     ) {
-        this->hbxrad = hbxrad;
+        this->mass = mass;
         physics::collidableObjs.push_back(this);
     }
+    
 
-
-    SphereCollider::~SphereCollider() {
+    Collider::~Collider() {
         using namespace physics;
         auto i = std::find(collidableObjs.begin(), collidableObjs.end(), this);
         if (i != collidableObjs.end()) collidableObjs.erase(i);
     }
 
 
-    void SphereCollider::collideWith(PhysicsObj* other) {
+    void Collider::collideWith(Collider* other) {
+        throw std::string("collideWith called without collider");
+    }
+
+
+    void Collider::collideWith(SphereCollider* other) {
+        throw std::string("collideWith called without collider");
+    }
+
+
+    void SphereCollider::collideWith(Collider* other) {
         other->collideWith(this);
     }
 
