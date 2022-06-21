@@ -3,7 +3,7 @@ add_executable("${PROJECT_NAME}_test"
     camera.test.cpp 
     collision.test.cpp 
     light.test.cpp 
-    model.test.cpp 
+    mesh.test.cpp 
     objloader.test.cpp 
     texture.test.cpp 
     vec.test.cpp

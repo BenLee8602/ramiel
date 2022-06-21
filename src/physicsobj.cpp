@@ -71,23 +71,34 @@ namespace ramiel {
     }
 
 
-    void Collider::collideWith(Collider* other) {
-        throw std::string("collideWith called without collider");
-    }
+    void Collider::collideWith(Collider* other)             { throw std::string("collideWith called without collider"); }
+    void Collider::collideWith(SphereCollider* other)       { throw std::string("collideWith called without collider"); }
+    void Collider::collideWith(AabbCollider* other)         { throw std::string("collideWith called without collider"); }
+    void Collider::collideWith(ObbCollider* other)          { throw std::string("collideWith called without collider"); }
+    void Collider::collideWith(MeshCollider* other)         { throw std::string("collideWith called without collider"); }
 
+    void SphereCollider::collideWith(Collider* other)       { other->collideWith(this); }
+    void SphereCollider::collideWith(SphereCollider* other) { collideSphereSphere(*this, *other); }
+    void SphereCollider::collideWith(AabbCollider* other)   { collideSphereAabb(*this, *other); }
+    void SphereCollider::collideWith(ObbCollider* other)    { collideSphereObb(*this, *other); }
+    void SphereCollider::collideWith(MeshCollider* other)   { collideSphereMesh(*this, *other); }
 
-    void Collider::collideWith(SphereCollider* other) {
-        throw std::string("collideWith called without collider");
-    }
+    void AabbCollider::collideWith(Collider* other)         { other->collideWith(this); }
+    void AabbCollider::collideWith(SphereCollider* other)   { collideSphereAabb(*other, *this); }
+    void AabbCollider::collideWith(AabbCollider* other)     { collideAabbAabb(*this, *other); }
+    void AabbCollider::collideWith(ObbCollider* other)      { collideAabbObb(*this, *other); }
+    void AabbCollider::collideWith(MeshCollider* other)     { collideAabbMesh(*this, *other); }
+    
+    void ObbCollider::collideWith(Collider* other)          { other->collideWith(this); }
+    void ObbCollider::collideWith(SphereCollider* other)    { collideSphereObb(*other, *this); }
+    void ObbCollider::collideWith(AabbCollider* other)      { collideAabbObb(*other, *this); }
+    void ObbCollider::collideWith(ObbCollider* other)       { collideObbObb(*this, *other); }
+    void ObbCollider::collideWith(MeshCollider* other)      { collideObbMesh(*this, *other); }
 
-
-    void SphereCollider::collideWith(Collider* other) {
-        other->collideWith(this);
-    }
-
-
-    void SphereCollider::collideWith(SphereCollider* other) {
-        collideSphereSphere(*this, *other);
-    }
+    void MeshCollider::collideWith(Collider* other)         { other->collideWith(this); }
+    void MeshCollider::collideWith(SphereCollider* other)   { collideSphereMesh(*other, *this); }
+    void MeshCollider::collideWith(AabbCollider* other)     { collideAabbMesh(*other, *this); }
+    void MeshCollider::collideWith(ObbCollider* other)      { collideObbMesh(*other, *this); }
+    void MeshCollider::collideWith(MeshCollider* other)     { collideMeshMesh(*this, *other); }
 
 }

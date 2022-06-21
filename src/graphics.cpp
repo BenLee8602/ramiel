@@ -15,7 +15,7 @@ namespace ramiel {
 	std::vector<Vec3f> graphics::pixels;
 	std::vector<float> graphics::depth;
 
-	std::unordered_map<std::string, Model*>   graphics::models;
+	std::unordered_map<std::string, Mesh*>   graphics::meshes;
 	std::unordered_map<std::string, Texture*> graphics::textures;
 
 	std::vector<Entity*> graphics::entities;
@@ -130,9 +130,9 @@ namespace ramiel {
 	}
 
 
-	bool graphics::loadModel(std::string name, std::string filename, Vec3f pos, Vec3f rot) {
+	bool graphics::loadMesh(std::string name, std::string filename, Vec3f pos, Vec3f rot) {
 		if (!std::ifstream(filename).good()) return false;
-		models[std::string(name)] = new Model(filename, pos, rot);
+		meshes[std::string(name)] = new Mesh(filename, pos, rot);
 		return true;
 	}
 
@@ -157,7 +157,7 @@ namespace ramiel {
 
 
 	bool graphics::addEntity(
-		std::string model,
+		std::string mesh,
 		ShadingType shading,
 		Vec3f color,
 		std::string texture,
@@ -171,7 +171,7 @@ namespace ramiel {
 		ColliderType colliderType,
 		float mass, float hbxrad
 	) {
-		if (!models[model]) return false;
+		if (!meshes[mesh]) return false;
 		
 		PhysicsObj* physicsObj;
 		switch(colliderType) {
@@ -197,7 +197,7 @@ namespace ramiel {
 		}
 
 		entities.push_back(new Entity(
-			models[model],
+			meshes[mesh],
 			texture.length() ? textures[texture] : nullptr,
 			normalMap.length() ? textures[normalMap] : nullptr,
 			mapShadingType(shading),

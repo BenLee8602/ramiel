@@ -1,5 +1,5 @@
 #include <cmath>
-#include "model.h"
+#include "mesh.h"
 #include "objloader.h"
 
 namespace ramiel {
@@ -23,7 +23,7 @@ namespace ramiel {
         v = out;
     }
 
-    Model::Model(std::string filename, Vec3f pos, Vec3f rot) {
+    Mesh::Mesh(std::string filename, Vec3f pos, Vec3f rot) {
         // allocate memory
 		size_t n_v, n_vt, n_f;
 		objloader::count(filename, n_v, n_vt, n_f);
@@ -61,7 +61,7 @@ namespace ramiel {
     }
 
 
-    void Model::getVPos(std::vector<Vec3f>& v_pos, Vec3f pos, Vec3f rot) const {
+    void Mesh::getVPos(std::vector<Vec3f>& v_pos, Vec3f pos, Vec3f rot) const {
         v_pos = this->v_pos;
         if (rot) {
             Vec3f sin = { std::sin(rot[X]), std::sin(rot[Y]), std::sin(rot[Z]) };
@@ -72,7 +72,7 @@ namespace ramiel {
     }
 
 
-    void Model::getVNormal(std::vector<Vec3f>& v_normal, Vec3f rot) const {
+    void Mesh::getVNormal(std::vector<Vec3f>& v_normal, Vec3f rot) const {
         v_normal = this->v_normal;
         if (rot) {
             Vec3f sin = { std::sin(rot[X]), std::sin(rot[Y]), std::sin(rot[Z]) };
@@ -82,10 +82,10 @@ namespace ramiel {
     }
 
 
-    const std::vector<Vec3f>& Model::getVPos()    const { return v_pos; }
-    const std::vector<Vec3f>& Model::getVNormal() const { return v_normal; }
-    const std::vector<Vec2f>& Model::getVTxt()    const { return v_txt; }
-    const std::vector<Vec3u>& Model::getTri()     const { return tri; }
-    const std::vector<Vec3u>& Model::getTriTxt()  const { return tri_txt; }
+    const std::vector<Vec3f>& Mesh::getVPos()    const { return v_pos; }
+    const std::vector<Vec3f>& Mesh::getVNormal() const { return v_normal; }
+    const std::vector<Vec2f>& Mesh::getVTxt()    const { return v_txt; }
+    const std::vector<Vec3u>& Mesh::getTri()     const { return tri; }
+    const std::vector<Vec3u>& Mesh::getTriTxt()  const { return tri_txt; }
 
 }

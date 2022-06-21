@@ -41,7 +41,7 @@ namespace ramiel {
 				o1.posVel -= n * 2.0f * dotProduct(o1.posVel, n);
 				o1.pos += o1.posVel * time;
 			}
-				
+			
 		}
 
 		// o2 dynamic
@@ -52,5 +52,53 @@ namespace ramiel {
 			o2.pos += o2.posVel * time;
 		}
     }
+
+
+    void collideSphereAabb(SphereCollider& sph, AabbCollider& box) {
+
+	}
+
+	
+    void collideSphereObb(SphereCollider& sph, ObbCollider& box) {
+
+	}
+
+	
+    void collideSphereMesh(SphereCollider& sph, MeshCollider& mesh) {
+
+	}
+
+	
+    void collideAabbAabb(AabbCollider& o1, AabbCollider& o2) {
+		// collision detection
+		if (o1.min[X] > o2.max[X] || o2.min[X] > o1.max[X]) return;
+		if (o1.min[Y] > o2.max[Y] || o2.min[Y] > o1.max[Y]) return;
+		if (o1.min[Z] > o2.max[Z] || o2.min[Z] > o1.max[Z]) return;
+	}
+
+	
+    void collideAabbObb(AabbCollider& aa, ObbCollider& ori) {
+
+	}
+
+	
+    void collideAabbMesh(AabbCollider& box, MeshCollider& mesh) {
+
+	}
+
+	
+    void collideObbObb(ObbCollider& o1, ObbCollider& o2) {
+
+	}
+
+	
+    void collideObbMesh(ObbCollider& box, MeshCollider& mesh) {
+
+	}
+
+	
+    void collideMeshMesh(MeshCollider& o1, MeshCollider& o2) {
+
+	}
 
 }

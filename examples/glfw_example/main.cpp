@@ -11,19 +11,20 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	graphics::loadModel("sphere", "examples/assets/models/sphere.obj");
+	graphics::loadMesh("sphere", "examples/assets/models/sphere.obj");
 	graphics::setAmbientLightColor({ 100, 100, 100 });
 	graphics::addDirLight();
 
+	//*
 	graphics::addEntity({
-		{ "model", "sphere" },
+		{ "mesh", "sphere" },
 		{ "color", Vec3f{ 255, 25, 25 } },
 		{ "pos", Vec3f{ 0, 0, 32 } },
 		{ "colliderType", ColliderType::SPHERE },
 		{ "hbxrad", 1.0f }
 	});
 	graphics::addEntity({
-		{ "model", std::string("sphere") },
+		{ "mesh", std::string("sphere") },
 		{ "color", Vec3f{ 25, 255, 25 } },
 		{ "pos", Vec3f{ 0, 4, 32 } },
 		{ "dynamic", true },
@@ -32,7 +33,7 @@ void initScene() {
 		{ "hbxrad", 1.0f }
 	});
 	graphics::addEntity({
-		{ "model", std::string("sphere") },
+		{ "mesh", std::string("sphere") },
 		{ "color", Vec3f{ 25, 25, 255 } },
 		{ "pos", Vec3f{ 0.5, 16, 32 } },
 		{ "dynamic", true },
@@ -40,6 +41,28 @@ void initScene() {
 		{ "colliderType", ColliderType::SPHERE },
 		{ "hbxrad", 1.0f }
 	});
+	//*/
+
+	/*
+	graphics::addEntity({
+		{ "mesh", std::string("sphere") },
+		{ "color", Vec3f{ 255, 25, 255 } },
+		{ "pos", Vec3f{ -8, 0, 32 } },
+		{ "posVel", Vec3f{ 2, 0, 0 } },
+		{ "dynamic", true },
+		{ "colliderType", ColliderType::SPHERE },
+		{ "hbxrad", 1.0f }
+	});
+	graphics::addEntity({
+		{ "mesh", std::string("sphere") },
+		{ "color", Vec3f{ 25, 255, 255 } },
+		{ "pos", Vec3f{ -2, 0, 32 } },
+		{ "posVel", Vec3f{ 1, 0, 0 } },
+		{ "dynamic", true },
+		{ "colliderType", ColliderType::SPHERE },
+		{ "hbxrad", 1.0f },
+	});
+	//*/
 }
 
 

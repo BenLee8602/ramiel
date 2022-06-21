@@ -6,7 +6,7 @@
 namespace ramiel {
 	
 	Entity::Entity(
-		Model* model,
+		Mesh* mesh,
 		Texture* texture,
 		Texture* normalMap,
 		ShadingType_ shading,
@@ -21,7 +21,7 @@ namespace ramiel {
 		this->physicsObj = physicsObj;
 		this->texture = texture;
 		this->normalMap = normalMap;
-		this->model = model;
+		this->mesh = mesh;
 		this->specularExponent = specularExponent;
 		this->specularIntensity = specularIntensity;
 	}
@@ -33,13 +33,13 @@ namespace ramiel {
 
 
 	void Entity::draw() {
-		// get model info
+		// get mesh info
 		std::vector<Vec3f> v_pos, v_normal;
-		model->getVPos(v_pos, physicsObj->getPos(), physicsObj->getRot());
-		model->getVNormal(v_normal, physicsObj->getRot());
-		const std::vector<Vec2f>& v_txt   = model->getVTxt();
-		const std::vector<Vec3u>& tri     = model->getTri();
-		const std::vector<Vec3u>& tri_txt = model->getTriTxt();
+		mesh->getVPos(v_pos, physicsObj->getPos(), physicsObj->getRot());
+		mesh->getVNormal(v_normal, physicsObj->getRot());
+		const std::vector<Vec2f>& v_txt   = mesh->getVTxt();
+		const std::vector<Vec3u>& tri     = mesh->getTri();
+		const std::vector<Vec3u>& tri_txt = mesh->getTriTxt();
 
 		// get camera coords
 		std::vector<Vec3f> cameraCoords(v_pos.size());

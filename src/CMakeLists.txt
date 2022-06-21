@@ -7,7 +7,7 @@ add_library(${PROJECT_NAME} STATIC
     effects.cpp effects.h 
     entity.cpp entity.h 
     light.cpp light.h 
-    model.cpp model.h 
+    mesh.cpp mesh.h 
     objloader.cpp objloader.h 
     physics.cpp physics.h 
     physicsobj.cpp physicsobj.h 

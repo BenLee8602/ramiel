@@ -39,10 +39,10 @@ namespace ramiel {
 
     bool graphics::addEntity(Args args) {
         // mandatory
-		if (args.find("model") == args.end()) return false;
+		if (args.find("mesh") == args.end()) return false;
 
 		// defaults
-		std::string model;
+		std::string mesh;
 		ShadingType shading = ShadingType::FLAT;
 		Vec3f color = vec3f_255;
 		std::string texture;
@@ -62,7 +62,7 @@ namespace ramiel {
 		
 		// get args
 		try {
-			getArg(args, "model", model);
+			getArg(args, "mesh", mesh);
 			getArg(args, "shading", shading);
 			getArg(args, "color", color);
 			getArg(args, "texture", texture);
@@ -87,7 +87,7 @@ namespace ramiel {
 		}
 
 		return addEntity(
-			model, shading,
+			mesh, shading,
 			color, texture, normalMap,
 			specularExponent, specularIntensity,
 			pos, rot,

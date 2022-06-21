@@ -38,7 +38,7 @@ namespace ramiel {
 		void getFrameDEC(int* frame);
 		void getFrameRGB(uint8_t* frame);
 
-		bool loadModel(
+		bool loadMesh(
 			std::string name,
 			std::string filename,
 			Vec3f pos = vec3f_0,
@@ -51,7 +51,7 @@ namespace ramiel {
 		);
 
 		bool addEntity(
-			std::string model,
+			std::string mesh,
 			ShadingType shading = ShadingType::FLAT,
 			Vec3f color = vec3f_255,
 			std::string texture = std::string(),

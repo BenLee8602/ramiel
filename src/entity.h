@@ -1,7 +1,7 @@
 #pragma once
 
 #include "physicsobj.h"
-#include "model.h"
+#include "mesh.h"
 #include "texture.h"
 
 namespace ramiel {
@@ -16,7 +16,7 @@ namespace ramiel {
 	class Entity {
 		ShadingType_ shading;
 		Vec3f color;
-		Model* model;
+		Mesh* mesh;
 		Texture* texture;
 		Texture* normalMap;
 		unsigned specularExponent;
@@ -25,7 +25,7 @@ namespace ramiel {
 		
 	public:
 		Entity(
-			Model* model,
+			Mesh* mesh,
 			Texture* texture = nullptr,
 			Texture* normalMap = nullptr,
 			ShadingType_ shading = ShadingType_::FLAT,
