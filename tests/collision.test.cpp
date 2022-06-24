@@ -29,3 +29,29 @@ TEST_CASE("sphere-sphere", "[collision][sphere]") {
         o2.mass * getMagnitude(o2.posVel) == totalMomentum
     );
 }
+
+
+TEST_CASE("aabb-aabb", "[collision][aabb]") {
+    AabbCollider o1({ 1.0f, 0.8f, 1.1f }, true, { -1.1f, -0.3f, -0.6f }, vec3f_0, { 9.1f, -6.5f, -8.4f }, vec3f_0, vec3f_0, vec3f_0, 0.9f);
+    AabbCollider o2({ 1.1f, 1.4f, 0.6f }, true, { -1.5f, 0.5f, -1.0f }, vec3f_0, { -8.6f, 2.6f, -8.1f }, vec3f_0, vec3f_0, vec3f_0, 1.0f);
+
+    Vec3f o1_pos_expected = { -3.73158f, -0.3f, -0.6f };
+    Vec3f o2_pos_expected = {  0.86842f,  0.5f, -1.0f };
+    Vec3f o1_vel_expected = { -9.53158f, -6.5f, -8.4f };
+    Vec3f o2_vel_expected = {  8.16842f,  2.6f, -8.1f };
+    Approx totalMomentum = Approx(
+        o1.mass * getMagnitude(o1.posVel) +
+        o2.mass * getMagnitude(o2.posVel)
+    ).epsilon(0.1f);
+
+    collideAabbAabb(o1, o2);
+
+    REQUIRE(o1.pos.equals(o1_pos_expected));
+    REQUIRE(o2.pos.equals(o2_pos_expected));
+    REQUIRE(o1.posVel.equals(o1_vel_expected));
+    REQUIRE(o2.posVel.equals(o2_vel_expected));
+    REQUIRE( // conservation of momentum
+        o1.mass * getMagnitude(o1.posVel) +
+        o2.mass * getMagnitude(o2.posVel) == totalMomentum
+    );
+}

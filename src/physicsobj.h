@@ -101,11 +101,10 @@ namespace ramiel {
 
 
     class AabbCollider : public Collider {
-        Vec3f min;
-        Vec3f max;
+        Vec3f size;
     public:
         AabbCollider(
-            Vec3f min, Vec3f max,
+            Vec3f size,
             RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS,
             RAMIEL_COLLIDER_ARGS
         ) : 
@@ -116,8 +115,7 @@ namespace ramiel {
                 posAcc, rotAcc,
                 mass
             ),
-            min(min),
-            max(max)
+            size(size)
         {}
 
         virtual void collideWith(Collider* other) override;
@@ -125,7 +123,7 @@ namespace ramiel {
         virtual void collideWith(AabbCollider* other) override;
         virtual void collideWith(ObbCollider* other) override;
         virtual void collideWith(MeshCollider* other) override;
-
+        
         friend void collideSphereAabb(SphereCollider& sph, AabbCollider& box);
         friend void collideAabbAabb(AabbCollider& o1, AabbCollider& o2);
         friend void collideAabbObb(AabbCollider& aa, ObbCollider& ori);

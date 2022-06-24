@@ -11,56 +11,30 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-	graphics::loadMesh("sphere", "examples/assets/models/sphere.obj");
-	graphics::setAmbientLightColor({ 100, 100, 100 });
+	graphics::loadMesh("cube", "examples/assets/models/cube.obj");
+	graphics::setAmbientLightColor({ 25, 25, 25 });
 	graphics::addDirLight();
 
 	//*
 	graphics::addEntity({
-		{ "mesh", "sphere" },
-		{ "color", Vec3f{ 255, 25, 25 } },
-		{ "pos", Vec3f{ 0, 0, 32 } },
-		{ "colliderType", ColliderType::SPHERE },
-		{ "hbxrad", 1.0f }
-	});
-	graphics::addEntity({
-		{ "mesh", std::string("sphere") },
-		{ "color", Vec3f{ 25, 255, 25 } },
-		{ "pos", Vec3f{ 0, 4, 32 } },
-		{ "dynamic", true },
-		{ "posAcc", Vec3f{ 0, -9.8, 0 } },
-		{ "colliderType", ColliderType::SPHERE },
-		{ "hbxrad", 1.0f }
-	});
-	graphics::addEntity({
-		{ "mesh", std::string("sphere") },
+		{ "mesh", "cube" },
 		{ "color", Vec3f{ 25, 25, 255 } },
-		{ "pos", Vec3f{ 0.5, 16, 32 } },
+		{ "pos", Vec3f{ 5, 4, 8 } },
+		{ "colliderType", ColliderType::AABB },
 		{ "dynamic", true },
-		{ "posAcc", Vec3f{ 0, -9.8, 0 } },
-		{ "colliderType", ColliderType::SPHERE },
-		{ "hbxrad", 1.0f }
-	});
-	//*/
-
-	/*
-	graphics::addEntity({
-		{ "mesh", std::string("sphere") },
-		{ "color", Vec3f{ 255, 25, 255 } },
-		{ "pos", Vec3f{ -8, 0, 32 } },
-		{ "posVel", Vec3f{ 2, 0, 0 } },
-		{ "dynamic", true },
-		{ "colliderType", ColliderType::SPHERE },
-		{ "hbxrad", 1.0f }
+		{ "posVel", Vec3f{ -1, -1, 0 } }
 	});
 	graphics::addEntity({
-		{ "mesh", std::string("sphere") },
-		{ "color", Vec3f{ 25, 255, 255 } },
-		{ "pos", Vec3f{ -2, 0, 32 } },
-		{ "posVel", Vec3f{ 1, 0, 0 } },
-		{ "dynamic", true },
-		{ "colliderType", ColliderType::SPHERE },
-		{ "hbxrad", 1.0f },
+		{ "mesh", "cube" },
+		{ "color", Vec3f{ 255, 25, 25 } },
+		{ "pos", Vec3f{ -2, 0, 8 } },
+		{ "colliderType", ColliderType::AABB },
+	});
+	graphics::addEntity({
+		{ "mesh", "cube" },
+		{ "color", Vec3f{ 25, 255, 25 } },
+		{ "pos", Vec3f{ 0, -2, 8 } },
+		{ "colliderType", ColliderType::AABB },
 	});
 	//*/
 }

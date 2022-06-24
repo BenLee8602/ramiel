@@ -168,8 +168,9 @@ namespace ramiel {
 		bool dynamic,
 		Vec3f posVel, Vec3f rotVel,
 		Vec3f posAcc, Vec3f rotAcc,
-		ColliderType colliderType,
-		float mass, float hbxrad
+		ColliderType colliderType, float mass,
+		float hbxrad,
+		Vec3f size
 	) {
 		if (!meshes[mesh]) return false;
 		
@@ -191,6 +192,17 @@ namespace ramiel {
 					posVel, rotVel,
 					posAcc, rotAcc,
 					mass, hbxrad
+				);
+				break;
+			}
+			case ColliderType::AABB: {
+				physicsObj = new AabbCollider(
+					size,
+					dynamic,
+					pos, rot,
+					posVel, rotVel,
+					posAcc, rotAcc,
+					mass
 				);
 				break;
 			}

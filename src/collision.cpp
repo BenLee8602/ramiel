@@ -1,3 +1,4 @@
+#include <limits>
 #include "collision.h"
 
 namespace ramiel {
@@ -11,7 +12,7 @@ namespace ramiel {
 		float r = o1.hbxrad + o2.hbxrad;
 		if (dist > r * r) return;
 
-		// calculate time of collision
+		// collision depth and time
 		float depth = r - std::sqrt(dist);
 		float time = depth / getMagnitude(o2.posVel - o1.posVel);
 
@@ -70,10 +71,61 @@ namespace ramiel {
 
 	
     void collideAabbAabb(AabbCollider& o1, AabbCollider& o2) {
+		Vec3f o1_min = o1.pos - o1.size;
+		Vec3f o1_max = o1.pos + o1.size;
+		Vec3f o2_min = o2.pos - o2.size;
+		Vec3f o2_max = o2.pos + o2.size;
+
 		// collision detection
-		if (o1.min[X] > o2.max[X] || o2.min[X] > o1.max[X]) return;
-		if (o1.min[Y] > o2.max[Y] || o2.min[Y] > o1.max[Y]) return;
-		if (o1.min[Z] > o2.max[Z] || o2.min[Z] > o1.max[Z]) return;
+		if (o1_min[X] > o2_max[X] || o2_min[X] > o1_max[X]) return;
+		if (o1_min[Y] > o2_max[Y] || o2_min[Y] > o1_max[Y]) return;
+		if (o1_min[Z] > o2_max[Z] || o2_min[Z] > o1_max[Z]) return;
+
+		// collision time, axis of collision
+		float  time = std::numeric_limits<float>::max();
+		size_t axis = 0;
+		for (size_t i = 0; i < 3; ++i) {
+			float vel_r = o2.posVel[i] - o1.posVel[i];
+			if (!vel_r) continue;
+			float depth = vel_r < 0.0f ? o1_max[i] - o2_min[i] : o2_max[i] - o1_min[i];
+			float t = std::abs(depth / vel_r);
+			if (t < time) {
+				time = t;
+				axis = i;
+			}
+		}
+
+		// collision response
+		if (o1.dynamic) {
+
+			// both dynamic
+			if (o2.dynamic) {
+				o1.pos[axis] -= o1.posVel[axis] * time;
+				o2.pos[axis] -= o2.posVel[axis] * time;
+				
+				float m = 1.0f / (o1.mass + o2.mass);
+				float v1_p = (o1.mass - o2.mass) * m * o1.posVel[axis] + 2.0f * o2.mass * m * o2.posVel[axis];
+				float v2_p = (o2.mass - o1.mass) * m * o2.posVel[axis] + 2.0f * o1.mass * m * o1.posVel[axis];
+				o1.posVel[axis] = v1_p;
+				o2.posVel[axis] = v2_p;
+
+				o1.pos[axis] += o1.posVel[axis] * time;
+				o2.pos[axis] += o2.posVel[axis] * time;
+			}
+
+			// o1 dynamic
+			else {
+				o1.pos[axis] -= 2.0f * o1.posVel[axis] * time;
+				o1.posVel[axis] *= -1.0f;
+			}
+			
+		}
+
+		// o2 dynamic
+		else if (o2.dynamic) {
+			o2.pos[axis] -= 2.0f * o2.posVel[axis] * time;
+			o2.posVel[axis] *= -1.0f;
+		}
 	}
 
 	

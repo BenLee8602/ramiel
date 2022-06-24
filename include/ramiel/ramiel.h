@@ -14,7 +14,8 @@ namespace ramiel {
 
 	enum class ColliderType : uint8_t {
 		NONE,
-		SPHERE
+		SPHERE,
+		AABB
 	};
 
 	enum class LightType : uint8_t {
@@ -67,7 +68,8 @@ namespace ramiel {
 			Vec3f rotAcc = vec3f_0,
 			ColliderType colliderType = ColliderType::NONE,
 			float mass = 1.0f,
-			float hbxrad = 0.5f
+			float hbxrad = 0.5f,
+			Vec3f size = { 0.5f, 0.5f, 0.5f }
 		);
 
 		void addDirLight(

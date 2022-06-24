@@ -59,6 +59,7 @@ namespace ramiel {
 		ColliderType colliderType = ColliderType::NONE;
 		float mass = 1.0f;
 		float hbxrad = 0.5f;
+		Vec3f size = { 0.5f, 0.5f, 0.5f };
 		
 		// get args
 		try {
@@ -78,8 +79,9 @@ namespace ramiel {
 			getArg(args, "rotAcc", rotAcc);
 			getArg(args, "colliderType", colliderType);
 			getArg(args, "mass", mass);
-			if (colliderType == ColliderType::SPHERE) {
-				getArg(args, "hbxrad", hbxrad);
+			switch (colliderType) {
+				case ColliderType::SPHERE: getArg(args, "hbxrad", hbxrad); break;
+				case ColliderType::AABB:   getArg(args, "size",   size);   break;
 			}
 		} catch (std::bad_variant_access e) {
 			std::cerr << "bad argument types - ramiel::graphics::addEntity(Args)\n";
@@ -94,8 +96,9 @@ namespace ramiel {
 			dynamic,
 			posVel, rotVel,
 			posAcc, rotAcc,
-			colliderType,
-			mass, hbxrad
+			colliderType, mass,
+			hbxrad,
+			size
 		);
 	}
 
