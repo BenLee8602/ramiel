@@ -7,6 +7,7 @@ namespace ramiel {
 	
 	Entity::Entity(
 		Mesh* mesh,
+		float scale,
 		Texture* texture,
 		Texture* normalMap,
 		ShadingType_ shading,
@@ -22,6 +23,7 @@ namespace ramiel {
 		this->texture = texture;
 		this->normalMap = normalMap;
 		this->mesh = mesh;
+		this->scale = scale;
 		this->specularExponent = specularExponent;
 		this->specularIntensity = specularIntensity;
 	}
@@ -35,7 +37,7 @@ namespace ramiel {
 	void Entity::draw() {
 		// get mesh info
 		std::vector<Vec3f> v_pos, v_normal;
-		mesh->getVPos(v_pos, physicsObj->getPos(), physicsObj->getRot());
+		mesh->getVPos(v_pos, scale, physicsObj->getPos(), physicsObj->getRot());
 		mesh->getVNormal(v_normal, physicsObj->getRot());
 		const std::vector<Vec2f>& v_txt   = mesh->getVTxt();
 		const std::vector<Vec3u>& tri     = mesh->getTri();

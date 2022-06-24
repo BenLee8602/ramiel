@@ -12,10 +12,30 @@ constexpr size_t height = 720;
 
 void initScene() {
 	graphics::loadMesh("cube", "examples/assets/models/cube.obj");
+	graphics::loadMesh("big cube", "examples/assets/models/cube.obj", 2);
 	graphics::setAmbientLightColor({ 25, 25, 25 });
 	graphics::addDirLight();
 
-	//*
+	graphics::addEntity({
+		{ "mesh", "cube" },
+		{ "pos", Vec3f{ -6, 0, 8 } }
+	});
+	graphics::addEntity({
+		{ "mesh", "big cube" },
+		{ "pos", Vec3f{ -2, 0, 8 } }
+	});
+	graphics::addEntity({
+		{ "mesh", "cube" },
+		{ "pos", Vec3f{ 2, 0, 8 } },
+		{ "scale", 2.0f }
+	});
+	graphics::addEntity({
+		{ "mesh", "big cube" },
+		{ "pos", Vec3f{ 6, 0, 8 } },
+		{ "scale", 2.0f }
+	});
+
+	/*
 	graphics::addEntity({
 		{ "mesh", "cube" },
 		{ "color", Vec3f{ 25, 25, 255 } },

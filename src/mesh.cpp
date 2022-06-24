@@ -23,7 +23,7 @@ namespace ramiel {
         v = out;
     }
 
-    Mesh::Mesh(std::string filename, Vec3f pos, Vec3f rot) {
+    Mesh::Mesh(std::string filename, float scale, Vec3f pos, Vec3f rot) {
         // allocate memory
 		size_t n_v, n_vt, n_f;
 		objloader::count(filename, n_v, n_vt, n_f);
@@ -49,6 +49,7 @@ namespace ramiel {
 		for (auto& n : v_normal) n = getNormalized(n);
 
         // transform
+        if (scale != 1.0f) for (auto& v : v_pos) v *= scale;
         if (rot) {
             Vec3f sin = { std::sin(rot[X]), std::sin(rot[Y]), std::sin(rot[Z]) };
             Vec3f cos = { std::cos(rot[X]), std::cos(rot[Y]), std::cos(rot[Z]) };
@@ -61,8 +62,9 @@ namespace ramiel {
     }
 
 
-    void Mesh::getVPos(std::vector<Vec3f>& v_pos, Vec3f pos, Vec3f rot) const {
+    void Mesh::getVPos(std::vector<Vec3f>& v_pos, float scale, const Vec3f& pos, const Vec3f& rot) const {
         v_pos = this->v_pos;
+        if (scale != 1.0f) for (auto& v : v_pos) v *= scale;
         if (rot) {
             Vec3f sin = { std::sin(rot[X]), std::sin(rot[Y]), std::sin(rot[Z]) };
             Vec3f cos = { std::cos(rot[X]), std::cos(rot[Y]), std::cos(rot[Z]) };

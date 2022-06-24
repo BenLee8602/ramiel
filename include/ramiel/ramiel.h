@@ -42,6 +42,7 @@ namespace ramiel {
 		bool loadMesh(
 			std::string name,
 			std::string filename,
+			float scale = 1.0f,
 			Vec3f pos = vec3f_0,
 			Vec3f rot = vec3f_0
 		);
@@ -61,6 +62,7 @@ namespace ramiel {
 			float specularIntensity = 0.2f,
 			Vec3f pos    = vec3f_0,
 			Vec3f rot    = vec3f_0,
+			float scale  = 1.0f,
 			bool dynamic = false,
 			Vec3f posVel = vec3f_0,
 			Vec3f rotVel = vec3f_0,

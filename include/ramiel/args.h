@@ -51,6 +51,7 @@ namespace ramiel {
 		float specularIntensity = 0.0f;
 		Vec3f pos    = vec3f_0;
 		Vec3f rot    = vec3f_0;
+		float scale  = 1.0f;
 		bool dynamic = false;
 		Vec3f posVel = vec3f_0;
 		Vec3f rotVel = vec3f_0;
@@ -72,6 +73,7 @@ namespace ramiel {
 			getArg(args, "specularIntensity", specularIntensity);
 			getArg(args, "pos", pos);
 			getArg(args, "rot", rot);
+			getArg(args, "scale", scale);
 			getArg(args, "dynamic", dynamic);
 			getArg(args, "posVel", posVel);
 			getArg(args, "rotVel", rotVel);
@@ -92,7 +94,7 @@ namespace ramiel {
 			mesh, shading,
 			color, texture, normalMap,
 			specularExponent, specularIntensity,
-			pos, rot,
+			pos, rot, scale,
 			dynamic,
 			posVel, rotVel,
 			posAcc, rotAcc,

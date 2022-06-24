@@ -15,9 +15,19 @@ namespace ramiel {
 		std::vector<Vec3u> tri_txt;
 
     public:
-        Mesh(std::string filename, Vec3f pos = vec3f_0, Vec3f rot = vec3f_0);
+        Mesh(
+            std::string filename,
+            float scale = 1.0f,
+            Vec3f pos = vec3f_0,
+            Vec3f rot = vec3f_0
+        );
 
-        void getVPos(std::vector<Vec3f>& v_pos, Vec3f pos = vec3f_0, Vec3f rot = vec3f_0) const;
+        void getVPos(
+            std::vector<Vec3f>& v_pos,
+            float scale,
+            const Vec3f& pos,
+            const Vec3f& rot
+        ) const;
         void getVNormal(std::vector<Vec3f>& v_normal, Vec3f rot) const;
 
         const std::vector<Vec3f>& getVPos() const;

@@ -130,9 +130,9 @@ namespace ramiel {
 	}
 
 
-	bool graphics::loadMesh(std::string name, std::string filename, Vec3f pos, Vec3f rot) {
+	bool graphics::loadMesh(std::string name, std::string filename, float scale, Vec3f pos, Vec3f rot) {
 		if (!std::ifstream(filename).good()) return false;
-		meshes[std::string(name)] = new Mesh(filename, pos, rot);
+		meshes[std::string(name)] = new Mesh(filename, scale, pos, rot);
 		return true;
 	}
 
@@ -164,7 +164,7 @@ namespace ramiel {
 		std::string normalMap,
 		unsigned specularExponent,
 		float specularIntensity,
-		Vec3f pos, Vec3f rot,
+		Vec3f pos, Vec3f rot, float scale,
 		bool dynamic,
 		Vec3f posVel, Vec3f rotVel,
 		Vec3f posAcc, Vec3f rotAcc,
@@ -209,7 +209,7 @@ namespace ramiel {
 		}
 
 		entities.push_back(new Entity(
-			meshes[mesh],
+			meshes[mesh], scale,
 			texture.length() ? textures[texture] : nullptr,
 			normalMap.length() ? textures[normalMap] : nullptr,
 			mapShadingType(shading),

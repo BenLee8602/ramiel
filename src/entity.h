@@ -17,6 +17,7 @@ namespace ramiel {
 		ShadingType_ shading;
 		Vec3f color;
 		Mesh* mesh;
+		float scale;
 		Texture* texture;
 		Texture* normalMap;
 		unsigned specularExponent;
@@ -26,13 +27,14 @@ namespace ramiel {
 	public:
 		Entity(
 			Mesh* mesh,
-			Texture* texture = nullptr,
-			Texture* normalMap = nullptr,
-			ShadingType_ shading = ShadingType_::FLAT,
-			Vec3f color = vec3f_255,
-			unsigned specularExponent = 0U,
-			float specularIntensity = 0.0f,
-			PhysicsObj* physicsObj = nullptr
+			float scale,
+			Texture* texture,
+			Texture* normalMap,
+			ShadingType_ shading,
+			Vec3f color,
+			unsigned specularExponent,
+			float specularIntensity,
+			PhysicsObj* physicsObj
 		);
 		~Entity();
 		void draw();
