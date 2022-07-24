@@ -34,6 +34,8 @@ namespace ramiel {
 		void setAmbientLightColor(Vec3f color);
 		void setBackgroundColor(Vec3f color);
 
+		void useHdr(bool use = true);
+
 		void renderFrame();
 
 		void getFrameDEC(int* frame);

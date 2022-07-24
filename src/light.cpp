@@ -5,7 +5,7 @@ namespace ramiel {
 
 	Light::Light(Vec3f color) {
 		this->color = color;
-		c_max(this->color);
+		//c_max(this->color);
 	}
 
 

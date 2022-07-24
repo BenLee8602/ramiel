@@ -7,6 +7,7 @@ namespace ramiel {
 
 	Camera graphics::camera;
 	Bloom  graphics::bloom(50);
+	bool   graphics::usingHdr = false;
 
 	Vec2u  graphics::size = { 0 };
 	Vec2u  graphics::mid = { 0 };
@@ -99,6 +100,11 @@ namespace ramiel {
 		bg_color = color;
 	}
 
+
+	void graphics::useHdr(bool use) {
+		usingHdr = use;
+	}
+
 	
 	void graphics::renderFrame() {
 		std::fill(pixels.begin(), pixels.end(), bg_color);
@@ -109,7 +115,7 @@ namespace ramiel {
 
 		for (auto& e : effects) e->applyEffect(&pixels[0], &pixels[0]);
 		bloom.applyEffect(&pixels[0], &pixels[0]);
-		for (size_t i = 0; i < bufferSize; i++) notBloom(pixels[i]);
+		usingHdr ? hdr(pixels) : ldr(pixels);
 	}
 
 	

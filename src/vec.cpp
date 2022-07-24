@@ -1,4 +1,4 @@
-#include <utility>
+#include <algorithm>
 #include "vec.h"
 
 namespace ramiel {
@@ -50,27 +50,72 @@ namespace ramiel {
 		return ((int)color[R] << 16) + ((int)color[G] << 8) + (int)color[B];
 	}
 
-	void notBloom(Vec3f& in) {
-		// determine total extra
-		Vec3f extra = in - vec3f_255;
-		c_max(extra);
-		float totalExtra = extra[R] + extra[G] + extra[B];
-		if (!totalExtra) return;
 
-		// determine empty space
-		Vec3f room = vec3f_255 - in;
-		c_max(room);
-		float totalRoom = room[R] + room[G] + room[B];
-		if (!totalRoom) {
-			c_min(in);
+	void ldr(std::vector<Vec3f>& pixels) {
+		for (auto& p : pixels) {
+			// determine total extra
+			Vec3f extra = p - vec3f_255;
+			c_max(extra);
+			float totalExtra = extra[R] + extra[G] + extra[B];
+			if (!totalExtra) continue;
+
+			// determine empty space
+			Vec3f room = vec3f_255 - p;
+			c_max(room);
+			float totalRoom = room[R] + room[G] + room[B];
+			if (!totalRoom) {
+				c_min(p);
+				continue;
+			}
+			float trInv = 1.0f / totalRoom;
+
+			// process input pt
+			Vec3f roomRatio = room * trInv;
+			p += roomRatio * totalExtra;
+			c_min(p);
+		}
+	}
+
+
+	constexpr Vec3f rgbToLum = {
+		0.2126f / 255.0f,
+		0.7152f / 255.0f,
+		0.0722f / 255.0f
+	};
+
+	inline float luminance(Vec3f rgb) {
+		return dotProduct(rgb, rgbToLum);
+	}
+
+	inline void changeLuminance(Vec3f& rgb, float oldLum, float newLum) {
+		rgb *= newLum / oldLum;
+	}
+
+	inline void changeLuminance(Vec3f& rgb, float lum) {
+		changeLuminance(rgb, luminance(rgb), lum);
+	}
+
+	// extended reinhard applied to luminance
+	void hdr(std::vector<Vec3f>& pixels) {
+		float maxLum = luminance(*std::max_element(
+			pixels.begin(), pixels.end(),
+			[](const Vec3f& p1, const Vec3f& p2) {
+				return luminance(p1) < luminance(p2);
+			}
+		));
+
+		if (maxLum <= 1.0f) {
+			for (auto& p : pixels) c_min(p);
 			return;
 		}
-		float trInv = 1.0f / totalRoom;
 
-		// process input pt
-		Vec3f roomRatio = room * trInv;
-		in += roomRatio * totalExtra;
-		c_min(in);
+		float ml = 1.0f / (maxLum * maxLum);
+		for (auto& p : pixels) {
+			float oldLum = luminance(p);
+			float newLum = (oldLum * (1.0f + (oldLum / (maxLum * maxLum)))) / (1.0f + oldLum);
+			changeLuminance(p, oldLum, newLum);
+			c_min(p);
+		}
 	}
 
 }

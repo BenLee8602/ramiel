@@ -11,6 +11,7 @@ namespace ramiel::graphics {
 	
 	extern Camera camera;
 	extern Bloom  bloom;
+	extern bool   usingHdr;
 
 	extern Vec2u  size;
 	extern Vec2u  mid;

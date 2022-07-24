@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <cmath>
+#include <vector>
 
 namespace ramiel {
 
@@ -106,10 +107,14 @@ namespace ramiel {
 	Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2);
 
 
+	// color
 	void c_min(Vec3f& color, const Vec3f& min = vec3f_255);
 	void c_max(Vec3f& color, const Vec3f& max = vec3f_0);
 	void c_clamp(Vec3f& color);
 	int rgbToDec(const Vec3f& color);
-	void notBloom(Vec3f& in);
+
+	// tone mapping
+	void ldr(std::vector<Vec3f>& pixels);
+	void hdr(std::vector<Vec3f>& pixels);
 
 }
