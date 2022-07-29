@@ -11,21 +11,25 @@ constexpr size_t height = 720;
 
 
 void initScene() {
+
 	//*
 	graphics::loadMesh("cube", "examples/assets/models/cube.obj");
 	graphics::loadTexture("grass", "examples/assets/textures/grass.jpg");
 	graphics::addEntity({
 		{ "mesh", "cube" },
 		{ "texture", "grass" },
-		{ "shading", ShadingType::PIXEL }
+		{ "shading", ShadingType::PIXEL },
+		{ "scale", 10.0f },
+		{ "pos", Vec3f{ 0, 0, 16 } }
 	});
-	//graphics::useHdr(true);
-	graphics::addPointLight({ 35555, 25555, 25555 }, { 2, 0.6, -3 });
+	graphics::addSpotLight({ 2555, 2555, 2555 }, { -3, -3, 0 });
+	graphics::addSpotLight({ 255555, 255555, 255555 }, { 3, 3, 0 });
 	graphics::setBackgroundColor({ 35, 25, 25 });
 	graphics::setAmbientLightColor({ 35, 25, 25 });
+	graphics::addEffect(hdr);
 	//*/
 
-	//*
+	/*
 	graphics::loadMesh("terrain", "examples/assets/models/terrain.obj", 1.0f, { -64, 0, -64 });
 	graphics::setAmbientLightColor({ 100, 80, 100 });
 	graphics::setBackgroundColor({ 150, 110, 110 });
@@ -34,34 +38,7 @@ void initScene() {
 		{ "mesh", "terrain" },
 		{ "shading", ShadingType::PIXEL }
 	});
-	graphics::addEffect(new Fog(20, 100, { 150, 110, 110 }, true));
-	//*/
-
-	/*
-	graphics::loadMesh("cube", "examples/assets/models/cube.obj");
-	graphics::setAmbientLightColor({ 25, 25, 25 });
-	graphics::addDirLight();
-
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "color", Vec3f{ 25, 25, 255 } },
-		{ "pos", Vec3f{ 5, 3.5, 8 } },
-		{ "colliderType", ColliderType::AABB },
-		{ "dynamic", true },
-		{ "posVel", Vec3f{ -1, -1, 0 } }
-	});
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "color", Vec3f{ 255, 25, 25 } },
-		{ "pos", Vec3f{ -2, 0, 8 } },
-		{ "colliderType", ColliderType::AABB },
-	});
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "color", Vec3f{ 25, 255, 25 } },
-		{ "pos", Vec3f{ 0, -2, 8 } },
-		{ "colliderType", ColliderType::AABB },
-	});
+	graphics::addEffect(fog<150, 110, 110, 20, 100>);
 	//*/
 }
 

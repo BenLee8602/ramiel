@@ -10,8 +10,6 @@
 namespace ramiel::graphics {
 	
 	extern Camera camera;
-	extern Bloom  bloom;
-	extern bool   usingHdr;
 
 	extern Vec2u  size;
 	extern Vec2u  mid;
@@ -25,7 +23,7 @@ namespace ramiel::graphics {
 
 	extern std::vector<Entity*> entities;
 	extern std::vector<Light*>  lights;
-	extern std::vector<Effect*> effects;
+	extern std::vector<Effect> effects;
 	extern Vec3f light_ambient;
 	extern Vec3f bg_color;
 

@@ -6,8 +6,6 @@
 namespace ramiel {
 
 	Camera graphics::camera;
-	Bloom  graphics::bloom(50);
-	bool   graphics::usingHdr = false;
 
 	Vec2u  graphics::size = { 0 };
 	Vec2u  graphics::mid = { 0 };
@@ -16,12 +14,12 @@ namespace ramiel {
 	std::vector<Vec3f> graphics::pixels;
 	std::vector<float> graphics::depth;
 
-	std::unordered_map<std::string, Mesh*>   graphics::meshes;
+	std::unordered_map<std::string, Mesh*>    graphics::meshes;
 	std::unordered_map<std::string, Texture*> graphics::textures;
 
 	std::vector<Entity*> graphics::entities;
 	std::vector<Light*>  graphics::lights;
-	std::vector<Effect*> graphics::effects;
+	std::vector<Effect>  graphics::effects;
 	Vec3f graphics::light_ambient = vec3f_0;
 	Vec3f graphics::bg_color = vec3f_0;
 
@@ -100,11 +98,6 @@ namespace ramiel {
 		bg_color = color;
 	}
 
-
-	void graphics::useHdr(bool use) {
-		usingHdr = use;
-	}
-
 	
 	void graphics::renderFrame() {
 		std::fill(pixels.begin(), pixels.end(), bg_color);
@@ -113,9 +106,8 @@ namespace ramiel {
 		camera.calcTrigValues();
 		drawEntities();
 
-		for (auto& e : effects) e->applyEffect(&pixels[0], &pixels[0]);
-		bloom.applyEffect(&pixels[0], &pixels[0]);
-		usingHdr ? hdr(pixels) : ldr(pixels);
+		for (auto& e : effects) e(size, bufferSize, pixels.begin(), depth.begin());
+		for (auto& p : pixels) c_min(p);
 	}
 
 	
@@ -249,7 +241,7 @@ namespace ramiel {
 	}
 
 	
-	void graphics::addEffect(Effect* effect) { // temp
+	void graphics::addEffect(Effect effect) {
 		effects.push_back(effect);
 	}
 
@@ -272,7 +264,6 @@ namespace ramiel {
 
 	void graphics::removeEffect(size_t index) {
 		if (index < effects.size()) {
-			delete effects[index];
 			effects.erase(effects.begin() + index);
 		}
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../src/vec.h"
-#include "../src/effects.h" // temp
+#include "../src/effects.h"
 
 namespace ramiel {
 
@@ -33,8 +33,6 @@ namespace ramiel {
 
 		void setAmbientLightColor(Vec3f color);
 		void setBackgroundColor(Vec3f color);
-
-		void useHdr(bool use = true);
 
 		void renderFrame();
 
@@ -94,7 +92,7 @@ namespace ramiel {
 			float falloffExp = 50.0f
 		);
 
-		void addEffect(Effect* effect); // temp
+		void addEffect(Effect effect);
 
 		void removeEntity(size_t index);
 		void removeLight(size_t index);

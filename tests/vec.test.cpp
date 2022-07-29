@@ -241,10 +241,3 @@ TEST_CASE("rgb to dec", "[vec][color]") {
     int expected = 0xffffff;
     REQUIRE(res == expected);
 }
-
-TEST_CASE("ldr", "[vec][tonemapping]") {
-    std::vector<Vec3f> color = { { 300.0f, 0.0f, 100.0f } };
-    ldr(color);
-    Vec3f expected = { 255.0f, 27.987804f, 117.012195f };
-    REQUIRE(color[0] == expected);
-}
