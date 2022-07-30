@@ -10,8 +10,9 @@ namespace ramiel {
 	public:
 	#endif
 		Vec3f color;
+		float intensity;
 	public:
-		Light(Vec3f color);
+		Light(Vec3f color, float intensity);
 		virtual Vec3f getLight(
 			const Vec3f& pos, const Vec3f& normal,
 			unsigned specularExponent, float specularIntensity
@@ -26,10 +27,7 @@ namespace ramiel {
 	#endif
 		Vec3f dir;
 	public:
-		Light_Dir(
-			Vec3f color = vec3f_255,
-			Vec3f dir = { 0.0f, 0.0f, 1.0f }
-		);
+		Light_Dir(Vec3f color, float intensity, Vec3f dir);
 		virtual Vec3f getLight(
 			const Vec3f& pos, const Vec3f& normal,
 			unsigned specularExponent, float specularIntensity
@@ -45,11 +43,7 @@ namespace ramiel {
 		Vec3f pos;
 		float falloff;
 	public:
-		Light_Pt(
-			Vec3f color = vec3f_255,
-			Vec3f pos = vec3f_0,
-			float falloff = 1.0f
-		);
+		Light_Pt(Vec3f color, float intensity, Vec3f pos, float falloff);
 		virtual Vec3f getLight(
 			const Vec3f& pos, const Vec3f& normal,
 			unsigned specularExponent, float specularIntensity
@@ -66,12 +60,13 @@ namespace ramiel {
 		float falloffExp;
 	public:
 		Light_Sp(
-			Vec3f color = vec3f_255,
-			Vec3f pos = vec3f_0,
-			Vec3f dir = { 0.0f, 0.0f, 1.0f },
-			float falloff = 0.1f,
-			float width = 30.0f,
-			float falloffExp = 50.0f
+			Vec3f color,
+			float intensity,
+			Vec3f pos,
+			Vec3f dir,
+			float falloff,
+			float width,
+			float falloffExp
 		);
 		virtual Vec3f getLight(
 			const Vec3f& pos, const Vec3f& normal,

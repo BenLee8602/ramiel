@@ -76,15 +76,18 @@ namespace ramiel {
 
 		void addDirLight(
 			Vec3f color = vec3f_255,
+			float intensity = 1.0f,
 			Vec3f dir = { 0.0f, 0.0f, 1.0f }
 		);
 		void addPointLight(
 			Vec3f color = vec3f_255,
+			float intensity = 1.0f,
 			Vec3f pos = vec3f_0,
 			float falloff = 1.0f
 		);
 		void addSpotLight(
 			Vec3f color = vec3f_255,
+			float intensity = 1.0f,
 			Vec3f pos = vec3f_0,
 			Vec3f dir = { 0.0f, 0.0f, 1.0f },
 			float falloff = 0.1f,

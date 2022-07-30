@@ -112,6 +112,7 @@ namespace ramiel {
         // defaults
         LightType lightType;
         Vec3f color = vec3f_255;
+		float intensity = 1.0f;
         Vec3f dir = vec3f_0;
         Vec3f pos = vec3f_0;
         float falloff = -1.0f;
@@ -122,6 +123,7 @@ namespace ramiel {
         try {
             getArg(args, "lightType", lightType);
             getArg(args, "color", color);
+			getArg(args, "intensity", intensity);
             getArg(args, "dir", dir);
             getArg(args, "pos", pos);
             getArg(args, "falloff", falloff);
@@ -133,9 +135,9 @@ namespace ramiel {
         }
 
         switch (lightType) {
-            case LightType::DIR:   addDirLight(color, dir); break;
-            case LightType::POINT: addPointLight(color, pos, falloff); break;
-            case LightType::SPOT:  addSpotLight(color, pos, dir, falloff, width, falloffExponent);
+            case LightType::DIR:   addDirLight(color, intensity, dir); break;
+            case LightType::POINT: addPointLight(color, intensity, pos, falloff); break;
+            case LightType::SPOT:  addSpotLight(color, intensity, pos, dir, falloff, width, falloffExponent);
         }
 
         return true;

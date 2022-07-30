@@ -22,8 +22,8 @@ void initScene() {
 		{ "scale", 10.0f },
 		{ "pos", Vec3f{ 0, 0, 16 } }
 	});
-	graphics::addSpotLight({ 2555, 2555, 2555 }, { -3, -3, 0 });
-	graphics::addSpotLight({ 255555, 255555, 255555 }, { 3, 3, 0 });
+	graphics::addSpotLight({ 255, 255, 255 }, 10.0f,  { -3, -3, 0 });
+	graphics::addSpotLight({ 255, 255, 255 }, 100.0f, {  3,  3, 0 });
 	graphics::setBackgroundColor({ 35, 25, 25 });
 	graphics::setAmbientLightColor({ 35, 25, 25 });
 	graphics::addEffect(hdr);

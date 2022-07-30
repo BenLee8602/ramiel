@@ -220,24 +220,23 @@ namespace ramiel {
 	}
 
 	
-	void graphics::addDirLight(
-		Vec3f color,
-		Vec3f dir
-	) { lights.push_back(new Light_Dir(color, dir)); }
+	void graphics::addDirLight(Vec3f color, float intensity, Vec3f dir) {
+		lights.push_back(new Light_Dir(color, intensity, dir));
+	}
 
 
 	void graphics::addPointLight(
-		Vec3f color,
+		Vec3f color, float intensity,
 		Vec3f pos,
 		float falloff
-	) { lights.push_back(new Light_Pt(color, pos, falloff)); }
+	) { lights.push_back(new Light_Pt(color, intensity, pos, falloff)); }
 
 
 	void graphics::addSpotLight(
-		Vec3f color, Vec3f pos, Vec3f dir,
+		Vec3f color, float intensity, Vec3f pos, Vec3f dir,
 		float falloff, float width, float falloffExp
 	) {
-		lights.push_back(new Light_Sp(color, pos, dir, falloff, width, falloffExp));
+		lights.push_back(new Light_Sp(color, intensity, pos, dir, falloff, width, falloffExp));
 	}
 
 	
