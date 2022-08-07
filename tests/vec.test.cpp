@@ -11,6 +11,13 @@ TEST_CASE("boolean conversion", "[vec][bool]") {
     REQUIRE(vec_true);
 }
 
+TEST_CASE("element type typecast", "[vec]") {
+    Vec3f fvec = { 1.5f, 2.5f, 3.5f };
+    Vec3  ivec = (Vec3)fvec;
+    Vec3  expected = { 1, 2, 3 };
+    REQUIRE(ivec == expected);
+}
+
 TEST_CASE("comparison operator", "[vec][bool]") {
     Vec3 v1 = { 10, -1, 3 };
     Vec3 v2 = { 7, 5, -8 };

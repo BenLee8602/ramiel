@@ -11,35 +11,7 @@ constexpr size_t height = 720;
 
 
 void initScene() {
-
-	//*
-	graphics::loadMesh("cube", "examples/assets/models/cube.obj");
-	graphics::loadTexture("grass", "examples/assets/textures/grass.jpg");
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "texture", "grass" },
-		{ "shading", ShadingType::PIXEL },
-		{ "scale", 10.0f },
-		{ "pos", Vec3f{ 0, 0, 16 } }
-	});
-	graphics::addSpotLight({ 255, 255, 255 }, 10.0f,  { -3, -3, 0 });
-	graphics::addSpotLight({ 255, 255, 255 }, 100.0f, {  3,  3, 0 });
-	graphics::setBackgroundColor({ 35, 25, 25 });
-	graphics::setAmbientLightColor({ 35, 25, 25 });
-	graphics::addEffect(hdr);
-	//*/
-
-	/*
-	graphics::loadMesh("terrain", "examples/assets/models/terrain.obj", 1.0f, { -64, 0, -64 });
-	graphics::setAmbientLightColor({ 100, 80, 100 });
-	graphics::setBackgroundColor({ 150, 110, 110 });
-	graphics::addDirLight({ 155, 40, 0 }, { -10, 1, 0 });
-	graphics::addEntity({
-		{ "mesh", "terrain" },
-		{ "shading", ShadingType::PIXEL }
-	});
-	graphics::addEffect(fog<150, 110, 110, 20, 100>);
-	//*/
+	
 }
 
 

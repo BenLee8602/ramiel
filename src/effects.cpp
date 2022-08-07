@@ -3,16 +3,16 @@
 
 namespace ramiel {
 
-    void ldr(std::vector<Vec3f>& pixels) {
-		for (auto& p : pixels) {
+    void ldr(RAMIEL_EFFECT_ARGS) {
+		for (size_t i = 0; i < bufferSize; ++i) {
 			// determine total extra
-			Vec3f extra = p - vec3f_255;
+			Vec3f extra = pixel[i] - vec3f_255;
 			c_max(extra);
 			float totalExtra = extra[R] + extra[G] + extra[B];
 			if (!totalExtra) continue;
 
 			// determine empty space
-			Vec3f room = vec3f_255 - p;
+			Vec3f room = vec3f_255 - pixel[i];
 			c_max(room);
 			float totalRoom = room[R] + room[G] + room[B];
 			if (!totalRoom) continue;
@@ -20,7 +20,7 @@ namespace ramiel {
 
 			// process input pt
 			Vec3f roomRatio = room * trInv;
-			p += roomRatio * totalExtra;
+			pixel[i] += roomRatio * totalExtra;
 		}
 	}
 

@@ -17,6 +17,7 @@ namespace ramiel {
 		// typecasting
 		explicit operator T* () { return arr; }
 		operator bool() const { for (size_t i = 0; i < N; ++i) if (arr[i]) return true; return false; }
+		template<typename U> explicit operator Vec<U, N>() const { Vec<U, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = (U)arr[i]; return temp; }
 
 		// comparison
 		template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (arr[i] != v[i]) return false; return true; }
