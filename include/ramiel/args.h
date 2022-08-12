@@ -47,8 +47,8 @@ namespace ramiel {
 		Vec3f color = vec3f_255;
 		std::string texture;
 		std::string normalMap;
-		unsigned specularExponent = 0U;
-		float specularIntensity = 0.0f;
+		unsigned specularExponent = 4U;
+		float specularIntensity = 0.1f;
 		Vec3f pos    = vec3f_0;
 		Vec3f rot    = vec3f_0;
 		float scale  = 1.0f;
@@ -57,7 +57,7 @@ namespace ramiel {
 		Vec3f rotVel = vec3f_0;
 		Vec3f posAcc = vec3f_0;
 		Vec3f rotAcc = vec3f_0;
-		ColliderType colliderType = ColliderType::NONE;
+		ColliderType colliderType = ColliderType::NONE; 
 		float mass = 1.0f;
 		float hbxrad = 0.5f;
 		Vec3f size = { 0.5f, 0.5f, 0.5f };

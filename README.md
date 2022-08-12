@@ -49,8 +49,6 @@ graphics::addEffect(hdr);
 // no texture or normal map
 graphics::addEntity({
     { "mesh", "cube" },
-    { "specularExponent", 4U },
-    { "specularIntensity", 0.1f },
     { "shading", ShadingType::PIXEL },
     { "dynamic", true },
     { "pos", Vec3f{ -1, 0, 1 } },
@@ -61,8 +59,6 @@ graphics::addEntity({
 // normal map only
 graphics::addEntity({
     { "mesh", "cube" },
-    { "specularExponent", 4U },
-    { "specularIntensity", 0.1f },
     { "shading", ShadingType::PIXEL },
     { "dynamic", true },
     { "pos", Vec3f{ 1, 0, 1 } },
@@ -74,8 +70,6 @@ graphics::addEntity({
 // texture only
 graphics::addEntity({
     { "mesh", "cube" },
-    { "specularExponent", 4U },
-    { "specularIntensity", 0.1f },
     { "shading", ShadingType::PIXEL },
     { "dynamic", true },
     { "pos", Vec3f{ -1, 0, -1 } },
@@ -86,8 +80,6 @@ graphics::addEntity({
 // both texture and normal map
 graphics::addEntity({
     { "mesh", "cube" },
-    { "specularExponent", 4U },
-    { "specularIntensity", 0.1f },
     { "shading", ShadingType::PIXEL },
     { "dynamic", true },
     { "pos", Vec3f{ 1, 0, -1 } },

@@ -32,7 +32,7 @@ namespace ramiel {
 
 		auto drawPortion = [](size_t begin, size_t end) {
 			for (size_t i = begin; i < end; i++) {
-				entities[i]->draw();
+				(entities[i]->*(entities[i]->draw))();
 			}
 		};
 

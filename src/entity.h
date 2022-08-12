@@ -37,7 +37,19 @@ namespace ramiel {
 			PhysicsObj* physicsObj
 		);
 		~Entity();
-		void draw();
+		void(ramiel::Entity::*draw)();
+
+	private:
+		void draw_flat();
+		void draw_flat_textured();
+		void draw_vertex();
+		void draw_vertex_textured();
+		void draw_pixel();
+		void draw_pixel_textured();
+		void draw_pixel_normalmapped();
+		void draw_pixel_textured_normalmapped();
+		void draw_pixel_smooth();
+		void draw_pixel_smooth_textured();
 	};
 
 }
