@@ -16,10 +16,6 @@ namespace ramiel {
 		tricam[1] = other.tricam[0];
 	}
 
-	void DrawFlat::clip1(float c1, float c2, DrawFlat& other) {
-		Draw::clip1(c1, c2, other);
-	}
-
 	void DrawVertex::clip1(float c1, float c2, DrawVertex& other) {
 		Draw::clip1(c1, c2, other);
 
@@ -62,10 +58,6 @@ namespace ramiel {
 		tricam[2][X] = tricam[2][X] + (tricam[1][X] - tricam[2][X]) * c2;
 		tricam[2][Y] = tricam[2][Y] + (tricam[1][Y] - tricam[2][Y]) * c2;
 		tricam[2][Z] = graphics::camera.znear;
-	}
-
-	void DrawFlat::clip2(float c1, float c2) {
-		Draw::clip2(c1, c2);
 	}
 
 	void DrawVertex::clip2(float c1, float c2) {
@@ -112,10 +104,6 @@ namespace ramiel {
 		color = graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
 	}
 
-	void DrawVertex::init() {
-		Draw::init();
-	}
-
 	void DrawPixel::init() {
 		DrawSuper_::init();
 
@@ -125,17 +113,9 @@ namespace ramiel {
 		for (int i = 0; i < 3; i++) v_pos[i] *= trizinv[i];
 	}
 
-	void DrawPixel_S::init() {
-		DrawPixel::init();
-	}
-
 	void Draw::swapv(size_t i1, size_t i2) {
 		std::swap(triscreen[i1], triscreen[i2]);
 		std::swap(tricam[i1], tricam[i2]);
-	}
-
-	void DrawFlat::swapv(size_t i1, size_t i2) {
-		Draw::swapv(i1, i2);
 	}
 
 	void DrawVertex::swapv(size_t i1, size_t i2) {
@@ -163,10 +143,6 @@ namespace ramiel {
 		dz1_y = (tricam[2][Z] - tricam[0][Z]) / (float)(triscreen[2][Y] - triscreen[0][Y]);
 		dz2_y = (tricam[1][Z] - tricam[0][Z]) / (float)(triscreen[1][Y] - triscreen[0][Y]);
 		dz_y = &dz2_y;
-	}
-
-	void DrawFlat::calcd_y() {
-		Draw::calcd_y();
 	}
 
 	void DrawVertex::calcd_y() {
@@ -201,10 +177,6 @@ namespace ramiel {
 		std::swap(dz1_y, dz2_y);
 		dx_y = &dx1_y;
 		dz_y = &dz1_y;
-	}
-
-	void DrawFlat::swapdy() {
-		Draw::swapdy();
 	}
 
 	void DrawVertex::swapdy() {
@@ -242,10 +214,6 @@ namespace ramiel {
 		z2 = tricam[0][Z] + dz2_y * (float)(y - triscreen[0][Y]);
 	}
 
-	void DrawFlat::clipy() {
-		Draw::clipy();
-	}
-
 	void DrawVertex::clipy() {
 		Draw::clipy();
 
@@ -274,10 +242,6 @@ namespace ramiel {
 		dz_x = (z2 - z1) / (x2 - x1);
 	}
 
-	void DrawFlat::calcd_x() {
-		Draw::calcd_x();
-	}
-
 	void DrawVertex::calcd_x() {
 		Draw::calcd_x();
 		dc_x = (c2 - c1) / (x2 - x1);
@@ -298,10 +262,6 @@ namespace ramiel {
 		x = std::max(0, (int)x1);
 		z = z1 + dz_x * (x - (int)x1);
 		index = graphics::coordsToIndex({ x, y });
-	}
-
-	void DrawFlat::clipx() {
-		Draw::clipx();
 	}
 
 	void DrawVertex::clipx() {
@@ -350,10 +310,6 @@ namespace ramiel {
 		z += dz_x;
 	}
 
-	void DrawFlat::incx() {
-		Draw::incx();
-	}
-
 	void DrawVertex::incx() {
 		Draw::incx();
 		c += dc_x;
@@ -375,10 +331,6 @@ namespace ramiel {
 
 		z1 += dz1_y;
 		z2 += dz2_y;
-	}
-
-	void DrawFlat::incy() {
-		Draw::incy();
 	}
 
 	void DrawVertex::incy() {
@@ -412,10 +364,6 @@ namespace ramiel {
 		*dz_y = (tricam[2][Z] - tricam[1][Z]) / (float)(triscreen[2][Y] - triscreen[1][Y]);
 		z1 = tricam[2][Z] - dz1_y * (float)(triscreen[2][Y] - y);
 		z2 = tricam[2][Z] - dz2_y * (float)(triscreen[2][Y] - y);
-	}
-
-	void DrawFlat::segmentswitch() {
-		Draw::segmentswitch();
 	}
 
 	void DrawVertex::segmentswitch() {

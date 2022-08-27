@@ -58,22 +58,9 @@ namespace ramiel {
 
 	class DrawFlat : public Draw {
 		Vec3f color;
-
 	public:
-		void clip1(float c1, float c2, DrawFlat& other);
-		void clip2(float c1, float c2);
-
 		void init();
-		void swapv(size_t i1, size_t i2);
-		void calcd_y();
-		void swapdy();
-		void clipy();
-		void calcd_x();
-		void clipx();
 		void drawpixel();
-		void incx();
-		void incy();
-		void segmentswitch();
 	};
 
 
@@ -91,7 +78,6 @@ namespace ramiel {
 		void clip1(float c1, float c2, DrawVertex& other);
 		void clip2(float c1, float c2);
 
-		void init();
 		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();
@@ -243,7 +229,6 @@ namespace ramiel {
 		void clip1(float c1, float c2, DrawPixel_S& other);
 		void clip2(float c1, float c2);
 
-		void init();
 		void swapv(size_t i1, size_t i2);
 		void calcd_y();
 		void swapdy();

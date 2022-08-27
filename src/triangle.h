@@ -38,7 +38,7 @@ namespace ramiel::triangle {
 
 
 	template<class Draw>
-	static bool clip(Draw& draw) {
+	bool clip(Draw& draw) {
 		
 		auto clip1 = [&draw]() {
 			// ratio of line clipped
