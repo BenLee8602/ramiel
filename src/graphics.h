@@ -34,6 +34,6 @@ namespace ramiel::graphics {
 		unsigned specularExponent, float specularIntensity
 	);
 
-	int coordsToIndex(const Vec2& in);
+	size_t coordsToIndex(const Vec2f& in);
 
 }

@@ -261,7 +261,7 @@ namespace ramiel {
 		xmax = std::min<int>(x2, graphics::size[X]);
 		x = std::max(0, (int)x1);
 		z = z1 + dz_x * (x - (int)x1);
-		index = graphics::coordsToIndex({ x, y });
+		index = graphics::coordsToIndex(Vec2f{ (float)x, (float)y });
 	}
 
 	void DrawVertex::clipx() {

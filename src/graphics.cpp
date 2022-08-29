@@ -62,7 +62,7 @@ namespace ramiel {
 	}
 
 
-	int graphics::coordsToIndex(const Vec2& in) {
+	size_t graphics::coordsToIndex(const Vec2f& in) {
 		return size[X] * in[Y] + in[X];
 	}
 
