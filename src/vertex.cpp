@@ -273,8 +273,8 @@ namespace ramiel {
     }
     
 
-    Vertex_PerPixel_S Vertex_PerPixel_S::operator+(const Vertex_PerPixel_S& other) const {
-        Vertex_PerPixel_S temp;
+    Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator+(const Vertex_PerPixel_Smooth& other) const {
+        Vertex_PerPixel_Smooth temp;
         temp.scrPos = scrPos + other.scrPos;
         temp.z = z + other.z;
         temp.wrlPos = wrlPos + other.wrlPos;
@@ -283,8 +283,8 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S Vertex_PerPixel_S::operator-(const Vertex_PerPixel_S& other) const {
-        Vertex_PerPixel_S temp;
+    Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator-(const Vertex_PerPixel_Smooth& other) const {
+        Vertex_PerPixel_Smooth temp;
         temp.scrPos = scrPos - other.scrPos;
         temp.z = z - other.z;
         temp.wrlPos = wrlPos - other.wrlPos;
@@ -293,8 +293,8 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S Vertex_PerPixel_S::operator*(float n) const {
-        Vertex_PerPixel_S temp;
+    Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator*(float n) const {
+        Vertex_PerPixel_Smooth temp;
         temp.scrPos = scrPos * n;
         temp.z = z * n;
         temp.wrlPos = wrlPos * n;
@@ -303,9 +303,9 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S Vertex_PerPixel_S::operator/(float n) const {
+    Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator/(float n) const {
         n = 1.0f / n;
-        Vertex_PerPixel_S temp;
+        Vertex_PerPixel_Smooth temp;
         temp.scrPos = scrPos * n;
         temp.z = z * n;
         temp.wrlPos = wrlPos * n;
@@ -314,7 +314,7 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S& Vertex_PerPixel_S::operator+=(const Vertex_PerPixel_S& other) {
+    Vertex_PerPixel_Smooth& Vertex_PerPixel_Smooth::operator+=(const Vertex_PerPixel_Smooth& other) {
         scrPos += other.scrPos;
         z += other.z;
         wrlPos += other.wrlPos;
@@ -324,8 +324,8 @@ namespace ramiel {
     }
     
 
-    Vertex_PerPixel_S_Textured Vertex_PerPixel_S_Textured::operator+(const Vertex_PerPixel_S_Textured& other) const {
-        Vertex_PerPixel_S_Textured temp;
+    Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator+(const Vertex_PerPixel_Smooth_Textured& other) const {
+        Vertex_PerPixel_Smooth_Textured temp;
         temp.scrPos = scrPos + other.scrPos;
         temp.z = z + other.z;
         temp.wrlPos = wrlPos + other.wrlPos;
@@ -335,8 +335,8 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S_Textured Vertex_PerPixel_S_Textured::operator-(const Vertex_PerPixel_S_Textured& other) const {
-        Vertex_PerPixel_S_Textured temp;
+    Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator-(const Vertex_PerPixel_Smooth_Textured& other) const {
+        Vertex_PerPixel_Smooth_Textured temp;
         temp.scrPos = scrPos - other.scrPos;
         temp.z = z - other.z;
         temp.wrlPos = wrlPos - other.wrlPos;
@@ -346,8 +346,8 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S_Textured Vertex_PerPixel_S_Textured::operator*(float n) const {
-        Vertex_PerPixel_S_Textured temp;
+    Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator*(float n) const {
+        Vertex_PerPixel_Smooth_Textured temp;
         temp.scrPos = scrPos * n;
         temp.z = z * n;
         temp.wrlPos = wrlPos * n;
@@ -357,9 +357,9 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S_Textured Vertex_PerPixel_S_Textured::operator/(float n) const {
+    Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator/(float n) const {
         n = 1.0f / n;
-        Vertex_PerPixel_S_Textured temp;
+        Vertex_PerPixel_Smooth_Textured temp;
         temp.scrPos = scrPos * n;
         temp.z = z * n;
         temp.wrlPos = wrlPos * n;
@@ -369,7 +369,7 @@ namespace ramiel {
         return temp;
     }
     
-    Vertex_PerPixel_S_Textured& Vertex_PerPixel_S_Textured::operator+=(const Vertex_PerPixel_S_Textured& other) {
+    Vertex_PerPixel_Smooth_Textured& Vertex_PerPixel_Smooth_Textured::operator+=(const Vertex_PerPixel_Smooth_Textured& other) {
         scrPos += other.scrPos;
         z += other.z;
         wrlPos += other.wrlPos;

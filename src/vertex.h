@@ -18,7 +18,7 @@ namespace ramiel {
         Vec2f scrPos;
         float z;
         float zinv;
-        float uv;
+        Vec2f uv;
         Vertex_PerTri_Textured operator+(const Vertex_PerTri_Textured& other) const;
         Vertex_PerTri_Textured operator-(const Vertex_PerTri_Textured& other) const;
         Vertex_PerTri_Textured operator*(float n) const;
@@ -42,7 +42,7 @@ namespace ramiel {
         float z;
         Vec3f color;
         float zinv;
-        float uv;
+        Vec2f uv;
         Vertex_PerVertex_Textured operator+(const Vertex_PerVertex_Textured& other) const;
         Vertex_PerVertex_Textured operator-(const Vertex_PerVertex_Textured& other) const;
         Vertex_PerVertex_Textured operator*(float n) const;
@@ -67,7 +67,7 @@ namespace ramiel {
         float z;
         Vec3f wrlPos;
         float zinv;
-        float uv;
+        Vec2f uv;
         Vertex_PerPixel_Textured operator+(const Vertex_PerPixel_Textured& other) const;
         Vertex_PerPixel_Textured operator-(const Vertex_PerPixel_Textured& other) const;
         Vertex_PerPixel_Textured operator*(float n) const;
@@ -75,31 +75,31 @@ namespace ramiel {
         Vertex_PerPixel_Textured& operator+=(const Vertex_PerPixel_Textured& other);
     };
 
-    struct Vertex_PerPixel_S {
+    struct Vertex_PerPixel_Smooth {
         Vec2f scrPos;
         float z;
         Vec3f wrlPos;
         Vec3f normal;
         float zinv;
-        Vertex_PerPixel_S operator+(const Vertex_PerPixel_S& other) const;
-        Vertex_PerPixel_S operator-(const Vertex_PerPixel_S& other) const;
-        Vertex_PerPixel_S operator*(float n) const;
-        Vertex_PerPixel_S operator/(float n) const;
-        Vertex_PerPixel_S& operator+=(const Vertex_PerPixel_S& other);
+        Vertex_PerPixel_Smooth operator+(const Vertex_PerPixel_Smooth& other) const;
+        Vertex_PerPixel_Smooth operator-(const Vertex_PerPixel_Smooth& other) const;
+        Vertex_PerPixel_Smooth operator*(float n) const;
+        Vertex_PerPixel_Smooth operator/(float n) const;
+        Vertex_PerPixel_Smooth& operator+=(const Vertex_PerPixel_Smooth& other);
     };
 
-    struct Vertex_PerPixel_S_Textured {
+    struct Vertex_PerPixel_Smooth_Textured {
         Vec2f scrPos;
         float z;
         Vec3f wrlPos;
         Vec3f normal;
         float zinv;
-        float uv;
-        Vertex_PerPixel_S_Textured operator+(const Vertex_PerPixel_S_Textured& other) const;
-        Vertex_PerPixel_S_Textured operator-(const Vertex_PerPixel_S_Textured& other) const;
-        Vertex_PerPixel_S_Textured operator*(float n) const;
-        Vertex_PerPixel_S_Textured operator/(float n) const;
-        Vertex_PerPixel_S_Textured& operator+=(const Vertex_PerPixel_S_Textured& other);
+        Vec2f uv;
+        Vertex_PerPixel_Smooth_Textured operator+(const Vertex_PerPixel_Smooth_Textured& other) const;
+        Vertex_PerPixel_Smooth_Textured operator-(const Vertex_PerPixel_Smooth_Textured& other) const;
+        Vertex_PerPixel_Smooth_Textured operator*(float n) const;
+        Vertex_PerPixel_Smooth_Textured operator/(float n) const;
+        Vertex_PerPixel_Smooth_Textured& operator+=(const Vertex_PerPixel_Smooth_Textured& other);
     };
 
 }
