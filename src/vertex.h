@@ -5,8 +5,9 @@
 namespace ramiel {
 
     struct Vertex_PerTri {
-        Vec2f scrPos;
-        float z;
+        Vec3f worldPos;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         Vertex_PerTri operator+(const Vertex_PerTri& other) const;
         Vertex_PerTri operator-(const Vertex_PerTri& other) const;
         Vertex_PerTri operator*(float n) const;
@@ -15,8 +16,9 @@ namespace ramiel {
     };
 
     struct Vertex_PerTri_Textured {
-        Vec2f scrPos;
-        float z;
+        Vec3f worldPos;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         float zinv;
         Vec2f uv;
         Vertex_PerTri_Textured operator+(const Vertex_PerTri_Textured& other) const;
@@ -27,8 +29,8 @@ namespace ramiel {
     };
 
     struct Vertex_PerVertex {
-        Vec2f scrPos;
-        float z;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         Vec3f color;
         Vertex_PerVertex operator+(const Vertex_PerVertex& other) const;
         Vertex_PerVertex operator-(const Vertex_PerVertex& other) const;
@@ -38,8 +40,8 @@ namespace ramiel {
     };
 
     struct Vertex_PerVertex_Textured {
-        Vec2f scrPos;
-        float z;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         Vec3f color;
         float zinv;
         Vec2f uv;
@@ -51,9 +53,9 @@ namespace ramiel {
     };
 
     struct Vertex_PerPixel {
-        Vec2f scrPos;
-        float z;
-        Vec3f wrlPos;
+        Vec3f worldPos;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         float zinv;
         Vertex_PerPixel operator+(const Vertex_PerPixel& other) const;
         Vertex_PerPixel operator-(const Vertex_PerPixel& other) const;
@@ -63,9 +65,9 @@ namespace ramiel {
     };
 
     struct Vertex_PerPixel_Textured {
-        Vec2f scrPos;
-        float z;
-        Vec3f wrlPos;
+        Vec3f worldPos;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         float zinv;
         Vec2f uv;
         Vertex_PerPixel_Textured operator+(const Vertex_PerPixel_Textured& other) const;
@@ -76,9 +78,9 @@ namespace ramiel {
     };
 
     struct Vertex_PerPixel_Smooth {
-        Vec2f scrPos;
-        float z;
-        Vec3f wrlPos;
+        Vec3f worldPos;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         Vec3f normal;
         float zinv;
         Vertex_PerPixel_Smooth operator+(const Vertex_PerPixel_Smooth& other) const;
@@ -89,9 +91,9 @@ namespace ramiel {
     };
 
     struct Vertex_PerPixel_Smooth_Textured {
-        Vec2f scrPos;
-        float z;
-        Vec3f wrlPos;
+        Vec3f worldPos;
+        Vec3f cameraPos;
+        Vec2f screenPos;
         Vec3f normal;
         float zinv;
         Vec2f uv;
