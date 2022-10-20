@@ -20,7 +20,7 @@ namespace ramiel {
         Vec3f cameraPos;
         Vec2f screenPos;
         float zinv;
-        Vec2f uv;
+        Vec2f texturePos;
         Vertex_PerTri_Textured operator+(const Vertex_PerTri_Textured& other) const;
         Vertex_PerTri_Textured operator-(const Vertex_PerTri_Textured& other) const;
         Vertex_PerTri_Textured operator*(float n) const;
@@ -44,7 +44,7 @@ namespace ramiel {
         Vec2f screenPos;
         Vec3f color;
         float zinv;
-        Vec2f uv;
+        Vec2f texturePos;
         Vertex_PerVertex_Textured operator+(const Vertex_PerVertex_Textured& other) const;
         Vertex_PerVertex_Textured operator-(const Vertex_PerVertex_Textured& other) const;
         Vertex_PerVertex_Textured operator*(float n) const;
@@ -69,7 +69,7 @@ namespace ramiel {
         Vec3f cameraPos;
         Vec2f screenPos;
         float zinv;
-        Vec2f uv;
+        Vec2f texturePos;
         Vertex_PerPixel_Textured operator+(const Vertex_PerPixel_Textured& other) const;
         Vertex_PerPixel_Textured operator-(const Vertex_PerPixel_Textured& other) const;
         Vertex_PerPixel_Textured operator*(float n) const;
@@ -96,7 +96,7 @@ namespace ramiel {
         Vec2f screenPos;
         Vec3f normal;
         float zinv;
-        Vec2f uv;
+        Vec2f texturePos;
         Vertex_PerPixel_Smooth_Textured operator+(const Vertex_PerPixel_Smooth_Textured& other) const;
         Vertex_PerPixel_Smooth_Textured operator-(const Vertex_PerPixel_Smooth_Textured& other) const;
         Vertex_PerPixel_Smooth_Textured operator*(float n) const;

@@ -87,10 +87,10 @@ namespace ramiel::triangle {
 
 
 	template<class Vertex>
-	void clipp(Vertex v[3]) {
+	bool clipp(Vertex v[3]) {
 		using graphics::camera;
 		if (v[0].z < camera.znear) {
-			if (v[1].z < znear) {
+			if (v[1].z < camera.znear) {
 				if (v[2].z < camera.znear) return false;
 				else clipp2(v[1], v[2], v[0]);
 			}

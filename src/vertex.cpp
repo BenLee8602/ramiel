@@ -43,7 +43,7 @@ namespace ramiel {
         temp.screenPos = screenPos + other.screenPos;
         temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
         temp.zinv = zinv + other.zinv;
-        temp.uv = uv + other.uv;
+        temp.texturePos = texturePos + other.texturePos;
         return temp;
     }
     
@@ -52,7 +52,7 @@ namespace ramiel {
         temp.screenPos = screenPos - other.screenPos;
         temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
         temp.zinv = zinv - other.zinv;
-        temp.uv = uv - other.uv;
+        temp.texturePos = texturePos - other.texturePos;
         return temp;
     }
     
@@ -61,7 +61,7 @@ namespace ramiel {
         temp.screenPos = screenPos * n;
         temp.cameraPos[Z] = cameraPos[Z] * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -71,7 +71,7 @@ namespace ramiel {
         temp.screenPos = screenPos * n;
         temp.cameraPos[Z] = cameraPos[Z] * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -79,7 +79,7 @@ namespace ramiel {
         screenPos += other.screenPos;
         cameraPos[Z] += other.cameraPos[Z];
         zinv += other.zinv;
-        uv += other.uv;
+        texturePos += other.texturePos;
         return *this;
     }
     
@@ -131,7 +131,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
         temp.color = color + other.color;
         temp.zinv = zinv + other.zinv;
-        temp.uv = uv + other.uv;
+        temp.texturePos = texturePos + other.texturePos;
         return temp;
     }
     
@@ -141,7 +141,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
         temp.color = color - other.color;
         temp.zinv = zinv + other.zinv;
-        temp.uv = uv + other.uv;
+        temp.texturePos = texturePos + other.texturePos;
         return temp;
     }
     
@@ -151,7 +151,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] * n;
         temp.color = color * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -162,7 +162,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] * n;
         temp.color = color * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -171,7 +171,7 @@ namespace ramiel {
         cameraPos[Z] += other.cameraPos[Z];
         color += other.color;
         zinv += other.zinv;
-        uv += other.uv;
+        texturePos += other.texturePos;
         return *this;
     }
     
@@ -228,7 +228,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
         temp.worldPos = worldPos + other.worldPos;
         temp.zinv = zinv + other.zinv;
-        temp.uv = uv + other.uv;
+        temp.texturePos = texturePos + other.texturePos;
         return temp;
     }
     
@@ -238,7 +238,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
         temp.worldPos = worldPos - other.worldPos;
         temp.zinv = zinv - other.zinv;
-        temp.uv = uv + other.uv;
+        temp.texturePos = texturePos + other.texturePos;
         return temp;
     }
     
@@ -248,7 +248,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] * n;
         temp.worldPos = worldPos * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -259,7 +259,7 @@ namespace ramiel {
         temp.cameraPos[Z] = cameraPos[Z] * n;
         temp.worldPos = worldPos * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -268,7 +268,7 @@ namespace ramiel {
         cameraPos[Z] += other.cameraPos[Z];
         worldPos += other.worldPos;
         zinv += other.zinv;
-        uv += other.uv;
+        texturePos += other.texturePos;
         return *this;
     }
     
@@ -331,7 +331,7 @@ namespace ramiel {
         temp.worldPos = worldPos + other.worldPos;
         temp.normal = normal + other.normal;
         temp.zinv = zinv + other.zinv;
-        temp.uv = uv + other.uv;
+        temp.texturePos = texturePos + other.texturePos;
         return temp;
     }
     
@@ -342,7 +342,7 @@ namespace ramiel {
         temp.worldPos = worldPos - other.worldPos;
         temp.normal = normal - other.normal;
         temp.zinv = zinv - other.zinv;
-        temp.uv = uv - other.uv;
+        temp.texturePos = texturePos - other.texturePos;
         return temp;
     }
     
@@ -353,7 +353,7 @@ namespace ramiel {
         temp.worldPos = worldPos * n;
         temp.normal = normal * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -365,7 +365,7 @@ namespace ramiel {
         temp.worldPos = worldPos * n;
         temp.normal = normal * n;
         temp.zinv = zinv * n;
-        temp.uv = uv * n;
+        temp.texturePos = texturePos * n;
         return temp;
     }
     
@@ -375,7 +375,7 @@ namespace ramiel {
         worldPos += other.worldPos;
         normal += other.normal;
         zinv += other.zinv;
-        uv += other.uv;
+        texturePos += other.texturePos;
         return *this;
     }
 
