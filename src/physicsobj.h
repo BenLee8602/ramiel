@@ -5,8 +5,8 @@
 
 #define RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS \
 bool dynamic = false,                   \
-Vec3f pos = vec3f_0,                    \
-Vec3f rot = vec3f_0,                    \
+Vec3f pos    = vec3f_0,                 \
+Rotation rot = Rotation(),              \
 Vec3f posVel = vec3f_0,                 \
 Vec3f rotVel = vec3f_0,                 \
 Vec3f posAcc = vec3f_0,                 \
@@ -24,7 +24,7 @@ namespace ramiel {
     #endif
         bool dynamic;
         Vec3f pos;
-        Vec3f rot;
+        Rotation rot;
         Vec3f posVel;
         Vec3f rotVel;
         Vec3f posAcc;
@@ -37,7 +37,7 @@ namespace ramiel {
         void step();
 
         inline const Vec3f& getPos() const { return pos; }
-        inline const Vec3f& getRot() const { return rot; }
+        inline const Rotation& getRot() const { return rot; }
     };
 
 

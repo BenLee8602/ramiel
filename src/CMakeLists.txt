@@ -6,12 +6,13 @@ add_library(${PROJECT_NAME} STATIC
     draw.cpp draw.h 
     effects.cpp effects.h 
     entity.cpp entity.h 
+    graphics.cpp graphics.h 
     light.cpp light.h 
     mesh.cpp mesh.h 
     objloader.cpp objloader.h 
     physics.cpp physics.h 
     physicsobj.cpp physicsobj.h 
-    graphics.cpp graphics.h 
+    rotation.cpp rotation.h 
     texture.cpp texture.h 
     triangle.h 
     vec.cpp vec.h

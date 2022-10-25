@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "vec.h"
+#include "rotation.h"
 
 namespace ramiel {
 
@@ -19,7 +20,7 @@ namespace ramiel {
             std::string filename,
             float scale = 1.0f,
             Vec3f pos = vec3f_0,
-            Vec3f rot = vec3f_0
+            Rotation rot = Rotation()
         );
 
         void getVPos(

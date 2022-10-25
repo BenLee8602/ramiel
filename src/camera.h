@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec.h"
+#include "rotation.h"
 
 namespace ramiel {
 
@@ -9,11 +10,7 @@ namespace ramiel {
 	public:
 	#endif
 		Vec3f pos; 
-		Vec3f rot;
-
-		Vec3f sin;
-		Vec3f cos;
-
+		Rotation rot;
 		float focalLen;
 
 	public:
@@ -26,7 +23,6 @@ namespace ramiel {
 			float znear = 0.2f,
 			float zfar = 1000.0f
 		);
-		void calcTrigValues();
 		void reset();
 		
 		void setFov(unsigned fov);

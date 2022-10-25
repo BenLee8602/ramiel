@@ -8,27 +8,16 @@ namespace ramiel {
 	static float camRotSpeed = 1.57079f;
 
 	Camera::Camera(unsigned fov, float znear, float zfar) {
-		this->pos = { 0.0f };
-		this->rot = { 0.0f };
-		calcTrigValues();
+		this->pos = vec3f_0;
+		this->rot = vec3f_0;
 		setFov(fov);
 		this->znear = znear;
 		this->zfar = zfar;
 	}
 
-	void Camera::calcTrigValues() {
-		sin[X] = std::sin(rot[X]);
-		sin[Y] = std::sin(rot[Y]);
-		sin[Z] = std::sin(rot[Z]);
-
-		cos[X] = std::cos(rot[X]);
-		cos[Y] = std::cos(rot[Y]);
-		cos[Z] = std::cos(rot[Z]);
-	}
-
 	void Camera::reset() {
-		pos = { 0.0f };
-		rot = { 0.0f };
+		pos = vec3f_0;
+		rot = vec3f_0;
 	}
 
 	void Camera::setFov(unsigned fov) {
@@ -59,30 +48,11 @@ namespace ramiel {
 	}
 
 	void Camera::rotate(float x, float y, float z) {
-		rot[X] += x;
-		rot[Y] += y;
-		rot[Z] += z;
+		rot = { x, y ,z };
 	}
 
 	Vec3f Camera::getCameraCoord(Vec3f in) const {
-		// translate
-		Vec3f out = in -= pos;
-
-		// z rot
-		out[X] = in[X] * cos[Z] + in[Y] * -sin[Z];
-		out[Y] = in[X] * sin[Z] + in[Y] * cos[Z];
-		in = out;
-
-		// y rot
-		out[X] = in[X] * cos[Y] + in[Z] * sin[Y];
-		out[Z] = in[X] * -sin[Y] + in[Z] * cos[Y];
-		in = out;
-
-		// x rot
-		out[Y] = in[Y] * cos[X] + in[Z] * -sin[X];
-		out[Z] = in[Y] * sin[X] + in[Z] * cos[X];
-		
-		return out;
+		return rot.rotate(in - pos);
 	}
 
 	Vec2 Camera::getScreenCoord(const Vec3f& in) const {
@@ -96,6 +66,10 @@ namespace ramiel {
 
 
 	void Camera::setControls(bool controls[12]) {
+		const Vec3f& sin = rot.getSin();
+		const Vec3f& cos = rot.getCos();
+		Vec3f newRot = rot;
+
 		float camPosSpeed_frame = camPosSpeed;
 		if (controls[0]) {
 			camPosSpeed_frame *= 10.0f;
@@ -144,23 +118,25 @@ namespace ramiel {
 
 		// turn right
 		if (controls[8]) {
-			rot[Y] -= physics::dtime * camRotSpeed;
+			newRot[Y] -= physics::dtime * camRotSpeed;
 		}
 
 		// turn left
 		if (controls[9]) {
-			rot[Y] += physics::dtime * camRotSpeed;
+			newRot[Y] += physics::dtime * camRotSpeed;
 		}
 
 		// turn down
 		if (controls[10]) {
-			if (rot[X] > -1.57079f) rot[X] -= physics::dtime * camRotSpeed;
+			if (newRot[X] > -1.57079f) newRot[X] -= physics::dtime * camRotSpeed;
 		}
 
 		// turn up
 		if (controls[11]) {
-			if (rot[X] < 1.57079f) rot[X] += physics::dtime * camRotSpeed;
+			if (newRot[X] < 1.57079f) newRot[X] += physics::dtime * camRotSpeed;
 		}
+
+		rot = newRot;
 	}
 
 }

@@ -12,6 +12,11 @@ namespace ramiel {
     }
 
 
+    inline Vec3f PixelShader::getAllLights(const Vec3f& pos, const Vec3f& normal) const {
+        return graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
+    }
+
+
     void PS_PerTri::init(Vertex_PerTri v[3]) {
         Vec3f pos = (v[0].worldPos + v[1].worldPos + v[2].worldPos) / 3.0f;
 		Vec3f normal = getNormal(v);

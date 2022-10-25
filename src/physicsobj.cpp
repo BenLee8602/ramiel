@@ -9,7 +9,7 @@ namespace ramiel {
 
     PhysicsObj::PhysicsObj(
         bool dynamic,
-        Vec3f pos, Vec3f rot,
+        Vec3f pos, Rotation rot,
         Vec3f posVel, Vec3f rotVel,
         Vec3f posAcc, Vec3f rotAcc
     ) {
@@ -49,7 +49,7 @@ namespace ramiel {
 
     Collider::Collider(
         bool dynamic,
-        Vec3f pos, Vec3f rot,
+        Vec3f pos, Rotation rot,
         Vec3f posVel, Vec3f rotVel,
         Vec3f posAcc, Vec3f rotAcc,
         float mass
