@@ -3,108 +3,140 @@
 #include <vector>
 #include "graphics.h"
 
-namespace ramiel::triangle {
 
-	template<class Vertex>
-	void raster2(Vertex v[3]) {
-		if (v[0].scrPos[Y] > v[1].scrPos[Y]) std::swap(v[0], v[1]);
-		if (v[0].scrPos[Y] > v[2].scrPos[Y]) std::swap(v[0], v[2]);
-		if (v[1].scrPos[Y] > v[2].scrPos[Y]) std::swap(v[1], v[2]);
+namespace ramiel {
 
-		Vertex dy1 = (v[2] - v[0]) / (v[2].scrPos[Y] - v[0].scrPos[Y]);
-		Vertex dy2 = (v[1] - v[0]) / (v[1].scrPos[Y] - v[0].scrPos[Y]);
-		Vertex* dy;
-		if (dy1.scrPos[X] > dy2.scrPos[X]) {
-			std::swap(dy1, dy2);
-			dy = &dy2;
+	template<typename Vertex, class PixelShader>
+	class Triangle {
+		Vertex v[3];
+		PixelShader& pixelShader;
+
+
+		public:
+		Triangle(
+			PixelShader& pixelShader
+			const Vertex& v1,
+			const Vertex& v2,
+			const Vertex& v3
+		) {
+			this->pixelShader = pixelShader;
+			v[0] = v1;
+			v[1] = v2;
+			v[2] = v3;
 		}
-		else dy = &dy1;
 
-		float y = std::max(0, v[0].scrPos[Y]);
-		float ymax = std::min<float>(v[1].scrPos[Y], graphics::size[Y]);
-		Vertex sc1 = v[0].scrPos[X] + dy1.scrPos[X] * (float)(y - v[0].scrPos[Y]);
-		Vertex sc2 = v[0].scrPos[X] + dy2.scrPos[X] * (float)(y - v[0].scrPos[Y]);
 
-		auto drawHalf = [&]() {
-			for (y; y < ymax; ++y) {
-				Vertex dx = (sc2 - sc1) / (sc2.scrPos[X] - sc1.scrPos[X]);
+		public:
+		void raster() {
+			if (v[0].scrPos[Y] > v[1].scrPos[Y]) std::swap(v[0], v[1]);
+			if (v[0].scrPos[Y] > v[2].scrPos[Y]) std::swap(v[0], v[2]);
+			if (v[1].scrPos[Y] > v[2].scrPos[Y]) std::swap(v[1], v[2]);
 
-				float x = std::max(0, sc1.scrPos[X]);
-				float xmax = std::min<float>(sc2.scrPos[X], graphics::size[X]);
-				Vertex p = sc1 + dx * (x - sc1.scrPos[X]);
+			Vertex dy1 = (v[2] - v[0]) / (v[2].scrPos[Y] - v[0].scrPos[Y]);
+			Vertex dy2 = (v[1] - v[0]) / (v[1].scrPos[Y] - v[0].scrPos[Y]);
+			Vertex* dy;
+			if (dy1.scrPos[X] > dy2.scrPos[X]) {
+				std::swap(dy1, dy2);
+				dy = &dy2;
+			}
+			else dy = &dy1;
 
-				for (x; x < xmax; ++x) {
-					if (p.z < graphics::depth[graphics::coordsToIndex(p.scrPos)]) {
-						graphics::pixels[graphics::coordsToIndex(p.scrPos)] = vec3f_255;
+			float y = std::max(0, v[0].scrPos[Y]);
+			float ymax = std::min<float>(v[1].scrPos[Y], graphics::size[Y]);
+			Vertex sc1 = v[0].scrPos[X] + dy1.scrPos[X] * (float)(y - v[0].scrPos[Y]);
+			Vertex sc2 = v[0].scrPos[X] + dy2.scrPos[X] * (float)(y - v[0].scrPos[Y]);
+
+			auto drawHalf = [&]() {
+				for (y; y < ymax; ++y) {
+					Vertex dx = (sc2 - sc1) / (sc2.scrPos[X] - sc1.scrPos[X]);
+
+					float x = std::max(0, sc1.scrPos[X]);
+					float xmax = std::min<float>(sc2.scrPos[X], graphics::size[X]);
+					Vertex p = sc1 + dx * (x - sc1.scrPos[X]);
+					size_t i = graphics::coordsToIndex(p.scrPos);
+
+					for (x; x < xmax; ++x) {
+						if (p.z < graphics::depth[i]) {
+							graphics::pixels[i] = pixelShader.draw(p);
+						}
+						++i;
+						p += dx;
 					}
-					p += dx;
+					sc1 += dy1;
+					sc2 += dy2;
 				}
-				sc1 += dy1;
-				sc2 += dy2;
-			}
-		};
+			};
 
-		drawHalf();
+			drawHalf();
 
-		ymax = std::min<float>(v[2].scrPos[Y], graphics::size[Y]);
-		*dy = (v[2] - v[1]) / (v[2].scrPos[Y] - v[1].scrPos[Y]);
-		sc1 = v[2] - dy1 * (float)(v[2].scrPos[Y] - y);
-		sc2 = v[2] - dy2 * (float)(v[2].scrPos[Y] - y);
+			ymax = std::min<float>(v[2].scrPos[Y], graphics::size[Y]);
+			*dy = (v[2] - v[1]) / (v[2].scrPos[Y] - v[1].scrPos[Y]);
+			sc1 = v[2] - dy1 * (float)(v[2].scrPos[Y] - y);
+			sc2 = v[2] - dy2 * (float)(v[2].scrPos[Y] - y);
 
-		drawHalf();
-	}
-
-
-	template<class Vertex>
-	void clipp1(Vertex& v0, Vertex& v1, Vertex& v2) {
-		// ratio of line clipped
-		float c1 = (graphics::camera.znear - v1.z) / (v0.z - v1.z);
-		float c2 = (graphics::camera.znear - v1.z) / (v2.z - v1.z);
-
-		// new tri formed from quad
-		Vertex vnew[3] = { v0, v1, v2 };
-
-		// clip and raster new tri
-		vnew[0] = v1 + (v0 - v1) * c1;
-		vnew[1] = v1 + (v2 - v1) * c2;
-		vnew[2] = v2;
-		v1 = vnew[0];
-
-		raster(vnew);
-	}
-
-
-	template<class Vertex>
-	void clipp2(Vertex& v0, Vertex& v1, Vertex& v2) {
-		// ratio of line clipped
-		float c1 = (graphics::camera.znear - v0.z) / (v1.z - v0.z);
-		float c2 = (graphics::camera.znear - v2.z) / (v1.z - v2.z);
-
-		// clip
-		v0 = v0 + (v1 - v0) * c1;
-		v2 = v2 + (v1 - v2) * c2;
-	}
-
-
-	template<class Vertex>
-	bool clipp(Vertex v[3]) {
-		using graphics::camera;
-		if (v[0].z < camera.znear) {
-			if (v[1].z < camera.znear) {
-				if (v[2].z < camera.znear) return false;
-				else clipp2(v[1], v[2], v[0]);
-			}
-			else if (v[2].z < camera.znear) clipp2(v[0], v[1], v[2]);
-			else clipp1(v[2], v[0], v[1]);
+			drawHalf();
 		}
-		else if (v[1].z < camera.znear) {
-			if (v[2].z < camera.znear) clipp2(v[2], v[0], v[1]);
-			else clipp1(v[0], v[1], v[2]);
-		}
-		else if (v[2].z < camera.znear) clipp1(v[1], v[2], v[0]);
-		return true;
-	}
 
+
+		private:
+		void clip1(Vertex& v0, Vertex& v1, Vertex& v2) {
+			// ratio of line clipped
+			float c1 = (graphics::camera.znear - v1.z) / (v0.z - v1.z);
+			float c2 = (graphics::camera.znear - v1.z) / (v2.z - v1.z);
+
+			// new tri formed from quad
+			Triangle newtri = Triangle(
+				pixelShader,
+				v0, v1, v2
+			);
+
+			// clip and raster new tri
+			newtri.v[0] = v1 + (v0 - v1) * c1;
+			newtri.v[1] = v1 + (v2 - v1) * c2;
+			newtri.v[2] = v2;
+			v1 = newtri.v[0];
+
+			newtri.raster();
+		}
+
+
+		private:
+		void clip2(Vertex& v0, Vertex& v1, Vertex& v2) {
+			// ratio of line clipped
+			float c1 = (graphics::camera.znear - v0.z) / (v1.z - v0.z);
+			float c2 = (graphics::camera.znear - v2.z) / (v1.z - v2.z);
+
+			// clip
+			v0 = v0 + (v1 - v0) * c1;
+			v2 = v2 + (v1 - v2) * c2;
+		}
+
+
+		public:
+		bool clip() {
+			using graphics::camera;
+			if (v[0].z < camera.znear) {
+				if (v[1].z < camera.znear) {
+					if (v[2].z < camera.znear) return false;
+					else clipp2(v[1], v[2], v[0]);
+				}
+				else if (v[2].z < camera.znear) clipp2(v[0], v[1], v[2]);
+				else clipp1(v[2], v[0], v[1]);
+			}
+			else if (v[1].z < camera.znear) {
+				if (v[2].z < camera.znear) clipp2(v[2], v[0], v[1]);
+				else clipp1(v[0], v[1], v[2]);
+			}
+			else if (v[2].z < camera.znear) clipp1(v[1], v[2], v[0]);
+			return true;
+		}
+
+	};
+
+}
+
+
+namespace ramiel::triangle {
 	
 	template<class Draw>
 	void raster(Draw& draw) {
