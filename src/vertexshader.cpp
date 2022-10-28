@@ -13,19 +13,19 @@ namespace ramiel {
             // backface culling
             if (dotProduct(
                 crossProduct(
-                    v[1].cameraPos - v[0].cameraPos,
-                    v[2].cameraPos - v[0].cameraPos
+                    vertices[triList[i][1]].cameraPos - vertices[triList[i][0]].cameraPos,
+                    vertices[triList[i][2]].cameraPos - vertices[triList[i][0]].cameraPos
                 ), v[0].cameraPos
-            ) >= 0.0f) return;
+            ) >= 0.0f) continue;
 
+            // assemble and draw triangle
             Triangle tri = {
                 pixelShader,
                 vertices[triList[i][0]],
                 vertices[triList[i][1]],
                 vertices[triList[i][2]]
             };
-            pixelShader.init();
-            
+            triangle.draw();
         }
     }
 

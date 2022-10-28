@@ -11,10 +11,7 @@ namespace ramiel {
         std::vector<Vec3f> v_pos;
 		std::vector<Vec3f> v_normal;
 		std::vector<Vec2f> v_txt;
-
 		std::vector<Vec3u> tri;
-		std::vector<Vec3u> tri_txt;
-
     public:
         Mesh(
             std::string filename,
@@ -22,15 +19,6 @@ namespace ramiel {
             Vec3f pos = vec3f_0,
             Rotation rot = Rotation()
         );
-
-        void getVPos(
-            std::vector<Vec3f>& v_pos,
-            float scale,
-            const Vec3f& pos,
-            const Vec3f& rot
-        ) const;
-        void getVNormal(std::vector<Vec3f>& v_normal, Vec3f rot) const;
-
         const std::vector<Vec3f>& getVPos() const;
         const std::vector<Vec3f>& getVNormal() const;
         const std::vector<Vec2f>& getVTxt() const;
