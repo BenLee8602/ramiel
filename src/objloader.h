@@ -4,6 +4,16 @@
 #include <vector>
 #include "vec.h"
 
+
+namespace ramiel {
+
+    struct ObjLoader {
+        void load();
+    };
+
+}
+
+
 namespace ramiel::objloader {
 
     std::vector<size_t> splitv(const std::string& in);

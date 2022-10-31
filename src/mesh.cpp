@@ -4,7 +4,7 @@
 
 namespace ramiel {
 
-    Mesh::Mesh(std::string filename, float scale, Vec3f pos, Rotation rot) {
+    MeshBase::Mesh(std::string filename, float scale, Vec3f pos, Rotation rot) {
         std::vector<Vec3u> tri_txt;
         std::vector<Vec2f> v_txt_temp;
 
@@ -50,9 +50,7 @@ namespace ramiel {
     }
 
 
-    const std::vector<Vec3f>& Mesh::getVPos()    const { return v_pos; }
-    const std::vector<Vec3f>& Mesh::getVNormal() const { return v_normal; }
-    const std::vector<Vec2f>& Mesh::getVTxt()    const { return v_txt; }
-    const std::vector<Vec3u>& Mesh::getTri()     const { return tri; }
+    
+    const std::vector<Vec3u>& MeshBase::getTri() const { return tri; }
 
 }

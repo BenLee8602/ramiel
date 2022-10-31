@@ -5,9 +5,8 @@
 
 namespace ramiel {
 
-    template<typename Vertex, class PS>
-    static void drawAllTriangles(Mesh* mesh, const std::vector<Vertex>& vertices, PixelShader* ps_ptr) {
-        PS pixelShader = ps_ptr->get();
+    template<typename Vertex, class PixelShader>
+    static void drawAllTriangles(MeshBase* mesh, const std::vector<Vertex>& vertices, PixelShader& pixelShader) {
         const std::vector<Vec3u>& triList = mesh->getTri();
         for (size_t i = 0; i < triList.size(); ++i) {
             // backface culling
@@ -30,147 +29,91 @@ namespace ramiel {
     }
 
 
-    void VS_PerTri(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerTri> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            vertices[i].worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(vertices[i].worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-        }
+    Vertex_Out_PerTri VS_PerTri::operator()(const Vertex_In_P& in) const {
+        Vertex_Out_PerTri out;
+        out.worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        out.cameraPos = graphics::camera.getCameraCoord(out.worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        return out;
     }
 
 
-    void VS_PerTri_Textured(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-        const std::vector<Vec2f>& v_txt = mesh->getVTxt();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerTri_Textured> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            vertices[i].worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(vertices[i].worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].zinv = 1.0f / vertices[i].cameraPos[Z];
-            vertices[i].texturePos = v_txt[i];
-        }
+    Vertex_Out_PerTri_Textured VS_PerTri_Textured::operator()(const Vertex_In_PT& in) const {
+        Vertex_Out_PerTri_Textured out;
+        out.worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        out.cameraPos = graphics::camera.getCameraCoord(out.worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        out.zinv = 1.0f / out.cameraPos[Z];
+        out.texturePos = in.txt;
+        return out;
     }
 
     
-    void VS_PerVertex(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-        const std::vector<Vec3f>& v_normal = mesh->getVNormal();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerVertex> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            Vec3f worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            Vec3f normal = rot.rotate(v_normal[i]);
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].color = pixelShader.getAllLights(worldPos, normal);
-        }
+    Vertex_Out_PerVertex VS_PerVertex::operator()(const Vertex_In_PN& in) const {
+        Vertex_Out_PerVertex out;
+        Vec3f worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        Vec3f normal = phys.getRot().rotate(in.nml);
+        out.cameraPos = graphics::camera.getCameraCoord(worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        //out.color = pixelShader.getAllLights(worldPos, normal);
+        return out;
     }
 
     
-    void VS_PerVertex_Textured(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-        const std::vector<Vec3f>& v_normal = mesh->getVNormal();
-        const std::vector<Vec2f>& v_txt = mesh->getVTxt();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerVertex_Textured> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            Vec3f worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            Vec3f normal = rot.rotate(v_normal[i]);
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].color = pixelShader.getAllLights(worldPos, normal);
-            vertices[i].zinv = 1.0f / vertices[i].cameraPos[Z];
-            vertices[i].texturePos = v_txt[i];
-        }
+    Vertex_Out_PerVertex_Textured VS_PerVertex_Textured::operator()(const Vertex_In_PNT& in) const {
+        Vertex_Out_PerVertex_Textured out;
+        Vec3f worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        Vec3f normal = phys.getRot().rotate(in.nml);
+        out.cameraPos = graphics::camera.getCameraCoord(worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        //out.color = pixelShader.getAllLights(worldPos, normal);
+        out.zinv = 1.0f / out.cameraPos[Z];
+        out.texturePos = in.txt;
+        return out;
     }
 
     
-    void VS_PerPixel(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerPixel> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            vertices[i].worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(vertices[i].worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].zinv = 1.0f / vertices[i].cameraPos[Z];
-        }
+    Vertex_Out_PerPixel VS_PerPixel::operator()(const Vertex_In_P& in) const {
+        Vertex_Out_PerPixel out;
+        out.worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        out.cameraPos = graphics::camera.getCameraCoord(out.worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        out.zinv = 1.0f / out.cameraPos[Z];
+        return out;
     }
 
     
-    void VS_PerPixel_Textured(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-        const std::vector<Vec2f>& v_txt = mesh->getVTxt();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerPixel_Textured> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            vertices[i].worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(vertices[i].worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].zinv = 1.0f / vertices[i].cameraPos[Z];
-            vertices[i].texturePos = v_txt[i];
-        }
+    Vertex_Out_PerPixel_Textured VS_PerPixel_Textured::operator()(const Vertex_In_PT& in) const {
+        Vertex_Out_PerPixel_Textured out;
+        out.worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        out.cameraPos = graphics::camera.getCameraCoord(out.worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        out.zinv = 1.0f / out.cameraPos[Z];
+        out.texturePos = in.txt;
+        return out;
     }
 
     
-    void VS_PerPixel_Smooth(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-        const std::vector<Vec3f>& v_normal = mesh->getVNormal();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerPixel_Smooth> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            vertices[i].worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(vertices[i].worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].normal = rot.rotate(v_normal[i]);
-            vertices[i].zinv = 1.0f / vertices[i].cameraPos[Z];
-        }
+    Vertex_Out_PerPixel_Smooth VS_PerPixel_Smooth::operator()(const Vertex_In_PN& in) const {
+        Vertex_Out_PerPixel_Smooth out;
+        out.worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        out.cameraPos = graphics::camera.getCameraCoord(out.worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        out.normal = phys.getRot().rotate(in.nml);
+        out.zinv = 1.0f / out.cameraPos[Z];
+        return out;
     }
 
     
-    void VS_PerPixel_Smooth_Textured(VERTEX_SHADER_ARGS) {
-		const std::vector<Vec3f>& v_pos = mesh->getVPos();
-        const std::vector<Vec3f>& v_normal = mesh->getVNormal();
-        const std::vector<Vec2f>& v_txt = mesh->getVTxt();
-
-        const Vec3f& pos = physicsObj->getPos();
-        const Rotation& rot = physicsObj->getRot();
-
-        std::vector<Vertex_PerPixel_Smooth_Textured> vertices(v_pos.size());
-        for (size_t i = 0; i < v_pos.size(); ++i) {
-            vertices[i].worldPos = rot.rotate(v_pos[i]) * scale + pos;
-            vertices[i].cameraPos = graphics::camera.getCameraCoord(vertices[i].worldPos);
-            vertices[i].screenPos = graphics::camera.getScreenCoord(vertices[i].cameraPos);
-            vertices[i].normal = rot.rotate(v_normal[i]);
-            vertices[i].zinv = 1.0f / vertices[i].cameraPos[Z];
-            vertices[i].texturePos = v_txt[i];
-        }
+    Vertex_Out_PerPixel_Smooth_Textured VS_PerPixel_Smooth_Textured::operator()(const Vertex_In_PNT& in) const {
+        Vertex_Out_PerPixel_Smooth_Textured out;
+        out.worldPos = phys.getRot().rotate(in.pos) * scale + phys.getPos();
+        out.cameraPos = graphics::camera.getCameraCoord(out.worldPos);
+        out.screenPos = graphics::camera.getScreenCoord(out.cameraPos);
+        out.normal = phys.getRot().rotate(in.nml);
+        out.zinv = 1.0f / out.cameraPos[Z];
+        out.texturePos = in.txt;
+        return out;
     }
 
 }

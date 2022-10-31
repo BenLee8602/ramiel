@@ -8,7 +8,7 @@ using namespace ramiel;
 
 
 TEST_CASE("mesh constructor", "[mesh]") {
-    Mesh mesh(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj", 1.1f, { -8.5f, -6.8f, 0.4f }, { -3.9f, 7.9f, -9.6f });
+    MeshBase mesh(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj", 1.1f, { -8.5f, -6.8f, 0.4f }, { -3.9f, 7.9f, -9.6f });
     std::vector<Vec3f> v_pos_expected = {
         { -9.92874f, -7.38299f,  1.19043f  },
         { -8.82991f, -7.34819f,  1.22716f  },
@@ -37,7 +37,7 @@ TEST_CASE("mesh constructor", "[mesh]") {
 }
 
 TEST_CASE("get vpos", "[mesh]") {
-    Mesh mesh(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj");
+    MeshBase mesh(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj");
     std::vector<Vec3f> v_pos;
     std::vector<Vec3f> v_pos_expected = {
         { 8.89438f, 9.62485f, 4.20835f },
@@ -58,7 +58,7 @@ TEST_CASE("get vpos", "[mesh]") {
 }
 
 TEST_CASE("get vnormal", "[mesh]") {
-    Mesh mesh(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj");
+    MeshBase mesh(std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj");
     std::vector<Vec3f> v_normal;
     std::vector<Vec3f> v_normal_expected = {
         { -0.81327f,  0.35183f, -0.46345f },

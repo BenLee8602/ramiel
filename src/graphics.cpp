@@ -14,7 +14,7 @@ namespace ramiel {
 	std::vector<Vec3f> graphics::pixels;
 	std::vector<float> graphics::depth;
 
-	std::unordered_map<std::string, Mesh*>    graphics::meshes;
+	std::unordered_map<std::string, MeshBase*>    graphics::meshes;
 	std::unordered_map<std::string, Texture*> graphics::textures;
 
 	std::vector<Entity*> graphics::entities;
@@ -130,7 +130,7 @@ namespace ramiel {
 
 	bool graphics::loadMesh(std::string name, std::string filename, float scale, Vec3f pos, Vec3f rot) {
 		if (!std::ifstream(filename).good()) return false;
-		meshes[std::string(name)] = new Mesh(filename, scale, pos, rot);
+		meshes[std::string(name)] = new MeshBase(filename, scale, pos, rot);
 		return true;
 	}
 

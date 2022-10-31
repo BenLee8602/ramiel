@@ -18,7 +18,7 @@ namespace ramiel::graphics {
 	extern std::vector<Vec3f> pixels;
 	extern std::vector<float> depth;
 
-	extern std::unordered_map<std::string, Mesh*>   meshes;
+	extern std::unordered_map<std::string, MeshBase*>   meshes;
 	extern std::unordered_map<std::string, Texture*> textures;
 
 	extern std::vector<Entity*> entities;
