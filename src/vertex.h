@@ -4,24 +4,21 @@
 
 namespace ramiel {
 
-    struct Vertex_In_P {
+    struct Vertex_Mesh {
         Vec3f pos;
     };
 
-    struct Vertex_In_PN {
-        Vec3f pos;
-        Vec3f nml;
+    struct Vertex_Mesh_T : public Vertex_Mesh {
+        Vec2f texture;
     };
 
-    struct Vertex_In_PT {
-        Vec3f pos;
-        Vec3f txt;
+    struct Vertex_Mesh_N : public Vertex_Mesh {
+        Vec3f normal;
     };
 
-    struct Vertex_In_PNT {
-        Vec3f pos;
-        Vec3f nml;
-        Vec3f txt;
+    struct Vertex_Mesh_TN : public Vertex_Mesh {
+        Vec2f texture;
+        Vec3f normal;
     };
 
 

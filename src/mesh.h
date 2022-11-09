@@ -2,9 +2,8 @@
 
 #include <string>
 #include <vector>
-#include "vec.h"
+#include "objloader.h"
 #include "rotation.h"
-#include "vertex.h"
 
 namespace ramiel {
 
@@ -25,7 +24,12 @@ namespace ramiel {
     class Mesh : public MeshBase {
         std::vector<Vertex> vertices;
     public:
-        Mesh();
+        Mesh(
+            std::string filename, Vertex(conv*)(const objloader::Vertex),
+            float scale = 1.0f, Vec3f pos = vec3f_0, Rotation rot = Rotation()
+        ) {
+            objloader::load(filename, vertices, )
+        }
         const std::vector<Vertex>& getVertices() const {
             return vertices;
         }

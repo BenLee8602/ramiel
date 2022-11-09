@@ -2,6 +2,52 @@
 #include <sstream>
 #include "objloader.h"
 
+
+namespace ramiel {
+
+    char junk;
+
+    Vec3f parseV3(std::istringstream& str) {
+        Vec3f v;
+        str >> v[0] >> v[1] >> v[2];
+        return v;
+    }
+
+    Vec2f parseV2(std::istringstream& str) {
+        Vec2f v;
+        str >> v[0] >> v[1];
+        return v;
+    }
+
+    
+    Vec3u parse_v(std::istringstream& str) {
+        Vec3u out;
+        str >> out[0];
+        return out;
+    }
+
+    Vec3u parse_vt(std::istringstream& str) {
+        Vec3u out;
+        str >> out[0] >> junk >> out[1];
+        return out;
+    }
+
+    Vec3u parse_vn(std::istringstream& str) {
+        Vec3u out;
+        str >> out[0] >> junk >> junk >> out[1];
+        return out;
+    }
+    
+    Vec3u parse_vtn(std::istringstream& str) {
+        Vec3u out;
+        str >> out[0] >> junk >> out[1] >> junk >> out[2];
+        return out;
+    }
+    
+}
+
+
+
 namespace ramiel::objloader {
 
     std::vector<size_t> splitv(const std::string& in) {
@@ -48,7 +94,7 @@ namespace ramiel::objloader {
 
         std::string line;
         while (std::getline(file, line)) {
-            std::stringstream stream(line);
+            std::stringstream stream(std::move(line));
             
             std::string type;
             stream >> type;

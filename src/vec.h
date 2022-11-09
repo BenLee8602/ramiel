@@ -97,8 +97,13 @@ namespace ramiel {
 	enum rgb : size_t { R, G, B };
 	enum uv  : size_t { U, V };
 
-	const Vec3f vec3f_0 = { 0.0f, 0.0f, 0.0f };
-	const Vec3f vec3f_255 = { 255.0f, 255.0f, 255.0f };
+	constexpr Vec2  vec2_0  = { 0, 0 };
+	constexpr Vec3  vec3_0  = { 0, 0, 0 };
+	constexpr Vec2u vec2u_0 = { 0u, 0u };
+	constexpr Vec3u vec3u_0 = { 0u, 0u, 0u };
+	constexpr Vec2f vec2f_0 = { 0.0f, 0.0f };
+	constexpr Vec3f vec3f_0 = { 0.0f, 0.0f, 0.0f };
+	constexpr Vec3f vec3f_255 = { 255.0f, 255.0f, 255.0f };
 
 
 	float getMagnitude(const Vec3f& v);
