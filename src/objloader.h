@@ -23,61 +23,93 @@ namespace ramiel {
     class ObjLoader {
         static_assert(
             std::is_base_of_v<Vertex_Mesh, Vertex>,
-            "invalid vertex type given to obj loader"
+            "objloader: invalid vertex type"
         );
 
-    protected:
-        std::string filename;
-        std::vector<Vec3u>& triangles;
-        std::vector<Vertex>& vertices;
+        typedef void(ObjLoader::*LoadLine)(std::string&, std::istringstream&);
+        typedef void(ObjLoader::*SetVertex)(const Vec3u&);
+
+        std::vector<Vec3u>& f;
+        std::vector<Vertex>& v;
+        std::vector<Vec2f> vt;
+        std::vector<Vec3f> vn;
+
         size_t fCount;
         size_t vCount;
         size_t vtCount;
         size_t vnCount;
+
         std::vector<uint32_t> polygon;
+
+        LoadLine loadLine;
         ParsePolygonVertex parsePolygonVertex;
+        SetVertex setVertex;
 
-        virtual void allocate() {
-            triangles.reserve(fCount);
-            vertices.reserve(vCount);
-        }
 
-        virtual Vertex constructVertex(std::istringstream& str) const {
-            return { parseV3(str) };
-        }
-
-        virtual void setVertexAttributes(const Vec3u& v) {
-            return;
-        }
-
-        virtual void loadLine(std::string& type, std::istringstream& str) {
-            if (type == "v") vertices.emplace_back(constructVertex(str));
+        void loadLine_v(std::string& type, std::istringstream& str) {
+            if (type == "v") v.emplace_back(Vertex(parseV3(str)));
             else if (type == "f") {
                 while (str.rdbuf()->in_avail()) {
-                    Vec3u v = parsePolygonVertex(str) - 1;
-                    polygon.emplace_back(v[0]);
-                    setVertexAttributes(v);
+                    Vec3u i = parsePolygonVertex(str) - 1;
+                    polygon.emplace_back(i[0]);
+                    (this->*setVertex)(i);
                 }
                 for (size_t i = 1; i < polygon.size() - 1; ++i)
-                    triangles.emplace_back(Vec3u{ polygon[0], polygon[i], polygon[i + 1] });
+                    f.emplace_back(Vec3u{ polygon[0], polygon[i], polygon[i + 1] });
                 polygon.clear();
             }
         }
 
+        void loadLine_vt(std::string& type, std::istringstream& str) {
+            if (type == "vt") vt.emplace_back(parseV2(str));
+            else loadLine_v(type, str);
+        }
+
+        void loadLine_vn(std::string& type, std::istringstream& str) {
+            if (type == "vn") vn.emplace_back(parseV3(str));
+            else loadLine_v(type, str);
+        }
+
+        void loadLine_vtn(std::string& type, std::istringstream& str) {
+            if (type == "vt") vt.emplace_back(parseV2(str));
+            else if (type == "vn") vn.emplace_back(parseV3(str));
+            else loadLine_v(type, str);
+        }
+
+
+        void setVertex_v(const Vec3u& i) {
+            return;
+        }
+
+        void setVertex_vt(const Vec3u& i) {
+            v[i[0]].setTexture(vt[i[1]]);
+        }
+
+        void setVertex_vn(const Vec3u& i) {
+            v[i[0]].setNormal(vn[i[2]]);
+        }
+
+        void setVertex_vtn(const Vec3u& i) {
+            v[i[0]].setTexture(vt[i[1]]);
+            v[i[0]].setNormal(vn[i[2]]);
+        }
+
+
     public:
         ObjLoader(
-            std::string filename,
-            std::vector<Vec3u>& triangles,
-            std::vector<Vertex>& vertices
-        ) : 
-            filename(filename),
-            triangles(triangles),
-            vertices(vertices),
+            const std::string& filename,
+            std::vector<Vec3u>& f,
+            std::vector<Vertex>& v,
+            bool loadvt, bool loadvn
+        ) :
+            f(f), v(v),
             fCount(0),
             vCount(0),
             vtCount(0),
             vnCount(0),
-            parsePolygonVertex(nullptr)
+            loadLine(nullptr),
+            parsePolygonVertex(nullptr),
+            setVertex(nullptr)
         {
             std::ifstream file(filename);
             if (!file.is_open()) return;
@@ -102,146 +134,47 @@ namespace ramiel {
             }
             else if (vnCount) parsePolygonVertex = parsePolygonVertex_vn;
             else parsePolygonVertex = parsePolygonVertex_v;
-        }
 
+            v.reserve(vCount);
+            f.reserve(fCount);
 
-        void load() {
-            std::ifstream file(filename);
-            if (!file.is_open()) return;
-            allocate();
+            bool vtGood = (loadvt && vtCount && (
+                std::is_base_of_v<Vertex_Mesh_T, Vertex> ||
+                std::is_base_of_v<Vertex_Mesh_TN, Vertex>
+            ));
+            bool vnGood = (loadvn && vtCount && (
+                std::is_base_of_v<Vertex_Mesh_N, Vertex> ||
+                std::is_base_of_v<Vertex_Mesh_TN, Vertex>
+            ));
 
-            std::string line;
+            if (vtGood) {
+                vt.reserve(vtCount);
+                if (vnGood) {
+                    vn.reserve(vnCount);
+                    loadLine  = loadLine_vtn;
+                    setVertex = setVertex_vtn;
+                } else {
+                    loadLine  = loadLine_vt;
+                    setVertex = setVertex_vt;
+                }
+            } else if (vnGood) {
+                vn.reserve(vnCount);
+                loadLine  = loadLine_vn;
+                setVertex = setVertex_vn;
+            } else {
+                loadLine  = loadLine_v;
+                setVertex = setVertex_v;
+            }
+
+            file.clear();
+            file.seekg(0, std::ios::beg);
+
             while (std::getline(file, line)) {
                 std::istringstream str(std::move(line));
                 str >> line;
-                loadLine(line, str);
+                (this->*loadLine)(line, str);
             }
         }
-    };
-
-
-    template<class Vertex>
-    class ObjLoader_T : public ObjLoader<Vertex> {
-        static_assert(
-            std::is_base_of_v<Vertex_Mesh_T, Vertex>,
-            "invalid vertex type given to obj loader"
-        );
-        using ObjLoader<Vertex>::vertices;
-        using ObjLoader<Vertex>::polygon;
-        using ObjLoader<Vertex>::vtCount;
-
-    protected:
-        std::vector<Vec2f> textures;
-
-        virtual void allocate() override {
-            ObjLoader<Vertex>::allocate();
-            textures.reserve(vtCount);
-        }
-
-        virtual Vertex constructVertex(std::istringstream& str) const override {
-            return { parseV3(str), vec2f_0 };
-        }
-
-        virtual void setVertexAttributes(const Vec3u& v) override {
-            if (textures.capacity() && textures[v[1]]) vertices[v[0]].texture = textures[v[1]];
-        }
-
-        virtual void loadLine(std::string& type, std::istringstream& str) override {
-            ObjLoader<Vertex>::loadLine(type, str);
-            if (type == "vt") textures.emplace_back(parseV2(str));
-        }
-    
-    public:
-        ObjLoader_T(
-            std::string filename,
-            std::vector<Vec3u>& triangles,
-            std::vector<Vertex>& vertices
-        ) : ObjLoader<Vertex>(filename, triangles, vertices) {}
-    };
-
-
-    template<class Vertex>
-    class ObjLoader_N : public ObjLoader<Vertex> {
-        static_assert(
-            std::is_base_of_v<Vertex_Mesh_N, Vertex>,
-            "invalid vertex type given to obj loader"
-        );
-        using ObjLoader<Vertex>::vertices;
-        using ObjLoader<Vertex>::polygon;
-        using ObjLoader<Vertex>::vnCount;
-
-    protected:
-        std::vector<Vec3f> normals;
-
-        virtual void allocate() override {
-            ObjLoader<Vertex>::allocate();
-            normals.reserve(vnCount);
-        }
-
-        virtual Vertex constructVertex(std::istringstream& str) const override {
-            return { parseV3(str), vec3f_0 };
-        }
-
-        virtual void setVertexAttributes(const Vec3u& v) override {
-            if (normals.capacity() && normals[v[2]]) vertices[v[0]].normal = normals[v[2]];
-        }
-
-        virtual void loadLine(std::string& type, std::istringstream& str) override {
-            ObjLoader<Vertex>::loadLine(type, str);
-            if (type == "vn") normals.emplace_back(parseV3(str));
-        }
-    
-    public:
-        ObjLoader_N(
-            std::string filename,
-            std::vector<Vec3u>& triangles,
-            std::vector<Vertex>& vertices
-        ) : ObjLoader<Vertex>(filename, triangles, vertices) {}
-    };
-
-
-    template<class Vertex>
-    class ObjLoader_TN : public ObjLoader<Vertex> {
-        static_assert(
-            std::is_base_of_v<Vertex_Mesh_TN, Vertex>,
-            "invalid vertex type given to obj loader"
-        );
-        using ObjLoader<Vertex>::vertices;
-        using ObjLoader<Vertex>::polygon;
-        using ObjLoader<Vertex>::vtCount;
-        using ObjLoader<Vertex>::vnCount;
-
-    protected:
-        std::vector<Vec2f> textures;
-        std::vector<Vec3f> normals;
-
-        virtual void allocate() override {
-            ObjLoader<Vertex>::allocate();
-            textures.reserve(vtCount);
-            normals.reserve(vnCount);
-        }
-
-        virtual Vertex constructVertex(std::istringstream& str) const override {
-            return { parseV3(str), vec2f_0, vec3f_0 };
-        }
-
-        virtual void setVertexAttributes(const Vec3u& v) override {
-            if (textures.capacity() && textures[v[1]]) vertices[v[0]].texture = textures[v[1]];
-            if (normals.capacity()  && normals[v[2]])  vertices[v[0]].normal  = normals[v[2]];
-        }
-
-        virtual void loadLine(std::string& type, std::istringstream& str) override {
-            ObjLoader<Vertex>::loadLine(type, str);
-            if (type == "vt") textures.emplace_back(parseV2(str));
-            else if (type == "vn") normals.emplace_back(parseV3(str));
-        }
-    
-    public:
-        ObjLoader_TN(
-            std::string filename,
-            std::vector<Vec3u>& triangles,
-            std::vector<Vertex>& vertices
-        ) : ObjLoader<Vertex>(filename, triangles, vertices) {}
     };
 
 }
