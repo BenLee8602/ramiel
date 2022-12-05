@@ -15,16 +15,8 @@ namespace ramiel {
         cos = { std::cos(rot[X]), std::cos(rot[Y]), std::cos(rot[Z]) };
     }
 
-
-    Rotation& Rotation::operator=(const Vec3f& rot) {
-        set(rot);
-    }
-
-
-    Rotation& Rotation::operator+=(const Vec3f& rot) {
-        set(this->rot + rot);
-    }
-
+    Rotation& Rotation::operator=(const Vec3f& rot) { set(rot); }
+    Rotation& Rotation::operator+=(const Vec3f& rot) { set(this->rot + rot); }
     
     void Rotation::set(const Vec3f& rot) {
         this->rot = rot;
@@ -33,31 +25,12 @@ namespace ramiel {
     }
 
 
-    Rotation::operator bool() const {
-        return rot;
-    }
+    Rotation::operator bool()    const { return rot; }
+    Rotation::operator Vec3f()   const { return rot; }
+    const Vec3f& Rotation::get() const { return rot; }
 
-
-    
-    Rotation::operator Vec3f() const {
-        return rot;
-    }
-
-    
-    const Vec3f& Rotation::get() const {
-        return rot;
-    }
-
-
-    const Vec3f& Rotation::getSin() const {
-        return sin;
-    }
-
-
-    
-    const Vec3f& Rotation::getCos() const {
-        return cos;
-    }
+    const Vec3f& Rotation::getSin() const { return sin; }
+    const Vec3f& Rotation::getCos() const { return cos; }
 
     
     Vec3f Rotation::rotate(Vec3f in) const {

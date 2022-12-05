@@ -7,47 +7,21 @@ namespace ramiel {
 
 	Camera graphics::camera;
 
-	Vec2u  graphics::size = { 0 };
-	Vec2u  graphics::mid = { 0 };
+	Vec2u  graphics::size = vec2u_0;
+	Vec2u  graphics::mid = vec2u_0;
 	size_t graphics::bufferSize = 0;
 
 	std::vector<Vec3f> graphics::pixels;
 	std::vector<float> graphics::depth;
 
-	std::unordered_map<std::string, MeshBase*>    graphics::meshes;
-	std::unordered_map<std::string, Texture*> graphics::textures;
+	std::unordered_map<std::string, MeshBase*> graphics::meshes;
+	std::unordered_map<std::string, Texture*>  graphics::textures;
 
-	std::vector<Entity*> graphics::entities;
-	std::vector<Light*>  graphics::lights;
-	std::vector<Effect>  graphics::effects;
+	std::vector<EntityBase*> graphics::entities;
+	std::vector<Light*> graphics::lights;
+	std::vector<Effect> graphics::effects;
 	Vec3f graphics::light_ambient = vec3f_0;
 	Vec3f graphics::bg_color = vec3f_0;
-
-
-    void graphics::drawEntities() {
-		const size_t nthreads = std::min<size_t>(entities.size(), std::thread::hardware_concurrency());
-		if (!nthreads) return;
-		const size_t ePerThread = entities.size() / nthreads;
-		std::thread* threads = new std::thread[nthreads];
-
-		auto drawPortion = [](size_t begin, size_t end) {
-			for (size_t i = begin; i < end; i++) {
-				(entities[i]->*(entities[i]->draw))();
-			}
-		};
-
-		size_t begin = 0;
-		for (size_t i = 0; i < nthreads - 1; i++) {
-			threads[i] = std::thread(drawPortion, begin, begin + ePerThread);
-			begin += ePerThread;
-		}
-		threads[nthreads - 1] = std::thread(drawPortion, begin, entities.size());
-		for (size_t i = 0; i < nthreads; i++) {
-			threads[i].join();
-		}
-
-		delete[] threads;
-	}
 
 
 	Vec3f graphics::getAllLights(
@@ -72,7 +46,7 @@ namespace ramiel {
 		mid = size / 2;
 		bufferSize = size[X] * size[Y];
 		pixels = std::vector<Vec3f>(bufferSize);
-		depth = std::vector<float>(bufferSize);
+		depth  = std::vector<float>(bufferSize);
 		setFov(90U);
 	}
 
@@ -102,10 +76,7 @@ namespace ramiel {
 	void graphics::renderFrame() {
 		std::fill(pixels.begin(), pixels.end(), bg_color);
 		std::fill(depth.begin(), depth.end(), camera.zfar);
-		
-		camera.calcTrigValues();
-		drawEntities();
-
+		for (auto& e : entities) e->draw();
 		for (auto& e : effects) e(size, bufferSize, pixels.begin(), depth.begin());
 		for (auto& p : pixels) c_min(p);
 	}
@@ -139,83 +110,6 @@ namespace ramiel {
 		if (!std::ifstream(filename).good()) return false;
 		if (type != 'c' && type != 'n') return false;
 		textures[std::string(name)] = new Texture(filename, type);
-		return true;
-	}
-
-
-	ShadingType_ mapShadingType(ShadingType shading) {
-		switch (shading) {
-			case ShadingType::FLAT:    return ShadingType_::FLAT;
-			case ShadingType::VERTEX:  return ShadingType_::VERTEX;
-			case ShadingType::PIXEL:   return ShadingType_::PIXEL;
-			case ShadingType::PIXEL_S: return ShadingType_::PIXEL_S;
-		}
-		return ShadingType_::FLAT;
-	}
-
-
-	bool graphics::addEntity(
-		std::string mesh,
-		ShadingType shading,
-		Vec3f color,
-		std::string texture,
-		std::string normalMap,
-		unsigned specularExponent,
-		float specularIntensity,
-		Vec3f pos, Vec3f rot, float scale,
-		bool dynamic,
-		Vec3f posVel, Vec3f rotVel,
-		Vec3f posAcc, Vec3f rotAcc,
-		ColliderType colliderType, float mass,
-		float hbxrad,
-		Vec3f size
-	) {
-		if (!meshes[mesh]) return false;
-		
-		PhysicsObj* physicsObj;
-		switch(colliderType) {
-			case ColliderType::NONE: {
-				physicsObj = new PhysicsObj(
-					dynamic,
-					pos, rot,
-					posVel, rotVel,
-					posAcc, rotAcc
-				);
-				break;
-			}
-			case ColliderType::SPHERE: {
-				physicsObj = new SphereCollider(
-					dynamic,
-					pos, rot,
-					posVel, rotVel,
-					posAcc, rotAcc,
-					mass, hbxrad
-				);
-				break;
-			}
-			case ColliderType::AABB: {
-				physicsObj = new AabbCollider(
-					size,
-					dynamic,
-					pos, rot,
-					posVel, rotVel,
-					posAcc, rotAcc,
-					mass
-				);
-				break;
-			}
-		}
-
-		entities.push_back(new Entity(
-			meshes[mesh], scale,
-			texture.length() ? textures[texture] : nullptr,
-			normalMap.length() ? textures[normalMap] : nullptr,
-			mapShadingType(shading),
-			color,
-			specularExponent,
-			specularIntensity,
-			physicsObj
-		));
 		return true;
 	}
 

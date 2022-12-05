@@ -1,5 +1,4 @@
 #include "pixelshader.h"
-#include "graphics.h"
 
 namespace ramiel {
 
@@ -12,15 +11,10 @@ namespace ramiel {
     }
 
 
-    inline Vec3f PixelShader::getAllLights(const Vec3f& pos, const Vec3f& normal) const {
-        return graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
-    }
-
-
     void PS_PerTri::init(Vertex_Out_PerTri v[3]) {
         Vec3f pos = (v[0].worldPos + v[1].worldPos + v[2].worldPos) / 3.0f;
 		Vec3f normal = getNormal(v);
-		color = surfaceColor * graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
+		color = surfaceColor * lightingList.getAllLight(pos, normal);
     }
 
 
@@ -32,7 +26,7 @@ namespace ramiel {
     void PS_PerTri_Textured::init(Vertex_Out_PerTri_Textured v[3]) {
         Vec3f pos = (v[0].worldPos + v[1].worldPos + v[2].worldPos) / 3.0f;
 		Vec3f normal = getNormal(v);
-		light = graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
+		light = lightingList.getAllLight(pos, normal);
         for (size_t i = 0; i < 3; ++i) v[i].texturePos *= v[i].zinv;
     }
 
@@ -69,11 +63,9 @@ namespace ramiel {
 
 
     Vec3f PS_PerPixel::draw(const Vertex_Out_PerPixel& v) {
-        size_t i = graphics::coordsToIndex(v.screenPos);
-        graphics::depth[i] = v.cameraPos;
 		Vec3f pos = v.worldPos / v.zinv;
-		Vec3f color = graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
-		graphics::pixels[i] = color * surfaceColor;
+		Vec3f color = lightingList.getAllLight(pos, normal);
+		return color * surfaceColor;
     }
 
 
@@ -87,11 +79,9 @@ namespace ramiel {
 
 
     Vec3f PS_PerPixel_Textured::draw(const Vertex_Out_PerPixel_Textured& v) {
-        size_t i = graphics::coordsToIndex(v.screenPos);
-        graphics::depth[i] = v.cameraPos;
 		Vec3f pos = v.worldPos / v.zinv;
-		Vec3f color = graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
-		graphics::pixels[i] = color * texture->get(v.texturePos / v.zinv);
+		Vec3f color = lightingList.getAllLight(pos, normal);
+		return color * texture->get(v.texturePos / v.zinv);
     }
 
 
@@ -118,14 +108,12 @@ namespace ramiel {
 
 
     Vec3f PS_PerPixel_NormalMapped::draw(const Vertex_Out_PerPixel_Textured& v) {
-        Vec3f normal_in = normalmap->get(v.texturePos / v.zinv);
+        Vec3f normal_in = normalMap->get(v.texturePos / v.zinv);
 		Vec3f normal_out = tangent * normal_in[X] + bitangent * normal_in[Y] + normal * normal_in[Z];
 
-        size_t i = graphics::coordsToIndex(v.screenPos);
-        graphics::depth[i] = v.cameraPos;
 		Vec3f pos = v.worldPos / v.zinv;
-		Vec3f color = graphics::getAllLights(pos, normal_out, specularExponent, specularIntensity);
-		graphics::pixels[i] = color * surfaceColor;
+		Vec3f color = lightingList.getAllLight(pos, normal_out);
+		return color * surfaceColor;
     }
 
 
@@ -152,14 +140,12 @@ namespace ramiel {
 
 
     Vec3f PS_PerPixel_Textured_NormalMapped::draw(const Vertex_Out_PerPixel_Textured& v) {
-        Vec3f normal_in = normalmap->get(v.texturePos / v.zinv);
+        Vec3f normal_in = normalMap->get(v.texturePos / v.zinv);
 		Vec3f normal_out = tangent * normal_in[X] + bitangent * normal_in[Y] + normal * normal_in[Z];
 
-        size_t i = graphics::coordsToIndex(v.screenPos);
-        graphics::depth[i] = v.cameraPos;
 		Vec3f pos = v.worldPos / v.zinv;
-		Vec3f color = graphics::getAllLights(pos, normal_out, specularExponent, specularIntensity);
-		graphics::pixels[i] = color * texture->get(v.texturePos / v.zinv);
+		Vec3f color = lightingList.getAllLight(pos, normal_out);
+		return color * texture->get(v.texturePos / v.zinv);
     }
 
 
@@ -171,11 +157,9 @@ namespace ramiel {
     Vec3f PS_PerPixel_Smooth::draw(const Vertex_Out_PerPixel_Smooth& v) {
         Vec3f normal = getNormalized(v.normal);
 
-        size_t i = graphics::coordsToIndex(v.screenPos);
-        graphics::depth[i] = v.cameraPos;
 		Vec3f pos = v.worldPos / v.zinv;
-		Vec3f color = graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
-		graphics::pixels[i] = color * surfaceColor;
+		Vec3f color = lightingList.getAllLight(pos, normal);
+		return color * surfaceColor;
     }
 
 
@@ -190,11 +174,9 @@ namespace ramiel {
     Vec3f PS_PerPixel_Smooth_Textured::draw(const Vertex_Out_PerPixel_Smooth_Textured& v) {
         Vec3f normal = getNormalized(v.normal);
 
-        size_t i = graphics::coordsToIndex(v.screenPos);
-        graphics::depth[i] = v.cameraPos;
 		Vec3f pos = v.worldPos / v.zinv;
-		Vec3f color = graphics::getAllLights(pos, normal, specularExponent, specularIntensity);
-		graphics::pixels[i] = color * texture->get(v.texturePos / v.zinv);
+		Vec3f color = lightingList.getAllLight(pos, normal);
+		return color * texture->get(v.texturePos / v.zinv);
     }
 
 }

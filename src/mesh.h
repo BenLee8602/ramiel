@@ -1,41 +1,29 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include "meshbase.h"
 #include "objloader.h"
-#include "rotation.h"
 
 namespace ramiel {
 
-    class MeshBase {
-		std::vector<Vec3u> tri;
-    public:
-        MeshBase(
-            std::string filename,
-            float scale = 1.0f,
-            Vec3f pos = vec3f_0,
-            Rotation rot = Rotation()
-        );
-        const std::vector<Vec3u>& getTri() const;
-        virtual void pipeline() const = 0;
-    };
-
-    template<typename Vertex>
+    template<class Vertex>
     class Mesh : public MeshBase {
+        static_assert(
+            std::is_base_of_v<Vertex_Mesh, Vertex>,
+            "Mesh: invalid vertex type"
+        );
+        
         std::vector<Vertex> vertices;
+
     public:
-        Mesh(
-            std::string filename, Vertex(conv*)(const objloader::Vertex),
-            float scale = 1.0f, Vec3f pos = vec3f_0, Rotation rot = Rotation()
-        ) {
-            objloader::load(filename, vertices, )
+        Mesh(const std::string& filename, bool loadvt = false, bool loadvn = false) {
+            ObjLoader(filename, triangles, vertices, loadvt, loadvn);
         }
-        const std::vector<Vertex>& getVertices() const {
-            return vertices;
+        Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
+            this->triangles = std::move(triangles);
+            this->vertices  = std::move(vertices);
         }
-        virtual void draw() const override {
-            
-        }
+        const std::vector<Vertex>& getVertices() const { return vertices; }
     };
 
 }

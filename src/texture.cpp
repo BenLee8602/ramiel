@@ -4,7 +4,7 @@
 
 namespace ramiel {
 
-    Texture::Texture(std::string filename, char type) {
+    Texture::Texture(std::string filename) {
         uint8_t* buffer;
         int bitsPerPixel;
         buffer = stbi_load(filename.c_str(), &size[X], &size[Y], &bitsPerPixel, 3);
@@ -16,18 +16,6 @@ namespace ramiel {
             data[i][G] = *b++;
             data[i][B] = *b++;
         }
-
-        if (type == 'c') {
-            for (size_t i = 0; i < data.size(); ++i) {
-                data[i] /= 255.0f;
-            }
-        }
-        else if (type == 'n') {
-            for (size_t i = 0; i < data.size(); ++i) {
-                data[i] = data[i] / 127.5f - 1.0f;
-            }
-        }
-
         delete[] buffer;
     }
 
@@ -41,6 +29,16 @@ namespace ramiel {
 
     Vec2 Texture::getSize() const {
         return size;
+    }
+
+
+    TextureRGB::TextureRGB(std::string filename) : Texture(filename) {
+        for (size_t i = 0; i < data.size(); ++i) data[i] /= 255.0f;
+    }
+
+
+    TextureNML::TextureNML(std::string filename) : Texture(filename) {
+        for (size_t i = 0; i < data.size(); ++i) data[i] = data[i] / 127.5f - 1.0f;
     }
 
 }

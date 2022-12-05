@@ -1,7 +1,9 @@
 #pragma once
 
 #include <unordered_map>
-#include "entity.h"
+#include "entitybase.h"
+#include "meshbase.h"
+#include "texture.h"
 #include "camera.h"
 #include "light.h"
 #include "effects.h"
@@ -18,16 +20,14 @@ namespace ramiel::graphics {
 	extern std::vector<Vec3f> pixels;
 	extern std::vector<float> depth;
 
-	extern std::unordered_map<std::string, MeshBase*>   meshes;
-	extern std::unordered_map<std::string, Texture*> textures;
+	extern std::unordered_map<std::string, MeshBase*> meshes;
+	extern std::unordered_map<std::string, Texture*>  textures;
 
-	extern std::vector<Entity*> entities;
-	extern std::vector<Light*>  lights;
+	extern std::vector<EntityBase*> entities;
+	extern std::vector<Light*> lights;
 	extern std::vector<Effect> effects;
 	extern Vec3f light_ambient;
 	extern Vec3f bg_color;
-
-	void drawEntities();
 
 	Vec3f getAllLights(
 		const Vec3f& pos, const Vec3f& normal,

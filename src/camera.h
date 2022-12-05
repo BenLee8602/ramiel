@@ -6,40 +6,49 @@
 namespace ramiel {
 
 	class Camera {
-	#ifdef RAMIEL_TEST
+		Vec2u res;
+        Vec2u mid;
+        size_t bufferSize;
+        std::vector<Vec3f> color;
+        std::vector<float> depth;
 	public:
-	#endif
-		Vec3f pos; 
+		Vec3f pos;
 		Rotation rot;
-		float focalLen;
-
-	public:
-
+		float focalLength;
+		Vec3f backgroundColor;
 		float znear;
 		float zfar;
 
-		Camera(
-			unsigned fov = 0,
-			float znear = 0.2f,
-			float zfar = 1000.0f
-		);
-		void reset();
-		
-		void setFov(unsigned fov);
-		
-		const Vec3f& getpos() const;
-		const Vec3f& getrot() const;
+		Camera() :
+			res(vec2u_0),
+			mid(vec2u_0),
+			bufferSize(0),
+			pos(vec3f_0),
+			rot(vec3f_0),
+			focalLength(0.0f),
+			backgroundColor(vec3f_0),
+			znear(0.2f),
+			zfar(1000.0f)
+		{}
 
-		void setpos(const Vec3f& pos);
-		void setrot(const Vec3f& rot);
+		size_t getBufferSize() const;
+		Vec2u getResolution() const;
+		void setResolution(Vec2u size);
 
-		void move(float x, float y, float z);
-		void rotate(float x, float y, float z);
+		void resetBuffers();
 
-		Vec3f getCameraCoord(Vec3f in) const;
-		Vec2 getScreenCoord(const Vec3f& in) const;
+		Vec3f getCameraCoord(const Vec3f& in) const;
+		Vec2f getScreenCoord(const Vec3f& in) const;
 
-		void setControls(bool controls[12]);
+		typedef std::vector<Vec3f>::iterator ColorBufferIterator;
+		typedef std::vector<float>::iterator DepthBufferIterator;
+		ColorBufferIterator getColorBuffer();
+		DepthBufferIterator getDepthBuffer();
+
+		void clampColorBuffer();
+
+		void getFrameDEC(int* frame) const;
+		void getFrameRGB(uint8_t* frame) const;
 	};
 
 }
