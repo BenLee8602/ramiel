@@ -6,34 +6,39 @@
 namespace ramiel {
 
 	class Camera {
-		Vec2u res;
-        Vec2u mid;
+		Vec2u resolution;
+        Vec2f halfResolution;
         size_t bufferSize;
+		float fov;
+		float focalLength;
         std::vector<Vec3f> color;
         std::vector<float> depth;
 	public:
 		Vec3f pos;
 		Rotation rot;
-		float focalLength;
 		Vec3f backgroundColor;
 		float znear;
 		float zfar;
 
 		Camera() :
-			res(vec2u_0),
-			mid(vec2u_0),
+			resolution(vec2u_0),
+			halfResolution(vec2f_0),
 			bufferSize(0),
+			fov(1.57f),
+			focalLength(0.0f),
 			pos(vec3f_0),
 			rot(vec3f_0),
-			focalLength(0.0f),
 			backgroundColor(vec3f_0),
 			znear(0.2f),
 			zfar(1000.0f)
 		{}
 
 		size_t getBufferSize() const;
-		Vec2u getResolution() const;
-		void setResolution(Vec2u size);
+		const Vec2u& res() const;
+		void res(Vec2u size);
+
+		float getFov() const;
+		void setFov(float fov);
 
 		void resetBuffers();
 

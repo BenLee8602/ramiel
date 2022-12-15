@@ -15,8 +15,8 @@ namespace ramiel {
         cos = { std::cos(rot[X]), std::cos(rot[Y]), std::cos(rot[Z]) };
     }
 
-    Rotation& Rotation::operator=(const Vec3f& rot) { set(rot); }
-    Rotation& Rotation::operator+=(const Vec3f& rot) { set(this->rot + rot); }
+    Rotation& Rotation::operator=(const Vec3f& rot)  { set(rot); return *this; }
+    Rotation& Rotation::operator+=(const Vec3f& rot) { set(this->rot + rot); return *this; }
     
     void Rotation::set(const Vec3f& rot) {
         this->rot = rot;

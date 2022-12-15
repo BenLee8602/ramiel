@@ -51,4 +51,13 @@ namespace ramiel {
         camera.clampColorBuffer();
     }
 
+
+    Scene::~Scene() {
+        for (auto& mesh : meshes) delete mesh.second;
+        for (auto& texture : textures) delete texture.second;
+        
+        for (auto& entity : entities) delete entity;
+        for (auto& light : lights) delete light;
+    }
+
 }

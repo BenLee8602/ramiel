@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include "graphics.h"
+#include "camera.h"
 
 
 namespace ramiel {
@@ -9,27 +8,24 @@ namespace ramiel {
 	template<typename Vertex, class PixelShader>
 	class Triangle {
 		Camera& camera;
-		PixelShader& pixelShader;
+		PixelShader pixelShader;
 		Vertex v[3];
 
 		public:
 		Triangle(
 			Camera& camera,
-			PixelShader& pixelShader,
-			const Vertex& v1,
-			const Vertex& v2,
-			const Vertex& v3
-		) {
-			this->camera = camera;
-			this->pixelShader = pixelShader;
-			v[0] = v1;
-			v[1] = v2;
-			v[2] = v3;
-		}
+			PixelShader pixelShader
+		) :
+			camera(camera),
+			pixelShader(pixelShader)
+		{}
 
 
 		private:
 		void raster() {
+			Camera::ColorBufferIterator color = camera.getColorBuffer();
+			Camera::DepthBufferIterator depth = camera.getDepthBuffer();
+			
 			if (v[0].screenPos[Y] > v[1].screenPos[Y]) std::swap(v[0], v[1]);
 			if (v[0].screenPos[Y] > v[2].screenPos[Y]) std::swap(v[0], v[2]);
 			if (v[1].screenPos[Y] > v[2].screenPos[Y]) std::swap(v[1], v[2]);
@@ -39,28 +35,28 @@ namespace ramiel {
 			Vertex* dy;
 			if (dy1.screenPos[X] > dy2.screenPos[X]) {
 				std::swap(dy1, dy2);
-				dy = &dy2;
+				dy = &dy1;
 			}
-			else dy = &dy1;
+			else dy = &dy2;
 
-			float y = std::max(0, v[0].screenPos[Y]);
-			float ymax = std::min<float>(v[1].screenPos[Y], camera.res[Y]);
-			Vertex sc1 = v[0].screenPos[X] + dy1.screenPos[X] * (y - v[0].screenPos[Y]);
-			Vertex sc2 = v[0].screenPos[X] + dy2.screenPos[X] * (y - v[0].screenPos[Y]);
-
+			float y = std::max(0.0f, v[0].screenPos[Y]);
+			float ymax = std::min<float>(v[1].screenPos[Y], camera.res()[Y]);
+			Vertex sc1 = v[0] + dy1 * (y - v[0].screenPos[Y]);
+			Vertex sc2 = v[0] + dy2 * (y - v[0].screenPos[Y]);
+			
 			auto drawHalf = [&]() {
 				for (y; y < ymax; ++y) {
 					Vertex dx = (sc2 - sc1) / (sc2.screenPos[X] - sc1.screenPos[X]);
 
-					float x = std::max(0, sc1.screenPos[X]);
-					float xmax = std::min<float>(sc2.screenPos[X], camera.res[X]);
+					float x = std::max(0.0f, sc1.screenPos[X]);
+					float xmax = std::min<float>(sc2.screenPos[X], camera.res()[X]);
 					Vertex p = sc1 + dx * (x - sc1.screenPos[X]);
-					size_t i = camera.res[X] * p.screenPos[Y] + p.screenPos[X];
+					size_t i = camera.res()[X] * (unsigned)p.screenPos[Y] + (unsigned)p.screenPos[X];
 
 					for (x; x < xmax; ++x) {
-						if (p.cameraPos[Z] < camera.depth[i]) {
-							camera.depth[i] = p.cameraPos[Z];
-							camera.color[i] = pixelShader.draw(p);
+						if (p.cameraPos[Z] < depth[i]) {
+							depth[i] = p.cameraPos[Z];
+							color[i] = pixelShader.draw(p);
 						}
 						++i;
 						p += dx;
@@ -69,14 +65,14 @@ namespace ramiel {
 					sc2 += dy2;
 				}
 			};
-
+			
 			drawHalf();
 
-			ymax = std::min<float>(v[2].screenPos[Y], camera.res[Y]);
+			ymax = std::min<float>(v[2].screenPos[Y], camera.res()[Y]);
 			*dy = (v[2] - v[1]) / (v[2].screenPos[Y] - v[1].screenPos[Y]);
 			sc1 = v[2] - dy1 * (v[2].screenPos[Y] - y);
 			sc2 = v[2] - dy2 * (v[2].screenPos[Y] - y);
-
+			
 			drawHalf();
 		}
 
@@ -88,10 +84,7 @@ namespace ramiel {
 			float c2 = (camera.znear - v1.cameraPos[Z]) / (v2.cameraPos[Z] - v1.cameraPos[Z]);
 
 			// new tri formed from quad
-			Triangle newtri = Triangle(
-				pixelShader,
-				v0, v1, v2
-			);
+			Triangle newtri = Triangle(camera, pixelShader);
 
 			// clip and raster new tri
 			newtri.v[0] = v1 + (v0 - v1) * c1;
@@ -135,9 +128,15 @@ namespace ramiel {
 
 
 		public:
-		void draw() {
-			// clip and draw
-			pixelShader.init();
+		void draw(
+			const Vertex& v0,
+			const Vertex& v1,
+			const Vertex& v2
+		) {
+			v[0] = v0;
+			v[1] = v1;
+			v[2] = v2;
+			pixelShader.init(v);
 			if (clip()) raster();
 		}
 

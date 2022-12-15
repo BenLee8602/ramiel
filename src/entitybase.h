@@ -8,6 +8,7 @@ namespace ramiel {
 	public:
 		bool enabled;
 		virtual void draw(Camera& camera) const = 0;
+		virtual ~EntityBase() {}
 	};
 
 }

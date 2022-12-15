@@ -15,9 +15,7 @@ namespace ramiel {
     class Scene {
     public:
         Camera camera;
-
         Vec3f ambientLight = vec3f_0;
-        Vec3f backgroundColor = vec3f_0;
 
     private:
         std::unordered_map<std::string, MeshBase*> meshes;
@@ -57,6 +55,8 @@ namespace ramiel {
         LightingListSpecular getLightingList(uint16_t specularExponent, float specularIntensity) const;
 
         void renderFrame();
+
+        ~Scene();
     };
 
 }

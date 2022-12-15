@@ -9,10 +9,9 @@ namespace ramiel {
     class VS_PerTri {
         Camera& camera;
     public:
-        typedef Vertex_Out_PerTri Vertex_Out;
-
         VS_PerTri(Camera& camera) : camera(camera) {}
 
+        typedef Vertex_Out_PerTri Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -27,10 +26,9 @@ namespace ramiel {
     class VS_PerTri_Textured {
         Camera& camera;
     public:
-        typedef Vertex_Out_PerTri_Textured Vertex_Out;
-
         VS_PerTri_Textured(Camera& camera) : camera(camera) {}
 
+        typedef Vertex_Out_PerTri_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -45,12 +43,18 @@ namespace ramiel {
 
 
     class VS_PerVertex {
+        Camera& camera;
         LightingListSpecular lightingList;
     public:
+        VS_PerVertex(
+            Camera& camera,
+            LightingListSpecular lightingList
+        ) :
+            camera(camera),
+            lightingList(lightingList)
+        {}
+
         typedef Vertex_Out_PerVertex Vertex_Out;
-
-        VS_PerVertex(LightingListSpecular lightingList) : lightingList(lightingList) {}
-
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -65,12 +69,18 @@ namespace ramiel {
 
 
     class VS_PerVertex_Textured {
+        Camera& camera;
         LightingListSpecular lightingList;
     public:
+        VS_PerVertex_Textured(
+            Camera& camera,
+            LightingListSpecular lightingList
+        ) :
+            camera(camera),
+            lightingList(lightingList)
+        {}
+
         typedef Vertex_Out_PerVertex_Textured Vertex_Out;
-
-        VS_PerVertex_Textured(LightingListSpecular lightingList) : lightingList(lightingList) {}
-
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -87,9 +97,11 @@ namespace ramiel {
 
 
     class VS_PerPixel {
+        Camera& camera;
     public:
-        typedef Vertex_Out_PerPixel Vertex_Out;
+        VS_PerPixel(Camera& camera) : camera(camera) {}
 
+        typedef Vertex_Out_PerPixel Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -103,9 +115,11 @@ namespace ramiel {
 
 
     class VS_PerPixel_Textured {
+        Camera& camera;
     public:
-        typedef Vertex_Out_PerPixel_Textured Vertex_Out;
+        VS_PerPixel_Textured(Camera& camera) : camera(camera) {}
 
+        typedef Vertex_Out_PerPixel_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -120,9 +134,11 @@ namespace ramiel {
 
 
     class VS_PerPixel_Smooth {
+        Camera& camera;
     public:
-        typedef Vertex_Out_PerPixel_Smooth Vertex_Out;
+        VS_PerPixel_Smooth(Camera& camera) : camera(camera) {}
 
+        typedef Vertex_Out_PerPixel_Smooth Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -137,9 +153,11 @@ namespace ramiel {
 
 
     class VS_PerPixel_Smooth_Textured {
+        Camera& camera;
     public:
-        typedef Vertex_Out_PerPixel_Smooth_Textured Vertex_Out;
+        VS_PerPixel_Smooth_Textured(Camera& camera) : camera(camera) {}
 
+        typedef Vertex_Out_PerPixel_Smooth_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;

@@ -7,23 +7,33 @@ namespace ramiel {
 		return bufferSize;
 	}
 
-	Vec2u Camera::getResolution() const {
-		return res;
+	const Vec2u& Camera::res() const {
+		return resolution;
 	}
 
-	void Camera::setResolution(Vec2u newSize) {
-		res = newSize;
-		mid = res / 2;
-		bufferSize = res[X] * res[Y];
+	void Camera::res(Vec2u newSize) {
+		resolution = newSize;
+		halfResolution = resolution / 2.0f;
+		bufferSize = resolution[X] * resolution[Y];
+		focalLength = halfResolution[X] / std::tan(fov / 2.0f);
 		color = std::vector<Vec3f>(bufferSize);
 		depth = std::vector<float>(bufferSize);
+	}
+
+
+	float Camera::getFov() const {
+		return fov;
+	}
+
+	void Camera::setFov(float deg) {
+		fov = deg * 0.01745f;
+		focalLength = halfResolution[X] / std::tan(fov / 2.0f);
 	}
 
 
 	void Camera::resetBuffers() {
 		std::fill(color.begin(), color.end(), backgroundColor);
 		std::fill(depth.begin(), depth.end(), zfar);
-		
 	}
 
 
@@ -33,11 +43,10 @@ namespace ramiel {
 
 
 	Vec2f Camera::getScreenCoord(const Vec3f& in) const {
-		Vec2f out = { 0 };
-		if (in[Z] != 0.0f) {
-			out[X] = in[X] * focalLength / in[Z] + mid[X];
-			out[Y] = in[Y] * focalLength / in[Z] + mid[Y];
-		}
+		if (in[Z] == 0.0f) return vec2f_0;
+		Vec2f out = vec2f_0;
+		out[X] = in[X] * focalLength / in[Z] + halfResolution[X];
+		out[Y] = in[Y] * focalLength / in[Z] + halfResolution[Y];
 		return out;
 	}
 
@@ -52,26 +61,20 @@ namespace ramiel {
 
 
 	void Camera::clampColorBuffer() {
-		for (size_t i = 0; i < bufferSize; ++i) c_min(color[i]);
+		for (auto& c : color) c_min(c);
 	}
 
 
 	void Camera::getFrameDEC(int* frame) const {
-		for (size_t i = 0; i < bufferSize; ++i) {
-			frame[i] = (
-				((int)color[i][R] << 16) +
-				((int)color[i][G] <<  8) +
-				((int)color[i][B])
-			);
-		}
+		for (auto& c : color)
+			*frame++ = (int)c[R] << 16 + (int)c[G] << 8 + (int)c[B];
 	}
 
 	void Camera::getFrameRGB(uint8_t* frame) const {
-		uint8_t* f = frame;
-		for (size_t i = 0; i < bufferSize; ++i) {
-			*f++ = color[i][R];
-			*f++ = color[i][G];
-			*f++ = color[i][B];
+		for (auto& c : color) {
+			*frame++ = c[R];
+			*frame++ = c[G];
+			*frame++ = c[B];
 		}
 	}
 

@@ -16,7 +16,7 @@ namespace ramiel {
             Vec3f surfaceColor
         ) :
             lightingList(lightingList),
-            surfaceColor(surfaceColor),
+            surfaceColor(surfaceColor / 255.0f),
             color(vec3f_0)
         {}
         void init(Vertex_Out_PerTri v[3]);
@@ -64,7 +64,7 @@ namespace ramiel {
             Vec3f surfaceColor
         ) :
             lightingList(lightingList),
-            surfaceColor(surfaceColor),
+            surfaceColor(surfaceColor / 255.0f),
             normal(vec3f_0)
         {}
         void init(Vertex_Out_PerPixel v[3]);
@@ -103,7 +103,7 @@ namespace ramiel {
         ) :
             lightingList(lightingList),
             normalMap(normalMap),
-            surfaceColor(surfaceColor),
+            surfaceColor(surfaceColor / 255.0f),
             normal(vec3f_0),
             tangent(vec3f_0),
             bitangent(vec3f_0)
@@ -145,7 +145,7 @@ namespace ramiel {
             Vec3f surfaceColor
         ) :
             lightingList(lightingList),
-            surfaceColor(surfaceColor)
+            surfaceColor(surfaceColor / 255.0f)
         {}
         void init(Vertex_Out_PerPixel_Smooth v[3]);
         Vec3f draw(const Vertex_Out_PerPixel_Smooth& v);

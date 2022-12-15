@@ -31,6 +31,7 @@ namespace ramiel {
 			std::transform(v_in.begin(), v_in.end(), v_out.begin(), vertexShader);
 
 			const std::vector<Vec3u>& triangles = mesh.getTriangles();
+			Triangle<typename VertexShader::Vertex_Out, PixelShader> t(camera, pixelShader);
 			for (auto& tri : triangles) {
 				// backface culling
 				if (dotProduct(
@@ -39,15 +40,9 @@ namespace ramiel {
 						v_out[tri[2]].cameraPos - v_out[tri[0]].cameraPos
 					),  v_out[tri[0]].cameraPos
 				) >= 0.0f) continue;
-
+				
 				// assemble and draw triangle
-				Triangle(
-					camera,
-					pixelShader,
-					v_out[tri[0]],
-					v_out[tri[1]],
-					v_out[tri[2]]
-				).draw();
+				t.draw(v_out[tri[0]], v_out[tri[1]], v_out[tri[2]]);
 			}
 		}
 

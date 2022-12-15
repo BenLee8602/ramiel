@@ -97,10 +97,11 @@ namespace ramiel {
 
     public:
         ObjLoader(
-            const std::string& filename,
+            const char* filename,
             std::vector<Vec3u>& f,
             std::vector<Vertex>& v,
-            bool loadvt, bool loadvn
+            bool loadvt = false,
+            bool loadvn = false
         ) :
             f(f), v(v),
             fCount(0),
