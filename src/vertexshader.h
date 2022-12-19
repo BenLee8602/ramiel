@@ -36,7 +36,7 @@ namespace ramiel {
             out.cameraPos = camera.getCameraCoord(out.worldPos);
             out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.zinv = 1.0f / out.cameraPos[Z];
-            out.texturePos = in.txt;
+            out.texturePos = in.texture;
             return out;
         }
     };

@@ -2,18 +2,22 @@
 
 namespace ramiel {
 
-    bool Scene::loadTexture(const char* filename) {
+    bool Scene::loadTexture(const char* filename, const char* textureName) {
         if (!std::ifstream(filename).good()) return false;
-        if (textures[filename]) return false;
-        textures[filename] = new TextureRGB(filename);
+        if (textures[textureName]) return false;
+        textures[textureName] = new TextureRGB(filename);
         return true;
     }
 
-    bool Scene::loadNormalMap(const char* filename) {
+    bool Scene::loadNormalMap(const char* filename, const char* normalMapName) {
         if (!std::ifstream(filename).good()) return false;
-        if (textures[filename]) return false;
-        textures[filename] = new TextureNML(filename);
+        if (textures[normalMapName]) return false;
+        textures[normalMapName] = new TextureNML(filename);
         return true;
+    }
+
+    const Texture* Scene::getTexture(const char* textureName) const {
+        return (*textures.find(textureName)).second;
     }
 
 

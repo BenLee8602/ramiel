@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include "vertex.h"
+#include "meshvertex.h"
 #include "rotation.h"
 
 
@@ -140,11 +140,11 @@ namespace ramiel {
             f.reserve(fCount);
 
             bool vtGood = (loadvt && vtCount && (
-                std::is_base_of_v<Vertex_Mesh_T, Vertex> ||
+                std::is_base_of_v<Vertex_Mesh_T,  Vertex> ||
                 std::is_base_of_v<Vertex_Mesh_TN, Vertex>
             ));
-            bool vnGood = (loadvn && vtCount && (
-                std::is_base_of_v<Vertex_Mesh_N, Vertex> ||
+            bool vnGood = (loadvn && vnCount && (
+                std::is_base_of_v<Vertex_Mesh_N,  Vertex> ||
                 std::is_base_of_v<Vertex_Mesh_TN, Vertex>
             ));
 

@@ -34,8 +34,9 @@ namespace ramiel {
             meshes[meshname] = new Mesh<Vertex>(filename, loadvt, loadvn);
             return true;
         }
-        bool loadTexture(const char* filename);
-        bool loadNormalMap(const char* filename);
+        bool loadTexture(const char* filename, const char* textureName);
+        bool loadNormalMap(const char* filename, const char* normalMapName);
+        const Texture* getTexture(const char* textureName) const;
 
         template<class Vertex, class VertexShader, class PixelShader>
         bool addEntity(
