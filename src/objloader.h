@@ -3,11 +3,19 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <unordered_map>
 #include "meshvertex.h"
 #include "rotation.h"
 
 
 namespace ramiel {
+
+    struct Hash_Vec3u {
+        size_t operator()(const Vec3u& key) const {
+            return key[0] << 16 + key[1] << 8 + key[2];
+        }
+    };
+
 
     Vec2f parseV2(std::istream& str);
     Vec3f parseV3(std::istream& str);
@@ -27,10 +35,12 @@ namespace ramiel {
         );
 
         typedef void(ObjLoader::*LoadLine)(std::string&, std::istringstream&);
-        typedef void(ObjLoader::*SetVertex)(const Vec3u&);
+        typedef Vertex(ObjLoader::*MakeVertex)(const Vec3u&) const;
 
-        std::vector<Vec3u>& f;
-        std::vector<Vertex>& v;
+        std::vector<Vertex>& v_out;
+        std::vector<Vec3u>& f_out;
+
+        std::vector<Vec3f> v;
         std::vector<Vec2f> vt;
         std::vector<Vec3f> vn;
 
@@ -39,23 +49,31 @@ namespace ramiel {
         size_t vtCount;
         size_t vnCount;
 
-        std::vector<uint32_t> polygon;
+        std::vector<size_t> polygon;
+        std::unordered_map<Vec3u, size_t, Hash_Vec3u> vertexIndices;
 
         LoadLine loadLine;
         ParsePolygonVertex parsePolygonVertex;
-        SetVertex setVertex;
+        MakeVertex makeVertex;
 
 
         void loadLine_v(std::string& type, std::istringstream& str) {
-            if (type == "v") v.emplace_back(Vertex(parseV3(str)));
+            if (type == "v") v.emplace_back(parseV3(str));
             else if (type == "f") {
                 while (str.rdbuf()->in_avail()) {
-                    Vec3u i = parsePolygonVertex(str) - 1;
-                    polygon.emplace_back(i[0]);
-                    (this->*setVertex)(i);
+                    Vec3u vertex = parsePolygonVertex(str) - 1;
+                    if (vertexIndices.find(vertex) == vertexIndices.end())
+                        vertexIndices[vertex] = vertexIndices.size();
+                    polygon.emplace_back(vertexIndices.at(vertex));
                 }
-                for (size_t i = 1; i < polygon.size() - 1; ++i)
-                    f.emplace_back(Vec3u{ polygon[0], polygon[i], polygon[i + 1] });
+                for (size_t i = 1; i < polygon.size() - 1; ++i) {
+                    //Vec3u vertices = { polygon[0], polygon[i], polygon[i + 1] };
+                    Vec3u vertices;
+                    vertices[0] = polygon[0];
+                    vertices[1] = polygon[i];
+                    vertices[2] = polygon[i + 1];
+                    f_out.emplace_back(vertices);
+                }
                 polygon.clear();
             }
         }
@@ -77,40 +95,40 @@ namespace ramiel {
         }
 
 
-        void setVertex_v(const Vec3u& i) {
-            return;
+        Vertex makeVertex_v(const Vec3u& i) const {
+            return Vertex(v[i[0]]);
         }
 
-        void setVertex_vt(const Vec3u& i) {
-            v[i[0]].setTexture(vt[i[1]]);
+        Vertex makeVertex_vt(const Vec3u& i) const {
+            return Vertex(v[i[0]], vt[i[1]]);
         }
 
-        void setVertex_vn(const Vec3u& i) {
-            v[i[0]].setNormal(vn[i[2]]);
+        Vertex makeVertex_vn(const Vec3u& i) const {
+            return Vertex(v[i[0]], vn[i[2]]);
         }
 
-        void setVertex_vtn(const Vec3u& i) {
-            v[i[0]].setTexture(vt[i[1]]);
-            v[i[0]].setNormal(vn[i[2]]);
+        Vertex makeVertex_vtn(const Vec3u& i) const {
+            return Vertex(v[i[0]], vt[i[1]], vn[i[2]]);
         }
 
 
     public:
         ObjLoader(
             const char* filename,
-            std::vector<Vec3u>& f,
-            std::vector<Vertex>& v,
+            std::vector<Vertex>& v_out,
+            std::vector<Vec3u>& f_out,
             bool loadvt = false,
             bool loadvn = false
         ) :
-            f(f), v(v),
+            v_out(v_out),
+            f_out(f_out),
             fCount(0),
             vCount(0),
             vtCount(0),
             vnCount(0),
             loadLine(nullptr),
             parsePolygonVertex(nullptr),
-            setVertex(nullptr)
+            makeVertex(nullptr)
         {
             std::ifstream file(filename);
             if (!file.is_open()) return;
@@ -135,9 +153,10 @@ namespace ramiel {
             }
             else if (vnCount) parsePolygonVertex = parsePolygonVertex_vn;
             else parsePolygonVertex = parsePolygonVertex_v;
-
+            
             v.reserve(vCount);
-            f.reserve(fCount);
+            f_out.reserve(fCount);
+            vertexIndices.reserve(vCount + vtCount + vnCount);
 
             bool vtGood = (loadvt && vtCount && (
                 std::is_base_of_v<Vertex_Mesh_T,  Vertex> ||
@@ -152,19 +171,19 @@ namespace ramiel {
                 vt.reserve(vtCount);
                 if (vnGood) {
                     vn.reserve(vnCount);
-                    loadLine  = loadLine_vtn;
-                    setVertex = setVertex_vtn;
+                    loadLine = loadLine_vtn;
+                    makeVertex = makeVertex_vtn;
                 } else {
-                    loadLine  = loadLine_vt;
-                    setVertex = setVertex_vt;
+                    loadLine = loadLine_vt;
+                    makeVertex = makeVertex_vt;
                 }
             } else if (vnGood) {
                 vn.reserve(vnCount);
-                loadLine  = loadLine_vn;
-                setVertex = setVertex_vn;
+                loadLine = loadLine_vn;
+                makeVertex = makeVertex_vn;
             } else {
-                loadLine  = loadLine_v;
-                setVertex = setVertex_v;
+                loadLine = loadLine_v;
+                makeVertex = makeVertex_v;
             }
 
             file.clear();
@@ -174,6 +193,11 @@ namespace ramiel {
                 std::istringstream str(std::move(line));
                 str >> line;
                 (this->*loadLine)(line, str);
+            }
+
+            v_out = std::vector<Vertex>(vertexIndices.size());
+            for (auto& [key, value] : vertexIndices) {
+                v_out[value] = (this->*makeVertex)(key);
             }
         }
     };

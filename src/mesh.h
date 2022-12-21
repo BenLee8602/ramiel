@@ -17,7 +17,7 @@ namespace ramiel {
 
     public:
         Mesh(const char* filename, bool loadvt = false, bool loadvn = false) {
-            ObjLoader(filename, triangles, vertices, loadvt, loadvn);
+            ObjLoader(filename, vertices, triangles, loadvt, loadvn);
         }
         Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
             this->triangles = std::move(triangles);
