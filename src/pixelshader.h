@@ -19,8 +19,8 @@ namespace ramiel {
             surfaceColor(surfaceColor / 255.0f),
             color(vec3f_0)
         {}
-        void init(Vertex_Out_PerTri v[3]);
-        Vec3f draw(const Vertex_Out_PerTri& v);
+        void init(Vertex_PerTri v[3]);
+        Vec3f draw(const Vertex_PerTri& v);
     };
 
     class PS_PerTri_Textured {
@@ -36,22 +36,22 @@ namespace ramiel {
             texture(texture),
             light(vec3f_0)
         {}
-        void init(Vertex_Out_PerTri_Textured v[3]);
-        Vec3f draw(const Vertex_Out_PerTri_Textured& v);
+        void init(Vertex_PerTri_Textured v[3]);
+        Vec3f draw(const Vertex_PerTri_Textured& v);
     };
 
     class PS_PerVertex {
     public:
-        void init(Vertex_Out_PerVertex v[3]);
-        Vec3f draw(const Vertex_Out_PerVertex& v);
+        void init(Vertex_PerVertex v[3]);
+        Vec3f draw(const Vertex_PerVertex& v);
     };
 
     class PS_PerVertex_Textured {
         const Texture* texture;
     public:
         PS_PerVertex_Textured(const Texture* texture) : texture(texture) {}
-        void init(Vertex_Out_PerVertex_Textured v[3]);
-        Vec3f draw(const Vertex_Out_PerVertex_Textured& v);
+        void init(Vertex_PerVertex_Textured v[3]);
+        Vec3f draw(const Vertex_PerVertex_Textured& v);
     };
 
     class PS_PerPixel {
@@ -67,8 +67,8 @@ namespace ramiel {
             surfaceColor(surfaceColor / 255.0f),
             normal(vec3f_0)
         {}
-        void init(Vertex_Out_PerPixel v[3]);
-        Vec3f draw(const Vertex_Out_PerPixel& v);
+        void init(Vertex_PerPixel v[3]);
+        Vec3f draw(const Vertex_PerPixel& v);
     };
 
     class PS_PerPixel_Textured {
@@ -84,8 +84,8 @@ namespace ramiel {
             texture(texture),
             normal(vec3f_0)
         {}
-        void init(Vertex_Out_PerPixel_Textured v[3]);
-        Vec3f draw(const Vertex_Out_PerPixel_Textured& v);
+        void init(Vertex_PerPixel_Textured v[3]);
+        Vec3f draw(const Vertex_PerPixel_Textured& v);
     };
 
     class PS_PerPixel_NormalMapped {
@@ -108,8 +108,8 @@ namespace ramiel {
             tangent(vec3f_0),
             bitangent(vec3f_0)
         {}
-        void init(Vertex_Out_PerPixel_Textured v[3]);
-        Vec3f draw(const Vertex_Out_PerPixel_Textured& v);
+        void init(Vertex_PerPixel_Textured v[3]);
+        Vec3f draw(const Vertex_PerPixel_Textured& v);
     };
 
     class PS_PerPixel_Textured_NormalMapped {
@@ -132,8 +132,8 @@ namespace ramiel {
             tangent(vec3f_0),
             bitangent(vec3f_0)
         {}
-        void init(Vertex_Out_PerPixel_Textured v[3]);
-        Vec3f draw(const Vertex_Out_PerPixel_Textured& v);
+        void init(Vertex_PerPixel_Textured v[3]);
+        Vec3f draw(const Vertex_PerPixel_Textured& v);
     };
 
     class PS_PerPixel_Smooth {
@@ -147,8 +147,8 @@ namespace ramiel {
             lightingList(lightingList),
             surfaceColor(surfaceColor / 255.0f)
         {}
-        void init(Vertex_Out_PerPixel_Smooth v[3]);
-        Vec3f draw(const Vertex_Out_PerPixel_Smooth& v);
+        void init(Vertex_PerPixel_Smooth v[3]);
+        Vec3f draw(const Vertex_PerPixel_Smooth& v);
     };
 
     class PS_PerPixel_Smooth_Textured {
@@ -162,8 +162,8 @@ namespace ramiel {
             lightingList(lightingList),
             texture(texture)
         {}
-        void init(Vertex_Out_PerPixel_Smooth_Textured v[3]);
-        Vec3f draw(const Vertex_Out_PerPixel_Smooth_Textured& v);
+        void init(Vertex_PerPixel_Smooth_Textured v[3]);
+        Vec3f draw(const Vertex_PerPixel_Smooth_Textured& v);
     };
 
 }

@@ -11,7 +11,7 @@ namespace ramiel {
     public:
         VS_PerTri(Camera& camera) : camera(camera) {}
 
-        typedef Vertex_Out_PerTri Vertex_Out;
+        typedef Vertex_PerTri Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -28,7 +28,7 @@ namespace ramiel {
     public:
         VS_PerTri_Textured(Camera& camera) : camera(camera) {}
 
-        typedef Vertex_Out_PerTri_Textured Vertex_Out;
+        typedef Vertex_PerTri_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -54,15 +54,13 @@ namespace ramiel {
             lightingList(lightingList)
         {}
 
-        typedef Vertex_Out_PerVertex Vertex_Out;
+        typedef Vertex_PerVertex Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
-            Vec3f worldPos = in.pos;
-            Vec3f normal = in.normal;
-            out.cameraPos = camera.getCameraCoord(worldPos);
+            out.cameraPos = camera.getCameraCoord(in.pos);
             out.screenPos = camera.getScreenCoord(out.cameraPos);
-            out.color = lightingList.getAllLight(worldPos, normal);
+            out.color = lightingList.getAllLight(in.pos, in.normal);
             return out;
         }
     };
@@ -80,15 +78,13 @@ namespace ramiel {
             lightingList(lightingList)
         {}
 
-        typedef Vertex_Out_PerVertex_Textured Vertex_Out;
+        typedef Vertex_PerVertex_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
-            Vec3f worldPos = in.pos;
-            Vec3f normal = in.normal;
-            out.cameraPos = camera.getCameraCoord(worldPos);
+            out.cameraPos = camera.getCameraCoord(in.pos);
             out.screenPos = camera.getScreenCoord(out.cameraPos);
-            out.color = lightingList.getAllLight(worldPos, normal);
+            out.light = lightingList.getAllLight(in.pos, in.normal);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.texture;
             return out;
@@ -101,7 +97,7 @@ namespace ramiel {
     public:
         VS_PerPixel(Camera& camera) : camera(camera) {}
 
-        typedef Vertex_Out_PerPixel Vertex_Out;
+        typedef Vertex_PerPixel Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -119,7 +115,7 @@ namespace ramiel {
     public:
         VS_PerPixel_Textured(Camera& camera) : camera(camera) {}
 
-        typedef Vertex_Out_PerPixel_Textured Vertex_Out;
+        typedef Vertex_PerPixel_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -138,7 +134,7 @@ namespace ramiel {
     public:
         VS_PerPixel_Smooth(Camera& camera) : camera(camera) {}
 
-        typedef Vertex_Out_PerPixel_Smooth Vertex_Out;
+        typedef Vertex_PerPixel_Smooth Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
@@ -157,7 +153,7 @@ namespace ramiel {
     public:
         VS_PerPixel_Smooth_Textured(Camera& camera) : camera(camera) {}
 
-        typedef Vertex_Out_PerPixel_Smooth_Textured Vertex_Out;
+        typedef Vertex_PerPixel_Smooth_Textured Vertex_Out;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;

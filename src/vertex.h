@@ -4,104 +4,104 @@
 
 namespace ramiel {
 
-    struct Vertex_Out_PerTri {
+    struct Vertex_PerTri {
         Vec3f worldPos;
         Vec3f cameraPos;
         Vec2f screenPos;
-        Vertex_Out_PerTri operator+(const Vertex_Out_PerTri& other) const;
-        Vertex_Out_PerTri operator-(const Vertex_Out_PerTri& other) const;
-        Vertex_Out_PerTri operator*(float n) const;
-        Vertex_Out_PerTri operator/(float n) const;
-        Vertex_Out_PerTri& operator+=(const Vertex_Out_PerTri& other);
+        Vertex_PerTri operator+(const Vertex_PerTri& other) const;
+        Vertex_PerTri operator-(const Vertex_PerTri& other) const;
+        Vertex_PerTri operator*(float n) const;
+        Vertex_PerTri operator/(float n) const;
+        Vertex_PerTri& operator+=(const Vertex_PerTri& other);
     };
 
-    struct Vertex_Out_PerTri_Textured {
+    struct Vertex_PerTri_Textured {
         Vec3f worldPos;
         Vec3f cameraPos;
         Vec2f screenPos;
         float zinv;
         Vec2f texturePos;
-        Vertex_Out_PerTri_Textured operator+(const Vertex_Out_PerTri_Textured& other) const;
-        Vertex_Out_PerTri_Textured operator-(const Vertex_Out_PerTri_Textured& other) const;
-        Vertex_Out_PerTri_Textured operator*(float n) const;
-        Vertex_Out_PerTri_Textured operator/(float n) const;
-        Vertex_Out_PerTri_Textured& operator+=(const Vertex_Out_PerTri_Textured& other);
+        Vertex_PerTri_Textured operator+(const Vertex_PerTri_Textured& other) const;
+        Vertex_PerTri_Textured operator-(const Vertex_PerTri_Textured& other) const;
+        Vertex_PerTri_Textured operator*(float n) const;
+        Vertex_PerTri_Textured operator/(float n) const;
+        Vertex_PerTri_Textured& operator+=(const Vertex_PerTri_Textured& other);
     };
 
-    struct Vertex_Out_PerVertex {
+    struct Vertex_PerVertex {
         Vec3f cameraPos;
         Vec2f screenPos;
         Vec3f color;
-        Vertex_Out_PerVertex operator+(const Vertex_Out_PerVertex& other) const;
-        Vertex_Out_PerVertex operator-(const Vertex_Out_PerVertex& other) const;
-        Vertex_Out_PerVertex operator*(float n) const;
-        Vertex_Out_PerVertex operator/(float n) const;
-        Vertex_Out_PerVertex& operator+=(const Vertex_Out_PerVertex& other);
+        Vertex_PerVertex operator+(const Vertex_PerVertex& other) const;
+        Vertex_PerVertex operator-(const Vertex_PerVertex& other) const;
+        Vertex_PerVertex operator*(float n) const;
+        Vertex_PerVertex operator/(float n) const;
+        Vertex_PerVertex& operator+=(const Vertex_PerVertex& other);
     };
 
-    struct Vertex_Out_PerVertex_Textured {
+    struct Vertex_PerVertex_Textured {
         Vec3f cameraPos;
         Vec2f screenPos;
-        Vec3f color;
+        Vec3f light;
         float zinv;
         Vec2f texturePos;
-        Vertex_Out_PerVertex_Textured operator+(const Vertex_Out_PerVertex_Textured& other) const;
-        Vertex_Out_PerVertex_Textured operator-(const Vertex_Out_PerVertex_Textured& other) const;
-        Vertex_Out_PerVertex_Textured operator*(float n) const;
-        Vertex_Out_PerVertex_Textured operator/(float n) const;
-        Vertex_Out_PerVertex_Textured& operator+=(const Vertex_Out_PerVertex_Textured& other);
+        Vertex_PerVertex_Textured operator+(const Vertex_PerVertex_Textured& other) const;
+        Vertex_PerVertex_Textured operator-(const Vertex_PerVertex_Textured& other) const;
+        Vertex_PerVertex_Textured operator*(float n) const;
+        Vertex_PerVertex_Textured operator/(float n) const;
+        Vertex_PerVertex_Textured& operator+=(const Vertex_PerVertex_Textured& other);
     };
 
-    struct Vertex_Out_PerPixel {
+    struct Vertex_PerPixel {
         Vec3f worldPos;
         Vec3f cameraPos;
         Vec2f screenPos;
         float zinv;
-        Vertex_Out_PerPixel operator+(const Vertex_Out_PerPixel& other) const;
-        Vertex_Out_PerPixel operator-(const Vertex_Out_PerPixel& other) const;
-        Vertex_Out_PerPixel operator*(float n) const;
-        Vertex_Out_PerPixel operator/(float n) const;
-        Vertex_Out_PerPixel& operator+=(const Vertex_Out_PerPixel& other);
+        Vertex_PerPixel operator+(const Vertex_PerPixel& other) const;
+        Vertex_PerPixel operator-(const Vertex_PerPixel& other) const;
+        Vertex_PerPixel operator*(float n) const;
+        Vertex_PerPixel operator/(float n) const;
+        Vertex_PerPixel& operator+=(const Vertex_PerPixel& other);
     };
 
-    struct Vertex_Out_PerPixel_Textured {
+    struct Vertex_PerPixel_Textured {
         Vec3f worldPos;
         Vec3f cameraPos;
         Vec2f screenPos;
         float zinv;
         Vec2f texturePos;
-        Vertex_Out_PerPixel_Textured operator+(const Vertex_Out_PerPixel_Textured& other) const;
-        Vertex_Out_PerPixel_Textured operator-(const Vertex_Out_PerPixel_Textured& other) const;
-        Vertex_Out_PerPixel_Textured operator*(float n) const;
-        Vertex_Out_PerPixel_Textured operator/(float n) const;
-        Vertex_Out_PerPixel_Textured& operator+=(const Vertex_Out_PerPixel_Textured& other);
+        Vertex_PerPixel_Textured operator+(const Vertex_PerPixel_Textured& other) const;
+        Vertex_PerPixel_Textured operator-(const Vertex_PerPixel_Textured& other) const;
+        Vertex_PerPixel_Textured operator*(float n) const;
+        Vertex_PerPixel_Textured operator/(float n) const;
+        Vertex_PerPixel_Textured& operator+=(const Vertex_PerPixel_Textured& other);
     };
 
-    struct Vertex_Out_PerPixel_Smooth {
+    struct Vertex_PerPixel_Smooth {
         Vec3f worldPos;
         Vec3f cameraPos;
         Vec2f screenPos;
         Vec3f normal;
         float zinv;
-        Vertex_Out_PerPixel_Smooth operator+(const Vertex_Out_PerPixel_Smooth& other) const;
-        Vertex_Out_PerPixel_Smooth operator-(const Vertex_Out_PerPixel_Smooth& other) const;
-        Vertex_Out_PerPixel_Smooth operator*(float n) const;
-        Vertex_Out_PerPixel_Smooth operator/(float n) const;
-        Vertex_Out_PerPixel_Smooth& operator+=(const Vertex_Out_PerPixel_Smooth& other);
+        Vertex_PerPixel_Smooth operator+(const Vertex_PerPixel_Smooth& other) const;
+        Vertex_PerPixel_Smooth operator-(const Vertex_PerPixel_Smooth& other) const;
+        Vertex_PerPixel_Smooth operator*(float n) const;
+        Vertex_PerPixel_Smooth operator/(float n) const;
+        Vertex_PerPixel_Smooth& operator+=(const Vertex_PerPixel_Smooth& other);
     };
 
-    struct Vertex_Out_PerPixel_Smooth_Textured {
+    struct Vertex_PerPixel_Smooth_Textured {
         Vec3f worldPos;
         Vec3f cameraPos;
         Vec2f screenPos;
         Vec3f normal;
         float zinv;
         Vec2f texturePos;
-        Vertex_Out_PerPixel_Smooth_Textured operator+(const Vertex_Out_PerPixel_Smooth_Textured& other) const;
-        Vertex_Out_PerPixel_Smooth_Textured operator-(const Vertex_Out_PerPixel_Smooth_Textured& other) const;
-        Vertex_Out_PerPixel_Smooth_Textured operator*(float n) const;
-        Vertex_Out_PerPixel_Smooth_Textured operator/(float n) const;
-        Vertex_Out_PerPixel_Smooth_Textured& operator+=(const Vertex_Out_PerPixel_Smooth_Textured& other);
+        Vertex_PerPixel_Smooth_Textured operator+(const Vertex_PerPixel_Smooth_Textured& other) const;
+        Vertex_PerPixel_Smooth_Textured operator-(const Vertex_PerPixel_Smooth_Textured& other) const;
+        Vertex_PerPixel_Smooth_Textured operator*(float n) const;
+        Vertex_PerPixel_Smooth_Textured operator/(float n) const;
+        Vertex_PerPixel_Smooth_Textured& operator+=(const Vertex_PerPixel_Smooth_Textured& other);
     };
 
 }

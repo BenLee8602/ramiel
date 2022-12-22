@@ -124,7 +124,7 @@ int main() {
     );
 	//*/
 
-	//* texture distorted 1
+	/*
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
         VS_PerVertex_Textured(scene.camera, scene.getLightingList(1, 0.0f)),
@@ -140,7 +140,7 @@ int main() {
     );
 	//*/
 
-	/* texture distorted 2
+	/*
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
         VS_PerPixel_Textured(scene.camera),
@@ -148,7 +148,7 @@ int main() {
     );
 	//*/
 
-	/* texture distorted 2
+	/*
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
         VS_PerPixel_Textured(scene.camera),
@@ -156,7 +156,7 @@ int main() {
     );
 	//*/
 
-	/* texture distorted 2
+	//*
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
         VS_PerPixel_Textured(scene.camera),
