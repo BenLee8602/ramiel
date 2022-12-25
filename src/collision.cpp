@@ -17,10 +17,10 @@ namespace ramiel {
 		float time = depth / getMagnitude(o2.posVel - o1.posVel);
 
 		// collision response
-		if (o1.dynamic) {
+		if (o1.responsive) {
 
-			// both dynamic
-			if (o2.dynamic) {
+			// both responsive
+			if (o2.responsive) {
 				o1.pos -= o1.posVel * time;
 				o2.pos -= o2.posVel * time;
 				Vec3f n = getNormalized(o2.pos - o1.pos);
@@ -35,7 +35,7 @@ namespace ramiel {
 				o2.pos += o2.posVel * time;
 			}
 
-			// o1 dynamic
+			// o1 responsive
 			else {
 				o1.pos -= o1.posVel * time;
 				Vec3f n = getNormalized(o2.pos - o1.pos);
@@ -45,8 +45,8 @@ namespace ramiel {
 			
 		}
 
-		// o2 dynamic
-		else if (o2.dynamic) {
+		// o2 responsive
+		else if (o2.responsive) {
 			o2.pos -= o2.posVel * time;
 			Vec3f n = getNormalized(o2.pos - o1.pos);
 			o2.posVel -= n * 2.0f * dotProduct(o2.posVel, n);
@@ -96,10 +96,10 @@ namespace ramiel {
 		}
 
 		// collision response
-		if (o1.dynamic) {
+		if (o1.responsive) {
 
-			// both dynamic
-			if (o2.dynamic) {
+			// both responsive
+			if (o2.responsive) {
 				o1.pos[axis] -= o1.posVel[axis] * time;
 				o2.pos[axis] -= o2.posVel[axis] * time;
 				
@@ -113,7 +113,7 @@ namespace ramiel {
 				o2.pos[axis] += o2.posVel[axis] * time;
 			}
 
-			// o1 dynamic
+			// o1 responsive
 			else {
 				o1.pos[axis] -= 2.0f * o1.posVel[axis] * time;
 				o1.posVel[axis] *= -1.0f;
@@ -121,8 +121,8 @@ namespace ramiel {
 			
 		}
 
-		// o2 dynamic
-		else if (o2.dynamic) {
+		// o2 responsive
+		else if (o2.responsive) {
 			o2.pos[axis] -= 2.0f * o2.posVel[axis] * time;
 			o2.posVel[axis] *= -1.0f;
 		}

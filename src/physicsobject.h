@@ -1,28 +1,13 @@
 #pragma once
 
-#include "vec.h"
 #include "mesh.h"
-
-#define RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS \
-bool dynamic = false,                   \
-Vec3f pos    = vec3f_0,                 \
-Rotation rot = Rotation(),              \
-Vec3f posVel = vec3f_0,                 \
-Vec3f rotVel = vec3f_0,                 \
-Vec3f posAcc = vec3f_0,                 \
-Vec3f rotAcc = vec3f_0                  \
-
-#define RAMIEL_COLLIDER_ARGS float mass = 1.0f
 
 namespace ramiel {
 
-    class PhysicsObj {
-    #ifdef RAMIEL_TEST
-    public:
-    #else
-    protected:
-    #endif
-        bool dynamic;
+    class Scene;
+
+    struct PhysicsObject {
+        Scene& scene;
         Vec3f pos;
         Rotation rot;
         Vec3f posVel;
@@ -30,14 +15,10 @@ namespace ramiel {
         Vec3f posAcc;
         Vec3f rotAcc;
 
-    public:
-        PhysicsObj(RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS);
-        virtual ~PhysicsObj();
+        PhysicsObject(Scene& scene, Vec3f pos = vec3f_0, Rotation rot = vec3f_0);
+        virtual ~PhysicsObject();
 
-        void step();
-
-        inline const Vec3f& getPos() const { return pos; }
-        inline const Rotation& getRot() const { return rot; }
+        void step(float dtime);
     };
 
 
@@ -47,43 +28,39 @@ namespace ramiel {
     class MeshCollider;
 
 
-    class Collider : public PhysicsObj {
-    #ifdef RAMIEL_TEST
-    public:
-    #else
-    protected:
-    #endif
+    struct Collider : public PhysicsObject {
+        bool responsive;
         float mass;
-    public:
+
         Collider(
-            RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS,
-            RAMIEL_COLLIDER_ARGS
+            Scene& scene,
+            Vec3f pos = vec3f_0,
+            Rotation rot = vec3f_0,
+            bool responsive = true,
+            float mass = 1.0f
         );
         virtual ~Collider();
 
-        virtual void collideWith(Collider* other);
-        virtual void collideWith(SphereCollider* other);
-        virtual void collideWith(AabbCollider* other);
-        virtual void collideWith(ObbCollider* other);
-        virtual void collideWith(MeshCollider* other);
+        virtual void collideWith(Collider* other) = 0;
+        virtual void collideWith(SphereCollider* other) = 0;
+        virtual void collideWith(AabbCollider* other) = 0;
+        virtual void collideWith(ObbCollider* other) = 0;
+        virtual void collideWith(MeshCollider* other) = 0;
     };
 
 
-    class SphereCollider : public Collider {
+    struct SphereCollider : public Collider {
         float hbxrad;
-    public:
+
         SphereCollider(
-            RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS,
-            RAMIEL_COLLIDER_ARGS,
-            float hbxrad = 0.5f
+            float hbxrad,
+            Scene& scene,
+            Vec3f pos = vec3f_0,
+            Rotation rot = vec3f_0,
+            bool responsive = true,
+            float mass = 1.0f
         ) : 
-            Collider(
-                dynamic,
-                pos, rot,
-                posVel, rotVel,
-                posAcc, rotAcc,
-                mass
-            ),
+            Collider(scene, pos, rot, responsive, mass),
             hbxrad(hbxrad)
         {}
 
@@ -100,21 +77,18 @@ namespace ramiel {
     };
 
 
-    class AabbCollider : public Collider {
+    struct AabbCollider : public Collider {
         Vec3f size;
-    public:
+
         AabbCollider(
             Vec3f size,
-            RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS,
-            RAMIEL_COLLIDER_ARGS
+            Scene& scene,
+            Vec3f pos = vec3f_0,
+            Rotation rot = vec3f_0,
+            bool responsive = true,
+            float mass = 1.0f
         ) : 
-            Collider(
-                dynamic,
-                pos, rot,
-                posVel, rotVel,
-                posAcc, rotAcc,
-                mass
-            ),
+            Collider(scene, pos, rot, responsive, mass),
             size(size)
         {}
 
@@ -131,14 +105,21 @@ namespace ramiel {
     };
 
 
-    class ObbCollider : public Collider {
-        // idk
-    public:
+    struct ObbCollider : public Collider {
+        Vec3f size;
+
         ObbCollider(
-            // idk,
-            RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS,
-            RAMIEL_COLLIDER_ARGS
-        );
+            Vec3f size,
+            Scene& scene,
+            Vec3f pos = vec3f_0,
+            Rotation rot = vec3f_0,
+            bool responsive = true,
+            float mass = 1.0f
+        ) : 
+            Collider(scene, pos, rot, responsive, mass),
+            size(size)
+        {}
+        
         virtual void collideWith(Collider* other) override;
         virtual void collideWith(SphereCollider* other) override;
         virtual void collideWith(AabbCollider* other) override;
@@ -152,14 +133,20 @@ namespace ramiel {
     };
 
 
-    class MeshCollider : public Collider {
-        Mesh* mesh;
-    public:
+    struct MeshCollider : public Collider {
+        Mesh<Vertex_Mesh>& mesh;
+
         MeshCollider(
-            Mesh* mesh,
-            RAMIEL_PHYSICSOBJ_DYNAMICS_ARGS,
-            RAMIEL_COLLIDER_ARGS
-        );
+            Mesh<Vertex_Mesh>& mesh,
+            Scene& scene,
+            Vec3f pos = vec3f_0,
+            Rotation rot = vec3f_0,
+            bool responsive = true,
+            float mass = 1.0f
+        ) : 
+            Collider(scene, pos, rot, responsive, mass),
+            mesh(mesh)
+        {}
 
         virtual void collideWith(Collider* other) override;
         virtual void collideWith(SphereCollider* other) override;

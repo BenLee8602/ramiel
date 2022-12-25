@@ -1,8 +1,10 @@
 add_library(${PROJECT_NAME} STATIC 
     camera.cpp 
+    collision.cpp 
     effects.cpp 
     light.cpp 
     objloader.cpp 
+    physicsobject.cpp 
     pixelshader.cpp 
     rotation.cpp 
     scene.cpp

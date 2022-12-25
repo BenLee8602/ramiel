@@ -9,6 +9,7 @@
 #include "entity.h"
 #include "light.h"
 #include "effects.h"
+#include "physicsobject.h"
 
 namespace ramiel {
 
@@ -25,6 +26,10 @@ namespace ramiel {
         std::vector<EntityBase*> entities;
         std::vector<Light*> lights;
         std::vector<Effect> effects;
+    
+    private:
+        std::vector<PhysicsObject*> physicsObjects;
+        std::vector<Collider*> colliders;
 
     public:
         template<class Vertex>
@@ -56,6 +61,16 @@ namespace ramiel {
         LightingListSpecular getLightingList(uint16_t specularExponent, float specularIntensity) const;
 
         void renderFrame();
+
+
+        bool addPhysicsObject(PhysicsObject* physicsObject);
+        bool removePhysicsObject(PhysicsObject* physicsObject);
+
+        bool addCollider(Collider* collider);
+        bool removeCollider(Collider* collider);
+
+        void simulatePhysics(float dtime);
+
 
         ~Scene();
     };

@@ -95,95 +95,201 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 
+	/*
 	Scene scene;
+    scene.camera.res({ width, height });
+
     scene.loadMesh<Vertex_Mesh_TN>("examples/assets/models/cube.obj", "cube", true, true);
 	scene.loadTexture("examples/assets/textures/brickwall_texture.jpg", "brickTexture");
 	scene.loadNormalMap("examples/assets/textures/brickwall_normal.jpg", "brickNormal");
+	
+	scene.ambientLight = { 25.0f, 25.0f, 25.0f };
+	scene.addLight(new Light_Pt(vec3f_255, 4.0f, { -6, 2, 2 }, 0.2f));
+	scene.addLight(new Light_Pt(vec3f_255, 4.0f, {  0, 2, 2 }, 0.2f));
+	scene.addLight(new Light_Pt(vec3f_255, 4.0f, {  6, 2, 2 }, 0.2f));
 
-	/*
     scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerTri(scene.camera),
-        PS_PerTri(scene.getLightingList(1, 0.0f), vec3f_255)
+        VS_PerTri(
+			scene.camera,
+			new PhysicsObject(scene, { -9, 0, 4 })
+		),
+        PS_PerTri(
+			scene.getLightingList(1, 0.0f),
+			{ 100, 90, 70 }
+		)
     );
-	//*/
-
-	/*
+	
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerTri_Textured(scene.camera),
-        PS_PerTri_Textured(scene.getLightingList(1, 0.0f), scene.getTexture("brickTexture"))
+        VS_PerTri_Textured(
+			scene.camera,
+			new PhysicsObject(scene, { -7, 0, 4 })
+		),
+        PS_PerTri_Textured(
+			scene.getLightingList(1, 0.0f),
+			scene.getTexture("brickTexture")
+		)
     );
-	//*/
-
-	/*
+	
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerVertex(scene.camera, scene.getLightingList(1, 0.0f)),
+        VS_PerVertex(
+			scene.camera,
+			scene.getLightingList(1, 0.0f),
+			{ 100, 90, 70 },
+			new PhysicsObject(scene, { -5, 0, 4 })
+		),
         PS_PerVertex()
     );
-	//*/
-
-	/*
+	
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerVertex_Textured(scene.camera, scene.getLightingList(1, 0.0f)),
+        VS_PerVertex_Textured(
+			scene.camera,
+			scene.getLightingList(1, 0.0f),
+			new PhysicsObject(scene, { -3, 0, 4 })
+		),
         PS_PerVertex_Textured(scene.getTexture("brickTexture"))
     );
-	//*/
-
-	/*
+	
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerPixel(scene.camera),
-        PS_PerPixel(scene.getLightingList(1, 0.0f), vec3f_255)
+        VS_PerPixel(
+			scene.camera,
+			new PhysicsObject(scene, { -1, 0, 4 })
+		),
+        PS_PerPixel(
+			scene.getLightingList(1, 0.0f),
+			{ 100, 90, 70 }
+		)
     );
-	//*/
-
-	/*
+	
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerPixel_Textured(scene.camera),
-        PS_PerPixel_Textured(scene.getLightingList(1, 0.0f), scene.getTexture("brickTexture"))
+        VS_PerPixel_Textured(
+			scene.camera,
+			new PhysicsObject(scene, { 1, 0, 4 })
+		),
+        PS_PerPixel_Textured(
+			scene.getLightingList(1, 0.0f),
+			scene.getTexture("brickTexture")
+		)
     );
-	//*/
-
-	/*
+	
 	scene.addEntity<Vertex_Mesh_TN>(
         "cube",
-        VS_PerPixel_Textured(scene.camera),
-        PS_PerPixel_NormalMapped(scene.getLightingList(1, 0.0f), scene.getTexture("brickNormal"), vec3f_255)
+        VS_PerPixel_Textured(
+			scene.camera,
+			new PhysicsObject(scene, { 3, 0, 4 })
+		),
+        PS_PerPixel_NormalMapped(
+			scene.getLightingList(1, 0.0f),
+			scene.getTexture("brickNormal"),
+			{ 100, 90, 70 }
+		)
+    );
+	
+	scene.addEntity<Vertex_Mesh_TN>(
+        "cube",
+        VS_PerPixel_Textured(
+			scene.camera,
+			new PhysicsObject(scene, { 5, 0, 4 })
+		),
+        PS_PerPixel_Textured_NormalMapped(
+			scene.getLightingList(1, 0.0f),
+			scene.getTexture("brickTexture"),
+			scene.getTexture("brickNormal")
+		)
+    );
+	
+	scene.addEntity<Vertex_Mesh_TN>(
+        "cube",
+        VS_PerPixel_Smooth(
+			scene.camera,
+			new PhysicsObject(scene, { 7, 0, 4 })
+		),
+        PS_PerPixel_Smooth(
+			scene.getLightingList(1, 0.0f),
+			{ 100, 90, 70 }
+		)
+    );
+	
+	scene.addEntity<Vertex_Mesh_TN>(
+        "cube",
+        VS_PerPixel_Smooth_Textured(
+			scene.camera,
+			new PhysicsObject(scene, { 9, 0, 4 })
+		),
+        PS_PerPixel_Smooth_Textured(
+			scene.getLightingList(1, 0.0f),
+			scene.getTexture("brickTexture")
+		)
     );
 	//*/
 
 	//*
-	scene.addEntity<Vertex_Mesh_TN>(
-        "cube",
-        VS_PerPixel_Textured(scene.camera),
-        PS_PerPixel_Textured_NormalMapped(scene.getLightingList(1, 0.0f), scene.getTexture("brickTexture"), scene.getTexture("brickNormal"))
-    );
-	//*/
+	Scene scene;
+	scene.camera.res({ width, height });
 
-	/*
-	scene.addEntity<Vertex_Mesh_TN>(
-        "cube",
-        VS_PerPixel_Smooth(scene.camera),
-        PS_PerPixel_Smooth(scene.getLightingList(1, 0.0f), vec3f_255)
-    );
-	//*/
+	scene.loadMesh<Vertex_Mesh>("examples/assets/models/sphere.obj", "sphere");
 
-	/*
-	scene.addEntity<Vertex_Mesh_TN>(
-        "cube",
-        VS_PerPixel_Smooth_Textured(scene.camera),
-        PS_PerPixel_Smooth_Textured(scene.getLightingList(1, 0.0f), scene.getTexture("brickTexture"))
-    );
+	scene.ambientLight = { 25, 25, 25 };
+	scene.addLight(new Light_Dir(vec3f_255, 1.0f, { 0, 0, 1 }));
+
+	scene.addEntity<Vertex_Mesh>(
+		"sphere",
+		VS_PerTri(
+			scene.camera,
+			new SphereCollider(1.0f, scene, { 0, 0, 32 }, vec3f_0, false)
+		),
+		PS_PerTri(
+			scene.getLightingList(1, 0.0f),
+			{ 255, 25, 25 }
+		)
+	);
+
+	SphereCollider* sc1 = new SphereCollider(
+		1.0f,
+		scene,
+		{ 0, 4, 32 },
+		vec3f_0,
+		true
+	);
+	sc1->posAcc = { 0, -9.8, 0 };
+	scene.addEntity<Vertex_Mesh>(
+		"sphere",
+		VS_PerTri(
+			scene.camera,
+			sc1
+		),
+		PS_PerTri(
+			scene.getLightingList(1, 0.0f),
+			{ 25, 255, 25 }
+		)
+	);
+
+	SphereCollider* sc2 = new SphereCollider(
+		1.0f,
+		scene,
+		{ 0.5, 16, 32 },
+		vec3f_0,
+		true
+	);
+	sc2->posAcc = { 0, -9.8, 0 };
+	scene.addEntity<Vertex_Mesh>(
+		"sphere",
+		VS_PerTri(
+			scene.camera,
+			sc2
+		),
+		PS_PerTri(
+			scene.getLightingList(1, 0.0f),
+			{ 25, 25, 255 }
+		)
+	);
+
 	//*/
-	
-    scene.camera.res({ width, height });
-	scene.camera.pos = { 1.0f, 1.0f, -4.0f };
-	scene.ambientLight = { 50.0f, 50.0f, 50.0f };
-	scene.addLight(new Light_Pt(vec3f_255, 1.0f, { 1.0f, 1.0f, -4.0f }, 0.1f));
 
 	uint8_t* frame = new uint8_t[width * height * 3];
 
@@ -196,6 +302,7 @@ int main() {
 		frameStart = glfwGetTime();
 
 		cameraControls(window, (float)dtime, scene.camera);
+		scene.simulatePhysics(dtime);
 		scene.renderFrame();
 		scene.camera.getFrameRGB(frame);
 		

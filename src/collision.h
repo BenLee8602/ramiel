@@ -1,6 +1,6 @@
 #pragma once
 
-#include "physicsobj.h"
+#include "physicsobject.h"
 
 namespace ramiel {
     
