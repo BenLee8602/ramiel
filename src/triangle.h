@@ -51,7 +51,7 @@ namespace ramiel {
 					int x = std::max<int>(0, sc1.screenPos[X]);
 					int xmax = std::min<int>(sc2.screenPos[X], camera.res()[X]);
 					Vertex p = sc1 + dx * (float)(x - sc1.screenPos[X]);
-					size_t i = camera.res()[X] * (unsigned)p.screenPos[Y] + (unsigned)p.screenPos[X];
+					size_t i = camera.res()[X] * y + x;
 
 					for (x; x < xmax; ++x) {
 						if (p.cameraPos[Z] < depth[i]) {
