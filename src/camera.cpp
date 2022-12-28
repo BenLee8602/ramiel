@@ -45,8 +45,8 @@ namespace ramiel {
 	Vec2f Camera::getScreenCoord(const Vec3f& in) const {
 		if (in[Z] == 0.0f) return vec2f_0;
 		Vec2f out = vec2f_0;
-		out[X] = in[X] * focalLength / in[Z] + halfResolution[X];
-		out[Y] = in[Y] * focalLength / in[Z] + halfResolution[Y];
+		out[X] = std::floor(in[X] * focalLength / in[Z] + halfResolution[X]);
+		out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfResolution[Y]);
 		return out;
 	}
 

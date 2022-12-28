@@ -39,18 +39,18 @@ namespace ramiel {
 			}
 			else dy = &dy2;
 
-			float y = std::max(0.0f, v[0].screenPos[Y]);
-			float ymax = std::min<float>(v[1].screenPos[Y], camera.res()[Y]);
-			Vertex sc1 = v[0] + dy1 * (y - v[0].screenPos[Y]);
-			Vertex sc2 = v[0] + dy2 * (y - v[0].screenPos[Y]);
+			int y = std::max<int>(0, v[0].screenPos[Y]);
+			int ymax = std::min<int>(v[1].screenPos[Y], camera.res()[Y]);
+			Vertex sc1 = v[0] + dy1 * (float)(y - v[0].screenPos[Y]);
+			Vertex sc2 = v[0] + dy2 * (float)(y - v[0].screenPos[Y]);
 			
 			auto drawHalf = [&]() {
 				for (y; y < ymax; ++y) {
 					Vertex dx = (sc2 - sc1) / (sc2.screenPos[X] - sc1.screenPos[X]);
 
-					float x = std::max(0.0f, sc1.screenPos[X]);
-					float xmax = std::min<float>(sc2.screenPos[X], camera.res()[X]);
-					Vertex p = sc1 + dx * (x - sc1.screenPos[X]);
+					int x = std::max<int>(0, sc1.screenPos[X]);
+					int xmax = std::min<int>(sc2.screenPos[X], camera.res()[X]);
+					Vertex p = sc1 + dx * (float)(x - sc1.screenPos[X]);
 					size_t i = camera.res()[X] * (unsigned)p.screenPos[Y] + (unsigned)p.screenPos[X];
 
 					for (x; x < xmax; ++x) {
@@ -68,10 +68,10 @@ namespace ramiel {
 			
 			drawHalf();
 
-			ymax = std::min<float>(v[2].screenPos[Y], camera.res()[Y]);
+			ymax = std::min<int>(v[2].screenPos[Y], camera.res()[Y]);
 			*dy = (v[2] - v[1]) / (v[2].screenPos[Y] - v[1].screenPos[Y]);
-			sc1 = v[2] - dy1 * (v[2].screenPos[Y] - y);
-			sc2 = v[2] - dy2 * (v[2].screenPos[Y] - y);
+			sc1 = v[2] - dy1 * (float)(v[2].screenPos[Y] - y);
+			sc2 = v[2] - dy2 * (float)(v[2].screenPos[Y] - y);
 			
 			drawHalf();
 		}
