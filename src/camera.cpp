@@ -67,7 +67,7 @@ namespace ramiel {
 
 	void Camera::getFrameDEC(int* frame) const {
 		for (auto& c : color)
-			*frame++ = (int)c[R] << 16 + (int)c[G] << 8 + (int)c[B];
+			*frame++ = ((int)c[R] << 16) + ((int)c[G] << 8) + (int)c[B];
 	}
 
 	void Camera::getFrameRGB(uint8_t* frame) const {
