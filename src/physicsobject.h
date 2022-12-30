@@ -4,10 +4,7 @@
 
 namespace ramiel {
 
-    class Scene;
-
     struct PhysicsObject {
-        Scene& scene;
         Vec3f pos;
         Rotation rot;
         Vec3f posVel;
@@ -15,8 +12,18 @@ namespace ramiel {
         Vec3f posAcc;
         Vec3f rotAcc;
 
-        PhysicsObject(Scene& scene, Vec3f pos = vec3f_0, Rotation rot = vec3f_0);
-        virtual ~PhysicsObject();
+        PhysicsObject(
+            Vec3f pos = vec3f_0,
+            Rotation rot = vec3f_0
+        ) :
+            pos(pos),
+            rot(rot),
+            posVel(vec3f_0),
+            rotVel(vec3f_0),
+            posAcc(vec3f_0),
+            rotAcc(vec3f_0)
+        {}
+        virtual ~PhysicsObject() {}
 
         void step(float dtime);
     };
@@ -33,13 +40,16 @@ namespace ramiel {
         float mass;
 
         Collider(
-            Scene& scene,
             Vec3f pos = vec3f_0,
             Rotation rot = vec3f_0,
             bool responsive = true,
             float mass = 1.0f
-        );
-        virtual ~Collider();
+        ) :
+            PhysicsObject(pos, rot),
+            responsive(responsive),
+            mass(mass)
+        {}
+        virtual ~Collider() {}
 
         virtual void collideWith(Collider* other) = 0;
         virtual void collideWith(SphereCollider* other) = 0;
@@ -53,14 +63,13 @@ namespace ramiel {
         float hbxrad;
 
         SphereCollider(
-            float hbxrad,
-            Scene& scene,
+            float hbxrad = 0.5f,
             Vec3f pos = vec3f_0,
             Rotation rot = vec3f_0,
             bool responsive = true,
             float mass = 1.0f
         ) : 
-            Collider(scene, pos, rot, responsive, mass),
+            Collider(pos, rot, responsive, mass),
             hbxrad(hbxrad)
         {}
 
@@ -82,13 +91,12 @@ namespace ramiel {
 
         AabbCollider(
             Vec3f size,
-            Scene& scene,
             Vec3f pos = vec3f_0,
             Rotation rot = vec3f_0,
             bool responsive = true,
             float mass = 1.0f
         ) : 
-            Collider(scene, pos, rot, responsive, mass),
+            Collider(pos, rot, responsive, mass),
             size(size)
         {}
 
@@ -110,13 +118,12 @@ namespace ramiel {
 
         ObbCollider(
             Vec3f size,
-            Scene& scene,
             Vec3f pos = vec3f_0,
             Rotation rot = vec3f_0,
             bool responsive = true,
             float mass = 1.0f
         ) : 
-            Collider(scene, pos, rot, responsive, mass),
+            Collider(pos, rot, responsive, mass),
             size(size)
         {}
         
@@ -138,13 +145,12 @@ namespace ramiel {
 
         MeshCollider(
             Mesh<Vertex_Mesh>& mesh,
-            Scene& scene,
             Vec3f pos = vec3f_0,
             Rotation rot = vec3f_0,
             bool responsive = true,
             float mass = 1.0f
         ) : 
-            Collider(scene, pos, rot, responsive, mass),
+            Collider(pos, rot, responsive, mass),
             mesh(mesh)
         {}
 

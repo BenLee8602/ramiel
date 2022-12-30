@@ -106,7 +106,7 @@ int main() {
 	scene.loadMesh<Vertex_Mesh>("examples/assets/models/cube.obj", "cube");
 	scene.addEntity<Vertex_Mesh>(
 		"cube",
-		VS_PerTri(scene.camera, new PhysicsObject(scene, { 0, 0, 4 })),
+		VS_PerTri(scene.camera, new PhysicsObject({ 0, 0, 4 })),
 		PS_PerTri(scene.getLightingList(1, 0.0f), vec3f_255)
 	);
 

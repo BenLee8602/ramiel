@@ -1,47 +1,12 @@
-#include "scene.h"
+#include "physicsobject.h"
 
 namespace ramiel {
-
-    PhysicsObject::PhysicsObject(Scene& scene, Vec3f pos, Rotation rot) : scene(scene) {
-        this->pos = pos;
-        this->rot = rot;
-        this->posVel = vec3f_0;
-        this->rotVel = vec3f_0;
-        this->posAcc = vec3f_0;
-        this->rotAcc = vec3f_0;
-
-        scene.addPhysicsObject(this);
-    }
-
-
-    PhysicsObject::~PhysicsObject() {
-        scene.removePhysicsObject(this);
-    }
-
 
     void PhysicsObject::step(float dtime) {
         posVel += posAcc * dtime;
         rotVel += rotAcc * dtime;
         pos    += posVel * dtime;
         rot    += rotVel * dtime;
-    }
-
-
-    Collider::Collider(
-        Scene& scene,
-        Vec3f pos,
-        Rotation rot,
-        bool responsive,
-        float mass
-    ) : PhysicsObject(scene, pos, rot) {
-        this->responsive = responsive;
-        this->mass = mass;
-        scene.addCollider(this);
-    }
-    
-
-    Collider::~Collider() {
-        scene.removeCollider(this);
     }
 
 
