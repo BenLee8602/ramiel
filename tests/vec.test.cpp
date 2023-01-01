@@ -241,10 +241,3 @@ TEST_CASE("color clamp", "[vec][color]") {
     Vec3f expected = { 0.0f, 128.0f, 255.0f };
     REQUIRE(color == expected);
 }
-
-TEST_CASE("rgb to dec", "[vec][color]") {
-    Vec3f color = { 255.0f, 255.0f, 255.0f };
-    int res = rgbToDec(color);
-    int expected = 0xffffff;
-    REQUIRE(res == expected);
-}

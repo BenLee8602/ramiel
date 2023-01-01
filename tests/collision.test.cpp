@@ -6,8 +6,10 @@ using namespace ramiel;
 
 
 TEST_CASE("sphere-sphere", "[collision][sphere]") {
-    SphereCollider o1(true, vec3f_0, vec3f_0, { -3.3f, 6.9f, 2.7f }, vec3f_0, vec3f_0, vec3f_0, 1.8, 0.5);
-    SphereCollider o2(true, { 0.25, 1, 0.52 }, vec3f_0, { -2.8f, -3.3f, 7.9f }, vec3f_0, vec3f_0, vec3f_0, 2.5, 0.85);
+    SphereCollider o1(0.5, vec3f_0, vec3f_0, true, 1.8);
+    SphereCollider o2(0.85, { 0.25, 1, 0.52 }, vec3f_0, true, 2.5);
+    o1.posVel = { -3.3f,  6.9f, 2.7f };
+    o2.posVel = { -2.8f, -3.3f, 7.9f };
 
     Vec3f o1_pos_expected = { -0.02837f, -0.13793f, -0.05067f };
     Vec3f o2_pos_expected = {  0.27042f,  1.09931f,  0.55648f };
@@ -32,8 +34,10 @@ TEST_CASE("sphere-sphere", "[collision][sphere]") {
 
 
 TEST_CASE("aabb-aabb", "[collision][aabb]") {
-    AabbCollider o1({ 1.0f, 0.8f, 1.1f }, true, { -1.1f, -0.3f, -0.6f }, vec3f_0, { 9.1f, -6.5f, -8.4f }, vec3f_0, vec3f_0, vec3f_0, 0.9f);
-    AabbCollider o2({ 1.1f, 1.4f, 0.6f }, true, { -1.5f, 0.5f, -1.0f }, vec3f_0, { -8.6f, 2.6f, -8.1f }, vec3f_0, vec3f_0, vec3f_0, 1.0f);
+    AabbCollider o1({ 1.0f, 0.8f, 1.1f }, { -1.1f, -0.3f, -0.6f }, vec3f_0, true, 0.9f);
+    AabbCollider o2({ 1.1f, 1.4f, 0.6f }, { -1.5f,  0.5f, -1.0f }, vec3f_0, true, 1.0f);
+    o1.posVel = {  9.1f, -6.5f, -8.4f };
+    o2.posVel = { -8.6f,  2.6f, -8.1f };
 
     Vec3f o1_pos_expected = { -3.73158f, -0.3f, -0.6f };
     Vec3f o2_pos_expected = {  0.86842f,  0.5f, -1.0f };
