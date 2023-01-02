@@ -17,17 +17,17 @@ namespace ramiel {
 		virtual Vec3f getLight(
 			const Vec3f& pos,
 			const Vec3f& normal,
-			const Camera& camera,
+			const Vec3f& cameraPos,
 			unsigned specularExponent,
 			float specularIntensity
 		) const = 0;
 	};
 
-	class Light_Dir : public Light {
+	class DirectionalLight : public Light {
 	protected:
 		Vec3f dir;
 	public:
-		Light_Dir(Vec3f color, float intensity, Vec3f dir);
+		DirectionalLight(Vec3f color, float intensity, Vec3f dir);
 		virtual Vec3f getLight(
 			const Vec3f& pos,
 			const Vec3f& normal
@@ -35,18 +35,18 @@ namespace ramiel {
 		virtual Vec3f getLight(
 			const Vec3f& pos,
 			const Vec3f& normal,
-			const Camera& camera,
+			const Vec3f& cameraPos,
 			unsigned specularExponent,
 			float specularIntensity
 		) const override;
 	};
 
-	class Light_Pt : public Light {
+	class PointLight : public Light {
 	protected:
 		Vec3f pos;
 		float falloff;
 	public:
-		Light_Pt(Vec3f color, float intensity, Vec3f pos, float falloff);
+		PointLight(Vec3f color, float intensity, Vec3f pos, float falloff);
 		virtual Vec3f getLight(
 			const Vec3f& pos,
 			const Vec3f& normal
@@ -54,18 +54,18 @@ namespace ramiel {
 		virtual Vec3f getLight(
 			const Vec3f& pos,
 			const Vec3f& normal,
-			const Camera& camera,
+			const Vec3f& cameraPos,
 			unsigned specularExponent,
 			float specularIntensity
 		) const override;
 	};
 
-	class Light_Sp : public Light_Pt {
+	class SpotLight : public PointLight {
 		Vec3f dir;
 		float width;
 		float falloffExp;
 	public:
-		Light_Sp(
+		SpotLight(
 			Vec3f color,
 			float intensity,
 			Vec3f pos,
@@ -81,7 +81,7 @@ namespace ramiel {
 		virtual Vec3f getLight(
 			const Vec3f& pos,
 			const Vec3f& normal,
-			const Camera& camera,
+			const Vec3f& cameraPos,
 			unsigned specularExponent,
 			float specularIntensity
 		) const override;
@@ -107,19 +107,19 @@ namespace ramiel {
 	};
 
 	class LightingListSpecular : public LightingList {
-		const Camera& camera;
+		const Vec3f& cameraPos;
 		uint16_t specularExponent;
 		float specularIntensity;
 	public:
 		LightingListSpecular(
 			const Vec3f& ambientLight,
 			const std::vector<Light*>& lights,
-			const Camera& camera,
+			const Vec3f& cameraPos,
 			uint16_t specularExponent,
 			float specularIntensity
 		) :
 			LightingList(ambientLight, lights),
-			camera(camera),
+			cameraPos(cameraPos),
 			specularExponent(specularExponent),
 			specularIntensity(specularIntensity)
 		{}

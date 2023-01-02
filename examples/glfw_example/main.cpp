@@ -97,11 +97,9 @@ int main() {
 
 	Scene scene;
 	scene.camera.res({ width, height });
-	scene.camera.pos = { -0.0153572, 1.71877, 3.30768 };
-	scene.camera.rot = { -0.520348, -0.839752, 0 };
 
 	scene.ambientLight = { 25, 25, 25 };
-	scene.addLight(new Light_Pt(vec3f_255, 1.0f, { 1, 1, 2 }, 0.1f));
+	scene.addLight(new PointLight(vec3f_255, 1.0f, { 1, 1, 2 }, 0.1f));
 
 	scene.loadMesh<Vertex_Mesh>("examples/assets/models/cube.obj", "cube");
 	scene.addEntity<Vertex_Mesh>(

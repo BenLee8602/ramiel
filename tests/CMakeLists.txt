@@ -3,6 +3,7 @@ add_executable("${PROJECT_NAME}_test"
     camera.test.cpp 
     collision.test.cpp 
     effects.test.cpp 
+    light.test.cpp 
     texture.test.cpp 
     vec.test.cpp
 )

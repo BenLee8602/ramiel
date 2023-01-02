@@ -41,7 +41,7 @@ namespace ramiel {
         return LightingListSpecular(
             ambientLight,
             lights,
-            camera,
+            camera.pos,
             specularExponent,
             specularIntensity
         );
