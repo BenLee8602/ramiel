@@ -1,64 +1,65 @@
 # Code
 
 ## Camera
-Stores the camera's current position and orientation. Contains functions for handling user input 
-(moving camera), and converting 3D world coordinates to 3D camera coordinates to 2D screen 
-coordinates.
+Represents a camera in the 3D world, including position, rotation, fov. Also contains color and 
+depth buffers, and functions for transforming world coordinates to camera coordinates, and 
+camera coordinates to screen coordinates.
 
 ## Collision
 Functions for handling collision detection and response.
 
-## Draw
-Contains the lowest level code, involved directly with drawing pixels to the pixel buffer. Defines 
-a class for each drawing type:
-* Flat: one color is used for drawing the entire triangle
-* Vertex: colors from each vertex are interpolated across the triangle face, giving a smoother look
-* Pixel: colors are calculated for each pixel, giving the most realistic look
-
-There are also templated draw classes for modifying the main 3 ^, for things like perspective 
-correction, and texturing. Each class is responsible for clipping and interpolating vertex data 
-across the triangle, drawing pixels, and executing any required setup for that drawing type.
-These functions are called by a Triangle class instance.
-
 ## Effects
-Post-processing effects. Defines the Effect type as a function that processes a rendered frame.
+Post-processing effects.
 
 ## Entity
-An entity is a 3D object. It references a Model and Texture. Also contains shading type, physical 
-properties, and a color if no texture is referenced.
-
-## Graphics
-Top level graphics module, stores all graphics related data, such as pixel buffers, entities, 
-lights, and textures, and functions for graphics related operations like adding/removing entities, 
-lighting, etc. from the scene, rendering frames, and more.
+An entity is a 3D object. It references a mesh, and contains vertex and pixel shaders which 
+define how the mesh is rendered.
 
 ## Light
-Defines classes for diffuse + specular lighting. This includes directional lighting (ex. the sun), 
-point lighting, (ex. a light bulb) and spotlight (a flashlight). Each class implements a function 
-to calculate the lighting on a given vertex.
+Light sources, including directional lights, point lights, and spotlights, and how to apply the 
+light to a given surface.
 
 ## Mesh
-Stores vertex geometry+texture, and polygon data for a 3D mesh.
+Stores 3D geometry, using a vertex buffer, and an index buffer to assemble the vertices into 
+triangles for rendering.
 
-## ObjReader
+## Meshvertex
+Vertex types to be stored in a mesh's vertex buffer, with attributes such as position/texture 
+coordinates and surface normals.
+
+## Objloader
 Functions for loading 3D geometry data from wavefront obj files.
 
-## Physics
-Top level physics module, stores all physics related data, such as physics objects and delta time, 
-and function for physics related operations such as simulating dynamics and collisions.
+## Physicsobject
+Contains physics properties of an object, such as position, velocity, mass, and behavior such as 
+dynamics and collisions.
 
-## Physicsobj
-Class that stores data for a physics object, such as mass, position, and rotation. Also contains 
-derived classes for different collider types, like sphere, aabb, and mesh.
+## Pixelshader
+Example pixel shaders. Transforms an input vertex into an rgb color.
+
+## Rotation
+Stores a 3D rotation in radians, automatically calculates and stores sin and cos when the value 
+is changed.
+
+## Scene
+Contains everything needed for simulating and rendering a 3D world, such as meshes, textures, 
+entities, lights, effects, and physics objects.
 
 ## Texture
-Loads an image using stb_image and stores the texture in memory. Can return the color of the 
-texture at a given normalized 2D coordinate. Also used for surface normal mapping.
+Loads an image from file using stb_image and stores it in memory. Can be used for rgb colors or 
+normal vectors.
 
 ## Triangle
-Functions for clipping and rastering a triangle, based on the given Draw object and vertex data.
+Functions for clipping and rasterizing a triangle represented by 3 vertices. Also takes a pixel 
+shader to convert a vertex to rgb, and a camera for writing the rgb output to it's color buffer.
 
 ## Vec
 Contains a class template, Vec<T, N> which contains a statically allocated array of type T and 
 size N. These files also contain functions for vector math such as calculating dot products, cross 
 products, and vector magnitude.
+
+## Vertex
+Example vertex types. Output of vertex shaders, used in rasterization and pixel shader input.
+
+## Vertexshader
+Example vertex shaders. Transforms an input vertex into an output vertex.

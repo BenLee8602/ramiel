@@ -49,7 +49,7 @@ namespace ramiel {
         size_t vtCount;
         size_t vnCount;
 
-        std::vector<size_t> polygon;
+        std::vector<uint32_t> polygon;
         std::unordered_map<Vec3u, size_t, Hash_Vec3u> vertexIndices;
 
         LoadLine loadLine;
@@ -66,14 +66,8 @@ namespace ramiel {
                         vertexIndices[vertex] = vertexIndices.size();
                     polygon.emplace_back(vertexIndices.at(vertex));
                 }
-                for (size_t i = 1; i < polygon.size() - 1; ++i) {
-                    //Vec3u vertices = { polygon[0], polygon[i], polygon[i + 1] };
-                    Vec3u vertices;
-                    vertices[0] = polygon[0];
-                    vertices[1] = polygon[i];
-                    vertices[2] = polygon[i + 1];
-                    f_out.emplace_back(vertices);
-                }
+                for (size_t i = 1; i < polygon.size() - 1; ++i)
+                    f_out.emplace_back(Vec3u{ polygon[0], polygon[i], polygon[i + 1] });
                 polygon.clear();
             }
         }
