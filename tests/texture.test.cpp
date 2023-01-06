@@ -14,7 +14,7 @@ TEST_CASE("texture size", "[texture]") {
 }
 
 TEST_CASE("texture get color", "[texture]") {
-    TextureRGB texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png");
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", false);
 
     const float n = 254.0f / 255.0f;
     const Vec3f white   = { n, n, n };
@@ -37,7 +37,7 @@ TEST_CASE("texture get color", "[texture]") {
 }
 
 TEST_CASE("texture get normal vector", "[texture]") {
-    TextureNML texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png");
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", true);
     Vec3f expected;
     const float n = 0.992157f;
     const Vec3f expected1 = { -1.0f, -1.0f, -1.0f };

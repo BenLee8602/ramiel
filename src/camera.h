@@ -6,8 +6,8 @@
 namespace ramiel {
 
 	class Camera {
-		Vec2u resolution;
-        Vec2f halfResolution;
+		Vec2u res;
+        Vec2f halfRes;
         size_t bufferSize;
 		float fov;
 		float focalLength;
@@ -21,8 +21,8 @@ namespace ramiel {
 		float zfar;
 
 		Camera() :
-			resolution(vec2u_0),
-			halfResolution(vec2f_0),
+			res(vec2u_0),
+			halfRes(vec2f_0),
 			bufferSize(0),
 			fov(1.57f),
 			focalLength(0.0f),
@@ -34,8 +34,8 @@ namespace ramiel {
 		{}
 
 		size_t getBufferSize() const;
-		const Vec2u& res() const;
-		void res(Vec2u size);
+		const Vec2u& getRes() const;
+		void setRes(Vec2u size);
 
 		float getFov() const;
 		void setFov(float fov);
@@ -54,6 +54,13 @@ namespace ramiel {
 
 		void getFrameDEC(int* frame) const;
 		void getFrameRGB(uint8_t* frame) const;
+	};
+
+
+	class CameraModifier {
+	public:
+		virtual void run(Camera& camera) const = 0;
+		virtual ~CameraModifier() {}
 	};
 
 }

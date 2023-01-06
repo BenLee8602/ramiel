@@ -1,10 +1,18 @@
 #pragma once
 
 #include <string>
-#include "meshbase.h"
 #include "objloader.h"
 
 namespace ramiel {
+
+    class MeshBase {
+    protected:
+        std::vector<Vec3u> triangles;
+    public:
+        const std::vector<Vec3u>& getTriangles() const { return triangles; }
+        virtual ~MeshBase() {}
+    };
+
 
     template<class Vertex>
     class Mesh : public MeshBase {
@@ -20,8 +28,12 @@ namespace ramiel {
             ObjLoader(filename, vertices, triangles, loadvt, loadvn);
         }
         Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
-            this->triangles = std::move(triangles);
-            this->vertices  = std::move(vertices);
+            this->triangles = triangles;
+            this->vertices  = vertices;
+        }
+        Mesh(std::vector<Vec3u>&& triangles, std::vector<Vertex>&& vertices) {
+            this->triangles = triangles;
+            this->vertices  = vertices;
         }
         const std::vector<Vertex>& getVertices() const { return vertices; }
     };

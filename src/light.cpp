@@ -42,7 +42,7 @@ namespace ramiel {
 		if (!dir[X] && !dir[Y] && !dir[Z]) dir[Z] = 1.0f;
 		if (falloff < 0.0f) this->falloff = 0.1f;
 		this->dir = getNormalized(dir);
-		this->width = 1.0f - (width / 360.0f);
+		this->width = 1.0f - (width / 3.14159265f);
 		this->falloffExp = falloffExp;
 	}
 
@@ -152,7 +152,7 @@ namespace ramiel {
 		// precalculate
 		Vec3f vec = pos - this->pos;
 		float d = getMagnitude(vec);
-		vec *= 1.0f / d; // normalize
+		vec /= d; // normalize
 
 		float s = std::max(0.0f, dotProduct(vec, this->dir));
 		if (s < width) return vec3f_0;

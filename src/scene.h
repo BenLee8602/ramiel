@@ -25,7 +25,7 @@ namespace ramiel {
     private:
         std::vector<EntityBase*> entities;
         std::vector<Light*> lights;
-        std::vector<Effect> effects;
+        std::vector<Effect*> effects;
     
     private:
         std::vector<PhysicsObject*> physicsObjects;
@@ -55,7 +55,7 @@ namespace ramiel {
             return true;
         }
         void addLight(Light* light);
-        void addEffect(Effect effect);
+        void addEffect(Effect* effect);
 
         LightingList getLightingList() const;
         LightingListSpecular getLightingList(uint16_t specularExponent, float specularIntensity) const;

@@ -40,7 +40,7 @@ namespace ramiel {
 			else dy = &dy2;
 
 			int y = std::max<int>(0, v[0].screenPos[Y]);
-			int ymax = std::min<int>(v[1].screenPos[Y], camera.res()[Y]);
+			int ymax = std::min<int>(v[1].screenPos[Y], camera.getRes()[Y]);
 			Vertex sc1 = v[0] + dy1 * (float)(y - v[0].screenPos[Y]);
 			Vertex sc2 = v[0] + dy2 * (float)(y - v[0].screenPos[Y]);
 			
@@ -49,9 +49,9 @@ namespace ramiel {
 					Vertex dx = (sc2 - sc1) / (sc2.screenPos[X] - sc1.screenPos[X]);
 
 					int x = std::max<int>(0, sc1.screenPos[X]);
-					int xmax = std::min<int>(sc2.screenPos[X], camera.res()[X]);
+					int xmax = std::min<int>(sc2.screenPos[X], camera.getRes()[X]);
 					Vertex p = sc1 + dx * (float)(x - sc1.screenPos[X]);
-					size_t i = camera.res()[X] * y + x;
+					size_t i = camera.getRes()[X] * y + x;
 
 					for (x; x < xmax; ++x) {
 						if (p.cameraPos[Z] < depth[i]) {
@@ -68,7 +68,7 @@ namespace ramiel {
 			
 			drawHalf();
 
-			ymax = std::min<int>(v[2].screenPos[Y], camera.res()[Y]);
+			ymax = std::min<int>(v[2].screenPos[Y], camera.getRes()[Y]);
 			*dy = (v[2] - v[1]) / (v[2].screenPos[Y] - v[1].screenPos[Y]);
 			sc1 = v[2] - dy1 * (float)(v[2].screenPos[Y] - y);
 			sc2 = v[2] - dy2 * (float)(v[2].screenPos[Y] - y);

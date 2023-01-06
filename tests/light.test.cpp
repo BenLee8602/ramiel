@@ -23,7 +23,7 @@ TEST_CASE("get point light", "[light]") {
 }
 
 TEST_CASE("get spot light", "[light]") {
-    SpotLight light({ 175, 139, 43 }, 7.1f, { 4.6f, -0.3f, 2.7f }, { 5.9f, -0.7f, 7.1f }, 0.1f, 50.7f, 81.2f);
+    SpotLight light({ 175, 139, 43 }, 7.1f, { 4.6f, -0.3f, 2.7f }, { 5.9f, -0.7f, 7.1f }, 0.1f, 1.74777f, 81.2f);
     Vec3f pos = { 10.5f, -1.0f, 9.8f };
     Vec3f normal = getNormalized({ -2.5f, 0.7f, -8.1f });
     Vec3f res = light.getLight(pos, normal);
@@ -51,7 +51,7 @@ TEST_CASE("get point light specular", "[light]") {
 }
 
 TEST_CASE("get spot light specular", "[light]") {
-    SpotLight light({ 126, 215, 181 }, 2.1f, vec3f_0, { 0.4f, -0.3f, 1.0f }, 0.1f, 30.0f, 50.0f);
+    SpotLight light({ 126, 215, 181 }, 2.1f, vec3f_0, { 0.4f, -0.3f, 1.0f }, 0.1f, 1.0472f, 50.0f);
     Vec3f pos = { 1.5f, -1.6f, 4.1f };
     Vec3f normal = getNormalized({ 0.2f, 0.4f, -2.0f });
     Vec3f res = light.getLight(pos, normal, vec3f_0, 36, 0.3f);

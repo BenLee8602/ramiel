@@ -96,65 +96,18 @@ int main() {
 	glfwMakeContextCurrent(window);
 
 	Scene scene;
-	scene.camera.res({ width, height });
+	scene.camera.setRes({ width, height });
 
-	scene.loadMesh<Vertex_Mesh_TN>("examples/assets/models/cube.obj", "cube", true, true);
-	scene.loadTexture("examples/assets/textures/brickwall_texture.jpg", "brick_texture");
-	scene.loadNormalMap("examples/assets/textures/brickwall_normal.jpg", "brick_normal");
+	scene.loadMesh<Vertex_Mesh>("examples/assets/models/terrain.obj", "terrain");
 
-	scene.ambientLight = { 25, 25, 25 };
-	scene.addLight(new PointLight(vec3f_255, 2.0f, { 0, 1, 0 }, 0.2));
-
-	PhysicsObject* p1 = new PhysicsObject({ -1, 0, 1 });
-	p1->rotVel = { -0.1,  0.1,  0.1 };
-	scene.addEntity<Vertex_Mesh_TN>(
-		"cube",
-		VS_PerPixel(scene.camera, p1),
-		PS_PerPixel(
-			scene.getLightingList(4, 0.1),
-			{ 100, 90, 70 }
-		)
+	scene.ambientLight = { 100, 80, 100 };
+	scene.addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
+	scene.addEntity<Vertex_Mesh>(
+		"terrain",
+		VS_PerTri(scene.camera, new PhysicsObject({ -64, 0, -64 })),
+		PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
 	);
-
-	PhysicsObject* p2 = new PhysicsObject({ 1, 0, 1 });
-	p2->rotVel = { 0.1, 0.1, 0.1 };
-	scene.addEntity<Vertex_Mesh_TN>(
-		"cube",
-		VS_PerPixel_Textured(scene.camera, p2),
-		PS_PerPixel_Textured(
-			scene.getLightingList(4, 0.1),
-			scene.getTexture("brick_texture")
-		)
-	);
-
-	PhysicsObject* p3 = new PhysicsObject({ -1, 0, -1 });
-	p3->rotVel = { -0.1, 0.1, -0.1 };
-	scene.addEntity<Vertex_Mesh_TN>(
-		"cube",
-		VS_PerPixel_Textured(scene.camera, p3),
-		PS_PerPixel_NormalMapped(
-			scene.getLightingList(4, 0.1),
-			scene.getTexture("brick_normal"),
-			{ 100, 90, 70 }
-		)
-	);
-
-	PhysicsObject* p4 = new PhysicsObject({ 1, 0, -1 });
-	p4->rotVel = { 0.1, 0.1, -0.1 };
-	scene.addEntity<Vertex_Mesh_TN>(
-		"cube",
-		VS_PerPixel_Textured(scene.camera, p4),
-		PS_PerPixel_Textured_NormalMapped(
-			scene.getLightingList(4, 0.1),
-			scene.getTexture("brick_texture"),
-			scene.getTexture("brick_normal")
-		)
-	);
-
-	scene.addPhysicsObject(p1);
-	scene.addPhysicsObject(p2);
-	scene.addPhysicsObject(p3);
-	scene.addPhysicsObject(p4);
+	scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 
 	uint8_t* frame = new uint8_t[width * height * 3];
 
@@ -178,11 +131,6 @@ int main() {
 		frameEnd = glfwGetTime();
 		dtime = frameEnd - frameStart;
 	}
-
-	delete p1;
-	delete p2;
-	delete p3;
-	delete p4;
 	
 	glfwDestroyWindow(window);
 	glfwTerminate();

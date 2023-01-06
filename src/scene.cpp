@@ -2,18 +2,24 @@
 
 namespace ramiel {
 
-    bool Scene::loadTexture(const char* filename, const char* textureName) {
+    static bool loadTexture(
+        std::unordered_map<std::string, Texture*>& textures,
+        const char* filename,
+        const char* textureName,
+        bool isNormalMap
+    ) {
         if (!std::ifstream(filename).good()) return false;
         if (textures[textureName]) return false;
-        textures[textureName] = new TextureRGB(filename);
+        textures[textureName] = new Texture(filename, false);
         return true;
     }
 
+    bool Scene::loadTexture(const char* filename, const char* textureName) {
+        return ramiel::loadTexture(textures, filename, textureName, false);
+    }
+
     bool Scene::loadNormalMap(const char* filename, const char* normalMapName) {
-        if (!std::ifstream(filename).good()) return false;
-        if (textures[normalMapName]) return false;
-        textures[normalMapName] = new TextureNML(filename);
-        return true;
+        return ramiel::loadTexture(textures, filename, normalMapName, true);
     }
 
     const Texture* Scene::getTexture(const char* textureName) const {
@@ -25,7 +31,7 @@ namespace ramiel {
         lights.push_back(light);
     }
 
-    void Scene::addEffect(Effect effect) {
+    void Scene::addEffect(Effect* effect) {
         effects.push_back(effect);
     }
 
@@ -50,8 +56,8 @@ namespace ramiel {
 
     void Scene::renderFrame() {
         camera.resetBuffers();
-        for (auto& e : entities) e->draw(camera);
-        for (auto& e : effects) e(camera);
+        for (auto& e : entities) e->run(camera);
+        for (auto& e : effects)  e->run(camera);
         camera.clampColorBuffer();
     }
 

@@ -7,15 +7,15 @@ namespace ramiel {
 		return bufferSize;
 	}
 
-	const Vec2u& Camera::res() const {
-		return resolution;
+	const Vec2u& Camera::getRes() const {
+		return res;
 	}
 
-	void Camera::res(Vec2u newSize) {
-		resolution = newSize;
-		halfResolution = resolution / 2.0f;
-		bufferSize = resolution[X] * resolution[Y];
-		focalLength = halfResolution[X] / std::tan(fov / 2.0f);
+	void Camera::setRes(Vec2u newSize) {
+		res = newSize;
+		halfRes = res / 2.0f;
+		bufferSize = res[X] * res[Y];
+		focalLength = halfRes[X] / std::tan(fov / 2.0f);
 		color = std::vector<Vec3f>(bufferSize);
 		depth = std::vector<float>(bufferSize);
 	}
@@ -27,7 +27,7 @@ namespace ramiel {
 
 	void Camera::setFov(float deg) {
 		fov = deg * 0.01745f;
-		focalLength = halfResolution[X] / std::tan(fov / 2.0f);
+		focalLength = halfRes[X] / std::tan(fov / 2.0f);
 	}
 
 
@@ -45,8 +45,8 @@ namespace ramiel {
 	Vec2f Camera::getScreenCoord(const Vec3f& in) const {
 		if (in[Z] == 0.0f) return vec2f_0;
 		Vec2f out = vec2f_0;
-		out[X] = std::floor(in[X] * focalLength / in[Z] + halfResolution[X]);
-		out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfResolution[Y]);
+		out[X] = std::floor(in[X] * focalLength / in[Z] + halfRes[X]);
+		out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfRes[Y]);
 		return out;
 	}
 

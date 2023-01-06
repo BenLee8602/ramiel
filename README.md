@@ -7,7 +7,7 @@ written without the use of any external libraries or frameworks.
 A mountain scene made using the following entities, lighting, and effects:
 ```cpp
 Scene scene;
-scene.camera.res({ width, height });
+scene.camera.setRes({ width, height });
 
 scene.loadMesh<Vertex_Mesh>("examples/assets/models/terrain.obj", "terrain");
 
@@ -18,14 +18,14 @@ scene.addEntity<Vertex_Mesh>(
     VS_PerTri(scene.camera, new PhysicsObject({ -64, 0, -64 })),
     PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
 );
-scene.addEffect(fog<150, 110, 110, 20, 100>);
+scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 ```
 
 ![Lighting Test](https://github.com/BenLee8602/ramiel/blob/master/screenshots/ramiel.PNG?raw=true)
 A test scene showing per-pixel lighting, a spotlight, and specular reflection:
 ```cpp
 Scene scene;
-scene.camera.res({ width, height });
+scene.camera.setRes({ width, height });
 
 scene.loadMesh<Vertex_Mesh>("examples/assets/models/ramiel.obj", "ramiel");
 
@@ -46,7 +46,7 @@ A test scene showing 4 cubes, with textures and normal mapping.
 * Bottom: textured and normal mapped
 ```cpp
 Scene scene;
-scene.camera.res({ width, height });
+scene.camera.setRes({ width, height });
 
 scene.loadMesh<Vertex_Mesh_TN>("examples/assets/models/cube.obj", "cube", true, true);
 scene.loadTexture("examples/assets/textures/brickwall_texture.jpg", "brick_texture");

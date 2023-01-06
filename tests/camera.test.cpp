@@ -6,15 +6,15 @@ using namespace ramiel;
 
 TEST_CASE("camera buffer size", "[camera]") {
     Camera camera;
-    camera.res({ 10, 10 });
-    REQUIRE(camera.res() == Vec2u{ 10, 10 });
+    camera.setRes({ 10, 10 });
+    REQUIRE(camera.getRes() == Vec2u{ 10, 10 });
     REQUIRE(camera.getBufferSize() == 100);
 }
 
 
 TEST_CASE("reset buffers", "[camera]") {
     Camera camera;
-    camera.res({ 2, 1 });
+    camera.setRes({ 2, 1 });
     camera.backgroundColor = { 255, 0, 255 };
     camera.zfar = 10.0f;
     camera.resetBuffers();
@@ -63,25 +63,25 @@ TEST_CASE("screen coordinates", "[camera]") {
     Vec3f in;
     Vec2f expected;
 
-    camera.res({ 720, 480 });
+    camera.setRes({ 720, 480 });
     camera.setFov(60);
     in = { -4.8f, 2.3f, 7.6f };
     expected = { -34, 428 };
     REQUIRE(camera.getScreenCoord(in) == expected);
 
-    camera.res({ 1280, 720 });
+    camera.setRes({ 1280, 720 });
     camera.setFov(75);
     in = { 10.1f, 6.5f, 8.5f };
     expected = { 1631, 997 };
     REQUIRE(camera.getScreenCoord(in) == expected);
 
-    camera.res({ 1920, 1080 });
+    camera.setRes({ 1920, 1080 });
     camera.setFov(90);
     in = { -7.9f, 15.3f, 2.1f };
     expected = { -2653, 7536 };
     REQUIRE(camera.getScreenCoord(in) == expected);
 
-    camera.res({ 2560, 1440 });
+    camera.setRes({ 2560, 1440 });
     camera.setFov(120);
     in = { -2.0f, 5.6f, 12.0f };
     expected = { 1156, 1065 };
@@ -91,7 +91,7 @@ TEST_CASE("screen coordinates", "[camera]") {
 
 TEST_CASE("clamp color buffer", "[camera]") {
     Camera camera;
-    camera.res({ 2, 1 });
+    camera.setRes({ 2, 1 });
     auto color = camera.getColorBuffer();
     color[0] = { 255, 0, 255 };
     color[1] = { 300, 255, 100 };
@@ -105,7 +105,7 @@ TEST_CASE("get frame in rgb format", "[camera]") {
     uint8_t* rgb = new uint8_t[6]();
 
     Camera camera;
-    camera.res({ 2, 1 });
+    camera.setRes({ 2, 1 });
     auto color = camera.getColorBuffer();
     color[0] = { 10, 3, 204 };
     color[1] = { 122, 99, 255 };
@@ -126,7 +126,7 @@ TEST_CASE("get frame in dec format", "[camera]") {
     int* dec = new int[2]();
 
     Camera camera;
-    camera.res({ 2, 1 });
+    camera.setRes({ 2, 1 });
     auto color = camera.getColorBuffer();
     color[0] = { 10, 204, 3 };
     color[1] = { 122, 99, 255 };

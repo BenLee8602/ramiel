@@ -7,13 +7,13 @@ using namespace ramiel;
 
 TEST_CASE("hdr", "[effects]") {
     Camera camera;
-    camera.res({ 3, 1 });
+    camera.setRes({ 3, 1 });
     auto color = camera.getColorBuffer();
     color[0] = { 100,   25,  25 };
     color[1] = { 100, 2550, 100 };
     color[2] = { 300,  255, 255 };
 
-    hdr(camera);
+    Hdr().run(camera);
 
     std::vector<Vec3> pixels_expected = {
         {  86,  21,  21 },
@@ -30,7 +30,7 @@ TEST_CASE("hdr", "[effects]") {
 
 TEST_CASE("fog", "[effects]") {
     Camera camera;
-    camera.res({ 5, 1 });
+    camera.setRes({ 5, 1 });
     auto color = camera.getColorBuffer();
     auto depth = camera.getDepthBuffer();
     for (size_t i = 0; i < 5; ++i) {
@@ -38,7 +38,7 @@ TEST_CASE("fog", "[effects]") {
         depth[i] = (float)(i + 1) * 0.5f;
     }
 
-    fog<0, 0, 0, 1, 2>(camera);
+    Fog(vec3f_0, 1, 2).run(camera);
 
     std::vector<Vec3f> pixels_expected = {
         vec3f_255, vec3f_255,

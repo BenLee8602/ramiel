@@ -21,10 +21,10 @@ namespace ramiel {
 		changeLuminance(rgb, luminance(rgb), lum);
 	}
 
+
 	// extended reinhard applied to luminance
-	void hdr(Camera& camera) {
+	void Hdr::run(Camera& camera) const {
 		Camera::ColorBufferIterator color = camera.getColorBuffer();
-		Camera::DepthBufferIterator depth = camera.getDepthBuffer();
 
 		float maxLum = luminance(*std::max_element(
 			color, color + camera.getBufferSize(),
@@ -40,6 +40,22 @@ namespace ramiel {
 			float oldLum = luminance(color[i]);
 			float newLum = oldLum * (1.0f + oldLum * ml) / (1.0f + oldLum);
 			changeLuminance(color[i], oldLum, newLum);
+		}
+	}
+
+
+	void Fog::run(Camera& camera) const {
+		Camera::ColorBufferIterator color = camera.getColorBuffer();
+		Camera::DepthBufferIterator depth = camera.getDepthBuffer();
+
+		for (size_t i = 0; i < camera.getBufferSize(); i++) {
+			if (depth[i] <= fogStart) continue;
+			if (depth[i] >= fogEnd) {
+				color[i] = fogColor;
+				continue;
+			}
+			float shift = (depth[i] - fogStart) * fogFactor;
+			color[i] = color[i] * (1.0f - shift) + fogColor * shift;
 		}
 	}
 
