@@ -62,17 +62,17 @@ namespace ramiel {
     }
 
 
-    bool Scene::addPhysicsObject(PhysicsObject* physicsObject) {
-        if (!physicsObject) return false;
-        physicsObjects.emplace_back(physicsObject);
+    bool Scene::addDynamicObject(Dynamics* dynamicObject) {
+        if (!dynamicObject) return false;
+        dynamicObjects.emplace_back(dynamicObject);
         return true;
     }
 
 
-    bool Scene::removePhysicsObject(PhysicsObject* physicsObject) {
-        auto i = std::find(physicsObjects.begin(), physicsObjects.end(), physicsObject);
-        if (i == physicsObjects.end()) return false;
-        physicsObjects.erase(i);
+    bool Scene::removeDynamicObject(Dynamics* dynamicObject) {
+        auto i = std::find(dynamicObjects.begin(), dynamicObjects.end(), dynamicObject);
+        if (i == dynamicObjects.end()) return false;
+        dynamicObjects.erase(i);
         return true;
     }
 
@@ -93,7 +93,7 @@ namespace ramiel {
 
     
     void Scene::simulatePhysics(float dtime) {
-        for (auto& o : physicsObjects) o->step(dtime);
+        for (auto& o : dynamicObjects) o->step(dtime);
 
         for (size_t i = 0; i < colliders.size(); ++i) {
             for (size_t j = i + 1; j < colliders.size(); ++j) {
@@ -104,7 +104,7 @@ namespace ramiel {
 
 
     Scene::~Scene() {
-        physicsObjects = std::vector<PhysicsObject*>();
+        dynamicObjects = std::vector<Dynamics*>();
         colliders = std::vector<Collider*>();
 
         for (auto& mesh : meshes) delete mesh.second;

@@ -9,7 +9,7 @@
 #include "entity.h"
 #include "light.h"
 #include "effects.h"
-#include "physicsobject.h"
+#include "collider.h"
 
 namespace ramiel {
 
@@ -28,7 +28,7 @@ namespace ramiel {
         std::vector<Effect*> effects;
     
     private:
-        std::vector<PhysicsObject*> physicsObjects;
+        std::vector<Dynamics*> dynamicObjects;
         std::vector<Collider*> colliders;
 
     public:
@@ -63,8 +63,8 @@ namespace ramiel {
         void renderFrame();
 
 
-        bool addPhysicsObject(PhysicsObject* physicsObject);
-        bool removePhysicsObject(PhysicsObject* physicsObject);
+        bool addDynamicObject(Dynamics* dynamicObject);
+        bool removeDynamicObject(Dynamics* dynamicObject);
 
         bool addCollider(Collider* collider);
         bool removeCollider(Collider* collider);

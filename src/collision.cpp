@@ -3,7 +3,7 @@
 
 namespace ramiel {
 
-    void collideSphereSphere(SphereCollider& o1, SphereCollider& o2) {
+    void collide(SphereCollider& o1, SphereCollider& o2) {
         //if (&o1 == &o2) return; // check for self collision, not needed
 
 		// collision detection
@@ -55,22 +55,22 @@ namespace ramiel {
     }
 
 
-    void collideSphereAabb(SphereCollider& sph, AabbCollider& box) {
+    void collide(SphereCollider& sph, AabbCollider& box) {
 
 	}
 
 	
-    void collideSphereObb(SphereCollider& sph, ObbCollider& box) {
+    void collide(SphereCollider& sph, ObbCollider& box) {
 
 	}
 
 	
-    void collideSphereMesh(SphereCollider& sph, MeshCollider& mesh) {
+    void collide(SphereCollider& sph, MeshCollider& mesh) {
 
 	}
 
 	
-    void collideAabbAabb(AabbCollider& o1, AabbCollider& o2) {
+    void collide(AabbCollider& o1, AabbCollider& o2) {
 		Vec3f o1_min = o1.pos - o1.size;
 		Vec3f o1_max = o1.pos + o1.size;
 		Vec3f o2_min = o2.pos - o2.size;
@@ -129,27 +129,27 @@ namespace ramiel {
 	}
 
 	
-    void collideAabbObb(AabbCollider& aa, ObbCollider& ori) {
+    void collide(AabbCollider& aa, ObbCollider& ori) {
 
 	}
 
 	
-    void collideAabbMesh(AabbCollider& box, MeshCollider& mesh) {
+    void collide(AabbCollider& box, MeshCollider& mesh) {
 
 	}
 
 	
-    void collideObbObb(ObbCollider& o1, ObbCollider& o2) {
+    void collide(ObbCollider& o1, ObbCollider& o2) {
 
 	}
 
 	
-    void collideObbMesh(ObbCollider& box, MeshCollider& mesh) {
+    void collide(ObbCollider& box, MeshCollider& mesh) {
 
 	}
 
 	
-    void collideMeshMesh(MeshCollider& o1, MeshCollider& o2) {
+    void collide(MeshCollider& o1, MeshCollider& o2) {
 
 	}
 

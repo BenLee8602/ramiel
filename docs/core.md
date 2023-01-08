@@ -40,6 +40,27 @@ class CameraModifier
 Interface for a class that modifies a camera object in some way
 - `virtual void run(Camera& camera) const = 0` the function that modifies a camera object
 
+## Collider
+```cpp
+struct Collider : public Dynamics
+```
+Abstract class for a hitbox used for collision detection + response.
+- `bool responsive` determines if this object responds to collisions
+- `float mass` mass of the object
+- `Collider(Dynamics dynamics = Dynamics(), bool responsive = true, float mass = 1.0f)` constructs collider
+
+## Dynamics
+```cpp
+struct Dynamics : public Transform
+```
+Represents a dynamic physics object.
+- `Vec3f posVel` velocity
+- `Vec3f rotVel` rotational velocity
+- `Vec3f posAcc` acceleration
+- `Vec3f rotAcc` rotational acceleration
+- `Dynamics(Vec3f pos = vec3f_0, Vec3f rot = vec3f_0, Vec3f posVel = vec3f_0, Vec3f rotVel = vec3f_0, Vec3f posAcc = vec3f_0, Vec3f rotAcc = vec3f_0)` construct Dynamics using `Vec3f`
+- `Dynamics(Transform transform, Vec3f posVel = vec3f_0, Vec3f rotVel = vec3f_0, Vec3f posAcc = vec3f_0, Vec3f rotAcc = vec3f_0)` construct Dynamics using `Transform` + `Vec3f`
+
 ## Entity
 ```cpp
 typedef CameraModifier EntityBase
@@ -47,14 +68,19 @@ typedef CameraModifier EntityBase
 template<class Vertex, class VertexShader, class PixelShader>
 class Entity : public EntityBase
 ```
-- `Entity(const Mesh<Vertex>& mesh, const VertexShader& vertexShader, const PixelShader& pixelShader)` constructs an entity using a mesh reference, a vertex shader, and a pixel shader
-- `virtual void run(Camera& camera) const override` renders the entity using camera
+Represents a 3D object in the scene.
+- `Entity(const Mesh<Vertex>& mesh, const VertexShader& vertexShader, const PixelShader& pixelShader)` constructs Entity
+    - `const Mesh<Vertex>& mesh` reference to a mesh containing the 3D geometry for the entity to render
+    - `const VertexShader& vertexShader` functor for transforming mesh vertices to another vertex type
+    - `const PixelShader& pixelShader` class for transforming vertex attributes to an rgb color
+- `virtual void run(Camera& camera) const override` renders the entity using `camera`
 
 ## Light
 
 ```cpp
 class Light
 ```
+Abstract class representing a light source.
 - `Light(Vec3f color, float intensity)` constructs Light
     - `Vec3f color` rgb color of the light
     - `float intensity` intensity/brightness of the light
@@ -64,6 +90,7 @@ class Light
 ```cpp
 class DirectionalLight : public Light
 ```
+A global light source with parallel light "rays" (ex. the sun).
 - `DirectionalLight(Vec3f color, float intensity, Vec3f dir)` constructs DirectionalLight
     - `Vec3f color` rgb color of the light
     - `float intensity` intensity/brightness of the light
@@ -74,6 +101,7 @@ class DirectionalLight : public Light
 ```cpp
 class PointLight : public Light
 ```
+A light source originating from a single point (ex. a lightbulb).
 - `PointLight(Vec3f color, float intensity, Vec3f pos, float falloff)` constructs PointLight
     - `Vec3f color` rgb color of the light
     - `float intensity` intensity/brightness of the light
@@ -85,6 +113,7 @@ class PointLight : public Light
 ```cpp
 class SpotLight : public PointLight
 ```
+A light source originating from a single point and aimed at a specific direction (ex. a flashlight).
 - `SpotLight(Vec3f color, float intensity, Vec3f pos, Vec3f dir, float falloff, float width, float falloffExp)` construct SpotLight
     - `Vec3f color` rgb color of the light
     - `float intensity` intensity/brightness of the light
@@ -99,6 +128,7 @@ class SpotLight : public PointLight
 ```cpp
 class LightingList
 ```
+Contains a light of lights. Usually provided from `Scene` and used by shaders to calculate lighting.
 - `LightingList(const Vec3f& ambientLight, const std::vector<Light*>& lights)` constructs LightingList
     - `const Vec3f& ambientLight` ambient light color
     - `const std::vector<Light*>& lights` list of light sources
@@ -109,6 +139,7 @@ class LightingList
 ```cpp
 class LightingListSpecular : public LightingList
 ```
+Contains a light of lights, and specular reflection properties. Usually provided from `Scene` and used by shaders to calculate lighting.
 - `LightingListSpecular(const Vec3f& ambientLight, const std::vector<Light*>& lights, const Vec3f& cameraPos, uint16_t specularExponent, float specularIntensity)` constructs LightingListSpecular
     - `const Vec3f& ambientLight` ambient light color
     - `const std::vector<Light*>& lights` list of light sources
@@ -123,12 +154,14 @@ class LightingListSpecular : public LightingList
 ```cpp
 class MeshBase
 ```
+A mesh stores 3D geometry data using a vertex buffer (storing position, texture coords, normals), and an index buffer (stores how vertices connect to form polygons). The mesh base class stores the index buffer.
 - `const std::vector<Vec3u>& getTriangles() const` returns index buffer
 
 ```cpp
 template<class Vertex>
 class Mesh : public MeshBase
 ```
+Stores a vertex buffer of type `Vertex`.
 - `Mesh(const char* filename, bool loadvt = false, bool loadvn = false)` constructs Mesh from file
     - `const char* filename` path to a wavefront obj file to load from
     - `bool loadvt` tells the objloader to load texture coordinates or not
@@ -189,8 +222,8 @@ Encapsulates all resources and elements needed to simulate and render a scene
 
 - `void renderFrame()` renders the scene. the rendered frame can be retrieved from the scene's camera
 
-- `bool addPhysicsObject(PhysicsObject* physicsObject)` adds a physics object to the scene's physics object list
-- `bool removePhysicsObject(PhysicsObject* physicsObject)` removes a physics object from the scene's physics object list
+- `bool addDynamicObject(Dynamics* dynamicObject)` adds a dynamic object to the scene's dynamic object list
+- `bool removeDynamicObject(Dynamics* dynamicObject)` removes a physics object from the scene's dynamic object list
 
 - `bool addCollider(Collider* collider)` adds a collider to the scene's collider list
 - `bool removeCollider(Collider* collider)` removes a collider from the scene's collider list
@@ -207,3 +240,80 @@ Stores a texture or normal map.
     - `bool isNormalMap` false = load as RGB texture, true = load as normal map
 - `Vec3f get(const Vec2f& coords) const` samples texture at given coordinates
 - `Vec2 getSize() const` returns texture resolution
+
+## Transform
+```cpp
+struct Transform
+```
+Represents an affine tranformation
+- `Vec3f pos` translation of the transformation
+- `Rotation rot` rotation of the transformation
+- `float scale` scaling factor of the transformation
+- `Transform(Vec3f pos = vec3f_0, Rotation rot = vec3f_0, float scale = 1.0f)` constructs Transform
+- `inline Vec3f operator()(const Vec3f& in) const` returns `in` after transformation
+
+## Triangle
+```cpp
+template<typename Vertex, class PixelShader>
+class Triangle
+```
+Used for clipping and rasterizing a triangle.
+- `Triangle(Camera& camera, PixelShader pixelShader)`
+    - `Camera& camera` the camera used to render the triangle
+    - `PixelShader pixelShader` the pixel shader used to convert vertex attributes to a color
+- `void draw(const Vertex& v0, const Vertex& v1, const Vertex& v2)` draws the triangle defined by `v1`, `v2`, and `v3`
+
+## Vec
+- `template<typename T, size_t N> std::ostream& operator<<(std::ostream& os, const Vec<T, N>& vec)` prints a vector
+
+- `float getMagnitude(const Vec3f& v)` returns magnitude of a vector
+- `Vec3f getNormalized(const Vec3f& v)` returns `v` normalized
+- `Vec3f getNormalized(const Vec3f& v, float magnitude)` returns `v` normalized, skips magnitude calculation
+- `float dotProduct(const Vec3f& vec1, const Vec3f& vec2)` returns the dot product of two vectors
+- `Vec3f crossProduct(const Vec3f& vec1, const Vec3f& vec2)` returns the cross product of two vectors
+
+- `void c_min(Vec3f& color, const Vec3f& min = vec3f_255)` clamps the upper bound of an rgb value
+- `void c_max(Vec3f& color, const Vec3f& max = vec3f_0)` clamps the lower bound of an rgb value
+- `void c_clamp(Vec3f& color)` clamps an rgb value between 0 and 255
+
+```cpp
+template<typename T, size_t N>
+struct Vec
+```
+Vector of type `T` and size `N`.
+- `T arr[N]` static array to store vector elements
+
+- `T& operator[](size_t index)` element access
+- `const T& operator[](size_t index) const` const element access
+
+- `explicit operator T* ()` convert to `T` pointer
+- `operator bool() const` boolean conversion, false if all elements are false
+- `template<typename U> explicit operator Vec<U, N>() const` convert vector from type `T` to `U`
+
+- `template<typename U> bool operator==(const Vec<U, N>& v) const` comparison, returns true if each element is equal
+- `template<typename U> bool equals(const Vec<U, N>& v) const` comparison, with epsilon value for floating point
+
+- `template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v)` vector assignment, sets each element of `this` to `v`
+- `template<typename U> Vec<T, N>& operator=(U num)` scalar assignment, sets each element of `this` to each element of `num`
+
+- `template<typename U> Vec<T, N>& operator+=(U num)` scalar addition assignment, adds `num` to each element of `this`
+- `template<typename U> Vec<T, N>& operator-=(U num)` scalar subtraction assignment, subtracts `num` from each element of `this`
+- `template<typename U> Vec<T, N>& operator*=(U num)` scalar multiplication assignment, multiplies each element of `this` by `num`
+- `template<typename U, typename F = float> Vec<T, N>& operator/=(U num)` scalar division assignment, divides each element of `this` by `num`
+
+- `template<typename U> Vec<T, N>& operator+=(const Vec<U, N>& v)` vector addition assignment, sets `this` to the sum of the two vectors
+- `template<typename U> Vec<T, N>& operator-=(const Vec<U, N>& v)` vector subtraction assignment, sets `this` to the difference of the two vectors
+- `template<typename U> Vec<T, N>& operator*=(const Vec<U, N>& v)` vector multiplication assignment, multiplies each element of `this` by each element of `v`
+- `template<typename U> Vec<T, N>& operator/=(const Vec<U, N>& v)` vector division assignment, divides each element of `this` by each element of `v`
+
+- `template<typename U> Vec<T, N> operator+(U num) const` scalar addition, adds `num` to each element of `this`
+- `template<typename U> Vec<T, N> operator-(U num) const` scalar subtraction subtracts `num` from each element of `this`
+- `template<typename U> Vec<T, N> operator*(U num) const` scalar multiplication, multiplies each element of `this` by `num`
+- `template<typename U, typename F = float> Vec<T, N> operator/(U num) const` scalar division, divides each element of `this` by `num`
+
+- `template<typename U> Vec<T, N> operator+(const Vec<U, N>& v) const` vector addition, returns the sum of the two vectors
+- `template<typename U> Vec<T, N> operator-(const Vec<U, N>& v) const` vector subtraction, returns the difference of the two vectors
+- `template<typename U> Vec<T, N> operator*(const Vec<U, N>& v) const` vector multiplication, returns each element of `this` multiplied by each element of `v`
+- `template<typename U> Vec<T, N> operator/(const Vec<U, N>& v) const` vector division, returns each element of `this` divided by each element of `v`
+
+- `Vec<T, N> operator-() const` returns `this` negated

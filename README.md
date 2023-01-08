@@ -15,13 +15,13 @@ scene.ambientLight = { 100, 80, 100 };
 scene.addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
 scene.addEntity<Vertex_Mesh>(
     "terrain",
-    VS_PerTri(scene.camera, new PhysicsObject({ -64, 0, -64 })),
+    VS_PerTri(scene.camera, new Transform({ -64, 0, -64 })),
     PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
 );
 scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 ```
 
-![Lighting Test](https://github.com/BenLee8602/ramiel/blob/master/screenshots/ramiel.PNG?raw=true)
+![Lighting](https://github.com/BenLee8602/ramiel/blob/master/screenshots/ramiel.PNG?raw=true)
 A test scene showing per-pixel lighting, a spotlight, and specular reflection:
 ```cpp
 Scene scene;
@@ -30,10 +30,10 @@ scene.camera.setRes({ width, height });
 scene.loadMesh<Vertex_Mesh>("examples/assets/models/ramiel.obj", "ramiel");
 
 scene.ambientLight = { 50, 50, 50 };
-scene.addLight(new SpotLight(vec3f_255, 4.0f, { -1, 2, 3 }, { 1, -2, 1 }, 0.1f, 30.0f, 50.0f));
+scene.addLight(new SpotLight(vec3f_255, 4.0f, { -1, 2, 3 }, { 1, -2, 1 }, 0.1f, 1.0f, 50.0f));
 scene.addEntity<Vertex_Mesh>(
     "ramiel",
-    VS_PerPixel(scene.camera, new PhysicsObject({ 0, 0, 4 })),
+    VS_PerPixel(scene.camera, new Transform({ 0, 0, 4 })),
     PS_PerPixel(scene.getLightingList(256, 1.0f), { 70, 135, 255 })
 );
 ```
@@ -56,8 +56,7 @@ scene.ambientLight = { 25, 25, 25 };
 scene.addLight(new PointLight(vec3f_255, 2.0f, { 0, 1, 0 }, 0.2));
 
 // no texture or normal map
-PhysicsObject* p1 = new PhysicsObject({ -1, 0, 1 });
-p1->rotVel = { -0.1,  0.1,  0.1 };
+Dynamics* p1 = new Dynamics({ -1, 0, 1 }, vec3f_0, vec3f_0, { -0.1,  0.1,  0.1 });
 scene.addEntity<Vertex_Mesh_TN>(
     "cube",
     VS_PerPixel(scene.camera, p1),
@@ -68,8 +67,7 @@ scene.addEntity<Vertex_Mesh_TN>(
 );
 
 // texture only
-PhysicsObject* p2 = new PhysicsObject({ 1, 0, 1 });
-p2->rotVel = { 0.1, 0.1, 0.1 };
+Dynamics* p2 = new Dynamics({ 1, 0, 1 }, vec3f_0, vec3f_0, { 0.1, 0.1, 0.1 });
 scene.addEntity<Vertex_Mesh_TN>(
     "cube",
     VS_PerPixel_Textured(scene.camera, p2),
@@ -80,8 +78,7 @@ scene.addEntity<Vertex_Mesh_TN>(
 );
 
 // normal map only
-PhysicsObject* p3 = new PhysicsObject({ -1, 0, -1 });
-p3->rotVel = { -0.1, 0.1, -0.1 };
+Dynamics* p3 = new Dynamics({ -1, 0, -1 }, vec3f_0, vec3f_0, { -0.1, 0.1, -0.1 });
 scene.addEntity<Vertex_Mesh_TN>(
     "cube",
     VS_PerPixel_Textured(scene.camera, p3),
@@ -93,8 +90,7 @@ scene.addEntity<Vertex_Mesh_TN>(
 );
 
 // both texture and normal map
-PhysicsObject* p4 = new PhysicsObject({ 1, 0, -1 });
-p4->rotVel = { 0.1, 0.1, -0.1 };
+Dynamics* p4 = new Dynamics({ 1, 0, -1 }, vec3f_0, vec3f_0, { 0.1, 0.1, -0.1 });
 scene.addEntity<Vertex_Mesh_TN>(
     "cube",
     VS_PerPixel_Textured(scene.camera, p4),
@@ -105,8 +101,8 @@ scene.addEntity<Vertex_Mesh_TN>(
     )
 );
 
-scene.addPhysicsObject(p1);
-scene.addPhysicsObject(p2);
-scene.addPhysicsObject(p3);
-scene.addPhysicsObject(p4);
+scene.addDynamicObject(p1);
+scene.addDynamicObject(p2);
+scene.addDynamicObject(p3);
+scene.addDynamicObject(p4);
 ```

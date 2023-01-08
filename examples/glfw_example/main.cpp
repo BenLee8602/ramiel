@@ -104,7 +104,7 @@ int main() {
 	scene.addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
 	scene.addEntity<Vertex_Mesh>(
 		"terrain",
-		VS_PerTri(scene.camera, new PhysicsObject({ -64, 0, -64 })),
+		VS_PerTri(scene.camera, new Transform({ -64, 0, -64 })),
 		PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
 	);
 	scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
