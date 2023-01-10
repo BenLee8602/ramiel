@@ -59,9 +59,9 @@ namespace ramiel {
 
     class VS_PerVertex {
         Camera& camera;
+        Transform* transform;
         LightingListSpecular lightingList;
         Vec3f surfaceColor;
-        Transform* transform;
     public:
         VS_PerVertex(
             Camera& camera,
@@ -90,17 +90,17 @@ namespace ramiel {
 
     class VS_PerVertex_Textured {
         Camera& camera;
-        LightingListSpecular lightingList;
         Transform* transform;
+        LightingListSpecular lightingList;
     public:
         VS_PerVertex_Textured(
             Camera& camera,
-            LightingListSpecular lightingList,
-            Transform* transform
+            Transform* transform,
+            LightingListSpecular lightingList
         ) :
             camera(camera),
-            lightingList(lightingList),
-            transform(transform)
+            transform(transform),
+            lightingList(lightingList)
         {}
 
         typedef Vertex_PerVertex_Textured Vertex_Out;

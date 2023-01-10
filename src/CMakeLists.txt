@@ -5,7 +5,6 @@ add_library(${PROJECT_NAME} STATIC
     effects.cpp 
     light.cpp 
     objloader.cpp 
-    pixelshader.cpp 
     rotation.cpp 
     scene.cpp
     texture.cpp 
