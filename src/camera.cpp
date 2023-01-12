@@ -1,165 +1,80 @@
 #include <cmath>
-#include "graphics.h"
-#include "physics.h"
+#include "camera.h"
 
 namespace ramiel {
 
-	static float camPosSpeed = 2.0f;
-	static float camRotSpeed = 1.57079f;
-
-	Camera::Camera(unsigned fov, float znear, float zfar) {
-		this->pos = { 0.0f };
-		this->rot = { 0.0f };
-		calcTrigValues();
-		setFov(fov);
-		this->znear = znear;
-		this->zfar = zfar;
+	size_t Camera::getBufferSize() const {
+		return bufferSize;
 	}
 
-	void Camera::calcTrigValues() {
-		sin[X] = std::sin(rot[X]);
-		sin[Y] = std::sin(rot[Y]);
-		sin[Z] = std::sin(rot[Z]);
-
-		cos[X] = std::cos(rot[X]);
-		cos[Y] = std::cos(rot[Y]);
-		cos[Z] = std::cos(rot[Z]);
+	const Vec2u& Camera::getRes() const {
+		return res;
 	}
 
-	void Camera::reset() {
-		pos = { 0.0f };
-		rot = { 0.0f };
+	void Camera::setRes(Vec2u newSize) {
+		res = newSize;
+		halfRes = res / 2.0f;
+		bufferSize = res[X] * res[Y];
+		focalLength = halfRes[X] / std::tan(fov / 2.0f);
+		color = std::vector<Vec3f>(bufferSize);
+		depth = std::vector<float>(bufferSize);
 	}
 
-	void Camera::setFov(unsigned fov) {
-		if (fov) focalLen = (float)graphics::size[X] / (float)fov * 90.0f;
-		else focalLen = graphics::size[X];
+
+	float Camera::getFov() const {
+		return fov;
 	}
 
-	const Vec3f& Camera::getpos() const {
-		return pos;
+	void Camera::setFov(float deg) {
+		fov = deg * 0.01745f;
+		focalLength = halfRes[X] / std::tan(fov / 2.0f);
 	}
 
-	const Vec3f& Camera::getrot() const {
-		return rot;
+
+	void Camera::resetBuffers() {
+		std::fill(color.begin(), color.end(), backgroundColor);
+		std::fill(depth.begin(), depth.end(), zfar);
 	}
 
-	void Camera::setpos(const Vec3f& pos) {
-		this->pos = pos;
+
+	Vec3f Camera::getCameraCoord(const Vec3f& in) const {
+		return rot.rotate(in - pos);
 	}
 
-	void Camera::setrot(const Vec3f& rot) {
-		this->rot = rot;
-	}
 
-	void Camera::move(float x, float y, float z) {
-		pos[X] += x;
-		pos[Y] += y;
-		pos[Z] += z;
-	}
-
-	void Camera::rotate(float x, float y, float z) {
-		rot[X] += x;
-		rot[Y] += y;
-		rot[Z] += z;
-	}
-
-	Vec3f Camera::getCameraCoord(Vec3f in) const {
-		// translate
-		Vec3f out = in -= pos;
-
-		// z rot
-		out[X] = in[X] * cos[Z] + in[Y] * -sin[Z];
-		out[Y] = in[X] * sin[Z] + in[Y] * cos[Z];
-		in = out;
-
-		// y rot
-		out[X] = in[X] * cos[Y] + in[Z] * sin[Y];
-		out[Z] = in[X] * -sin[Y] + in[Z] * cos[Y];
-		in = out;
-
-		// x rot
-		out[Y] = in[Y] * cos[X] + in[Z] * -sin[X];
-		out[Z] = in[Y] * sin[X] + in[Z] * cos[X];
-		
-		return out;
-	}
-
-	Vec2 Camera::getScreenCoord(const Vec3f& in) const {
-		Vec2 out = { 0 };
-		if (in[Z] != 0.0f) {
-			out[X] = (int)(in[X] * focalLen / in[Z] + graphics::mid[X]);
-			out[Y] = (int)(in[Y] * focalLen / in[Z] + graphics::mid[Y]);
-		}
+	Vec2f Camera::getScreenCoord(const Vec3f& in) const {
+		if (in[Z] == 0.0f) return vec2f_0;
+		Vec2f out = vec2f_0;
+		out[X] = std::floor(in[X] * focalLength / in[Z] + halfRes[X]);
+		out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfRes[Y]);
 		return out;
 	}
 
 
-	void Camera::setControls(bool controls[12]) {
-		float camPosSpeed_frame = camPosSpeed;
-		if (controls[0]) {
-			camPosSpeed_frame *= 10.0f;
-		}
+	Camera::ColorBufferIterator Camera::getColorBuffer() {
+		return color.begin();
+	}
 
-		// reset pos and rot
-		if (controls[1]) {
-			reset();
-		}
+	Camera::DepthBufferIterator Camera::getDepthBuffer() {
+		return depth.begin();
+	}
 
-		// move left
-		if (controls[2]) {
-			pos[X] -= physics::dtime * camPosSpeed_frame * cos[Y];
-			pos[Z] -= physics::dtime * camPosSpeed_frame * sin[Y];
-		}
 
-		// move right
-		if (controls[3]) {
-			pos[X] += physics::dtime * camPosSpeed_frame * cos[Y];
-			pos[Z] += physics::dtime * camPosSpeed_frame * sin[Y];
-		}
+	void Camera::clampColorBuffer() {
+		for (auto& c : color) c_min(c);
+	}
 
-		// move down
-		if (controls[4]) {
-			pos[Y] -= physics::dtime * camPosSpeed_frame;
-		}
 
-		// move up
-		if (controls[5]) {
-			pos[Y] += physics::dtime * camPosSpeed_frame;
-		}
+	void Camera::getFrameDEC(int* frame) const {
+		for (auto& c : color)
+			*frame++ = ((int)c[R] << 16) + ((int)c[G] << 8) + (int)c[B];
+	}
 
-		// move backward
-		if (controls[6]) {
-			pos[X] += physics::dtime * camPosSpeed_frame * sin[Y];
-			pos[Y] += physics::dtime * camPosSpeed_frame * -sin[X];
-			pos[Z] -= physics::dtime * camPosSpeed_frame * cos[Y];
-		}
-
-		// move forward
-		if (controls[7]) {
-			pos[X] -= physics::dtime * camPosSpeed_frame * sin[Y];
-			pos[Y] -= physics::dtime * camPosSpeed_frame * -sin[X];
-			pos[Z] += physics::dtime * camPosSpeed_frame * cos[Y];
-		}
-
-		// turn right
-		if (controls[8]) {
-			rot[Y] -= physics::dtime * camRotSpeed;
-		}
-
-		// turn left
-		if (controls[9]) {
-			rot[Y] += physics::dtime * camRotSpeed;
-		}
-
-		// turn down
-		if (controls[10]) {
-			if (rot[X] > -1.57079f) rot[X] -= physics::dtime * camRotSpeed;
-		}
-
-		// turn up
-		if (controls[11]) {
-			if (rot[X] < 1.57079f) rot[X] += physics::dtime * camRotSpeed;
+	void Camera::getFrameRGB(uint8_t* frame) const {
+		for (auto& c : color) {
+			*frame++ = c[R];
+			*frame++ = c[G];
+			*frame++ = c[B];
 		}
 	}
 

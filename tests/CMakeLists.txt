@@ -1,12 +1,12 @@
 add_executable("${PROJECT_NAME}_test" 
-    catch2/main.cpp
+    catch2/main.cpp 
     camera.test.cpp 
     collision.test.cpp 
+    dynamics.test.cpp 
     effects.test.cpp 
     light.test.cpp 
-    mesh.test.cpp 
-    objloader.test.cpp 
     texture.test.cpp 
+    transform.test.cpp 
     vec.test.cpp
 )
 target_include_directories(${PROJECT_NAME}_test PRIVATE ${CMAKE_SOURCE_DIR}/src)

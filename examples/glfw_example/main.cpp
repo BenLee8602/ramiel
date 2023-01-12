@@ -1,124 +1,87 @@
-#include <iostream>
 #include <GLFW/glfw3.h>
 
-#define RAMIEL_ARGS_IMPLEMENTATION
-#include <ramiel/args.h>
-#include <ramiel/ramiel.h>
+#include <ramiel/core.h>
+#include <ramiel/shaders.h>
 using namespace ramiel;
 
 constexpr size_t width = 1280;
 constexpr size_t height = 720;
 
-
-void initScene() {
-	graphics::loadTexture("brick_texture", "examples/assets/textures/brickwall_texture.jpg", 'c');
-	graphics::loadTexture("brick_normal", "examples/assets/textures/brickwall_normal.jpg", 'n');
-	graphics::loadMesh("cube", "examples/assets/models/cube.obj");
-
-	// lighting
-	graphics::setAmbientLightColor({ 25, 25, 25 });
-	graphics::addPointLight(vec3f_255, 4.0f, { -6, 2, -2 }, 0.2);
-	graphics::addPointLight(vec3f_255, 4.0f, {  0, 2, -2 }, 0.2);
-	graphics::addPointLight(vec3f_255, 4.0f, {  6, 2, -2 }, 0.2);
-	//graphics::addEffect(hdr);
-
-	// flat
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ -9, 0, 0 } },
-		{ "shading", ShadingType::FLAT },
-		{ "color", Vec3f{ 100, 90, 70 } }
-	});
-
-	// flat textured
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ -7, 0, 0 } },
-		{ "shading", ShadingType::FLAT },
-		{ "texture", "brick_texture" }
-	});
-
-	// vertex
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ -5, 0, 0 } },
-		{ "shading", ShadingType::VERTEX },
-		{ "color", Vec3f{ 100, 90, 70 } }
-	});
-
-	// vertex textured
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ -3, 0, 0 } },
-		{ "shading", ShadingType::VERTEX },
-		{ "texture", "brick_texture" }
-	});
-
-	// pixel
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ -1, 0, 0 } },
-		{ "shading", ShadingType::PIXEL },
-		{ "color", Vec3f{ 100, 90, 70 } }
-	});
-
-	// pixel textured
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ 1, 0, 0 } },
-		{ "shading", ShadingType::PIXEL },
-		{ "texture", "brick_texture" }
-	});
-
-	// pixel normal mapped
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ 3, 0, 0 } },
-		{ "shading", ShadingType::PIXEL },
-		{ "color", Vec3f{ 100, 90, 70 } },
-		{ "normalMap", "brick_normal" }
-	});
-
-	// pixel textured and normal mapped
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ 5, 0, 0 } },
-		{ "shading", ShadingType::PIXEL },
-		{ "texture", "brick_texture" },
-		{ "normalMap", "brick_normal" }
-	});
-
-	// pixel smooth
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ 7, 0, 0 } },
-		{ "shading", ShadingType::PIXEL_S },
-		{ "color", Vec3f{ 100, 90, 70 } }
-	});
-
-	// pixel smooth textured
-	graphics::addEntity({
-		{ "mesh", "cube" },
-		{ "pos", Vec3f{ 9, 0, 0 } },
-		{ "shading", ShadingType::PIXEL_S },
-		{ "texture", "brick_texture" }
-	});
-}
+constexpr float cameraSpeedNormal = 2.0f;
+constexpr float cameraSpeedFaster = 10.0f;
+constexpr float cameraRotationSpeed = 1.57079f;
 
 
-void getControls(GLFWwindow* window, bool controls[12]) {
-	controls[0]  = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
-	controls[1]  = glfwGetKey(window, GLFW_KEY_Q);
-	controls[2]  = glfwGetKey(window, GLFW_KEY_A);
-	controls[3]  = glfwGetKey(window, GLFW_KEY_D);
-	controls[4]  = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL);
-	controls[5]  = glfwGetKey(window, GLFW_KEY_SPACE);
-	controls[6]  = glfwGetKey(window, GLFW_KEY_S);
-	controls[7]  = glfwGetKey(window, GLFW_KEY_W);
-	controls[8]  = glfwGetKey(window, GLFW_KEY_RIGHT);
-	controls[9]  = glfwGetKey(window, GLFW_KEY_LEFT);
-	controls[10] = glfwGetKey(window, GLFW_KEY_DOWN);
-	controls[11] = glfwGetKey(window, GLFW_KEY_UP);
+void cameraControls(GLFWwindow* window, float dtime, Camera& camera) {
+	// move faster
+	float cameraSpeed = (
+		glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) ?
+		cameraSpeedFaster : cameraSpeedNormal
+	);
+	float pos = cameraSpeed * dtime;
+	float rot = cameraRotationSpeed * dtime;
+
+	// reset pos and rot
+	if (glfwGetKey(window, GLFW_KEY_Q)) {
+		camera.pos = vec3f_0;
+		camera.rot = vec3f_0;
+	}
+
+	// move left
+	if (glfwGetKey(window, GLFW_KEY_A)) {
+		camera.pos[X] -= pos * camera.rot.cos()[Y];
+		camera.pos[Z] -= pos * camera.rot.sin()[Y];
+	}
+
+	// move right
+	if (glfwGetKey(window, GLFW_KEY_D)) {
+		camera.pos[X] += pos * camera.rot.cos()[Y];
+		camera.pos[Z] += pos * camera.rot.sin()[Y];
+	}
+
+	// move down
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
+		camera.pos[Y] -= pos;
+	}
+
+	// move up
+	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+		camera.pos[Y] += pos;
+	}
+
+	// move backward
+	if (glfwGetKey(window, GLFW_KEY_S)) {
+		camera.pos[X] += pos *  camera.rot.sin()[Y];
+		camera.pos[Y] += pos * -camera.rot.sin()[X];
+		camera.pos[Z] -= pos *  camera.rot.cos()[Y];
+	}
+
+	// move forward
+	if (glfwGetKey(window, GLFW_KEY_W)) {
+		camera.pos[X] -= pos *  camera.rot.sin()[Y];
+		camera.pos[Y] -= pos * -camera.rot.sin()[X];
+		camera.pos[Z] += pos *  camera.rot.cos()[Y];
+	}
+
+	// turn down
+	if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+		if (camera.rot[X] <  1.57079f) camera.rot += { -rot, 0, 0 };
+	}
+
+	// turn up
+	if (glfwGetKey(window, GLFW_KEY_UP)) {
+		if (camera.rot[X] > -1.57079f) camera.rot += {  rot, 0, 0 };
+	}
+
+	// turn right
+	if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+		camera.rot += { 0, -rot, 0 };
+	}
+
+	// turn left
+	if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+		camera.rot += { 0,  rot, 0 };
+	}
 }
 
 
@@ -132,11 +95,21 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 
-	graphics::setBufferSize({ width, height });
-	initScene();
+	Scene scene;
+	scene.camera.setRes({ width, height });
+
+	scene.loadMesh<Vertex_Mesh>("examples/assets/models/terrain.obj", "terrain");
+
+	scene.ambientLight = { 100, 80, 100 };
+	scene.addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
+	scene.addEntity<Vertex_Mesh>(
+		"terrain",
+		VS_PerTri(scene.camera, new Transform({ -64, 0, -64 })),
+		PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
+	);
+	scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 
 	uint8_t* frame = new uint8_t[width * height * 3];
-	bool controls[12];
 
 	glfwSetTime(0);
 	double frameStart = glfwGetTime();
@@ -145,13 +118,12 @@ int main() {
 	
 	while (!glfwWindowShouldClose(window)) {
 		frameStart = glfwGetTime();
-		
-		getControls(window, controls);
-		graphics::setControls(controls);
-		physics::simulatePhysics(dtime);
-		graphics::renderFrame();
-		graphics::getFrameRGB(frame);
 
+		cameraControls(window, (float)dtime, scene.camera);
+		scene.simulatePhysics(dtime);
+		scene.renderFrame();
+		scene.camera.getFrameRGB(frame);
+		
 		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, frame);
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -1,40 +1,41 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include "vec.h"
+#include "objloader.h"
 
 namespace ramiel {
 
-    class Mesh {
-        std::vector<Vec3f> v_pos;
-		std::vector<Vec3f> v_normal;
-		std::vector<Vec2f> v_txt;
+    class MeshBase {
+    protected:
+        std::vector<Vec3u> triangles;
+    public:
+        const std::vector<Vec3u>& getTriangles() const { return triangles; }
+        virtual ~MeshBase() {}
+    };
 
-		std::vector<Vec3u> tri;
-		std::vector<Vec3u> tri_txt;
+
+    template<class Vertex>
+    class Mesh : public MeshBase {
+        static_assert(
+            std::is_base_of_v<Vertex_Mesh, Vertex>,
+            "Mesh: invalid vertex type"
+        );
+        
+        std::vector<Vertex> vertices;
 
     public:
-        Mesh(
-            std::string filename,
-            float scale = 1.0f,
-            Vec3f pos = vec3f_0,
-            Vec3f rot = vec3f_0
-        );
-
-        void getVPos(
-            std::vector<Vec3f>& v_pos,
-            float scale,
-            const Vec3f& pos,
-            const Vec3f& rot
-        ) const;
-        void getVNormal(std::vector<Vec3f>& v_normal, Vec3f rot) const;
-
-        const std::vector<Vec3f>& getVPos() const;
-        const std::vector<Vec3f>& getVNormal() const;
-        const std::vector<Vec2f>& getVTxt() const;
-        const std::vector<Vec3u>& getTri() const;
-        const std::vector<Vec3u>& getTriTxt() const;
+        Mesh(const char* filename, bool loadvt = false, bool loadvn = false) {
+            ObjLoader(filename, vertices, triangles, loadvt, loadvn);
+        }
+        Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
+            this->triangles = triangles;
+            this->vertices  = vertices;
+        }
+        Mesh(std::vector<Vec3u>&& triangles, std::vector<Vertex>&& vertices) {
+            this->triangles = triangles;
+            this->vertices  = vertices;
+        }
+        const std::vector<Vertex>& getVertices() const { return vertices; }
     };
 
 }

@@ -1,65 +1,71 @@
 #pragma once
 
-#include "vec.h"
+#include "camera.h"
 
 namespace ramiel {
 
 	class Light {
 	protected:
-	#ifdef RAMIEL_TEST
-	public:
-	#endif
 		Vec3f color;
 		float intensity;
 	public:
 		Light(Vec3f color, float intensity);
 		virtual Vec3f getLight(
-			const Vec3f& pos, const Vec3f& normal,
-			unsigned specularExponent, float specularIntensity
+			const Vec3f& pos,
+			const Vec3f& normal
 		) const = 0;
-		virtual void move(const Vec3f& pos) = 0;
+		virtual Vec3f getLight(
+			const Vec3f& pos,
+			const Vec3f& normal,
+			const Vec3f& cameraPos,
+			unsigned specularExponent,
+			float specularIntensity
+		) const = 0;
 	};
 
-	class Light_Dir : public Light {
+	class DirectionalLight : public Light {
 	protected:
-	#ifdef RAMIEL_TEST
-	public:
-	#endif
 		Vec3f dir;
 	public:
-		Light_Dir(Vec3f color, float intensity, Vec3f dir);
+		DirectionalLight(Vec3f color, float intensity, Vec3f dir);
 		virtual Vec3f getLight(
-			const Vec3f& pos, const Vec3f& normal,
-			unsigned specularExponent, float specularIntensity
+			const Vec3f& pos,
+			const Vec3f& normal
 		) const override;
-		virtual void move(const Vec3f& pos) override;
+		virtual Vec3f getLight(
+			const Vec3f& pos,
+			const Vec3f& normal,
+			const Vec3f& cameraPos,
+			unsigned specularExponent,
+			float specularIntensity
+		) const override;
 	};
 
-	class Light_Pt : public Light {
+	class PointLight : public Light {
 	protected:
-	#ifdef RAMIEL_TEST
-	public:
-	#endif
 		Vec3f pos;
 		float falloff;
 	public:
-		Light_Pt(Vec3f color, float intensity, Vec3f pos, float falloff);
+		PointLight(Vec3f color, float intensity, Vec3f pos, float falloff);
 		virtual Vec3f getLight(
-			const Vec3f& pos, const Vec3f& normal,
-			unsigned specularExponent, float specularIntensity
+			const Vec3f& pos,
+			const Vec3f& normal
 		) const override;
-		virtual void move(const Vec3f& pos) override;
+		virtual Vec3f getLight(
+			const Vec3f& pos,
+			const Vec3f& normal,
+			const Vec3f& cameraPos,
+			unsigned specularExponent,
+			float specularIntensity
+		) const override;
 	};
 
-	class Light_Sp : public Light_Pt {
-	#ifdef RAMIEL_TEST
-	public:
-	#endif
+	class SpotLight : public PointLight {
 		Vec3f dir;
 		float width;
 		float falloffExp;
 	public:
-		Light_Sp(
+		SpotLight(
 			Vec3f color,
 			float intensity,
 			Vec3f pos,
@@ -69,10 +75,58 @@ namespace ramiel {
 			float falloffExp
 		);
 		virtual Vec3f getLight(
-			const Vec3f& pos, const Vec3f& normal,
-			unsigned specularExponent, float specularIntensity
+			const Vec3f& pos,
+			const Vec3f& normal
 		) const override;
-		void rotate(const Vec3f& dir);
+		virtual Vec3f getLight(
+			const Vec3f& pos,
+			const Vec3f& normal,
+			const Vec3f& cameraPos,
+			unsigned specularExponent,
+			float specularIntensity
+		) const override;
+	};
+
+
+	class LightingList {
+	protected:
+		const Vec3f& ambientLight;
+		const std::vector<Light*>& lights;
+	public:
+		LightingList(
+			const Vec3f& ambientLight,
+			const std::vector<Light*>& lights
+		) : 
+			ambientLight(ambientLight),
+			lights(lights)
+		{}
+		virtual Vec3f getAllLight(
+			const Vec3f& pos,
+			const Vec3f& normal
+		) const;
+	};
+
+	class LightingListSpecular : public LightingList {
+		const Vec3f& cameraPos;
+		uint16_t specularExponent;
+		float specularIntensity;
+	public:
+		LightingListSpecular(
+			const Vec3f& ambientLight,
+			const std::vector<Light*>& lights,
+			const Vec3f& cameraPos,
+			uint16_t specularExponent,
+			float specularIntensity
+		) :
+			LightingList(ambientLight, lights),
+			cameraPos(cameraPos),
+			specularExponent(specularExponent),
+			specularIntensity(specularIntensity)
+		{}
+		virtual Vec3f getAllLight(
+			const Vec3f& pos,
+			const Vec3f& normal
+		) const override;
 	};
 
 }

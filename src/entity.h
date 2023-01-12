@@ -1,55 +1,53 @@
 #pragma once
 
-#include "physicsobj.h"
+#include <algorithm>
 #include "mesh.h"
-#include "texture.h"
+#include "triangle.h"
 
 namespace ramiel {
 
-	enum class ShadingType_ : uint8_t {
-		FLAT,
-		VERTEX,
-		PIXEL,
-		PIXEL_S
-	};
+	typedef CameraModifier EntityBase;
 
-	class Entity {
-		ShadingType_ shading;
-		Vec3f color;
-		Mesh* mesh;
-		float scale;
-		Texture* texture;
-		Texture* normalMap;
-		unsigned specularExponent;
-		float specularIntensity;
-		PhysicsObj* physicsObj;
-		
+
+	template<class Vertex, class VertexShader, class PixelShader>
+	class Entity : public EntityBase {
+		const Mesh<Vertex>& mesh;
+		VertexShader vertexShader;
+		PixelShader pixelShader;
 	public:
 		Entity(
-			Mesh* mesh,
-			float scale,
-			Texture* texture,
-			Texture* normalMap,
-			ShadingType_ shading,
-			Vec3f color,
-			unsigned specularExponent,
-			float specularIntensity,
-			PhysicsObj* physicsObj
-		);
-		~Entity();
-		void(ramiel::Entity::*draw)();
+			const Mesh<Vertex>& mesh,
+			const VertexShader& vertexShader,
+			const PixelShader& pixelShader
+		) :
+			mesh(mesh),
+			vertexShader(vertexShader),
+			pixelShader(pixelShader)
+		{}
 
-	private:
-		void draw_flat();
-		void draw_flat_textured();
-		void draw_vertex();
-		void draw_vertex_textured();
-		void draw_pixel();
-		void draw_pixel_textured();
-		void draw_pixel_normalmapped();
-		void draw_pixel_textured_normalmapped();
-		void draw_pixel_smooth();
-		void draw_pixel_smooth_textured();
+
+		virtual void run(Camera& camera) const override {
+			// run vertex shader
+			const std::vector<Vertex>& v_in = mesh.getVertices();
+			std::vector<typename VertexShader::Vertex_Out> v_out(v_in.size());
+			std::transform(v_in.begin(), v_in.end(), v_out.begin(), vertexShader);
+
+			const std::vector<Vec3u>& triangles = mesh.getTriangles();
+			Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(camera, pixelShader);
+			for (auto& t : triangles) {
+				// backface culling
+				if (dotProduct(
+					crossProduct(
+						v_out[t[1]].cameraPos - v_out[t[0]].cameraPos,
+						v_out[t[2]].cameraPos - v_out[t[0]].cameraPos
+					),  v_out[t[0]].cameraPos
+				) >= 0.0f) continue;
+				
+				// assemble and draw triangle
+				tri.draw(v_out[t[0]], v_out[t[1]], v_out[t[2]]);
+			}
+		}
+
 	};
 
 }

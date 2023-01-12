@@ -3,7 +3,7 @@
 
 namespace ramiel {
 
-    void collideSphereSphere(SphereCollider& o1, SphereCollider& o2) {
+    void collide(SphereCollider& o1, SphereCollider& o2) {
         //if (&o1 == &o2) return; // check for self collision, not needed
 
 		// collision detection
@@ -17,10 +17,10 @@ namespace ramiel {
 		float time = depth / getMagnitude(o2.posVel - o1.posVel);
 
 		// collision response
-		if (o1.dynamic) {
+		if (o1.responsive) {
 
-			// both dynamic
-			if (o2.dynamic) {
+			// both responsive
+			if (o2.responsive) {
 				o1.pos -= o1.posVel * time;
 				o2.pos -= o2.posVel * time;
 				Vec3f n = getNormalized(o2.pos - o1.pos);
@@ -35,7 +35,7 @@ namespace ramiel {
 				o2.pos += o2.posVel * time;
 			}
 
-			// o1 dynamic
+			// o1 responsive
 			else {
 				o1.pos -= o1.posVel * time;
 				Vec3f n = getNormalized(o2.pos - o1.pos);
@@ -45,8 +45,8 @@ namespace ramiel {
 			
 		}
 
-		// o2 dynamic
-		else if (o2.dynamic) {
+		// o2 responsive
+		else if (o2.responsive) {
 			o2.pos -= o2.posVel * time;
 			Vec3f n = getNormalized(o2.pos - o1.pos);
 			o2.posVel -= n * 2.0f * dotProduct(o2.posVel, n);
@@ -55,22 +55,22 @@ namespace ramiel {
     }
 
 
-    void collideSphereAabb(SphereCollider& sph, AabbCollider& box) {
+    void collide(SphereCollider& sph, AabbCollider& box) {
 
 	}
 
 	
-    void collideSphereObb(SphereCollider& sph, ObbCollider& box) {
+    void collide(SphereCollider& sph, ObbCollider& box) {
 
 	}
 
 	
-    void collideSphereMesh(SphereCollider& sph, MeshCollider& mesh) {
+    void collide(SphereCollider& sph, MeshCollider& mesh) {
 
 	}
 
 	
-    void collideAabbAabb(AabbCollider& o1, AabbCollider& o2) {
+    void collide(AabbCollider& o1, AabbCollider& o2) {
 		Vec3f o1_min = o1.pos - o1.size;
 		Vec3f o1_max = o1.pos + o1.size;
 		Vec3f o2_min = o2.pos - o2.size;
@@ -96,10 +96,10 @@ namespace ramiel {
 		}
 
 		// collision response
-		if (o1.dynamic) {
+		if (o1.responsive) {
 
-			// both dynamic
-			if (o2.dynamic) {
+			// both responsive
+			if (o2.responsive) {
 				o1.pos[axis] -= o1.posVel[axis] * time;
 				o2.pos[axis] -= o2.posVel[axis] * time;
 				
@@ -113,7 +113,7 @@ namespace ramiel {
 				o2.pos[axis] += o2.posVel[axis] * time;
 			}
 
-			// o1 dynamic
+			// o1 responsive
 			else {
 				o1.pos[axis] -= 2.0f * o1.posVel[axis] * time;
 				o1.posVel[axis] *= -1.0f;
@@ -121,35 +121,35 @@ namespace ramiel {
 			
 		}
 
-		// o2 dynamic
-		else if (o2.dynamic) {
+		// o2 responsive
+		else if (o2.responsive) {
 			o2.pos[axis] -= 2.0f * o2.posVel[axis] * time;
 			o2.posVel[axis] *= -1.0f;
 		}
 	}
 
 	
-    void collideAabbObb(AabbCollider& aa, ObbCollider& ori) {
+    void collide(AabbCollider& aa, ObbCollider& ori) {
 
 	}
 
 	
-    void collideAabbMesh(AabbCollider& box, MeshCollider& mesh) {
+    void collide(AabbCollider& box, MeshCollider& mesh) {
 
 	}
 
 	
-    void collideObbObb(ObbCollider& o1, ObbCollider& o2) {
+    void collide(ObbCollider& o1, ObbCollider& o2) {
 
 	}
 
 	
-    void collideObbMesh(ObbCollider& box, MeshCollider& mesh) {
+    void collide(ObbCollider& box, MeshCollider& mesh) {
 
 	}
 
 	
-    void collideMeshMesh(MeshCollider& o1, MeshCollider& o2) {
+    void collide(MeshCollider& o1, MeshCollider& o2) {
 
 	}
 

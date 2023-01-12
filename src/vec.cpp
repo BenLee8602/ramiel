@@ -46,8 +46,4 @@ namespace ramiel {
 		color[B] = std::min(std::max(color[B], 0.0f), 255.0f);
 	}
 
-	int rgbToDec(const Vec3f& color) {
-		return ((int)color[R] << 16) + ((int)color[G] << 8) + (int)color[B];
-	}
-
 }
