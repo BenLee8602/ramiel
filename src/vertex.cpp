@@ -5,21 +5,21 @@ namespace ramiel {
     Vertex_PerTri Vertex_PerTri::operator+(const Vertex_PerTri& other) const {
         Vertex_PerTri temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         return temp;
     }
     
     Vertex_PerTri Vertex_PerTri::operator-(const Vertex_PerTri& other) const {
         Vertex_PerTri temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         return temp;
     }
     
     Vertex_PerTri Vertex_PerTri::operator*(float n) const {
         Vertex_PerTri temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         return temp;
     }
     
@@ -27,13 +27,13 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerTri temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         return temp;
     }
     
     Vertex_PerTri& Vertex_PerTri::operator+=(const Vertex_PerTri& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         return *this;
     }
     
@@ -41,7 +41,7 @@ namespace ramiel {
     Vertex_PerTri_Textured Vertex_PerTri_Textured::operator+(const Vertex_PerTri_Textured& other) const {
         Vertex_PerTri_Textured temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.zinv = zinv + other.zinv;
         temp.texturePos = texturePos + other.texturePos;
         return temp;
@@ -50,7 +50,7 @@ namespace ramiel {
     Vertex_PerTri_Textured Vertex_PerTri_Textured::operator-(const Vertex_PerTri_Textured& other) const {
         Vertex_PerTri_Textured temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.zinv = zinv - other.zinv;
         temp.texturePos = texturePos - other.texturePos;
         return temp;
@@ -59,7 +59,7 @@ namespace ramiel {
     Vertex_PerTri_Textured Vertex_PerTri_Textured::operator*(float n) const {
         Vertex_PerTri_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.zinv = zinv * n;
         temp.texturePos = texturePos * n;
         return temp;
@@ -69,7 +69,7 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerTri_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.zinv = zinv * n;
         temp.texturePos = texturePos * n;
         return temp;
@@ -77,7 +77,7 @@ namespace ramiel {
     
     Vertex_PerTri_Textured& Vertex_PerTri_Textured::operator+=(const Vertex_PerTri_Textured& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         zinv += other.zinv;
         texturePos += other.texturePos;
         return *this;
@@ -87,7 +87,7 @@ namespace ramiel {
     Vertex_PerVertex Vertex_PerVertex::operator+(const Vertex_PerVertex& other) const {
         Vertex_PerVertex temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.color = color + other.color;
         return temp;
     }
@@ -95,7 +95,7 @@ namespace ramiel {
     Vertex_PerVertex Vertex_PerVertex::operator-(const Vertex_PerVertex& other) const {
         Vertex_PerVertex temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.color = color - other.color;
         return temp;
     }
@@ -103,7 +103,7 @@ namespace ramiel {
     Vertex_PerVertex Vertex_PerVertex::operator*(float n) const {
         Vertex_PerVertex temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.color = color * n;
         return temp;
     }
@@ -112,14 +112,14 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerVertex temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.color = color * n;
         return temp;
     }
     
     Vertex_PerVertex& Vertex_PerVertex::operator+=(const Vertex_PerVertex& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         color += other.color;
         return *this;
     }
@@ -128,7 +128,7 @@ namespace ramiel {
     Vertex_PerVertex_Textured Vertex_PerVertex_Textured::operator+(const Vertex_PerVertex_Textured& other) const {
         Vertex_PerVertex_Textured temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.light = light + other.light;
         temp.zinv = zinv + other.zinv;
         temp.texturePos = texturePos + other.texturePos;
@@ -138,7 +138,7 @@ namespace ramiel {
     Vertex_PerVertex_Textured Vertex_PerVertex_Textured::operator-(const Vertex_PerVertex_Textured& other) const {
         Vertex_PerVertex_Textured temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.light = light - other.light;
         temp.zinv = zinv - other.zinv;
         temp.texturePos = texturePos - other.texturePos;
@@ -148,7 +148,7 @@ namespace ramiel {
     Vertex_PerVertex_Textured Vertex_PerVertex_Textured::operator*(float n) const {
         Vertex_PerVertex_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.light = light * n;
         temp.zinv = zinv * n;
         temp.texturePos = texturePos * n;
@@ -159,7 +159,7 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerVertex_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.light = light * n;
         temp.zinv = zinv * n;
         temp.texturePos = texturePos * n;
@@ -168,7 +168,7 @@ namespace ramiel {
     
     Vertex_PerVertex_Textured& Vertex_PerVertex_Textured::operator+=(const Vertex_PerVertex_Textured& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         light += other.light;
         zinv += other.zinv;
         texturePos += other.texturePos;
@@ -179,7 +179,7 @@ namespace ramiel {
     Vertex_PerPixel Vertex_PerPixel::operator+(const Vertex_PerPixel& other) const {
         Vertex_PerPixel temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.worldPos = worldPos + other.worldPos;
         temp.zinv = zinv + other.zinv;
         return temp;
@@ -188,7 +188,7 @@ namespace ramiel {
     Vertex_PerPixel Vertex_PerPixel::operator-(const Vertex_PerPixel& other) const {
         Vertex_PerPixel temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.worldPos = worldPos - other.worldPos;
         temp.zinv = zinv - other.zinv;
         return temp;
@@ -197,7 +197,7 @@ namespace ramiel {
     Vertex_PerPixel Vertex_PerPixel::operator*(float n) const {
         Vertex_PerPixel temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.zinv = zinv * n;
         return temp;
@@ -207,7 +207,7 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerPixel temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.zinv = zinv * n;
         return temp;
@@ -215,7 +215,7 @@ namespace ramiel {
     
     Vertex_PerPixel& Vertex_PerPixel::operator+=(const Vertex_PerPixel& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         worldPos += other.worldPos;
         zinv += other.zinv;
         return *this;
@@ -225,7 +225,7 @@ namespace ramiel {
     Vertex_PerPixel_Textured Vertex_PerPixel_Textured::operator+(const Vertex_PerPixel_Textured& other) const {
         Vertex_PerPixel_Textured temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.worldPos = worldPos + other.worldPos;
         temp.zinv = zinv + other.zinv;
         temp.texturePos = texturePos + other.texturePos;
@@ -235,7 +235,7 @@ namespace ramiel {
     Vertex_PerPixel_Textured Vertex_PerPixel_Textured::operator-(const Vertex_PerPixel_Textured& other) const {
         Vertex_PerPixel_Textured temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.worldPos = worldPos - other.worldPos;
         temp.zinv = zinv - other.zinv;
         temp.texturePos = texturePos - other.texturePos;
@@ -245,7 +245,7 @@ namespace ramiel {
     Vertex_PerPixel_Textured Vertex_PerPixel_Textured::operator*(float n) const {
         Vertex_PerPixel_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.zinv = zinv * n;
         temp.texturePos = texturePos * n;
@@ -256,7 +256,7 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerPixel_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.zinv = zinv * n;
         temp.texturePos = texturePos * n;
@@ -265,7 +265,7 @@ namespace ramiel {
     
     Vertex_PerPixel_Textured& Vertex_PerPixel_Textured::operator+=(const Vertex_PerPixel_Textured& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         worldPos += other.worldPos;
         zinv += other.zinv;
         texturePos += other.texturePos;
@@ -276,7 +276,7 @@ namespace ramiel {
     Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator+(const Vertex_PerPixel_Smooth& other) const {
         Vertex_PerPixel_Smooth temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.worldPos = worldPos + other.worldPos;
         temp.normal = normal + other.normal;
         temp.zinv = zinv + other.zinv;
@@ -286,7 +286,7 @@ namespace ramiel {
     Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator-(const Vertex_PerPixel_Smooth& other) const {
         Vertex_PerPixel_Smooth temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.worldPos = worldPos - other.worldPos;
         temp.normal = normal - other.normal;
         temp.zinv = zinv - other.zinv;
@@ -296,7 +296,7 @@ namespace ramiel {
     Vertex_PerPixel_Smooth Vertex_PerPixel_Smooth::operator*(float n) const {
         Vertex_PerPixel_Smooth temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.normal = normal * n;
         temp.zinv = zinv * n;
@@ -307,7 +307,7 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerPixel_Smooth temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.normal = normal * n;
         temp.zinv = zinv * n;
@@ -316,7 +316,7 @@ namespace ramiel {
     
     Vertex_PerPixel_Smooth& Vertex_PerPixel_Smooth::operator+=(const Vertex_PerPixel_Smooth& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         worldPos += other.worldPos;
         normal += other.normal;
         zinv += other.zinv;
@@ -327,7 +327,7 @@ namespace ramiel {
     Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator+(const Vertex_PerPixel_Smooth_Textured& other) const {
         Vertex_PerPixel_Smooth_Textured temp;
         temp.screenPos = screenPos + other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] + other.cameraPos[Z];
+        temp.cameraPos = cameraPos + other.cameraPos;
         temp.worldPos = worldPos + other.worldPos;
         temp.normal = normal + other.normal;
         temp.zinv = zinv + other.zinv;
@@ -338,7 +338,7 @@ namespace ramiel {
     Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator-(const Vertex_PerPixel_Smooth_Textured& other) const {
         Vertex_PerPixel_Smooth_Textured temp;
         temp.screenPos = screenPos - other.screenPos;
-        temp.cameraPos[Z] = cameraPos[Z] - other.cameraPos[Z];
+        temp.cameraPos = cameraPos - other.cameraPos;
         temp.worldPos = worldPos - other.worldPos;
         temp.normal = normal - other.normal;
         temp.zinv = zinv - other.zinv;
@@ -349,7 +349,7 @@ namespace ramiel {
     Vertex_PerPixel_Smooth_Textured Vertex_PerPixel_Smooth_Textured::operator*(float n) const {
         Vertex_PerPixel_Smooth_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.normal = normal * n;
         temp.zinv = zinv * n;
@@ -361,7 +361,7 @@ namespace ramiel {
         n = 1.0f / n;
         Vertex_PerPixel_Smooth_Textured temp;
         temp.screenPos = screenPos * n;
-        temp.cameraPos[Z] = cameraPos[Z] * n;
+        temp.cameraPos = cameraPos * n;
         temp.worldPos = worldPos * n;
         temp.normal = normal * n;
         temp.zinv = zinv * n;
@@ -371,7 +371,7 @@ namespace ramiel {
     
     Vertex_PerPixel_Smooth_Textured& Vertex_PerPixel_Smooth_Textured::operator+=(const Vertex_PerPixel_Smooth_Textured& other) {
         screenPos += other.screenPos;
-        cameraPos[Z] += other.cameraPos[Z];
+        cameraPos += other.cameraPos;
         worldPos += other.worldPos;
         normal += other.normal;
         zinv += other.zinv;

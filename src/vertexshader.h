@@ -25,7 +25,6 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             return out;
         }
     };
@@ -49,7 +48,6 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.texture;
             return out;
@@ -81,7 +79,6 @@ namespace ramiel {
             Vertex_Out out;
             Vec3f worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.color = surfaceColor * lightingList.getAllLight(worldPos, in.normal);
             return out;
         }
@@ -109,7 +106,6 @@ namespace ramiel {
             Vertex_Out out;
             Vec3f worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.light = lightingList.getAllLight(worldPos, in.normal);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.texture;
@@ -136,7 +132,6 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.zinv = 1.0f / out.cameraPos[Z];
             return out;
         }
@@ -161,7 +156,6 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.texture;
             return out;
@@ -187,7 +181,6 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.normal = in.normal;
             out.zinv = 1.0f / out.cameraPos[Z];
             return out;
@@ -213,7 +206,6 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.screenPos = camera.getScreenCoord(out.cameraPos);
             out.normal = in.normal;
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.texture;

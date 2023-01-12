@@ -23,6 +23,8 @@ namespace ramiel {
 
 		private:
 		void raster() {
+			for (size_t i = 0; i < 3; ++i) v[i].screenPos = camera.getScreenCoord(v[i].cameraPos);
+
 			Camera::ColorBufferIterator color = camera.getColorBuffer();
 			Camera::DepthBufferIterator depth = camera.getDepthBuffer();
 			
