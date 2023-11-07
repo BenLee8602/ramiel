@@ -3,6 +3,9 @@
 ramiel is a 3D graphics + physics library. All graphics + physics related functionality was 
 written without the use of any external libraries or frameworks.
 
+
+## examples
+
 ![Mountains](https://github.com/BenLee8602/ramiel/blob/master/screenshots/perlin_mountain.PNG?raw=true)
 A mountain scene made using the following entities, lighting, and effects:
 ```cpp
@@ -105,4 +108,25 @@ scene.addDynamicObject(p1);
 scene.addDynamicObject(p2);
 scene.addDynamicObject(p3);
 scene.addDynamicObject(p4);
+```
+
+
+## build
+
+clone the repo
+```
+git clone https://github.com/BenLee8602/ramiel.git ramiel
+cd ramiel
+```
+
+generate project files using cmake. will use mingw makefiles for this example
+```
+cmake -B build -S . -G "MinGW Makefiles"
+mingw32-make -C build
+```
+
+you should now see `ramiel/build/src/libramiel.a`  
+heres how you can build the example in `ramiel/examples/glfw_example`. make sure you have glfw installed
+```
+g++ -Iinclude -Ipath/to/glfw examples/glfw_example/main.cpp build/src/libramiel.a path/to/glfw/libglfw3.a -lgdi32 -lopengl32 -o ramiel.exe
 ```
