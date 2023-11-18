@@ -1,15 +1,15 @@
 add_library(${PROJECT_NAME} STATIC 
-    camera.cpp 
-    collider.cpp 
-    collision.cpp 
-    effects.cpp 
-    light.cpp 
-    objloader.cpp 
-    rotation.cpp 
-    scene.cpp
-    texture.cpp 
-    vec.cpp 
-    vertex.cpp 
+    graphics/camera.cpp 
+    physics/collider.cpp 
+    physics/collision.cpp 
+    graphics/effects.cpp 
+    graphics/light.cpp 
+    file/objloader.cpp 
+    math/rotation.cpp 
+    scene.cpp 
+    graphics/texture.cpp 
+    math/vec.cpp 
+    graphics/vertex.cpp 
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)

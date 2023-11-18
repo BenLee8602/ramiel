@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "vec.h"
+#include <ramiel/math.h>
 
 namespace ramiel {
 

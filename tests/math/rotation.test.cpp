@@ -1,6 +1,5 @@
-#include "catch2/catch2.hpp"
-
-#include <rotation.h>
+#include <catch2/catch2.hpp>
+#include <ramiel/math.h>
 using namespace ramiel;
 
 
