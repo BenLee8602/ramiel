@@ -1,5 +1,5 @@
-#include "catch2/catch2.hpp"
-#include <vec.h>
+#include <catch2/catch2.hpp>
+#include <ramiel/math.h>
 using namespace ramiel;
 
 

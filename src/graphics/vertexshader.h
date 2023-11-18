@@ -1,9 +1,9 @@
 #pragma once
 
+#include <ramiel/math.h>
 #include "vertex.h"
 #include "light.h"
 #include "camera.h"
-#include "transform.h"
 
 namespace ramiel {
 

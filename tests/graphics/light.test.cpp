@@ -1,6 +1,5 @@
-#include "catch2/catch2.hpp"
-
-#include <light.h>
+#include <catch2/catch2.hpp>
+#include <ramiel/graphics.h>
 using namespace ramiel;
 
 

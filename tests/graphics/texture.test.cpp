@@ -1,10 +1,6 @@
-#include "catch2/catch2.hpp"
-#include <texture.h>
+#include <catch2/catch2.hpp>
+#include <ramiel/graphics.h>
 using namespace ramiel;
-
-#ifndef ramiel_TEST_DATA_DIR
-#define ramiel_TEST_DATA_DIR "."
-#endif
 
 
 TEST_CASE("texture size", "[texture]") {

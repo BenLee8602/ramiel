@@ -1,7 +1,6 @@
 #pragma once
 
-#include "vec.h"
-#include "rotation.h"
+#include <ramiel/math.h>
 
 namespace ramiel {
 

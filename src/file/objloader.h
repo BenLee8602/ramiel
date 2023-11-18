@@ -4,8 +4,8 @@
 #include <vector>
 #include <sstream>
 #include <unordered_map>
-#include "meshvertex.h"
-#include "rotation.h"
+
+#include <ramiel/math.h>
 
 
 namespace ramiel {

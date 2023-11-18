@@ -3,13 +3,10 @@
 #include <unordered_map>
 #include <fstream>
 
-#include "camera.h"
-#include "mesh.h"
-#include "texture.h"
-#include "entity.h"
-#include "light.h"
-#include "effects.h"
-#include "collider.h"
+#include <ramiel/math.h>
+#include <ramiel/file.h>
+#include <ramiel/graphics.h>
+#include <ramiel/physics.h>
 
 namespace ramiel {
 
@@ -36,7 +33,10 @@ namespace ramiel {
         bool loadMesh(const char* filename, const char* meshname, bool loadvt = false, bool loadvn = false) {
             if (!std::ifstream(filename).good()) return false;
             if (meshes[meshname]) return false;
-            meshes[meshname] = new Mesh<Vertex>(filename, loadvt, loadvn);
+            std::vector<Vertex> vertices;
+            std::vector<Vec3u> triangles;
+            ObjLoader<Vertex>(filename, vertices, triangles, loadvt, loadvn);
+            meshes[meshname] = new Mesh<Vertex>(std::move(triangles), std::move(vertices));
             return true;
         }
         bool loadTexture(const char* filename, const char* textureName);
