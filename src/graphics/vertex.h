@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vec.h"
+#include <ramiel/math.h>
 
 namespace ramiel {
 

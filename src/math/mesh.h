@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string>
-#include "objloader.h"
+
+#include "vec.h"
+#include "meshvertex.h"
 
 namespace ramiel {
 
@@ -24,9 +26,6 @@ namespace ramiel {
         std::vector<Vertex> vertices;
 
     public:
-        Mesh(const char* filename, bool loadvt = false, bool loadvn = false) {
-            ObjLoader(filename, vertices, triangles, loadvt, loadvn);
-        }
         Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
             this->triangles = triangles;
             this->vertices  = vertices;

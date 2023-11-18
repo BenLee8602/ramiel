@@ -1,6 +1,5 @@
-#include "catch2/catch2.hpp"
-
-#include <dynamics.h>
+#include <catch2/catch2.hpp>
+#include <ramiel/physics.h>
 using namespace ramiel;
 
 TEST_CASE("dynamics step", "[dynamics]") {

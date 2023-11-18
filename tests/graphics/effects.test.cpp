@@ -1,7 +1,6 @@
-#include "catch2/catch2.hpp"
-
+#include <catch2/catch2.hpp>
 #include <vector>
-#include "../src/effects.h"
+#include <ramiel/graphics.h>
 using namespace ramiel;
 
 

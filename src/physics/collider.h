@@ -1,7 +1,7 @@
 #pragma once
 
+#include <ramiel/math.h>
 #include "dynamics.h"
-#include "mesh.h"
 
 namespace ramiel {
 
