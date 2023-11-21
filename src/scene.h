@@ -35,7 +35,7 @@ namespace ramiel {
             if (meshes[meshname]) return false;
             std::vector<Vertex> vertices;
             std::vector<Vec3u> triangles;
-            loadObj(filename, vertices, triangles);
+            getObj(filename, vertices, triangles);
             meshes[meshname] = new Mesh<Vertex>(std::move(triangles), std::move(vertices));
             return true;
         }
