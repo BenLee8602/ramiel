@@ -43,7 +43,7 @@ TEST_CASE("load obj", "[objloader]") {
     std::vector<Vec3u> triangles;
     std::vector<Vertex> vertices;
     std::string filename = std::string(ramiel_TEST_DATA_DIR) + "/cube_withquads.obj";
-    loadObj<Vertex>(filename.c_str(), vertices, triangles);
+    getObj<Vertex>(filename.c_str(), vertices, triangles);
 
     std::vector<Vec3u> triangles_expected = {
         {  0,  1,  2 },
