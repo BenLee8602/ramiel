@@ -97,11 +97,11 @@ int main() {
 	Scene scene;
 	scene.camera.setRes({ width, height });
 
-	scene.loadMesh<Vertex_Mesh>("examples/assets/models/terrain.obj", "terrain");
+	scene.loadMesh<MeshVertex>("examples/assets/models/terrain.obj", "terrain");
 
 	scene.ambientLight = { 100, 80, 100 };
 	scene.addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
-	scene.addEntity<Vertex_Mesh>(
+	scene.addEntity<MeshVertex>(
 		"terrain",
 		VS_PerTri(scene.camera, new Transform({ -64, 0, -64 })),
 		PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
