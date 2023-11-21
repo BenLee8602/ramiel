@@ -49,7 +49,7 @@ namespace ramiel {
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
             out.zinv = 1.0f / out.cameraPos[Z];
-            out.texturePos = in.texture;
+            out.texturePos = in.txt;
             return out;
         }
     };
@@ -79,7 +79,7 @@ namespace ramiel {
             Vertex_Out out;
             Vec3f worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(worldPos);
-            out.color = surfaceColor * lightingList.getAllLight(worldPos, in.normal);
+            out.color = surfaceColor * lightingList.getAllLight(worldPos, in.nml);
             return out;
         }
     };
@@ -106,9 +106,9 @@ namespace ramiel {
             Vertex_Out out;
             Vec3f worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(worldPos);
-            out.light = lightingList.getAllLight(worldPos, in.normal);
+            out.light = lightingList.getAllLight(worldPos, in.nml);
             out.zinv = 1.0f / out.cameraPos[Z];
-            out.texturePos = in.texture;
+            out.texturePos = in.txt;
             return out;
         }
     };
@@ -157,7 +157,7 @@ namespace ramiel {
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
             out.zinv = 1.0f / out.cameraPos[Z];
-            out.texturePos = in.texture;
+            out.texturePos = in.txt;
             return out;
         }
     };
@@ -181,7 +181,7 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.normal = in.normal;
+            out.normal = in.nml;
             out.zinv = 1.0f / out.cameraPos[Z];
             return out;
         }
@@ -206,9 +206,9 @@ namespace ramiel {
             Vertex_Out out;
             out.worldPos = (*transform)(in.pos);
             out.cameraPos = camera.getCameraCoord(out.worldPos);
-            out.normal = in.normal;
+            out.normal = in.nml;
             out.zinv = 1.0f / out.cameraPos[Z];
-            out.texturePos = in.texture;
+            out.texturePos = in.txt;
             return out;
         }
     };

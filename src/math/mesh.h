@@ -1,9 +1,7 @@
 #pragma once
 
 #include <string>
-
 #include "vec.h"
-#include "meshvertex.h"
 
 namespace ramiel {
 
@@ -15,16 +13,9 @@ namespace ramiel {
         virtual ~MeshBase() {}
     };
 
-
     template<class Vertex>
     class Mesh : public MeshBase {
-        static_assert(
-            std::is_base_of_v<Vertex_Mesh, Vertex>,
-            "Mesh: invalid vertex type"
-        );
-        
         std::vector<Vertex> vertices;
-
     public:
         Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
             this->triangles = triangles;
@@ -35,6 +26,38 @@ namespace ramiel {
             this->vertices  = vertices;
         }
         const std::vector<Vertex>& getVertices() const { return vertices; }
+    };
+
+
+    struct MeshVertex {
+        Vec3f pos;
+        MeshVertex(Vec3f pos = vec3f_0) : pos(pos) {}
+        MeshVertex(Vec3f pos, Vec2f txt, Vec3f nml) : pos(pos) {}
+    };
+
+    struct MeshVertexT {
+        Vec3f pos;
+        Vec2f txt;
+        MeshVertexT(Vec3f pos = vec3f_0, Vec2f txt = vec2f_0) : pos(pos), txt(txt) {}
+        MeshVertexT(Vec3f pos, Vec2f txt, Vec3f nml) : pos(pos), txt(txt) {}
+    };
+
+    struct MeshVertexN {
+        Vec3f pos;
+        Vec3f nml;
+        MeshVertexN(Vec3f pos = vec3f_0, Vec3f nml = vec3f_0) : pos(pos), nml(nml) {}
+        MeshVertexN(Vec3f pos, Vec2f txt, Vec3f nml) : pos(pos), nml(nml) {}
+    };
+
+    struct MeshVertexTN {
+        Vec3f pos;
+        Vec2f txt;
+        Vec3f nml;
+        MeshVertexTN(
+            Vec3f pos = vec3f_0,
+            Vec2f txt = vec2f_0,
+            Vec3f nml = vec3f_0
+        ) : pos(pos), txt(txt), nml(nml) {}
     };
 
 }

@@ -99,10 +99,10 @@ namespace ramiel {
 
 
     struct MeshCollider : public Collider {
-        Mesh<Vertex_Mesh>& mesh;
+        Mesh<MeshVertex>& mesh;
 
         MeshCollider(
-            Mesh<Vertex_Mesh>& mesh,
+            Mesh<MeshVertex>& mesh,
             Dynamics dynamics = Dynamics(),
             bool responsive = true,
             float mass = 1.0f
