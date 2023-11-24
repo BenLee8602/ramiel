@@ -10,8 +10,8 @@ namespace ramiel {
         float scale;
 
         Transform(
-            Vec3f pos = vec3f_0,
-            Rotation rot = vec3f_0,
+            Vec3f pos = Vec3f(),
+            Rotation rot = Vec3f(),
             float scale = 1.0f
         ) :
             pos(pos),

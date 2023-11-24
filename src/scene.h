@@ -13,7 +13,7 @@ namespace ramiel {
     class Scene {
     public:
         Camera camera;
-        Vec3f ambientLight = vec3f_0;
+        Vec3f ambientLight = Vec3f();
 
     private:
         std::unordered_map<std::string, MeshBase*> meshes;

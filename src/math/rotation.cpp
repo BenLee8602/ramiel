@@ -3,8 +3,8 @@
 namespace ramiel {
 
     Rotation::Rotation() {
-        rot = vec3f_0;
-        sine = vec3f_0;
+        rot = Vec3f();
+        sine = Vec3f();
         cosine = { 1.0f, 1.0f, 1.0f };
     }
 

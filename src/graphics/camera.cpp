@@ -43,8 +43,8 @@ namespace ramiel {
 
 
 	Vec2f Camera::getScreenCoord(const Vec3f& in) const {
-		if (in[Z] == 0.0f) return vec2f_0;
-		Vec2f out = vec2f_0;
+		if (in[Z] == 0.0f) return Vec2f();
+		Vec2f out = Vec2f();
 		out[X] = std::floor(in[X] * focalLength / in[Z] + halfRes[X]);
 		out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfRes[Y]);
 		return out;
@@ -61,7 +61,7 @@ namespace ramiel {
 
 
 	void Camera::clampColorBuffer() {
-		for (auto& c : color) c_min(c);
+		for (auto& c : color) c = min(c, 255.0f);
 	}
 
 

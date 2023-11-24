@@ -186,21 +186,21 @@ TEST_CASE("operator-()", "[vec]") {
 
 TEST_CASE("magnitude", "[vec]") {
     Vec3f v = { -8.9f, -7.7f, -5.4f };
-    float res = getMagnitude(v);
+    float res = mag(v);
     Approx expected = Approx(12.94836f).epsilon(0.0001f);
     REQUIRE(res == expected);
 }
 
 TEST_CASE("normalize", "[vec]") {
     Vec3f v = { -5.2f, 3.3f, 8.5f };
-    Vec3f res = getNormalized(v);
+    Vec3f res = normalize(v);
     Vec3f expected = { -0.495395f, 0.314386f, 0.809781f };
     REQUIRE(res.equals(expected));
 }
 
 TEST_CASE("normalize, magnitude given", "[vec]") {
     Vec3f v = { -3.2f, -1.4f, 8.8f };
-    Vec3f res = getNormalized(v, 9.46784f);
+    Vec3f res = normalize(v, 9.46784f);
     Vec3f expected = { -0.33799f, -0.14786f, 0.92946f };
     REQUIRE(res.equals(expected));
 }
@@ -208,7 +208,7 @@ TEST_CASE("normalize, magnitude given", "[vec]") {
 TEST_CASE("dot product", "[vec]") {
     Vec3f v1 = { -9.2f, 6.9f, 9.9f };
     Vec3f v2 = { -8.2f, -3.5f, 4.6f };
-    float res = dotProduct(v1, v2);
+    float res = dot(v1, v2);
     Approx expected = Approx(96.83f).epsilon(0.0001f);
     REQUIRE(res == expected);
 }
@@ -216,28 +216,35 @@ TEST_CASE("dot product", "[vec]") {
 TEST_CASE("cross product", "[vec]") {
     Vec3f v1 = { 9.1f, -4.9f, 0.4f };
     Vec3f v2 = { -5.0f, -8.2f, -7.3f };
-    Vec3f res = crossProduct(v1, v2);
+    Vec3f res = cross(v1, v2);
     Vec3f expected = { 39.05f, 64.43f, -99.12f };
     REQUIRE(res.equals(expected));
 }
 
-TEST_CASE("color clamp min", "[vec][color]") {
-    Vec3f color = { 255.0f, 300.0f, 200.0f };
-    c_min(color);
+TEST_CASE("min scalar", "[vec][clamp]") {
+    Vec3 vec = { 4, 5, 6 };
+    Vec3 expected = { 4, 5, 5 };
+    Vec3 actual = min(vec, 5);
+    REQUIRE(expected == actual);
+}
+
+TEST_CASE("min vector", "[vec][clamp]") {
+    Vec3f vec = { 255.0f, 300.0f, 200.0f };
     Vec3f expected = { 255.0f, 255.0f, 200.0f };
-    REQUIRE(color == expected);
+    Vec3f actual = min(vec, Vec3f{ 255, 255, 255 });
+    REQUIRE(expected == actual);
 }
 
-TEST_CASE("color clamp max", "[vec][color]") {
-    Vec3f color = { 255.0f, -5.0f, 100.0f };
-    c_max(color);
+TEST_CASE("max scalar", "[vec][clamp]") {
+    Vec3 vec = { 4, 5, 6 };
+    Vec3 expected = { 5, 5, 6 };
+    Vec3 actual = max(vec, 5);
+    REQUIRE(expected == actual);
+}
+
+TEST_CASE("max vector", "[vec][clamp]") {
+    Vec3f vec = { 255.0f, -5.0f, 100.0f };
     Vec3f expected = { 255.0f, 0.0f, 100.0f };
-    REQUIRE(color == expected);
-}
-
-TEST_CASE("color clamp", "[vec][color]") {
-    Vec3f color = { -999.0f, 128.0f, 999.0f };
-    c_clamp(color);
-    Vec3f expected = { 0.0f, 128.0f, 255.0f };
-    REQUIRE(color == expected);
+    Vec3f actual = max(vec, Vec3f());
+    REQUIRE(expected == actual);
 }
