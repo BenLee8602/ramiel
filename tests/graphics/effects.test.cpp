@@ -111,15 +111,15 @@ TEST_CASE("fog", "[effects]") {
     auto color = camera.getColorBuffer();
     auto depth = camera.getDepthBuffer();
     for (size_t i = 0; i < 5; ++i) {
-        color[i] = vec3f_255;
+        color[i] = Vec3f{ 255, 255, 255 };
         depth[i] = (float)(i + 1) * 0.5f;
     }
 
-    Fog(vec3f_0, 1, 2).run(camera);
+    Fog(Vec3f(), 1, 2).run(camera);
 
-    REQUIRE(color[0].equals(vec3f_255));
-    REQUIRE(color[1].equals(vec3f_255));
+    REQUIRE(color[0].equals(Vec3f{ 255, 255, 255 }));
+    REQUIRE(color[1].equals(Vec3f{ 255, 255, 255 }));
     REQUIRE(color[2].equals(Vec3f{ 127.5f, 127.5f, 127.5f }));
-    REQUIRE(color[3].equals(vec3f_0));
-    REQUIRE(color[4].equals(vec3f_0));
+    REQUIRE(color[3].equals(Vec3f()));
+    REQUIRE(color[4].equals(Vec3f()));
 }

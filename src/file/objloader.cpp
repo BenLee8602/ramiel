@@ -63,9 +63,9 @@ namespace ramiel {
         f.reserve(fCount);
         vertexIndices.reserve(vCount + vtCount + vnCount);
 
-        v.emplace_back(vec3f_0);
-        vt.emplace_back(vec2f_0);
-        vn.emplace_back(vec3f_0);
+        v.emplace_back(Vec3f{});
+        vt.emplace_back(Vec2f{});
+        vn.emplace_back(Vec3f{});
 
         file.clear();
         file.seekg(0, std::ios::beg);

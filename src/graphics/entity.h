@@ -36,8 +36,8 @@ namespace ramiel {
 			Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(camera, pixelShader);
 			for (auto& t : triangles) {
 				// backface culling
-				if (dotProduct(
-					crossProduct(
+				if (dot(
+					cross(
 						v_out[t[1]].cameraPos - v_out[t[0]].cameraPos,
 						v_out[t[2]].cameraPos - v_out[t[0]].cameraPos
 					),  v_out[t[0]].cameraPos

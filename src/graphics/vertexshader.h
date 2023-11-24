@@ -65,7 +65,7 @@ namespace ramiel {
             Camera& camera,
             Transform* transform,
             LightingListSpecular lightingList,
-            Vec3f surfaceColor = vec3f_255
+            Vec3f surfaceColor = Vec3f{ 255, 255, 255 }
         ) :
             camera(camera),
             lightingList(lightingList),

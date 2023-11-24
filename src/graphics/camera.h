@@ -20,14 +20,14 @@ namespace ramiel {
 		float zfar;
 
 		Camera() :
-			res(vec2u_0),
-			halfRes(vec2f_0),
+			res(Vec2u()),
+			halfRes(Vec2f()),
 			bufferSize(0),
 			fov(1.57f),
 			focalLength(0.0f),
-			pos(vec3f_0),
-			rot(vec3f_0),
-			backgroundColor(vec3f_0),
+			pos(Vec3f()),
+			rot(Vec3f()),
+			backgroundColor(Vec3f()),
 			znear(0.2f),
 			zfar(1000.0f)
 		{}

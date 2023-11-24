@@ -7,7 +7,7 @@ namespace ramiel {
 
     template<class Vertex>
     inline Vec3f getNormal(Vertex v[3]) {
-        return getNormalized(crossProduct(
+        return normalize(cross(
             v[1].worldPos - v[0].worldPos,
             v[2].worldPos - v[0].worldPos
         ));
@@ -25,7 +25,7 @@ namespace ramiel {
         ) :
             lightingList(lightingList),
             surfaceColor(surfaceColor / 255.0f),
-            color(vec3f_0)
+            color(Vec3f())
         {}
 
         template<class Vertex_In>
@@ -53,7 +53,7 @@ namespace ramiel {
         ) :
             lightingList(lightingList),
             texture(texture),
-            light(vec3f_0)
+            light(Vec3f())
         {}
 
         template<class Vertex_In>
@@ -113,7 +113,7 @@ namespace ramiel {
         ) :
             lightingList(lightingList),
             surfaceColor(surfaceColor / 255.0f),
-            normal(vec3f_0)
+            normal(Vec3f())
         {}
 
         template<class Vertex_In>
@@ -142,7 +142,7 @@ namespace ramiel {
         ) :
             lightingList(lightingList),
             texture(texture),
-            normal(vec3f_0)
+            normal(Vec3f())
         {}
 
         template<class Vertex_In>
@@ -179,9 +179,9 @@ namespace ramiel {
             lightingList(lightingList),
             normalMap(normalMap),
             surfaceColor(surfaceColor / 255.0f),
-            normal(vec3f_0),
-            tangent(vec3f_0),
-            bitangent(vec3f_0)
+            normal(Vec3f()),
+            tangent(Vec3f()),
+            bitangent(Vec3f())
         {}
 
         template<class Vertex_In>
@@ -192,13 +192,13 @@ namespace ramiel {
             const Vec2f dtex2 = v[2].texturePos - v[0].texturePos;
 
             const float f = 1.0f / (dtex1[X] * dtex2[Y] + dtex2[X] * dtex1[Y]);
-            normal    = crossProduct(dpos1, dpos2);
+            normal    = cross(dpos1, dpos2);
             tangent   = (dpos1 * dtex2[Y] - dpos2 * dtex1[Y]) * f;
             bitangent = (dpos2 * dtex1[X] - dpos1 * dtex2[X]) * f;
 
-            normal    = getNormalized(normal);
-            tangent   = getNormalized(tangent);
-            bitangent = getNormalized(bitangent);
+            normal    = normalize(normal);
+            tangent   = normalize(tangent);
+            bitangent = normalize(bitangent);
 
             for (int i = 0; i < 3; ++i) {
                 v[i].worldPos *= v[i].zinv;
@@ -234,9 +234,9 @@ namespace ramiel {
             lightingList(lightingList),
             texture(texture),
             normalMap(normalMap),
-            normal(vec3f_0),
-            tangent(vec3f_0),
-            bitangent(vec3f_0)
+            normal(Vec3f()),
+            tangent(Vec3f()),
+            bitangent(Vec3f())
         {}
 
         template<class Vertex_In>
@@ -247,13 +247,13 @@ namespace ramiel {
             const Vec2f dtex2 = v[2].texturePos - v[0].texturePos;
 
             const float f = 1.0f / (dtex1[X] * dtex2[Y] + dtex2[X] * dtex1[Y]);
-            normal    = crossProduct(dpos1, dpos2);
+            normal    = cross(dpos1, dpos2);
             tangent   = (dpos1 * dtex2[Y] - dpos2 * dtex1[Y]) * f;
             bitangent = (dpos2 * dtex1[X] - dpos1 * dtex2[X]) * f;
 
-            normal    = getNormalized(normal);
-            tangent   = getNormalized(tangent);
-            bitangent = getNormalized(bitangent);
+            normal    = normalize(normal);
+            tangent   = normalize(tangent);
+            bitangent = normalize(bitangent);
             
             for (int i = 0; i < 3; ++i) {
                 v[i].worldPos *= v[i].zinv;
@@ -292,7 +292,7 @@ namespace ramiel {
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f normal = getNormalized(v.normal);
+            Vec3f normal = normalize(v.normal);
 
             Vec3f pos = v.worldPos / v.zinv;
             Vec3f color = lightingList.getAllLight(pos, normal);
@@ -323,7 +323,7 @@ namespace ramiel {
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f normal = getNormalized(v.normal);
+            Vec3f normal = normalize(v.normal);
 
             Vec3f pos = v.worldPos / v.zinv;
             Vec3f color = lightingList.getAllLight(pos, normal);

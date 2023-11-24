@@ -8,7 +8,6 @@ add_library(${PROJECT_NAME} STATIC
     math/rotation.cpp 
     scene.cpp 
     graphics/texture.cpp 
-    math/vec.cpp 
     graphics/vertex.cpp 
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)

@@ -7,7 +7,7 @@ namespace ramiel {
 		auto color = camera.getColorBuffer();
 		for (size_t i = 0; i < camera.getBufferSize(); ++i) {
 			color[i] += brightness;
-			c_clamp(color[i]);
+			color[i] = min(max(color[i], 0.0f), 255.0f);
 		}
 	}
 
@@ -16,7 +16,7 @@ namespace ramiel {
 		auto color = camera.getColorBuffer();
 		for (size_t i = 0; i < camera.getBufferSize(); ++i) {
 			color[i] *= this->color;
-			c_min(color[i]);
+			color[i] = min(color[i], 255.0f);
 		}
 	};
 
@@ -25,7 +25,7 @@ namespace ramiel {
 		auto color = camera.getColorBuffer();
 		for (size_t i = 0; i < camera.getBufferSize(); ++i) {
 			color[i] = (color[i] - 127.5f) * contrast + 127.5f;
-			c_clamp(color[i]);
+			color[i] = min(max(color[i], 0.0f), 255.0f);
 		}
 	}
 
@@ -34,7 +34,7 @@ namespace ramiel {
 		auto color = camera.getColorBuffer();
 		for (size_t i = 0; i < camera.getBufferSize(); ++i) {
 			color[i] *= exposure;
-			c_min(color[i]);
+			color[i] = min(color[i], 255.0f);
 		}
 	}
 
@@ -63,7 +63,7 @@ namespace ramiel {
 			0.7152f / 255.0f,
 			0.0722f / 255.0f
 		};
-		return dotProduct(rgb, rgbToLum);
+		return dot(rgb, rgbToLum);
 	}
 
 	static inline void changeLuminance(Vec3f& rgb, float oldLum, float newLum) {
@@ -105,10 +105,10 @@ namespace ramiel {
 
 		auto color = camera.getColorBuffer();
 		for (size_t i = 0; i < camera.getBufferSize(); ++i) {
-			float lum = dotProduct(color[i], rgbToLum);
+			float lum = dot(color[i], rgbToLum);
 			Vec3f grey = { lum, lum, lum };
 			color[i] = color[i] * saturation + grey * (1.0f - saturation);
-			c_clamp(color[i]);
+			color[i] = min(max(color[i], 0.0f), 255.0f);
 		}
 	}
 

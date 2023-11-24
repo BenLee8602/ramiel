@@ -22,8 +22,8 @@ void cameraControls(GLFWwindow* window, float dtime, Camera& camera) {
 
 	// reset pos and rot
 	if (glfwGetKey(window, GLFW_KEY_Q)) {
-		camera.pos = vec3f_0;
-		camera.rot = vec3f_0;
+		camera.pos = Vec3f();
+		camera.rot = Vec3f();
 	}
 
 	// move left
@@ -104,7 +104,7 @@ int main() {
 	scene.addEntity<MeshVertex>(
 		"terrain",
 		VS_PerTri(scene.camera, new Transform({ -64, 0, -64 })),
-		PS_PerTri(scene.getLightingList(8, 1.0f), vec3f_255)
+		PS_PerTri(scene.getLightingList(8, 1.0f), Vec3f{ 255, 255, 255 })
 	);
 	scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 

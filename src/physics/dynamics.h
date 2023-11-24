@@ -11,12 +11,12 @@ namespace ramiel {
         Vec3f rotAcc;
 
         Dynamics(
-            Vec3f pos    = vec3f_0,
-            Vec3f rot    = vec3f_0,
-            Vec3f posVel = vec3f_0,
-            Vec3f rotVel = vec3f_0,
-            Vec3f posAcc = vec3f_0,
-            Vec3f rotAcc = vec3f_0
+            Vec3f pos    = Vec3f(),
+            Vec3f rot    = Vec3f(),
+            Vec3f posVel = Vec3f(),
+            Vec3f rotVel = Vec3f(),
+            Vec3f posAcc = Vec3f(),
+            Vec3f rotAcc = Vec3f()
         ) :
             Transform(pos, rot),
             posVel(posVel),
@@ -26,10 +26,10 @@ namespace ramiel {
         {}
         Dynamics(
             Transform transform,
-            Vec3f posVel = vec3f_0,
-            Vec3f rotVel = vec3f_0,
-            Vec3f posAcc = vec3f_0,
-            Vec3f rotAcc = vec3f_0
+            Vec3f posVel = Vec3f(),
+            Vec3f rotVel = Vec3f(),
+            Vec3f posAcc = Vec3f(),
+            Vec3f rotAcc = Vec3f()
         ) :
             Transform(transform),
             posVel(posVel),
