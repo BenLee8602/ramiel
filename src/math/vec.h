@@ -1,8 +1,7 @@
 #pragma once
 
-#include <fstream>
 #include <cmath>
-#include <vector>
+#include <iostream>
 
 namespace ramiel {
 
@@ -74,41 +73,6 @@ namespace ramiel {
     }
 
 
-    enum xyz : size_t { X, Y, Z };
-    enum rgb : size_t { R, G, B };
-    enum uv  : size_t { U, V };
-
-    typedef Vec<char, 2> Vec2i8;
-    typedef Vec<char, 3> Vec3i8;
-    typedef Vec<unsigned char, 2> Vec2ui8;
-    typedef Vec<unsigned char, 3> Vec3ui8;
-
-    typedef Vec<short, 2> Vec2i16;
-    typedef Vec<short, 3> Vec3i16;
-    typedef Vec<unsigned short, 2> Vec2ui16;
-    typedef Vec<unsigned short, 3> Vec3ui16;
-
-    typedef Vec<int, 2> Vec2;
-    typedef Vec<int, 3> Vec3;
-    typedef Vec<unsigned int, 2> Vec2u;
-    typedef Vec<unsigned int, 3> Vec3u;
-
-    typedef Vec<long, 2> Vec2i32;
-    typedef Vec<long, 3> Vec3i32;
-    typedef Vec<unsigned long, 2> Vec2ui32;
-    typedef Vec<unsigned long, 3> Vec3ui32;
-
-    typedef Vec<long long, 2> Vec2i64;
-    typedef Vec<long long, 3> Vec3i64;
-    typedef Vec<unsigned long long, 2> Vec2ui64;
-    typedef Vec<unsigned long long, 3> Vec3ui64;
-
-    typedef Vec<float, 2> Vec2f;
-    typedef Vec<float, 3> Vec3f;
-    typedef Vec<double, 2> Vec2lf;
-    typedef Vec<double, 3> Vec3lf;
-
-
     template<typename T, size_t N>
     T dot(const Vec<T, N>& v1, const Vec<T, N>& v2) {
         T d = (T)0;
@@ -120,9 +84,9 @@ namespace ramiel {
     template<typename T, size_t N>
     Vec<T, N> cross(const Vec<T, N>& vec1, const Vec<T, N>& vec2) {
         Vec<T, N> c{};
-        c[X] = vec1[Y] * vec2[Z] - vec1[Z] * vec2[Y];
-        c[Y] = vec1[Z] * vec2[X] - vec1[X] * vec2[Z];
-        c[Z] = vec1[X] * vec2[Y] - vec1[Y] * vec2[X];
+        c[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+        c[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
+        c[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
         return c;
     }
 
@@ -172,5 +136,52 @@ namespace ramiel {
             out[i] = std::max(v[i], max_);
         return out;
     }
+
+
+    enum xyz : size_t { X, Y, Z, W };
+    enum rgb : size_t { R, G, B };
+    enum uv  : size_t { U, V };
+
+    typedef Vec<int, 2> Vec2;
+    typedef Vec<int, 3> Vec3;
+    typedef Vec<int, 4> Vec4;
+    typedef Vec<unsigned, 2> Vec2u;
+    typedef Vec<unsigned, 3> Vec3u;
+    typedef Vec<unsigned, 4> Vec4u;
+
+    typedef Vec<float, 2> Vec2f;
+    typedef Vec<float, 3> Vec3f;
+    typedef Vec<float, 4> Vec4f;
+    typedef Vec<double, 2> Vec2lf;
+    typedef Vec<double, 3> Vec3lf;
+    typedef Vec<double, 4> Vec4lf;
+
+    typedef Vec<int8_t, 2> Vec2i8;
+    typedef Vec<int8_t, 3> Vec3i8;
+    typedef Vec<int8_t, 4> Vec4i8;
+    typedef Vec<uint8_t, 2> Vec2ui8;
+    typedef Vec<uint8_t, 3> Vec3ui8;
+    typedef Vec<uint8_t, 4> Vec4ui8;
+
+    typedef Vec<int16_t, 2> Vec2i16;
+    typedef Vec<int16_t, 3> Vec3i16;
+    typedef Vec<int16_t, 4> Vec4i16;
+    typedef Vec<uint16_t, 2> Vec2ui16;
+    typedef Vec<uint16_t, 3> Vec3ui16;
+    typedef Vec<uint16_t, 4> Vec4ui16;
+
+    typedef Vec<int32_t, 2> Vec2i32;
+    typedef Vec<int32_t, 3> Vec3i32;
+    typedef Vec<int32_t, 4> Vec4i32;
+    typedef Vec<uint32_t, 2> Vec2ui32;
+    typedef Vec<uint32_t, 3> Vec3ui32;
+    typedef Vec<uint32_t, 4> Vec4ui32;
+
+    typedef Vec<int64_t, 2> Vec2i64;
+    typedef Vec<int64_t, 3> Vec3i64;
+    typedef Vec<int64_t, 4> Vec4i64;
+    typedef Vec<uint64_t, 2> Vec2ui64;
+    typedef Vec<uint64_t, 3> Vec3ui64;
+    typedef Vec<uint64_t, 4> Vec4ui64;
 
 }

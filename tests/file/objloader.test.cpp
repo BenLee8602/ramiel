@@ -1,3 +1,4 @@
+#include <sstream>
 #include <catch2/catch2.hpp>
 #include <ramiel/file.h>
 using namespace ramiel;

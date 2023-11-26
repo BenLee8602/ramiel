@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
 #include <unordered_map>
 
 #include <ramiel/math.h>
