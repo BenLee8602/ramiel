@@ -5,6 +5,7 @@ add_executable("${PROJECT_NAME}_test"
     physics/dynamics.test.cpp 
     graphics/effects.test.cpp 
     graphics/light.test.cpp 
+    math/mat.test.cpp 
     file/objloader.test.cpp 
     math/rotation.test.cpp 
     graphics/texture.test.cpp 
