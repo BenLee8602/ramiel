@@ -65,20 +65,25 @@ namespace ramiel {
     }
 
 
+    template<typename T>
+    T det(const Vec<Vec<T, 1>, 1>& in) {
+        return in[0][0];
+    }
+
+    template<typename T>
+    T det(const Vec<Vec<T, 2>, 2>& in) {
+        return in[0][0] * in[1][1] - in[0][1] * in[1][0];
+    }
+
     template<typename T, size_t N>
     T det(const Vec<Vec<T, N>, N>& in) {
-        static_assert(N < 10, "cant calculate det for given matrix dims");
-        if constexpr (N == 1) return in[0][0];
-        else if constexpr (N == 2) {
-            return in[0][0] * in[1][1] - in[0][1] * in[1][0];
-        } else {
-            T out = (T)0;
-            for (size_t i = 0; i < N; ++i) {
-                T coeff = in[0][i] * (T)(i % 2 ? -1 : 1);
-                out += coeff * det(sub(in, 0, i));
-            }
-            return out;
+        static_assert(N < 10, "matrix too large");
+        T out = (T)0;
+        for (size_t i = 0; i < N; ++i) {
+            T coeff = in[0][i] * (T)(i % 2 ? -1 : 1);
+            out += coeff * det(sub(in, 0, i));
         }
+        return out;
     }
 
 
