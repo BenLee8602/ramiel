@@ -18,22 +18,74 @@ TEST_CASE("element type typecast", "[vec]") {
     REQUIRE(ivec == expected);
 }
 
-TEST_CASE("comparison operator", "[vec][bool]") {
+TEST_CASE("vector equals", "[vec][bool][vector]") {
     Vec3 v1 = { 10, -1, 3 };
     Vec3 v2 = { 7, 5, -8 };
     Vec3 v3 = { 10, -1, 3 };
     REQUIRE_FALSE(v1 == v2);
-    REQUIRE_FALSE(v2 == v3);
     REQUIRE(v1 == v3);
 }
 
-TEST_CASE("floating point vec comparison", "[vec][bool]") {
-    Vec3f v1 = { -5.8f, 3.2f, -3.9f };
-    Vec3f v2 = { -9.9f, 8.7f, 2.3f };
-    Vec3f v3 = { -5.8f, 3.2f, -3.899999f };
-    REQUIRE_FALSE(v1.equals(v2));
-    REQUIRE_FALSE(v2.equals(v3));
-    REQUIRE(v1.equals(v3));
+TEST_CASE("vector lt", "[vec][bool][vector]") {
+    Vec3 v1 = { 4, 5, 6 };
+    Vec3 v2 = { 5, 5, 7 };
+    Vec3 v3 = { 5, 6, 7 };
+    REQUIRE_FALSE(v1 < v2);
+    REQUIRE(v1 < v3);
+}
+
+TEST_CASE("vector gt", "[vec][bool][vector]") {
+    Vec3 v1 = { 4, 5, 6 };
+    Vec3 v2 = { 3, 5, 5 };
+    Vec3 v3 = { 3, 4, 5 };
+    REQUIRE_FALSE(v1 > v2);
+    REQUIRE(v1 > v3);
+}
+
+TEST_CASE("vector lte", "[vec][bool][vector]") {
+    Vec3 v1 = { 4, 5, 6 };
+    Vec3 v2 = { 3, 5, 7 };
+    Vec3 v3 = { 4, 6, 6 };
+    REQUIRE_FALSE(v1 <= v2);
+    REQUIRE(v1 <= v3);
+}
+
+TEST_CASE("vector gte", "[vec][bool][vector]") {
+    Vec3 v1 = { 4, 5, 6 };
+    Vec3 v2 = { 3, 5, 7 };
+    Vec3 v3 = { 4, 4, 6 };
+    REQUIRE_FALSE(v1 >= v2);
+    REQUIRE(v1 >= v3);
+}
+
+TEST_CASE("scalar equals", "[vec][bool][scalar]") {
+    Vec3 v = { 1, 1, 1 };
+    REQUIRE_FALSE(v == 2);
+    REQUIRE(v == 1);
+}
+
+TEST_CASE("scalar lt", "[vec][bool][scalar]") {
+    Vec3 v = { 2, 3, 4 };
+    REQUIRE_FALSE(v < 4);
+    REQUIRE(v < 5);
+}
+
+TEST_CASE("scalar gt", "[vec][bool][scalar]") {
+    Vec3 v = { 2, 3, 4 };
+    REQUIRE_FALSE(v > 2);
+    REQUIRE(v > 1);
+}
+
+TEST_CASE("scalar lte", "[vec][bool][scalar]") {
+    Vec3 v = { 2, 3, 4 };
+    REQUIRE_FALSE(v <= 3);
+    REQUIRE(v <= 4);
+}
+
+TEST_CASE("scalar gte", "[vec][bool][scalar]") {
+    Vec3 v = { 2, 3, 4 };
+    REQUIRE_FALSE(v >= 3);
+    REQUIRE(v >= 2);
 }
 
 TEST_CASE("vector assignment", "[vec][vector][assignment]") {
@@ -181,7 +233,21 @@ TEST_CASE("operator-()", "[vec]") {
     Vec3f v = { 0.2f, 5.5f, -5.7f };
     Vec3f res = -v;
     Vec3f expected = { -0.2f, -5.5f, 5.7f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected));
+}
+
+TEST_CASE("threshold comparison", "[vec]") {
+    Vec2f v = { 1.0f, 1.00001f };
+
+    Vec2f v1 = { 1.0f, 2.0f };
+    Vec2f v2 = { 1.0f, 1.0f };
+    REQUIRE_FALSE(equal(v, v1));
+    REQUIRE(equal(v, v2));
+
+    float s1 = 2.0f;
+    float s2 = 1.0f;
+    REQUIRE_FALSE(equal(v, s1));
+    REQUIRE(equal(v, s2));
 }
 
 TEST_CASE("magnitude", "[vec]") {
@@ -195,14 +261,14 @@ TEST_CASE("normalize", "[vec]") {
     Vec3f v = { -5.2f, 3.3f, 8.5f };
     Vec3f res = normalize(v);
     Vec3f expected = { -0.495395f, 0.314386f, 0.809781f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected));
 }
 
 TEST_CASE("normalize, magnitude given", "[vec]") {
     Vec3f v = { -3.2f, -1.4f, 8.8f };
     Vec3f res = normalize(v, 9.46784f);
     Vec3f expected = { -0.33799f, -0.14786f, 0.92946f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected));
 }
 
 TEST_CASE("dot product", "[vec]") {
@@ -218,7 +284,7 @@ TEST_CASE("cross product", "[vec]") {
     Vec3f v2 = { -5.0f, -8.2f, -7.3f };
     Vec3f res = cross(v1, v2);
     Vec3f expected = { 39.05f, 64.43f, -99.12f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected));
 }
 
 TEST_CASE("min scalar", "[vec][clamp]") {

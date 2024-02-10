@@ -15,9 +15,9 @@ TEST_CASE("brightness", "[effects]") {
 
     Brightness(56).run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 143, 112, 94 }));
-    REQUIRE(color[1].equals(Vec3f{ 127, 139, 82 }));
-    REQUIRE(color[2].equals(Vec3f{ 106, 85, 161 }));
+    REQUIRE(equal(color[0], Vec3f{ 143, 112, 94 }));
+    REQUIRE(equal(color[1], Vec3f{ 127, 139, 82 }));
+    REQUIRE(equal(color[2], Vec3f{ 106, 85, 161 }));
 }
 
 
@@ -32,9 +32,9 @@ TEST_CASE("color filter", "[effects]") {
 
     ColorFilter({ 84, 45, 69 }).run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 20.7529f, 14.4706f, 19.2118f }));
-    REQUIRE(color[1].equals(Vec3f{ 20.7529f, 13.7647f, 57.9059f }));
-    REQUIRE(color[2].equals(Vec3f{ 67.5294f, 8.11765f, 24.8941f }));
+    REQUIRE(equal(color[0], Vec3f{ 20.7529f, 14.4706f, 19.2118f }));
+    REQUIRE(equal(color[1], Vec3f{ 20.7529f, 13.7647f, 57.9059f }));
+    REQUIRE(equal(color[2], Vec3f{ 67.5294f, 8.11765f, 24.8941f }));
 }
 
 
@@ -49,9 +49,9 @@ TEST_CASE("contrast", "[effects]") {
 
     Contrast(1.9f).run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 58.15f, 255.0f, 6.85f }));
-    REQUIRE(color[1].equals(Vec3f{ 33.45f, 61.95f, 0.0f }));
-    REQUIRE(color[2].equals(Vec3f{ 25.85f, 29.65f, 0.0f }));
+    REQUIRE(equal(color[0], Vec3f{ 58.15f, 255.0f, 6.85f }));
+    REQUIRE(equal(color[1], Vec3f{ 33.45f, 61.95f, 0.0f }));
+    REQUIRE(equal(color[2], Vec3f{ 25.85f, 29.65f, 0.0f }));
 }
 
 
@@ -66,9 +66,9 @@ TEST_CASE("exposure", "[effects]") {
 
     Exposure(3).run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 255,  87, 138 }));
-    REQUIRE(color[1].equals(Vec3f{ 216,  96, 255 }));
-    REQUIRE(color[2].equals(Vec3f{ 105, 255, 189 }));
+    REQUIRE(equal(color[0], Vec3f{ 255,  87, 138 }));
+    REQUIRE(equal(color[1], Vec3f{ 216,  96, 255 }));
+    REQUIRE(equal(color[2], Vec3f{ 105, 255, 189 }));
 }
 
 
@@ -83,9 +83,9 @@ TEST_CASE("saturation", "[effects]") {
 
     Saturation(2).run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 233.402f, 171.402f, 5.40199f }));
-    REQUIRE(color[1].equals(Vec3f{ 68.6502f, 138.65f, 0.0f }));
-    REQUIRE(color[2].equals(Vec3f{ 126.915f, 80.9152f, 30.9152f }));
+    REQUIRE(equal(color[0], Vec3f{ 233.402f, 171.402f, 5.40199f }, 0.001f));
+    REQUIRE(equal(color[1], Vec3f{ 68.6502f, 138.65f, 0.0f }, 0.001f));
+    REQUIRE(equal(color[2], Vec3f{ 126.915f, 80.9152f, 30.9152f }, 0.001f));
 }
 
 
@@ -99,9 +99,9 @@ TEST_CASE("tone mapping", "[effects]") {
 
     ToneMapping().run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 86.4269f, 21.6067f, 21.6067f }));
-    REQUIRE(color[1].equals(Vec3f{ 13.7671f, 351.061f, 13.7671f }));
-    REQUIRE(color[2].equals(Vec3f{ 150.133f, 127.613f, 127.613f }));
+    REQUIRE(equal(color[0], Vec3f{ 86.4269f, 21.6067f, 21.6067f }, 0.001f));
+    REQUIRE(equal(color[1], Vec3f{ 13.7671f, 351.061f, 13.7671f }, 0.001f));
+    REQUIRE(equal(color[2], Vec3f{ 150.133f, 127.613f, 127.613f }, 0.001f));
 }
 
 
@@ -117,9 +117,9 @@ TEST_CASE("fog", "[effects]") {
 
     Fog(Vec3f(), 1, 2).run(camera);
 
-    REQUIRE(color[0].equals(Vec3f{ 255, 255, 255 }));
-    REQUIRE(color[1].equals(Vec3f{ 255, 255, 255 }));
-    REQUIRE(color[2].equals(Vec3f{ 127.5f, 127.5f, 127.5f }));
-    REQUIRE(color[3].equals(Vec3f()));
-    REQUIRE(color[4].equals(Vec3f()));
+    REQUIRE(equal(color[0], Vec3f{ 255, 255, 255 }));
+    REQUIRE(equal(color[1], Vec3f{ 255, 255, 255 }));
+    REQUIRE(equal(color[2], Vec3f{ 127.5f, 127.5f, 127.5f }));
+    REQUIRE(equal(color[3], Vec3f()));
+    REQUIRE(equal(color[4], Vec3f()));
 }

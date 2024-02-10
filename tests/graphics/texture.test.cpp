@@ -22,14 +22,14 @@ TEST_CASE("texture get color", "[texture]") {
     const Vec3f blue    = { 0, 0, n };
     const Vec3f black   = { 0, 0, 0 };
 
-    REQUIRE(texture.get({  1.0f / 16.0f,  1.0f / 16.0f }).equals(white));
-    REQUIRE(texture.get({  3.0f / 16.0f,  3.0f / 16.0f }).equals(yellow));
-    REQUIRE(texture.get({  5.0f / 16.0f,  5.0f / 16.0f }).equals(cyan));
-    REQUIRE(texture.get({  7.0f / 16.0f,  7.0f / 16.0f }).equals(green));
-    REQUIRE(texture.get({  9.0f / 16.0f,  9.0f / 16.0f }).equals(magenta));
-    REQUIRE(texture.get({ 11.0f / 16.0f, 11.0f / 16.0f }).equals(red));
-    REQUIRE(texture.get({ 13.0f / 16.0f, 13.0f / 16.0f }).equals(blue));
-    REQUIRE(texture.get({ 15.0f / 16.0f, 15.0f / 16.0f }).equals(black));
+    REQUIRE(equal(texture.get({  1.0f / 16.0f,  1.0f / 16.0f }), white));
+    REQUIRE(equal(texture.get({  3.0f / 16.0f,  3.0f / 16.0f }), yellow));
+    REQUIRE(equal(texture.get({  5.0f / 16.0f,  5.0f / 16.0f }), cyan));
+    REQUIRE(equal(texture.get({  7.0f / 16.0f,  7.0f / 16.0f }), green));
+    REQUIRE(equal(texture.get({  9.0f / 16.0f,  9.0f / 16.0f }), magenta));
+    REQUIRE(equal(texture.get({ 11.0f / 16.0f, 11.0f / 16.0f }), red));
+    REQUIRE(equal(texture.get({ 13.0f / 16.0f, 13.0f / 16.0f }), blue));
+    REQUIRE(equal(texture.get({ 15.0f / 16.0f, 15.0f / 16.0f }), black));
 }
 
 TEST_CASE("texture get normal vector", "[texture]") {
@@ -41,8 +41,8 @@ TEST_CASE("texture get normal vector", "[texture]") {
     const Vec3f expected3 = { -1.0f,     n,     n };
     const Vec3f expected4 = {     n,     n,     n };
 
-    REQUIRE(texture.get({ 0.42f, 1.01f }).equals(expected1));
-    REQUIRE(texture.get({ 0.49f, 0.03f }).equals(expected2));
-    REQUIRE(texture.get({ 0.25f, 0.98f }).equals(expected3));
-    REQUIRE(texture.get({ 0.05f, 0.77f }).equals(expected4));
+    REQUIRE(equal(texture.get({ 0.42f, 1.01f }), expected1));
+    REQUIRE(equal(texture.get({ 0.49f, 0.03f }), expected2));
+    REQUIRE(equal(texture.get({ 0.25f, 0.98f }), expected3));
+    REQUIRE(equal(texture.get({ 0.05f, 0.77f }), expected4));
 }

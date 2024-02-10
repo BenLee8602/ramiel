@@ -23,10 +23,10 @@ TEST_CASE("dynamics step", "[dynamics]") {
     posVel_expected = { 34.0f, -65.86f, 5.74f };
     rotVel_expected = { -70.62f, 33.04f, 4.7f };
     dynamics.step(dtime);
-    REQUIRE(dynamics.pos.equals(pos_expected));
-    REQUIRE(dynamics.rot.get().equals(rot_expected));
-    REQUIRE(dynamics.posVel.equals(posVel_expected));
-    REQUIRE(dynamics.rotVel.equals(rotVel_expected));
+    REQUIRE(equal(dynamics.pos, pos_expected));
+    REQUIRE(equal(dynamics.rot.get(), rot_expected));
+    REQUIRE(equal(dynamics.posVel, posVel_expected));
+    REQUIRE(equal(dynamics.rotVel, rotVel_expected));
 
     dtime = 1.3f;
     pos_expected = { 369.26f, -716.053f, 62.587f };
@@ -34,8 +34,8 @@ TEST_CASE("dynamics step", "[dynamics]") {
     posVel_expected = { 39.2f, -76.13f, 5.87f };
     rotVel_expected = { -80.76f, 36.42f, 6.0f };
     dynamics.step(dtime);
-    REQUIRE(dynamics.pos.equals(pos_expected));
-    REQUIRE(dynamics.rot.get().equals(rot_expected));
-    REQUIRE(dynamics.posVel.equals(posVel_expected));
-    REQUIRE(dynamics.rotVel.equals(rotVel_expected));
+    REQUIRE(equal(dynamics.pos, pos_expected));
+    REQUIRE(equal(dynamics.rot.get(), rot_expected));
+    REQUIRE(equal(dynamics.posVel, posVel_expected));
+    REQUIRE(equal(dynamics.rotVel, rotVel_expected));
 }
