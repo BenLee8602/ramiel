@@ -18,9 +18,19 @@ namespace ramiel {
         operator bool() const { for (size_t i = 0; i < N; ++i) if (vec[i]) return true; return false; }
         template<typename U> explicit operator Vec<U, N>() const { Vec<U, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = (U)vec[i]; return temp; }
 
-        // comparison
+        // scalar comparison
+        template<typename U> bool operator==(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] != num) return false; return true; }
+        template<typename U> bool operator<=(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] > num) return false; return true; }
+        template<typename U> bool operator>=(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] < num) return false; return true; }
+        template<typename U> bool operator<(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] >= num) return false; return true; }
+        template<typename U> bool operator>(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] <= num) return false; return true; }
+
+        // vector comparison
         template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] != v[i]) return false; return true; }
-        template<typename U> bool equals(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (std::abs(vec[i] - v[i]) > (T)0.001) return false; return true; }
+        template<typename U> bool operator<=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] > v[i]) return false; return true; }
+        template<typename U> bool operator>=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] < v[i]) return false; return true; }
+        template<typename U> bool operator<(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] >= v[i]) return false; return true; }
+        template<typename U> bool operator>(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] <= v[i]) return false; return true; }
 
         // assignment
         template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) vec[i] = v[i]; return *this; }
@@ -70,6 +80,13 @@ namespace ramiel {
             os << vec[i] << ", ";
         }
         return os << vec[N - 1] << " }";
+    }
+
+
+    template<typename T, size_t N, typename U>
+    bool equal(const Vec<T, N>& v1, const U& v2, const T& thres = (T)0.0001) {
+        Vec<T, N> v = v1 - v2;
+        return v <= thres && v >= -thres;
     }
 
 

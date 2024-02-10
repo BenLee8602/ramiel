@@ -36,25 +36,25 @@ TEST_CASE("camera coordinates", "[camera]") {
     expected = { -4.8f, 2.3f, 7.6f };
     camera.rot = { 0.0f, 0.0f, 0.0f };
     camera.pos = { 0.0f, 0.0f, 0.0f };
-    REQUIRE(camera.getCameraCoord(in).equals(expected));
+    REQUIRE(equal(camera.getCameraCoord(in), expected));
 
     in = { 9.9f, -5.3f, -9.7f };
     expected = { 10.1742f, 6.55266f, 8.58715f };
     camera.rot = { -5.4f, -1.3f, -4.5f };
     camera.pos = { 0.0f, 0.0f, 0.0f };
-    REQUIRE(camera.getCameraCoord(in).equals(expected));
+    REQUIRE(equal(camera.getCameraCoord(in), expected));
 
     in = { -2.1f, 6.8f, 0.5f };
     expected = { -7.9f, 15.3f, 2.1f };
     camera.rot = { 0.0f, 0.0f, 0.0f };
     camera.pos = { 5.8f, -8.5f, -1.6f };
-    REQUIRE(camera.getCameraCoord(in).equals(expected));
+    REQUIRE(equal(camera.getCameraCoord(in), expected));
 
     in = { 2.5f, -6.6f, -3.1f };
     expected = { -2.05688f, 5.63915f, 12.0108f };
     camera.rot = { -9.3f, 5.6f, 3.8f };
     camera.pos = { -8.7f, -6.9f, 4.3f };
-    REQUIRE(camera.getCameraCoord(in).equals(expected));
+    REQUIRE(equal(camera.getCameraCoord(in), expected));
 }
 
 TEST_CASE("screen coordinates", "[camera]") {

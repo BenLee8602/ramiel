@@ -19,10 +19,10 @@ TEST_CASE("sphere-sphere", "[collision][sphere]") {
 
     collide(o1, o2);
 
-    REQUIRE(o1.pos.equals(o1_pos_expected));
-    REQUIRE(o2.pos.equals(o2_pos_expected));
-    REQUIRE(o1.posVel.equals(o1_vel_expected));
-    REQUIRE(o2.posVel.equals(o2_vel_expected));
+    REQUIRE(equal(o1.pos, o1_pos_expected));
+    REQUIRE(equal(o2.pos, o2_pos_expected));
+    REQUIRE(equal(o1.posVel, o1_vel_expected));
+    REQUIRE(equal(o2.posVel, o2_vel_expected));
     REQUIRE( // conservation of momentum
         o1.mass * mag(o1.posVel) +
         o2.mass * mag(o2.posVel) == totalMomentum
@@ -45,10 +45,10 @@ TEST_CASE("aabb-aabb", "[collision][aabb]") {
 
     collide(o1, o2);
 
-    REQUIRE(o1.pos.equals(o1_pos_expected));
-    REQUIRE(o2.pos.equals(o2_pos_expected));
-    REQUIRE(o1.posVel.equals(o1_vel_expected));
-    REQUIRE(o2.posVel.equals(o2_vel_expected));
+    REQUIRE(equal(o1.pos, o1_pos_expected));
+    REQUIRE(equal(o2.pos, o2_pos_expected));
+    REQUIRE(equal(o1.posVel, o1_vel_expected));
+    REQUIRE(equal(o2.posVel, o2_vel_expected));
     REQUIRE( // conservation of momentum
         o1.mass * mag(o1.posVel) +
         o2.mass * mag(o2.posVel) == totalMomentum
