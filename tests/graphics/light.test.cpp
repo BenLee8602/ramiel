@@ -9,7 +9,7 @@ TEST_CASE("get directional light", "[light]") {
     Vec3f normal = normalize(Vec3f{ 5.6f, 9.5f, -9.1f });
     Vec3f res = light.getLight(pos, normal);
     Vec3f expected = { 307.458f, 151.364f, 463.552f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected, 0.001f));
 }
 
 TEST_CASE("get point light", "[light]") {
@@ -18,7 +18,7 @@ TEST_CASE("get point light", "[light]") {
     Vec3f normal = normalize(Vec3f{ -4.7f, -1.4f, 7.5f });
     Vec3f res = light.getLight(pos, normal);
     Vec3f expected = { 1.14577f, 3.05538f, 0.425991f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected));
 }
 
 TEST_CASE("get spot light", "[light]") {
@@ -27,7 +27,7 @@ TEST_CASE("get spot light", "[light]") {
     Vec3f normal = normalize(Vec3f{ -2.5f, 0.7f, -8.1f });
     Vec3f res = light.getLight(pos, normal);
     Vec3f expected = { 119.931f, 95.2598f, 29.4689f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected, 0.001f));
 }
 
 
@@ -37,7 +37,7 @@ TEST_CASE("get directional light specular", "[light]") {
     Vec3f normal = normalize(Vec3f{ 9.2f, -4.3f, -1.5f });
     Vec3f res = light.getLight(pos, normal, Vec3f(), 10, 0.1f);
     Vec3f expected = { 59.607f, 246.943f, 259.716f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected, 0.001f));
 }
 
 TEST_CASE("get point light specular", "[light]") {
@@ -46,7 +46,7 @@ TEST_CASE("get point light specular", "[light]") {
     Vec3f normal = normalize(Vec3f{ -5.2f, 1.6f, 3.3f });
     Vec3f res = light.getLight(pos, normal, Vec3f(), 64, 0.8f);
     Vec3f expected = { 618.644f, 415.554f, 206.215f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected, 0.001f));
 }
 
 TEST_CASE("get spot light specular", "[light]") {
@@ -55,5 +55,5 @@ TEST_CASE("get spot light specular", "[light]") {
     Vec3f normal = normalize(Vec3f{ 0.2f, 0.4f, -2.0f });
     Vec3f res = light.getLight(pos, normal, Vec3f(), 36, 0.3f);
     Vec3f expected = { 62.7161f, 107.016f, 90.0922f };
-    REQUIRE(res.equals(expected));
+    REQUIRE(equal(res, expected, 0.001f));
 }

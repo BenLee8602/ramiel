@@ -12,12 +12,12 @@ TEST_CASE("transform vector", "[transform]") {
     transform.scale = 2.5f;
     in = { 1.4f, -9.0f, 3.4f };
     expected = { 2.26049, -5.01989, -15.4735 };
-    REQUIRE(transform(in).equals(expected));
+    REQUIRE(equal(transform(in), expected));
 
     transform.pos = { -3.0f, -4.8f, -7.2f };
     transform.rot = { -4.0f,  7.2f,  8.2f };
     transform.scale = 3.1f;
     in = { 7.0f, -8.5f, 9.4f };
     expected = { 30.7302, -26.9324, 12.4667 };
-    REQUIRE(transform(in).equals(expected));
+    REQUIRE(equal(transform(in), expected));
 }
