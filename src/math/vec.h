@@ -84,7 +84,7 @@ namespace ramiel {
 
 
     template<typename T, size_t N, typename U>
-    bool equal(const Vec<T, N>& v1, const U& v2, const T& thres = (T)0.0001) {
+    bool equal(const Vec<T, N>& v1, const U& v2, float thres = 0.0001) {
         Vec<T, N> v = v1 - v2;
         return v <= thres && v >= -thres;
     }
