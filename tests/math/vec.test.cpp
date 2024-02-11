@@ -18,12 +18,20 @@ TEST_CASE("element type typecast", "[vec]") {
     REQUIRE(ivec == expected);
 }
 
-TEST_CASE("vector equals", "[vec][bool][vector]") {
+TEST_CASE("vector equal", "[vec][bool][vector]") {
     Vec3 v1 = { 10, -1, 3 };
     Vec3 v2 = { 7, 5, -8 };
     Vec3 v3 = { 10, -1, 3 };
     REQUIRE_FALSE(v1 == v2);
     REQUIRE(v1 == v3);
+}
+
+TEST_CASE("vector not equal", "[vec][bool][vector]") {
+    Vec3 v1 = { 10, -1, 3 };
+    Vec3 v2 = { 7, 5, -8 };
+    Vec3 v3 = { 10, -1, 3 };
+    REQUIRE(v1 != v2);
+    REQUIRE_FALSE(v1 != v3);
 }
 
 TEST_CASE("vector lt", "[vec][bool][vector]") {
@@ -58,10 +66,16 @@ TEST_CASE("vector gte", "[vec][bool][vector]") {
     REQUIRE(v1 >= v3);
 }
 
-TEST_CASE("scalar equals", "[vec][bool][scalar]") {
+TEST_CASE("scalar equal", "[vec][bool][scalar]") {
     Vec3 v = { 1, 1, 1 };
     REQUIRE_FALSE(v == 2);
     REQUIRE(v == 1);
+}
+
+TEST_CASE("scalar not equal", "[vec][bool][scalar]") {
+    Vec3 v = { 1, 1, 1 };
+    REQUIRE(v != 2);
+    REQUIRE_FALSE(v != 1);
 }
 
 TEST_CASE("scalar lt", "[vec][bool][scalar]") {
