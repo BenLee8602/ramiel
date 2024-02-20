@@ -17,7 +17,7 @@ TEST_CASE("sphere-sphere", "[collision][sphere]") {
         o2.mass * mag(o2.posVel)
     ).epsilon(0.1f);
 
-    collide(o1, o2);
+    collideSphereSphere(&o1, &o2);
 
     REQUIRE(equal(o1.pos, o1_pos_expected));
     REQUIRE(equal(o2.pos, o2_pos_expected));
@@ -43,7 +43,7 @@ TEST_CASE("aabb-aabb", "[collision][aabb]") {
         o2.mass * mag(o2.posVel)
     ).epsilon(0.1f);
 
-    collide(o1, o2);
+    collideAabbAabb(&o1, &o2);
 
     REQUIRE(equal(o1.pos, o1_pos_expected));
     REQUIRE(equal(o2.pos, o2_pos_expected));
