@@ -1,5 +1,6 @@
 #pragma once
 
+#include <typeindex>
 #include <ramiel/math.h>
 #include "dynamics.h"
 
@@ -9,6 +10,8 @@ namespace ramiel {
     class AabbCollider;
     class ObbCollider;
     class MeshCollider;
+
+    typedef std::type_index ColliderType;
 
 
     struct Collider : public Dynamics {
@@ -32,6 +35,8 @@ namespace ramiel {
         virtual void collideWith(AabbCollider* other) = 0;
         virtual void collideWith(ObbCollider* other) = 0;
         virtual void collideWith(MeshCollider* other) = 0;
+
+        virtual ColliderType getType() const = 0;
     };
 
 
@@ -53,6 +58,8 @@ namespace ramiel {
         virtual void collideWith(AabbCollider*   other) override;
         virtual void collideWith(ObbCollider*    other) override;
         virtual void collideWith(MeshCollider*   other) override;
+
+        virtual ColliderType getType() const { return ColliderType(typeid(SphereCollider)); };
     };
 
 
@@ -74,6 +81,8 @@ namespace ramiel {
         virtual void collideWith(AabbCollider*   other) override;
         virtual void collideWith(ObbCollider*    other) override;
         virtual void collideWith(MeshCollider*   other) override;
+
+        virtual ColliderType getType() const { return ColliderType(typeid(AabbCollider)); };
     };
 
 
@@ -95,6 +104,8 @@ namespace ramiel {
         virtual void collideWith(AabbCollider*   other) override;
         virtual void collideWith(ObbCollider*    other) override;
         virtual void collideWith(MeshCollider*   other) override;
+
+        virtual ColliderType getType() const { return ColliderType(typeid(ObbCollider)); };
     };
 
 
@@ -116,6 +127,8 @@ namespace ramiel {
         virtual void collideWith(AabbCollider*   other) override;
         virtual void collideWith(ObbCollider*    other) override;
         virtual void collideWith(MeshCollider*   other) override;
+
+        virtual ColliderType getType() const { return ColliderType(typeid(MeshCollider)); };
     };
 
 }

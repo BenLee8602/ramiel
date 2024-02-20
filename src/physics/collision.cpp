@@ -153,4 +153,18 @@ namespace ramiel {
 
 	}
 
+
+    void collideSphereSphere(Collider* collider1, Collider* collider2) {
+		SphereCollider& sphere1 = *static_cast<SphereCollider*>(collider1);
+		SphereCollider& sphere2 = *static_cast<SphereCollider*>(collider2);
+		collide(sphere1, sphere2); // temp, will move full implementation here
+	}
+
+
+    void collideAabbAabb(Collider* collider1, Collider* collider2) {
+		AabbCollider& aabb1 = *static_cast<AabbCollider*>(collider1);
+		AabbCollider& aabb2 = *static_cast<AabbCollider*>(collider2);
+		collide(aabb1, aabb2); // temp, will move full implementation here
+	}
+
 }
