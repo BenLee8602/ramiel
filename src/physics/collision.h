@@ -1,9 +1,10 @@
 #pragma once
 
+#include <functional>
 #include "collider.h"
 
 namespace ramiel {
-    
+
     void collide(SphereCollider& o1, SphereCollider& o2);
     void collide(SphereCollider& sph, AabbCollider& box);
     void collide(SphereCollider& sph, ObbCollider& box);
@@ -17,5 +18,11 @@ namespace ramiel {
     void collide(ObbCollider& box, MeshCollider& mesh);
 
     void collide(MeshCollider& o1, MeshCollider& o2);
+
+
+    typedef std::function<void(Collider*, Collider*)> CollisionHandler;
+
+    void collideSphereSphere(Collider* collider1, Collider* collider2);
+    void collideAabbAabb(Collider* collider1, Collider* collider2);
 
 }

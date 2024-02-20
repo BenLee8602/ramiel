@@ -2,6 +2,7 @@ add_library(${PROJECT_NAME} STATIC
     graphics/camera.cpp 
     physics/collider.cpp 
     physics/collision.cpp 
+    physics/collisiondispatch.cpp 
     graphics/effects.cpp 
     graphics/light.cpp 
     file/objloader.cpp 
