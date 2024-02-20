@@ -28,15 +28,8 @@ namespace ramiel {
             mass(mass)
         {}
 
-        virtual ~Collider() {}
-
-        virtual void collideWith(Collider* other) = 0;
-        virtual void collideWith(SphereCollider* other) = 0;
-        virtual void collideWith(AabbCollider* other) = 0;
-        virtual void collideWith(ObbCollider* other) = 0;
-        virtual void collideWith(MeshCollider* other) = 0;
-
         virtual ColliderType getType() const = 0;
+        virtual ~Collider() {}
     };
 
 
@@ -53,13 +46,9 @@ namespace ramiel {
             hbxrad(hbxrad)
         {}
 
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
-
-        virtual ColliderType getType() const { return ColliderType(typeid(SphereCollider)); };
+        virtual ColliderType getType() const {
+            return ColliderType(typeid(SphereCollider));
+        };
     };
 
 
@@ -76,13 +65,9 @@ namespace ramiel {
             size(size)
         {}
 
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
-
-        virtual ColliderType getType() const { return ColliderType(typeid(AabbCollider)); };
+        virtual ColliderType getType() const {
+            return ColliderType(typeid(AabbCollider));
+        };
     };
 
 
@@ -99,13 +84,9 @@ namespace ramiel {
             size(size)
         {}
 
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
-
-        virtual ColliderType getType() const { return ColliderType(typeid(ObbCollider)); };
+        virtual ColliderType getType() const {
+            return ColliderType(typeid(ObbCollider));
+        };
     };
 
 
@@ -122,13 +103,9 @@ namespace ramiel {
             mesh(mesh)
         {}
 
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
-
-        virtual ColliderType getType() const { return ColliderType(typeid(MeshCollider)); };
+        virtual ColliderType getType() const {
+            return ColliderType(typeid(MeshCollider));
+        };
     };
 
 }

@@ -97,7 +97,7 @@ namespace ramiel {
 
         for (size_t i = 0; i < colliders.size(); ++i) {
             for (size_t j = i + 1; j < colliders.size(); ++j) {
-                colliders[i]->collideWith(colliders[j]);
+                dispatchCollision(colliders[i], colliders[j]);
             }
         }
     }
