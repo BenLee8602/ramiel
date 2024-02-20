@@ -3,91 +3,80 @@
 
 namespace ramiel {
 
-    void collide(SphereCollider& o1, SphereCollider& o2) {
-        //if (&o1 == &o2) return; // check for self collision, not needed
+    void collideSphereSphere(Collider* collider1, Collider* collider2) {
+		SphereCollider& sphere1 = *static_cast<SphereCollider*>(collider1);
+		SphereCollider& sphere2 = *static_cast<SphereCollider*>(collider2);
 
 		// collision detection
-		Vec3f pos_r = o2.pos - o1.pos;
+		Vec3f pos_r = sphere2.pos - sphere1.pos;
 		float dist = dot(pos_r, pos_r); // dist^2
-		float r = o1.hbxrad + o2.hbxrad;
+		float r = sphere1.hbxrad + sphere2.hbxrad;
 		if (dist > r * r) return;
 
 		// collision depth and time
 		float depth = r - std::sqrt(dist);
-		float time = depth / mag(o2.posVel - o1.posVel);
+		float time = depth / mag(sphere2.posVel - sphere1.posVel);
 
 		// collision response
-		if (o1.responsive) {
+		if (sphere1.responsive) {
 
 			// both responsive
-			if (o2.responsive) {
-				o1.pos -= o1.posVel * time;
-				o2.pos -= o2.posVel * time;
-				Vec3f n = normalize(o2.pos - o1.pos);
+			if (sphere2.responsive) {
+				sphere1.pos -= sphere1.posVel * time;
+				sphere2.pos -= sphere2.posVel * time;
+				Vec3f n = normalize(sphere2.pos - sphere1.pos);
 
-				const float m = 2.0f / (o1.mass + o2.mass);
-				Vec3f v1_p = o1.posVel - n * o2.mass * m * dot(o1.posVel - o2.posVel, n);
-				Vec3f v2_p = o2.posVel - n * o1.mass * m * dot(o2.posVel - o1.posVel, n);
-				o1.posVel = v1_p;
-				o2.posVel = v2_p;
+				const float m = 2.0f / (sphere1.mass + sphere2.mass);
+				Vec3f v1_p = sphere1.posVel - n * sphere2.mass * m * dot(sphere1.posVel - sphere2.posVel, n);
+				Vec3f v2_p = sphere2.posVel - n * sphere1.mass * m * dot(sphere2.posVel - sphere1.posVel, n);
+				sphere1.posVel = v1_p;
+				sphere2.posVel = v2_p;
 
-				o1.pos += o1.posVel * time;
-				o2.pos += o2.posVel * time;
+				sphere1.pos += sphere1.posVel * time;
+				sphere2.pos += sphere2.posVel * time;
 			}
 
-			// o1 responsive
+			// sphere1 responsive
 			else {
-				o1.pos -= o1.posVel * time;
-				Vec3f n = normalize(o2.pos - o1.pos);
-				o1.posVel -= n * 2.0f * dot(o1.posVel, n);
-				o1.pos += o1.posVel * time;
+				sphere1.pos -= sphere1.posVel * time;
+				Vec3f n = normalize(sphere2.pos - sphere1.pos);
+				sphere1.posVel -= n * 2.0f * dot(sphere1.posVel, n);
+				sphere1.pos += sphere1.posVel * time;
 			}
 			
 		}
 
-		// o2 responsive
-		else if (o2.responsive) {
-			o2.pos -= o2.posVel * time;
-			Vec3f n = normalize(o2.pos - o1.pos);
-			o2.posVel -= n * 2.0f * dot(o2.posVel, n);
-			o2.pos += o2.posVel * time;
+		// sphere2 responsive
+		else if (sphere2.responsive) {
+			sphere2.pos -= sphere2.posVel * time;
+			Vec3f n = normalize(sphere2.pos - sphere1.pos);
+			sphere2.posVel -= n * 2.0f * dot(sphere2.posVel, n);
+			sphere2.pos += sphere2.posVel * time;
 		}
-    }
-
-
-    void collide(SphereCollider& sph, AabbCollider& box) {
-
 	}
 
-	
-    void collide(SphereCollider& sph, ObbCollider& box) {
 
-	}
-
-	
-    void collide(SphereCollider& sph, MeshCollider& mesh) {
-
-	}
-
-	
-    void collide(AabbCollider& o1, AabbCollider& o2) {
-		Vec3f o1_min = o1.pos - o1.size;
-		Vec3f o1_max = o1.pos + o1.size;
-		Vec3f o2_min = o2.pos - o2.size;
-		Vec3f o2_max = o2.pos + o2.size;
+    void collideAabbAabb(Collider* collider1, Collider* collider2) {
+		AabbCollider& aabb1 = *static_cast<AabbCollider*>(collider1);
+		AabbCollider& aabb2 = *static_cast<AabbCollider*>(collider2);
+		
+		Vec3f aabb1_min = aabb1.pos - aabb1.size;
+		Vec3f aabb1_max = aabb1.pos + aabb1.size;
+		Vec3f aabb2_min = aabb2.pos - aabb2.size;
+		Vec3f aabb2_max = aabb2.pos + aabb2.size;
 
 		// collision detection
-		if (o1_min[X] > o2_max[X] || o2_min[X] > o1_max[X]) return;
-		if (o1_min[Y] > o2_max[Y] || o2_min[Y] > o1_max[Y]) return;
-		if (o1_min[Z] > o2_max[Z] || o2_min[Z] > o1_max[Z]) return;
+		if (aabb1_min[X] > aabb2_max[X] || aabb2_min[X] > aabb1_max[X]) return;
+		if (aabb1_min[Y] > aabb2_max[Y] || aabb2_min[Y] > aabb1_max[Y]) return;
+		if (aabb1_min[Z] > aabb2_max[Z] || aabb2_min[Z] > aabb1_max[Z]) return;
 
 		// collision time, axis of collision
 		float  time = std::numeric_limits<float>::max();
 		size_t axis = 0;
 		for (size_t i = 0; i < 3; ++i) {
-			float vel_r = o2.posVel[i] - o1.posVel[i];
+			float vel_r = aabb2.posVel[i] - aabb1.posVel[i];
 			if (!vel_r) continue;
-			float depth = vel_r < 0.0f ? o1_max[i] - o2_min[i] : o2_max[i] - o1_min[i];
+			float depth = vel_r < 0.0f ? aabb1_max[i] - aabb2_min[i] : aabb2_max[i] - aabb1_min[i];
 			float t = std::abs(depth / vel_r);
 			if (t < time) {
 				time = t;
@@ -96,75 +85,36 @@ namespace ramiel {
 		}
 
 		// collision response
-		if (o1.responsive) {
+		if (aabb1.responsive) {
 
 			// both responsive
-			if (o2.responsive) {
-				o1.pos[axis] -= o1.posVel[axis] * time;
-				o2.pos[axis] -= o2.posVel[axis] * time;
+			if (aabb2.responsive) {
+				aabb1.pos[axis] -= aabb1.posVel[axis] * time;
+				aabb2.pos[axis] -= aabb2.posVel[axis] * time;
 				
-				float m = 1.0f / (o1.mass + o2.mass);
-				float v1_p = (o1.mass - o2.mass) * m * o1.posVel[axis] + 2.0f * o2.mass * m * o2.posVel[axis];
-				float v2_p = (o2.mass - o1.mass) * m * o2.posVel[axis] + 2.0f * o1.mass * m * o1.posVel[axis];
-				o1.posVel[axis] = v1_p;
-				o2.posVel[axis] = v2_p;
+				float m = 1.0f / (aabb1.mass + aabb2.mass);
+				float v1_p = (aabb1.mass - aabb2.mass) * m * aabb1.posVel[axis] + 2.0f * aabb2.mass * m * aabb2.posVel[axis];
+				float v2_p = (aabb2.mass - aabb1.mass) * m * aabb2.posVel[axis] + 2.0f * aabb1.mass * m * aabb1.posVel[axis];
+				aabb1.posVel[axis] = v1_p;
+				aabb2.posVel[axis] = v2_p;
 
-				o1.pos[axis] += o1.posVel[axis] * time;
-				o2.pos[axis] += o2.posVel[axis] * time;
+				aabb1.pos[axis] += aabb1.posVel[axis] * time;
+				aabb2.pos[axis] += aabb2.posVel[axis] * time;
 			}
 
-			// o1 responsive
+			// aabb1 responsive
 			else {
-				o1.pos[axis] -= 2.0f * o1.posVel[axis] * time;
-				o1.posVel[axis] *= -1.0f;
+				aabb1.pos[axis] -= 2.0f * aabb1.posVel[axis] * time;
+				aabb1.posVel[axis] *= -1.0f;
 			}
 			
 		}
 
-		// o2 responsive
-		else if (o2.responsive) {
-			o2.pos[axis] -= 2.0f * o2.posVel[axis] * time;
-			o2.posVel[axis] *= -1.0f;
+		// aabb2 responsive
+		else if (aabb2.responsive) {
+			aabb2.pos[axis] -= 2.0f * aabb2.posVel[axis] * time;
+			aabb2.posVel[axis] *= -1.0f;
 		}
-	}
-
-	
-    void collide(AabbCollider& aa, ObbCollider& ori) {
-
-	}
-
-	
-    void collide(AabbCollider& box, MeshCollider& mesh) {
-
-	}
-
-	
-    void collide(ObbCollider& o1, ObbCollider& o2) {
-
-	}
-
-	
-    void collide(ObbCollider& box, MeshCollider& mesh) {
-
-	}
-
-	
-    void collide(MeshCollider& o1, MeshCollider& o2) {
-
-	}
-
-
-    void collideSphereSphere(Collider* collider1, Collider* collider2) {
-		SphereCollider& sphere1 = *static_cast<SphereCollider*>(collider1);
-		SphereCollider& sphere2 = *static_cast<SphereCollider*>(collider2);
-		collide(sphere1, sphere2); // temp, will move full implementation here
-	}
-
-
-    void collideAabbAabb(Collider* collider1, Collider* collider2) {
-		AabbCollider& aabb1 = *static_cast<AabbCollider*>(collider1);
-		AabbCollider& aabb2 = *static_cast<AabbCollider*>(collider2);
-		collide(aabb1, aabb2); // temp, will move full implementation here
 	}
 
 }
