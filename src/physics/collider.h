@@ -6,11 +6,6 @@
 
 namespace ramiel {
 
-    class SphereCollider;
-    class AabbCollider;
-    class ObbCollider;
-    class MeshCollider;
-
     typedef std::type_index ColliderType;
 
 
