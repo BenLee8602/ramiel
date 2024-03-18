@@ -14,11 +14,11 @@ namespace {
 
     std::unordered_map<
         std::pair<ColliderType, ColliderType>,
-        CollisionHandler,
+        CollisionHandlerFactory,
         CollisionHandlerTableHash
     > collisionHandlers = {
-        { { typeid(SphereCollider), typeid(SphereCollider) }, collideSphereSphere },
-        { { typeid(AabbCollider),   typeid(AabbCollider)   }, collideAabbAabb     }
+        { { typeid(SphereCollider), typeid(SphereCollider) }, collide<Collide_Sph_Sph> },
+        { { typeid(AabbCollider),   typeid(AabbCollider)   }, collide<Collide_Aabb_Aabb> }
     };
 
 }
@@ -26,33 +26,25 @@ namespace {
 
 namespace ramiel {
 
-    void dispatchCollision(Collider* collider1, Collider* collider2) {
-        ColliderType type1 = collider1->getType();
-        ColliderType type2 = collider2->getType();
-        
-        auto handler = collisionHandlers.find({ type1, type2 });
-        if (handler != collisionHandlers.end()) {
-            handler->second(collider1, collider2);
-            return;
-        }
-
-        handler = collisionHandlers.find({ type1, type2 });
-        if (handler != collisionHandlers.end()) handler->second(collider2, collider1);
+    CollisionHandler_P getCollisionHandler(Collider* c1, Collider* c2) {
+        CollisionHandlerFactory factory = getCollisionHandler(c1->getType(), c2->getType());
+        if (!factory) return nullptr;
+        return factory(c1, c2);
     }
 
     
-    CollisionHandler getCollisionHandler(ColliderType type1, ColliderType type2) {
+    CollisionHandlerFactory getCollisionHandler(ColliderType type1, ColliderType type2) {
         auto handler = collisionHandlers.find({ type1, type2 });
         if (handler != collisionHandlers.end()) return handler->second;
 
         handler = collisionHandlers.find({ type2, type1 });
         if (handler != collisionHandlers.end()) return handler->second;
 
-        return CollisionHandler();
+        return nullptr;
     }
 
 
-    void setCollisionHandler(ColliderType type1, ColliderType type2, CollisionHandler handler) {
+    void setCollisionHandler(ColliderType type1, ColliderType type2, CollisionHandlerFactory handler) {
         if (collisionHandlers.find({ type2, type1 }) != collisionHandlers.end())
             collisionHandlers[{ type2, type1 }] = handler;
         else collisionHandlers[{ type1, type2 }] = handler;
