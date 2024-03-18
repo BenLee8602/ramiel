@@ -65,42 +65,4 @@ namespace ramiel {
         };
     };
 
-
-    struct ObbCollider : public Collider {
-        Vec3f size;
-
-        ObbCollider(
-            Vec3f size,
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) : 
-            Collider(dynamics, responsive, mass),
-            size(size)
-        {}
-
-        virtual ColliderType getType() const {
-            return ColliderType(typeid(ObbCollider));
-        };
-    };
-
-
-    struct MeshCollider : public Collider {
-        Mesh<MeshVertex>& mesh;
-
-        MeshCollider(
-            Mesh<MeshVertex>& mesh,
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) : 
-            Collider(dynamics, responsive, mass),
-            mesh(mesh)
-        {}
-
-        virtual ColliderType getType() const {
-            return ColliderType(typeid(MeshCollider));
-        };
-    };
-
 }
