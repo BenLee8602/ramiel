@@ -1,7 +1,7 @@
 add_executable("${PROJECT_NAME}_test" 
     ${CMAKE_SOURCE_DIR}/deps/catch2/main.cpp 
     graphics/camera.test.cpp 
-    physics/collision.test.cpp 
+    physics/collisionhandle.test.cpp 
     physics/collisiondispatch.test.cpp 
     physics/dynamics.test.cpp 
     graphics/effects.test.cpp 
