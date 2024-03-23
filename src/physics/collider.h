@@ -10,18 +10,9 @@ namespace ramiel {
 
 
     struct Collider : public Dynamics {
-        bool responsive;
-        float mass;
-
         Collider(
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) :
-            Dynamics(dynamics),
-            responsive(responsive),
-            mass(mass)
-        {}
+            Dynamics dynamics = Dynamics()
+        ) : Dynamics(dynamics) {}
 
         virtual ColliderType getType() const = 0;
         virtual ~Collider() {}
@@ -29,16 +20,17 @@ namespace ramiel {
 
 
     struct SphereCollider : public Collider {
+        float mass;
         float hbxrad;
 
         SphereCollider(
             float hbxrad,
             Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
+            float mass = 0.0f
         ) : 
-            Collider(dynamics, responsive, mass),
-            hbxrad(hbxrad)
+            hbxrad(hbxrad),
+            Collider(dynamics),
+            mass(mass)
         {}
 
         virtual ColliderType getType() const {
@@ -48,16 +40,17 @@ namespace ramiel {
 
 
     struct AabbCollider : public Collider {
+        float mass;
         Vec3f size;
 
         AabbCollider(
             Vec3f size,
             Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
+            float mass = 0.0f
         ) : 
-            Collider(dynamics, responsive, mass),
-            size(size)
+            size(size),
+            Collider(dynamics),
+            mass(mass)
         {}
 
         virtual ColliderType getType() const {
