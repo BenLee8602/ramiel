@@ -1,30 +1,8 @@
 #pragma once
 
-#include "rotation.h"
 #include "mat.h"
 
 namespace ramiel {
-
-    struct Transform {
-        Vec3f pos;
-        Rotation rot;
-        float scale;
-
-        Transform(
-            Vec3f pos = Vec3f(),
-            Rotation rot = Vec3f(),
-            float scale = 1.0f
-        ) :
-            pos(pos),
-            rot(rot),
-            scale(scale)
-        {}
-
-        inline Vec3f operator()(const Vec3f& in) const {
-            return rot.rotate(in) * scale + pos;
-        }
-    };
-
 
     template<typename T, size_t N>
     Vec<Vec<T, N + 1>, N + 1> translate(const Vec<T, N>& translation) {

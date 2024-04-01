@@ -5,7 +5,6 @@ add_library(${PROJECT_NAME} STATIC
     graphics/effects.cpp 
     graphics/light.cpp 
     file/objloader.cpp 
-    math/rotation.cpp 
     scene.cpp 
     graphics/texture.cpp 
     graphics/vertex.cpp 

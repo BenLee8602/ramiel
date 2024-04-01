@@ -3,12 +3,10 @@ add_executable("${PROJECT_NAME}_test"
     graphics/camera.test.cpp 
     physics/collisionhandle.test.cpp 
     physics/collisiondispatch.test.cpp 
-    physics/dynamics.test.cpp 
     graphics/effects.test.cpp 
     graphics/light.test.cpp 
     math/mat.test.cpp 
     file/objloader.test.cpp 
-    math/rotation.test.cpp 
     graphics/texture.test.cpp 
     math/transform.test.cpp 
     math/vec.test.cpp
