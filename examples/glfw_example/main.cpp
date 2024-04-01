@@ -28,14 +28,14 @@ void cameraControls(GLFWwindow* window, float dtime, Camera& camera) {
 
 	// move left
 	if (glfwGetKey(window, GLFW_KEY_A)) {
-		camera.pos[X] -= pos * camera.rot.cos()[Y];
-		camera.pos[Z] -= pos * camera.rot.sin()[Y];
+		camera.pos[X] -= pos * std::cos(camera.rot[Y]);
+		camera.pos[Z] -= pos * std::sin(camera.rot[Y]);
 	}
 
 	// move right
 	if (glfwGetKey(window, GLFW_KEY_D)) {
-		camera.pos[X] += pos * camera.rot.cos()[Y];
-		camera.pos[Z] += pos * camera.rot.sin()[Y];
+		camera.pos[X] += pos * std::cos(camera.rot[Y]);
+		camera.pos[Z] += pos * std::sin(camera.rot[Y]);
 	}
 
 	// move down
@@ -50,36 +50,36 @@ void cameraControls(GLFWwindow* window, float dtime, Camera& camera) {
 
 	// move backward
 	if (glfwGetKey(window, GLFW_KEY_S)) {
-		camera.pos[X] += pos *  camera.rot.sin()[Y];
-		camera.pos[Y] += pos * -camera.rot.sin()[X];
-		camera.pos[Z] -= pos *  camera.rot.cos()[Y];
+		camera.pos[X] += pos * std::sin( camera.rot[Y]);
+		camera.pos[Y] += pos * std::sin(-camera.rot[X]);
+		camera.pos[Z] -= pos * std::cos( camera.rot[Y]);
 	}
 
 	// move forward
 	if (glfwGetKey(window, GLFW_KEY_W)) {
-		camera.pos[X] -= pos *  camera.rot.sin()[Y];
-		camera.pos[Y] -= pos * -camera.rot.sin()[X];
-		camera.pos[Z] += pos *  camera.rot.cos()[Y];
+		camera.pos[X] -= pos * std::sin( camera.rot[Y]);
+		camera.pos[Y] -= pos * std::sin(-camera.rot[X]);
+		camera.pos[Z] += pos * std::cos( camera.rot[Y]);
 	}
 
 	// turn down
 	if (glfwGetKey(window, GLFW_KEY_DOWN)) {
-		if (camera.rot[X] <  1.57079f) camera.rot += { -rot, 0, 0 };
+		camera.rot[X] = std::max(camera.rot[X] - rot, -1.57079f);
 	}
 
 	// turn up
 	if (glfwGetKey(window, GLFW_KEY_UP)) {
-		if (camera.rot[X] > -1.57079f) camera.rot += {  rot, 0, 0 };
+		camera.rot[X] = std::min(camera.rot[X] + rot, 1.57079f);
 	}
 
 	// turn right
 	if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-		camera.rot += { 0, -rot, 0 };
+		camera.rot[Y] -= rot;
 	}
 
 	// turn left
 	if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-		camera.rot += { 0,  rot, 0 };
+		camera.rot[Y] += rot;
 	}
 }
 
