@@ -34,11 +34,16 @@ namespace ramiel {
 	void Camera::resetBuffers() {
 		std::fill(color.begin(), color.end(), backgroundColor);
 		std::fill(depth.begin(), depth.end(), zfar);
+
+		// temp
+		transform = matmat(translate(-pos), rotate(rot));
 	}
 
 
 	Vec3f Camera::getCameraCoord(const Vec3f& in) const {
-		return rot.rotate(in - pos);
+		Vec4f in4 = { in[X], in[Y], in[Z], 1 };
+		Vec4f out4 = matvec(transform, in4);
+		return { out4[X], out4[Y], out4[Z] };
 	}
 
 

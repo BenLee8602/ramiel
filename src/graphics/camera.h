@@ -15,7 +15,8 @@ namespace ramiel {
         std::vector<float> depth;
 	public:
 		Vec3f pos;
-		Rotation rot;
+		Vec3f rot;
+		Mat4x4f transform;
 		Vec3f backgroundColor;
 		float znear;
 		float zfar;
