@@ -8,4 +8,3 @@
 #include "../src/graphics/texture.h"
 #include "../src/graphics/triangle.h"
 #include "../src/graphics/vertex.h"
-#include "../src/graphics/vertexshader.h"

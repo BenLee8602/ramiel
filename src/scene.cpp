@@ -62,14 +62,14 @@ namespace ramiel {
     }
 
 
-    bool Scene::addDynamicObject(Dynamics* dynamicObject) {
+    bool Scene::addDynamicObject(Kinematics* dynamicObject) {
         if (!dynamicObject) return false;
         dynamicObjects.emplace_back(dynamicObject);
         return true;
     }
 
 
-    bool Scene::removeDynamicObject(Dynamics* dynamicObject) {
+    bool Scene::removeDynamicObject(Kinematics* dynamicObject) {
         auto i = std::find(dynamicObjects.begin(), dynamicObjects.end(), dynamicObject);
         if (i == dynamicObjects.end()) return false;
         dynamicObjects.erase(i);
@@ -105,7 +105,7 @@ namespace ramiel {
 
 
     Scene::~Scene() {
-        dynamicObjects = std::vector<Dynamics*>();
+        dynamicObjects = std::vector<Kinematics*>();
         colliders = std::vector<Collider*>();
 
         for (auto& mesh : meshes) delete mesh.second;
