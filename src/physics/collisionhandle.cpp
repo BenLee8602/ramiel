@@ -17,7 +17,7 @@ namespace ramiel {
         if (dist > r * r) return false;
 
         float depth = r - std::sqrt(dist);
-        time = depth / mag(sphere2->posVel - sphere1->posVel);
+        time = depth / mag(sphere2->pv - sphere1->pv);
 
         return true;
     }
@@ -35,26 +35,26 @@ namespace ramiel {
             return;
         }
 
-        sphere1->pos -= sphere1->posVel * time;
-        sphere2->pos -= sphere2->posVel * time;
+        sphere1->pos -= sphere1->pv * time;
+        sphere2->pos -= sphere2->pv * time;
         Vec3f n = normalize(sphere2->pos - sphere1->pos);
 
         const float m = 2.0f / (sphere1->mass + sphere2->mass);
-        Vec3f v1_p = sphere1->posVel - n * sphere2->mass * m * dot(sphere1->posVel - sphere2->posVel, n);
-        Vec3f v2_p = sphere2->posVel - n * sphere1->mass * m * dot(sphere2->posVel - sphere1->posVel, n);
-        sphere1->posVel = v1_p;
-        sphere2->posVel = v2_p;
+        Vec3f v1_p = sphere1->pv - n * sphere2->mass * m * dot(sphere1->pv - sphere2->pv, n);
+        Vec3f v2_p = sphere2->pv - n * sphere1->mass * m * dot(sphere2->pv - sphere1->pv, n);
+        sphere1->pv = v1_p;
+        sphere2->pv = v2_p;
 
-        sphere1->pos += sphere1->posVel * time;
-        sphere2->pos += sphere2->posVel * time;
+        sphere1->pos += sphere1->pv * time;
+        sphere2->pos += sphere2->pv * time;
     }
 
 
     void Collide_Sph_Sph::resolveIC() {
-        sphere2->pos -= sphere2->posVel * time;
+        sphere2->pos -= sphere2->pv * time;
         Vec3f n = normalize(sphere2->pos - sphere1->pos);
-        sphere2->posVel -= n * 2.0f * dot(sphere2->posVel, n);
-        sphere2->pos += sphere2->posVel * time;
+        sphere2->pv -= n * 2.0f * dot(sphere2->pv, n);
+        sphere2->pos += sphere2->pv * time;
     }
 
 
@@ -77,7 +77,7 @@ namespace ramiel {
         if (box1_min[Z] > box2_max[Z] || box2_min[Z] > box1_max[Z]) return false;
 
         for (size_t i = 0; i < 3; ++i) {
-            float vel_r = box2->posVel[i] - box1->posVel[i];
+            float vel_r = box2->pv[i] - box1->pv[i];
             if (!vel_r) continue;
             float depth = vel_r < 0.0f ? box1_max[i] - box2_min[i] : box2_max[i] - box1_min[i];
             float t = std::abs(depth / vel_r);
@@ -103,23 +103,23 @@ namespace ramiel {
             return;
         }
 
-        box1->pos[axis] -= box1->posVel[axis] * time;
-        box2->pos[axis] -= box2->posVel[axis] * time;
+        box1->pos[axis] -= box1->pv[axis] * time;
+        box2->pos[axis] -= box2->pv[axis] * time;
         
         float m = 1.0f / (box1->mass + box2->mass);
-        float v1_p = (box1->mass - box2->mass) * m * box1->posVel[axis] + 2.0f * box2->mass * m * box2->posVel[axis];
-        float v2_p = (box2->mass - box1->mass) * m * box2->posVel[axis] + 2.0f * box1->mass * m * box1->posVel[axis];
-        box1->posVel[axis] = v1_p;
-        box2->posVel[axis] = v2_p;
+        float v1_p = (box1->mass - box2->mass) * m * box1->pv[axis] + 2.0f * box2->mass * m * box2->pv[axis];
+        float v2_p = (box2->mass - box1->mass) * m * box2->pv[axis] + 2.0f * box1->mass * m * box1->pv[axis];
+        box1->pv[axis] = v1_p;
+        box2->pv[axis] = v2_p;
 
-        box1->pos[axis] += box1->posVel[axis] * time;
-        box2->pos[axis] += box2->posVel[axis] * time;
+        box1->pos[axis] += box1->pv[axis] * time;
+        box2->pos[axis] += box2->pv[axis] * time;
     }
 
 
     void Collide_Aabb_Aabb::resolveIC() {
-        box2->pos[axis] -= 2.0f * box2->posVel[axis] * time;
-        box2->posVel[axis] *= -1.0f;
+        box2->pos[axis] -= 2.0f * box2->pv[axis] * time;
+        box2->pv[axis] *= -1.0f;
     }
 
 }

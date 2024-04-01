@@ -1,23 +1,9 @@
 #pragma once
 
-#include <typeindex>
 #include <ramiel/math.h>
-#include "dynamics.h"
+#include "physicsobject.h"
 
 namespace ramiel {
-
-    typedef std::type_index ColliderType;
-
-
-    struct Collider : public Dynamics {
-        Collider(
-            Dynamics dynamics = Dynamics()
-        ) : Dynamics(dynamics) {}
-
-        virtual ColliderType getType() const = 0;
-        virtual ~Collider() {}
-    };
-
 
     struct SphereCollider : public Collider {
         float mass;
@@ -25,11 +11,11 @@ namespace ramiel {
 
         SphereCollider(
             float hbxrad,
-            Dynamics dynamics = Dynamics(),
+            Kinematics kinematics = Kinematics(),
             float mass = 0.0f
         ) : 
             hbxrad(hbxrad),
-            Collider(dynamics),
+            Collider(kinematics),
             mass(mass)
         {}
 
@@ -45,11 +31,11 @@ namespace ramiel {
 
         AabbCollider(
             Vec3f size,
-            Dynamics dynamics = Dynamics(),
+            Kinematics kinematics = Kinematics(),
             float mass = 0.0f
         ) : 
             size(size),
-            Collider(dynamics),
+            Collider(kinematics),
             mass(mass)
         {}
 

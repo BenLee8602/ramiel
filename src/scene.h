@@ -25,7 +25,7 @@ namespace ramiel {
         std::vector<Effect*> effects;
     
     private:
-        std::vector<Dynamics*> dynamicObjects;
+        std::vector<Kinematics*> dynamicObjects;
         std::vector<Collider*> colliders;
 
     public:
@@ -63,8 +63,8 @@ namespace ramiel {
         void renderFrame();
 
 
-        bool addDynamicObject(Dynamics* dynamicObject);
-        bool removeDynamicObject(Dynamics* dynamicObject);
+        bool addDynamicObject(Kinematics* dynamicObject);
+        bool removeDynamicObject(Kinematics* dynamicObject);
 
         bool addCollider(Collider* collider);
         bool removeCollider(Collider* collider);
