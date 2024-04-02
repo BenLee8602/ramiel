@@ -5,7 +5,7 @@ add_library(${PROJECT_NAME} STATIC
     graphics/effects.cpp 
     graphics/light.cpp 
     file/objloader.cpp 
-    scene.cpp 
+    ramiel.cpp 
     graphics/texture.cpp 
     graphics/vertex.cpp 
 )
