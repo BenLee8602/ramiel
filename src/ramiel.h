@@ -10,69 +10,55 @@
 
 namespace ramiel {
 
-    class Scene {
-    public:
-        Camera camera;
-        Vec3f ambientLight = Vec3f();
+    Camera& cam();
 
-    private:
-        std::unordered_map<std::string, MeshBase*> meshes;
-        std::unordered_map<std::string, Texture*>  textures;
+    void loadMesh(const char* meshName, MeshBase* mesh);
+    template<class Vertex>
+    void loadMesh(const char* filename, const char* meshname, bool loadvt = false, bool loadvn = false) {
+        std::vector<Vertex> vertices;
+        std::vector<Vec3u> triangles;
+        getObj(filename, vertices, triangles);
+        MeshBase* mesh = new Mesh<Vertex>(std::move(triangles), std::move(vertices));
+        loadMesh(meshname, mesh);
+    }
+    MeshBase* getMesh(const char* meshName);
 
-    private:
-        std::vector<EntityBase*> entities;
-        std::vector<Light*> lights;
-        std::vector<Effect*> effects;
-    
-    private:
-        std::vector<Kinematics*> dynamicObjects;
-        std::vector<Collider*> colliders;
+    bool loadTexture(const char* filename, const char* textureName);
+    bool loadNormalMap(const char* filename, const char* normalMapName);
+    Texture* getTexture(const char* textureName);
 
-    public:
-        template<class Vertex>
-        bool loadMesh(const char* filename, const char* meshname, bool loadvt = false, bool loadvn = false) {
-            if (!std::ifstream(filename).good()) return false;
-            if (meshes[meshname]) return false;
-            std::vector<Vertex> vertices;
-            std::vector<Vec3u> triangles;
-            getObj(filename, vertices, triangles);
-            meshes[meshname] = new Mesh<Vertex>(std::move(triangles), std::move(vertices));
-            return true;
-        }
-        bool loadTexture(const char* filename, const char* textureName);
-        bool loadNormalMap(const char* filename, const char* normalMapName);
-        const Texture* getTexture(const char* textureName) const;
+    void addEntity(EntityBase* entity);
+    template<class Vertex, class VertexShader, class PixelShader>
+    void addEntity(
+        const char* meshName,
+        VertexShader vertexShader,
+        PixelShader pixelShader
+    ) {
+        Mesh<Vertex>* mesh = static_cast<Mesh<Vertex>*>(getMesh(meshName));
+        EntityBase* entity = new Entity(*mesh, vertexShader, pixelShader);
+        addEntity(entity);
+    }
 
-        template<class Vertex, class VertexShader, class PixelShader>
-        bool addEntity(
-            const char* meshName,
-            VertexShader vertexShader,
-            PixelShader pixelShader
-        ) {
-            Mesh<Vertex>* mesh = dynamic_cast<Mesh<Vertex>*>(meshes[meshName]);
-            if (!mesh) return false;
-            entities.push_back(new Entity(*mesh, vertexShader, pixelShader));
-            return true;
-        }
-        void addLight(Light* light);
-        void addEffect(Effect* effect);
+    const Vec3f& getAmbientLight();
+    void setAmbientLight(const Vec3f& color);
+    void addLight(Light* light);
+    LightingList getLightingList();
+    LightingListSpecular getLightingList(uint16_t specularExponent, float specularIntensity);
 
-        LightingList getLightingList() const;
-        LightingListSpecular getLightingList(uint16_t specularExponent, float specularIntensity) const;
+    void addEffect(Effect* effect);
 
-        void renderFrame();
+    void renderFrame();
 
 
-        bool addDynamicObject(Kinematics* dynamicObject);
-        bool removeDynamicObject(Kinematics* dynamicObject);
+    bool addDynamicObject(Kinematics* dynamicObject);
+    bool removeDynamicObject(Kinematics* dynamicObject);
 
-        bool addCollider(Collider* collider);
-        bool removeCollider(Collider* collider);
+    bool addCollider(Collider* collider);
+    bool removeCollider(Collider* collider);
 
-        void simulatePhysics(float dtime);
+    void simulatePhysics(float dtime);
 
 
-        ~Scene();
-    };
+    void destroy();
 
 }
