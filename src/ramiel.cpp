@@ -1,6 +1,38 @@
 #include "ramiel.h"
+using namespace ramiel;
+
+namespace {
+
+    Camera camera;
+    Vec3f ambientLight = Vec3f();
+
+    std::unordered_map<std::string, MeshBase*> meshes;
+    std::unordered_map<std::string, Texture*>  textures;
+
+    std::vector<EntityBase*> entities;
+    std::vector<Light*> lights;
+    std::vector<Effect*> effects;
+
+    std::vector<Kinematics*> dynamicObjects;
+    std::vector<Collider*> colliders;
+
+}
 
 namespace ramiel {
+
+    Camera& cam() {
+        return camera;
+    }
+
+
+    void loadMesh(const char* meshName, MeshBase* mesh) {
+        meshes[meshName] = mesh;
+    }
+
+    MeshBase* getMesh(const char* meshName) {
+        return meshes[meshName];
+    }
+
 
     static bool loadTexture(
         std::unordered_map<std::string, Texture*>& textures,
@@ -14,36 +46,44 @@ namespace ramiel {
         return true;
     }
 
-    bool Scene::loadTexture(const char* filename, const char* textureName) {
+    bool loadTexture(const char* filename, const char* textureName) {
         return ramiel::loadTexture(textures, filename, textureName, false);
     }
 
-    bool Scene::loadNormalMap(const char* filename, const char* normalMapName) {
+    bool loadNormalMap(const char* filename, const char* normalMapName) {
         return ramiel::loadTexture(textures, filename, normalMapName, true);
     }
 
-    const Texture* Scene::getTexture(const char* textureName) const {
+    Texture* getTexture(const char* textureName) {
         return (*textures.find(textureName)).second;
     }
 
 
-    void Scene::addLight(Light* light) {
+    void addEntity(EntityBase* entity) {
+        entities.push_back(entity);
+    }
+
+
+    const Vec3f& getAmbientLight() {
+        return ambientLight;
+    }
+
+    void setAmbientLight(const Vec3f& color) {
+        ambientLight = color;
+    }
+
+    void addLight(Light* light) {
         lights.push_back(light);
     }
 
-    void Scene::addEffect(Effect* effect) {
-        effects.push_back(effect);
-    }
-
-
-    LightingList Scene::getLightingList() const {
+    LightingList getLightingList() {
         return LightingList(ambientLight, lights);
     }
 
-    LightingListSpecular Scene::getLightingList(
+    LightingListSpecular getLightingList(
         uint16_t specularExponent,
         float specularIntensity
-    ) const {
+    ) {
         return LightingListSpecular(
             ambientLight,
             lights,
@@ -54,7 +94,12 @@ namespace ramiel {
     }
 
 
-    void Scene::renderFrame() {
+    void addEffect(Effect* effect) {
+        effects.push_back(effect);
+    }
+
+
+    void renderFrame() {
         camera.resetBuffers();
         for (auto& e : entities) e->run(camera);
         for (auto& e : effects)  e->run(camera);
@@ -62,14 +107,14 @@ namespace ramiel {
     }
 
 
-    bool Scene::addDynamicObject(Kinematics* dynamicObject) {
+    bool addDynamicObject(Kinematics* dynamicObject) {
         if (!dynamicObject) return false;
         dynamicObjects.emplace_back(dynamicObject);
         return true;
     }
 
 
-    bool Scene::removeDynamicObject(Kinematics* dynamicObject) {
+    bool removeDynamicObject(Kinematics* dynamicObject) {
         auto i = std::find(dynamicObjects.begin(), dynamicObjects.end(), dynamicObject);
         if (i == dynamicObjects.end()) return false;
         dynamicObjects.erase(i);
@@ -77,14 +122,14 @@ namespace ramiel {
     }
 
 
-    bool Scene::addCollider(Collider* collider) {
+    bool addCollider(Collider* collider) {
         if (!collider) return false;
         colliders.emplace_back(collider);
         return true;
     }
 
 
-    bool Scene::removeCollider(Collider* collider) {
+    bool removeCollider(Collider* collider) {
         auto i = std::find(colliders.begin(), colliders.end(), collider);
         if (i == colliders.end()) return false;
         colliders.erase(i);
@@ -92,7 +137,7 @@ namespace ramiel {
     }
 
     
-    void Scene::simulatePhysics(float dtime) {
+    void simulatePhysics(float dtime) {
         for (auto& o : dynamicObjects) o->step(dtime);
 
         for (size_t i = 0; i < colliders.size(); ++i) {
@@ -104,7 +149,7 @@ namespace ramiel {
     }
 
 
-    Scene::~Scene() {
+    void destroy() {
         dynamicObjects = std::vector<Kinematics*>();
         colliders = std::vector<Collider*>();
 

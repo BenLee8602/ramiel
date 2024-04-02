@@ -94,19 +94,18 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 
-	Scene scene;
-	scene.camera.setRes({ width, height });
+	cam().setRes({ width, height });
 
-	scene.loadMesh<MeshVertex>("examples/assets/models/terrain.obj", "terrain");
+	loadMesh<MeshVertex>("examples/assets/models/terrain.obj", "terrain");
 
-	scene.ambientLight = { 100, 80, 100 };
-	scene.addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
-	scene.addEntity<MeshVertex>(
+	setAmbientLight({ 100, 80, 100 });
+	addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
+	addEntity<MeshVertex>(
 		"terrain",
-		VS_PerTri(scene.camera, new Kinematics({ -64, 0, -64 })),
-		PS_PerTri(scene.getLightingList(8, 1.0f), Vec3f{ 255, 255, 255 })
+		VS_PerTri(cam(), new Kinematics({ -64, 0, -64 })),
+		PS_PerTri(getLightingList(8, 1.0f), Vec3f{ 255, 255, 255 })
 	);
-	scene.addEffect(new Fog({ 150, 110, 110 }, 20, 100));
+	addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 
 	uint8_t* frame = new uint8_t[width * height * 3];
 
@@ -118,10 +117,10 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		frameStart = glfwGetTime();
 
-		cameraControls(window, (float)dtime, scene.camera);
-		scene.simulatePhysics(dtime);
-		scene.renderFrame();
-		scene.camera.getFrameRGB(frame);
+		cameraControls(window, (float)dtime, cam());
+		simulatePhysics(dtime);
+		renderFrame();
+		cam().getFrameRGB(frame);
 		
 		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, frame);
 		glfwSwapBuffers(window);
@@ -134,5 +133,7 @@ int main() {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	delete[] frame;
+
+	destroy();
 	return 0;
 }
