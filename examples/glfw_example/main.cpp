@@ -102,7 +102,7 @@ int main() {
 	addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
 	addEntity<MeshVertex>(
 		"terrain",
-		VS_PerTri(cam(), new Kinematics({ -64, 0, -64 })),
+		VS_PerTri(new Kinematics({ -64, 0, -64 })),
 		PS_PerTri(getLightingList(8, 1.0f), Vec3f{ 255, 255, 255 })
 	);
 	addEffect(new Fog({ 150, 110, 110 }, 20, 100));
