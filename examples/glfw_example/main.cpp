@@ -97,13 +97,21 @@ int main() {
 	cam().setRes({ width, height });
 
 	loadMesh<MeshVertex>("examples/assets/models/terrain.obj", "terrain");
+	loadMesh<MeshVertexT>("examples/assets/models/cube.obj", "cube");
+
+	loadTexture("examples/assets/textures/brickwall_texture.jpg", "brickwall", rgb1);
 
 	setAmbientLight({ 100, 80, 100 });
 	addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
 	addEntity<MeshVertex>(
 		"terrain",
-		VS_PerTri(new Kinematics({ -64, 0, -64 })),
+		VS_PerTri(new PhysicsObject({ -64, 0, -64 })),
 		PS_PerTri(getLightingList(8, 1.0f), Vec3f{ 255, 255, 255 })
+	);
+	addEntity<MeshVertexT>(
+		"cube",
+		VS_PerPixel_Textured(new PhysicsObject()),
+		PS_PerPixel_Textured(getLightingList(8, 1.0f), getTexture("brickwall"))
 	);
 	addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 

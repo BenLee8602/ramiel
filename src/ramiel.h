@@ -23,8 +23,7 @@ namespace ramiel {
     }
     MeshBase* getMesh(const char* meshName);
 
-    bool loadTexture(const char* filename, const char* textureName);
-    bool loadNormalMap(const char* filename, const char* normalMapName);
+    bool loadTexture(const char* filename, const char* textureName, Mat4x4f format);
     Texture* getTexture(const char* textureName);
 
     void addEntity(EntityBase* entity);

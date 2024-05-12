@@ -1,4 +1,5 @@
 #include <catch2/catch2.hpp>
+#include <ramiel/file.h>
 #include <ramiel/graphics.h>
 using namespace ramiel;
 
@@ -10,7 +11,7 @@ TEST_CASE("texture size", "[texture]") {
 }
 
 TEST_CASE("texture get color", "[texture]") {
-    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", false);
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", rgb1);
 
     const float n = 254.0f / 255.0f;
     const Vec3f white   = { n, n, n };
@@ -33,16 +34,15 @@ TEST_CASE("texture get color", "[texture]") {
 }
 
 TEST_CASE("texture get normal vector", "[texture]") {
-    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", true);
-    Vec3f expected;
+    Texture texture(std::string(ramiel_TEST_DATA_DIR) + "/colortest.png", normalMap);
+
     const float n = 0.992157f;
     const Vec3f expected1 = { -1.0f, -1.0f, -1.0f };
     const Vec3f expected2 = { -1.0f,     n, -1.0f };
     const Vec3f expected3 = { -1.0f,     n,     n };
     const Vec3f expected4 = {     n,     n,     n };
-
-    REQUIRE(equal(texture.get({ 0.42f, 1.01f }), expected1));
-    REQUIRE(equal(texture.get({ 0.49f, 0.03f }), expected2));
-    REQUIRE(equal(texture.get({ 0.25f, 0.98f }), expected3));
-    REQUIRE(equal(texture.get({ 0.05f, 0.77f }), expected4));
+    REQUIRE(equal(texture.get({ 15.0f / 16.0f, 0.5f }), expected1));
+    REQUIRE(equal(texture.get({  7.0f / 16.0f, 0.5f }), expected2));
+    REQUIRE(equal(texture.get({  5.0f / 16.0f, 0.5f }), expected3));
+    REQUIRE(equal(texture.get({  1.0f / 16.0f, 0.5f }), expected4));
 }

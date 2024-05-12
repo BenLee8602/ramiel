@@ -34,24 +34,11 @@ namespace ramiel {
     }
 
 
-    static bool loadTexture(
-        std::unordered_map<std::string, Texture*>& textures,
-        const char* filename,
-        const char* textureName,
-        bool isNormalMap
-    ) {
+    bool loadTexture(const char* filename, const char* textureName, Mat4x4f format) {
         if (!std::ifstream(filename).good()) return false;
         if (textures[textureName]) return false;
-        textures[textureName] = new Texture(filename, false);
+        textures[textureName] = new Texture(filename, format);
         return true;
-    }
-
-    bool loadTexture(const char* filename, const char* textureName) {
-        return ramiel::loadTexture(textures, filename, textureName, false);
-    }
-
-    bool loadNormalMap(const char* filename, const char* normalMapName) {
-        return ramiel::loadTexture(textures, filename, normalMapName, true);
     }
 
     Texture* getTexture(const char* textureName) {
