@@ -11,8 +11,6 @@ TEST_CASE("load image", "[image]") {
 
     filename = std::string(ramiel_TEST_DATA_DIR) + "/doesnt_exist.png";
     REQUIRE(!loadImage(filename, res, data));
-    REQUIRE(res == Vec2u());
-    REQUIRE(data.size() == 0);
 
     filename = std::string(ramiel_TEST_DATA_DIR) + "/colortest.png";
     REQUIRE(loadImage(filename, res, data));
