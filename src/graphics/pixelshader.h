@@ -1,6 +1,6 @@
 #pragma once
 
-#include "texture.h"
+#include <ramiel/data.h>
 #include "light.h"
 
 namespace ramiel {

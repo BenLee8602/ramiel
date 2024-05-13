@@ -1,7 +1,7 @@
 #pragma once
 
 #include <algorithm>
-#include <ramiel/math.h>
+#include <ramiel/data.h>
 #include "triangle.h"
 
 namespace ramiel {
