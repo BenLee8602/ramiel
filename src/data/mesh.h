@@ -18,13 +18,12 @@ namespace ramiel {
     class Mesh : public MeshBase {
         std::vector<Vertex> vertices;
     public:
-        Mesh(std::vector<Vec3u>& triangles, std::vector<Vertex>& vertices) {
-            this->triangles = triangles;
-            this->vertices  = vertices;
+        Mesh(const std::vector<Vec3u>& triangles, const std::vector<Vertex>& vertices) {
+            this->triangles = std::move(triangles);
+            this->vertices  = std::move(vertices);
         }
-        Mesh(std::vector<Vec3u>&& triangles, std::vector<Vertex>&& vertices) {
-            this->triangles = triangles;
-            this->vertices  = vertices;
+        Mesh(const std::string& filename) {
+            getObj<Vertex>(filename, vertices, triangles);
         }
         const std::vector<Vertex>& getVertices() const { return vertices; }
     };

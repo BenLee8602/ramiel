@@ -20,7 +20,7 @@ namespace ramiel {
     Vec3u parsePolygonVertex(std::string& str);
 
     bool loadObj(
-        const char* filename,
+        const std::string& filename,
         std::vector<Vec3u>& f,
         std::vector<Vec3f>& v,
         std::vector<Vec2f>& vt,
@@ -30,7 +30,7 @@ namespace ramiel {
 
 
     template<class Vertex>
-    bool getObj(const char* filename, std::vector<Vertex>& v_out, std::vector<Vec3u>& f_out) {
+    bool getObj(const std::string& filename, std::vector<Vertex>& v_out, std::vector<Vec3u>& f_out) {
         std::vector<Vec3f> v;
         std::vector<Vec2f> vt;
         std::vector<Vec3f> vn;
