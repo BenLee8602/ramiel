@@ -5,6 +5,7 @@
 
 #include <ramiel/math.h>
 #include <ramiel/file.h>
+#include <ramiel/data.h>
 #include <ramiel/graphics.h>
 #include <ramiel/physics.h>
 

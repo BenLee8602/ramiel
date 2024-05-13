@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <ramiel/math.h>
 
 namespace ramiel {

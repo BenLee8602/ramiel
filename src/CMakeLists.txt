@@ -8,7 +8,7 @@ add_library(${PROJECT_NAME} STATIC
     graphics/light.cpp 
     file/objloader.cpp 
     ramiel.cpp 
-    graphics/texture.cpp 
+    data/texture.cpp 
     graphics/vertex.cpp 
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)
