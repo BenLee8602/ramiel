@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} STATIC
     ramiel.cpp 
     data/texture.cpp 
     graphics/vertex.cpp 
+    data/voidbuffer.cpp 
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
