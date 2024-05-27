@@ -10,7 +10,8 @@ add_executable("${PROJECT_NAME}_test"
     file/objloader.test.cpp 
     graphics/texture.test.cpp 
     math/transform.test.cpp 
-    math/vec.test.cpp
+    math/vec.test.cpp 
+    data/voidbuffer.test.cpp 
 )
 target_include_directories(${PROJECT_NAME}_test PRIVATE ${CMAKE_SOURCE_DIR}/deps)
 target_include_directories(${PROJECT_NAME}_test PRIVATE ${CMAKE_SOURCE_DIR}/include)
