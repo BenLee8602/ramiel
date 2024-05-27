@@ -8,7 +8,7 @@ add_executable("${PROJECT_NAME}_test"
     graphics/light.test.cpp 
     math/mat.test.cpp 
     file/objloader.test.cpp 
-    graphics/texture.test.cpp 
+    data/texture.test.cpp 
     math/transform.test.cpp 
     math/vec.test.cpp 
     data/voidbuffer.test.cpp 
