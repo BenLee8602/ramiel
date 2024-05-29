@@ -7,15 +7,15 @@ namespace ramiel {
 
     class VoidBuffer {
     public:
-        typedef std::function<void*(void)> Allocator;
+        typedef std::function<void*(size_t)> Allocator;
         typedef std::function<void(void*)> Deallocator;
 
         VoidBuffer(
             std::type_index type,
             size_t size,
-            size_t length,
             Allocator allocate,
-            Deallocator deallocate
+            Deallocator deallocate,
+            size_t length = 0
         );
         VoidBuffer(const VoidBuffer& other) = delete;
         VoidBuffer(VoidBuffer&& other) = delete;
@@ -27,6 +27,8 @@ namespace ramiel {
         size_t getSize() const;
         size_t getLength() const;
 
+        void setLength(size_t length);
+
         void* operator[](size_t i);
         const void* operator[](size_t i) const;
 
@@ -35,7 +37,7 @@ namespace ramiel {
         const size_t size;
 
         void* data;
-        const size_t length;
+        size_t length;
 
         const Allocator allocate;
         const Deallocator deallocate;
@@ -43,8 +45,8 @@ namespace ramiel {
 
 
     template<class T>
-    VoidBuffer makeVoidBuffer(size_t length) {
-        VoidBuffer::Allocator allocate = [length]() {
+    VoidBuffer makeVoidBuffer(size_t length = 0) {
+        VoidBuffer::Allocator allocate = [](size_t length) {
             return static_cast<void*>(new T[length]());
         };
 
@@ -52,7 +54,7 @@ namespace ramiel {
             delete[] static_cast<T*>(data);
         };
 
-        return VoidBuffer(typeid(T), sizeof(T), length, allocate, deallocate);
+        return VoidBuffer(typeid(T), sizeof(T), allocate, deallocate, length);
     }
 
 }
