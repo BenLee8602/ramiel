@@ -37,9 +37,12 @@ TEST_CASE("get void buffer size", "[voidbuffer]") {
 }
 
 
-TEST_CASE("get void buffer length", "[voidbuffer]") {
-    VoidBuffer vb = makeVoidBuffer<char>(8);
+TEST_CASE("void buffer length", "[voidbuffer]") {
+    VoidBuffer vb = makeVoidBuffer<char>();
+    REQUIRE(vb.getLength() == 0);
+
     size_t expected = 8;
+    vb.setLength(expected);
     size_t actual = vb.getLength();
     REQUIRE(expected == actual);
 }
