@@ -9,18 +9,20 @@ namespace ramiel {
     public:
         typedef std::function<void*(size_t)> Allocator;
         typedef std::function<void(void*)> Deallocator;
+        typedef std::function<void(void*, const void*)> Copier;
 
         VoidBuffer(
             std::type_index type,
             size_t size,
             Allocator allocate,
             Deallocator deallocate,
+            Copier copier = nullptr,
             size_t length = 0
         );
-        VoidBuffer(const VoidBuffer& other) = delete;
-        VoidBuffer(VoidBuffer&& other) = delete;
-        VoidBuffer& operator=(const VoidBuffer& other) = delete;
-        VoidBuffer& operator=(VoidBuffer&& other) = delete;
+        VoidBuffer(const VoidBuffer& src);
+        VoidBuffer(VoidBuffer&& src);
+        VoidBuffer& operator=(const VoidBuffer& src);
+        VoidBuffer& operator=(VoidBuffer&& src);
         ~VoidBuffer();
 
         std::type_index getType() const;
@@ -33,14 +35,15 @@ namespace ramiel {
         const void* operator[](size_t i) const;
 
     private:
-        const std::type_index type;
-        const size_t size;
+        std::type_index type;
+        size_t size;
+
+        Allocator allocate;
+        Deallocator deallocate;
+        Copier copy;
 
         void* data;
         size_t length;
-
-        const Allocator allocate;
-        const Deallocator deallocate;
     };
 
 
@@ -54,7 +57,11 @@ namespace ramiel {
             delete[] static_cast<T*>(data);
         };
 
-        return VoidBuffer(typeid(T), sizeof(T), allocate, deallocate, length);
+        VoidBuffer::Copier copy = [](void* dest, const void* src) {
+            *static_cast<T*>(dest) = *static_cast<const T*>(src);
+        };
+
+        return VoidBuffer(typeid(T), sizeof(T), allocate, deallocate, copy, length);
     }
 
 }
