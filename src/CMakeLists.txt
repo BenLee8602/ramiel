@@ -7,6 +7,7 @@ add_library(${PROJECT_NAME} STATIC
     file/image.cpp 
     math/interpolate.cpp 
     graphics/light.cpp 
+    data/mesh.cpp 
     file/objloader.cpp 
     ramiel.cpp 
     graphics/rasterize.cpp 
