@@ -10,6 +10,7 @@ add_executable("${PROJECT_NAME}_test"
     file/objloader.test.cpp 
     data/texture.test.cpp 
     math/transform.test.cpp 
+    data/tuple.test.cpp 
     math/vec.test.cpp 
     data/voidbuffer.test.cpp 
 )
