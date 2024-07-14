@@ -18,7 +18,7 @@ namespace ramiel {
     };
 
     template<typename T, typename... Ts>
-    struct ReverseTs : private ReverseTs<Ts...> {
+    struct ReverseTs {
         using Type = decltype(cat(
             typename ReverseTs<Ts...>::Type{},
             ReverseTs<T>{}
@@ -155,7 +155,6 @@ namespace ramiel {
     // read more about it here:
     // blog: https://alexpolt.github.io/type-loophole.html
     // github: https://github.com/alexpolt/luple/
-
 
     template<class T, int N>
     struct FieldIndex {
