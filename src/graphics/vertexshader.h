@@ -21,7 +21,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(out.worldPos);
+            out.cameraPos = getCameraCoord(out.worldPos);
             return out;
         }
     };
@@ -41,7 +41,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
             
-            out.cameraPos = cam().getCameraCoord(out.worldPos);
+            out.cameraPos = getCameraCoord(out.worldPos);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.txt;
             return out;
@@ -73,7 +73,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             Vec3f worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(worldPos);
+            out.cameraPos = getCameraCoord(worldPos);
             out.color = surfaceColor * lightingList.getAllLight(worldPos, in.nml);
             return out;
         }
@@ -101,7 +101,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             Vec3f worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(worldPos);
+            out.cameraPos = getCameraCoord(worldPos);
             out.light = lightingList.getAllLight(worldPos, in.nml);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.txt;
@@ -124,7 +124,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(out.worldPos);
+            out.cameraPos = getCameraCoord(out.worldPos);
             out.zinv = 1.0f / out.cameraPos[Z];
             return out;
         }
@@ -145,7 +145,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(out.worldPos);
+            out.cameraPos = getCameraCoord(out.worldPos);
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.txt;
             return out;
@@ -167,7 +167,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(out.worldPos);
+            out.cameraPos = getCameraCoord(out.worldPos);
             out.normal = in.nml;
             out.zinv = 1.0f / out.cameraPos[Z];
             return out;
@@ -189,7 +189,7 @@ namespace ramiel {
             Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
             out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
 
-            out.cameraPos = cam().getCameraCoord(out.worldPos);
+            out.cameraPos = getCameraCoord(out.worldPos);
             out.normal = in.nml;
             out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.txt;

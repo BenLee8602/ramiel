@@ -11,8 +11,6 @@
 
 namespace ramiel {
 
-    Camera& cam();
-
     void loadMesh(const char* meshName, MeshBase* mesh);
     template<class Vertex>
     void loadMesh(const char* filename, const char* meshname, bool loadvt = false, bool loadvn = false) {

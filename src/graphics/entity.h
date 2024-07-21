@@ -6,7 +6,10 @@
 
 namespace ramiel {
 
-    typedef CameraModifier EntityBase;
+    class EntityBase {
+    public:
+        virtual void run() const = 0;
+    };
 
 
     template<class Vertex, class VertexShader, class PixelShader>
@@ -26,14 +29,14 @@ namespace ramiel {
         {}
 
 
-        virtual void run(Camera& camera) const override {
+        virtual void run() const override {
             // run vertex shader
             const std::vector<Vertex>& v_in = mesh.getVertices();
             std::vector<typename VertexShader::Vertex_Out> v_out(v_in.size());
             std::transform(v_in.begin(), v_in.end(), v_out.begin(), vertexShader);
 
             const std::vector<Vec3u>& triangles = mesh.getTriangles();
-            Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(camera, pixelShader);
+            Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(pixelShader);
             for (auto& t : triangles) {
                 // backface culling
                 if (dot(
