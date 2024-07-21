@@ -9,10 +9,10 @@ namespace ramiel {
     void setRes(Vec2u size);
     size_t getBufferSize();
 
-    typedef std::vector<Vec3f>::iterator ColorBufferIterator;
-    typedef std::vector<float>::iterator DepthBufferIterator;
-    ColorBufferIterator getColorBuffer();
-    DepthBufferIterator getDepthBuffer();
+    typedef std::vector<Vec3f>::iterator ColorIt;
+    typedef std::vector<float>::iterator DepthIt;
+    ColorIt getColorBuffer();
+    DepthIt getDepthBuffer();
 
     const Vec3f& getPos();
     const Vec3f& getRot();

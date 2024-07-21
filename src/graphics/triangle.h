@@ -15,8 +15,8 @@ namespace ramiel {
         void raster() {
             for (size_t i = 0; i < 3; ++i) v[i].screenPos = getScreenCoord(v[i].cameraPos);
 
-            ColorBufferIterator color = getColorBuffer();
-            DepthBufferIterator depth = getDepthBuffer();
+            ColorIt color = getColorBuffer();
+            DepthIt depth = getDepthBuffer();
             
             if (v[0].screenPos[Y] > v[1].screenPos[Y]) std::swap(v[0], v[1]);
             if (v[0].screenPos[Y] > v[2].screenPos[Y]) std::swap(v[0], v[2]);
