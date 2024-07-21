@@ -48,11 +48,11 @@ namespace ramiel {
     }
 
 
-    ColorBufferIterator getColorBuffer() {
+    ColorIt getColorBuffer() {
         return color.begin();
     }
 
-    DepthBufferIterator getDepthBuffer() {
+    DepthIt getDepthBuffer() {
         return depth.begin();
     }
 
