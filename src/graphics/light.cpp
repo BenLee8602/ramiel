@@ -3,191 +3,191 @@
 
 namespace ramiel {
 
-	Light::Light(Vec3f color, float intensity) {
-		this->color = color;
-		max(Vec3f(), this->color);
-		this->intensity = std::max(0.0f, intensity);
-		this->color *= this->intensity;
-	}
+    Light::Light(Vec3f color, float intensity) {
+        this->color = color;
+        max(Vec3f(), this->color);
+        this->intensity = std::max(0.0f, intensity);
+        this->color *= this->intensity;
+    }
 
-	DirectionalLight::DirectionalLight(
-		Vec3f color,
-		float intensity,
-		Vec3f dir
-	) : Light(color, intensity) {
-		if (!dir) dir[Z] = 1.0f;
-		this->dir = normalize(dir);
-	}
+    DirectionalLight::DirectionalLight(
+        Vec3f color,
+        float intensity,
+        Vec3f dir
+    ) : Light(color, intensity) {
+        if (!dir) dir[Z] = 1.0f;
+        this->dir = normalize(dir);
+    }
 
-	PointLight::PointLight(
-		Vec3f color,
-		float intensity,
-		Vec3f pos,
-		float falloff
-	) : Light(color, intensity) {
-		if (falloff < 0.0f) falloff = 1.0f;
-		this->pos = pos;
-		this->falloff = falloff;
-	}
+    PointLight::PointLight(
+        Vec3f color,
+        float intensity,
+        Vec3f pos,
+        float falloff
+    ) : Light(color, intensity) {
+        if (falloff < 0.0f) falloff = 1.0f;
+        this->pos = pos;
+        this->falloff = falloff;
+    }
 
-	SpotLight::SpotLight(
-		Vec3f color,
-		float intensity,
-		Vec3f pos,
-		Vec3f dir,
-		float falloff,
-		float width,
-		float falloffExp
-	) : PointLight(color, intensity, pos, falloff) {
-		if (!dir[X] && !dir[Y] && !dir[Z]) dir[Z] = 1.0f;
-		if (falloff < 0.0f) this->falloff = 0.1f;
-		this->dir = normalize(dir);
-		this->width = 1.0f - (width / 3.14159265f);
-		this->falloffExp = falloffExp;
-	}
-
-
-	Vec3f DirectionalLight::getLight(
-		const Vec3f& pos,
-		const Vec3f& normal
-	) const {
-		return this->color * std::max(
-			0.0f,
-			-dot(normal, this->dir)
-		);
-	}
+    SpotLight::SpotLight(
+        Vec3f color,
+        float intensity,
+        Vec3f pos,
+        Vec3f dir,
+        float falloff,
+        float width,
+        float falloffExp
+    ) : PointLight(color, intensity, pos, falloff) {
+        if (!dir[X] && !dir[Y] && !dir[Z]) dir[Z] = 1.0f;
+        if (falloff < 0.0f) this->falloff = 0.1f;
+        this->dir = normalize(dir);
+        this->width = 1.0f - (width / 3.14159265f);
+        this->falloffExp = falloffExp;
+    }
 
 
-	Vec3f PointLight::getLight(
-		const Vec3f& pos,
-		const Vec3f& normal
-	) const {
-		Vec3f vec = pos - this->pos;
-		float m = mag(vec);
-		vec *= 1.0f / m; // normalize
-		float falloff = 1.0f / (this->falloff * m * m + 1.0f);
-		return this->color * falloff * std::max(0.0f, -dot(vec, normal));
-	}
+    Vec3f DirectionalLight::getLight(
+        const Vec3f& pos,
+        const Vec3f& normal
+    ) const {
+        return this->color * std::max(
+            0.0f,
+            -dot(normal, this->dir)
+        );
+    }
 
 
-	Vec3f SpotLight::getLight(
-		const Vec3f& pos,
-		const Vec3f& normal
-	) const {
-		Vec3f vec = pos - this->pos;
-		float m = mag(vec);
-		vec *= 1.0f / m; // normalize
-
-		float s = std::max(0.0f, dot(vec, this->dir));
-		if (s < width) return Vec3f();
-
-		float falloff = 1.0f / (this->falloff * m * m + 1.0f) * std::pow(s, this->falloffExp);
-		return this->color * falloff * std::max(0.0f, -dot(vec, normal));
-	}
+    Vec3f PointLight::getLight(
+        const Vec3f& pos,
+        const Vec3f& normal
+    ) const {
+        Vec3f vec = pos - this->pos;
+        float m = mag(vec);
+        vec *= 1.0f / m; // normalize
+        float falloff = 1.0f / (this->falloff * m * m + 1.0f);
+        return this->color * falloff * std::max(0.0f, -dot(vec, normal));
+    }
 
 
-	Vec3f DirectionalLight::getLight(
-		const Vec3f& pos,
-		const Vec3f& normal,
-		const Vec3f& cameraPos,
-		unsigned specularExponent,
-		float specularIntensity
-	) const {
-		// precalculate
-		float d = dot(normal, this->dir);
+    Vec3f SpotLight::getLight(
+        const Vec3f& pos,
+        const Vec3f& normal
+    ) const {
+        Vec3f vec = pos - this->pos;
+        float m = mag(vec);
+        vec *= 1.0f / m; // normalize
 
-		// diffuse
-		float diffuse = std::max(0.0f, -d);
+        float s = std::max(0.0f, dot(vec, this->dir));
+        if (s < width) return Vec3f();
 
-		// specular
-		Vec3f cameraVec = normalize(cameraPos - pos);
-		Vec3f reflectedVec = this->dir - normal * d * 2.0f;
-		float specular = specularIntensity * std::pow(
-			std::max(0.0f, dot(reflectedVec, cameraVec)),
-			specularExponent
-		);
-
-		return this->color * (diffuse + specular);
-	}
-	
-
-	Vec3f PointLight::getLight(
-		const Vec3f& pos,
-		const Vec3f& normal,
-		const Vec3f& cameraPos,
-		unsigned specularExponent,
-		float specularIntensity
-	) const {
-		// precalculate
-		Vec3f vec = pos - this->pos;
-		float m = mag(vec);
-		vec *= 1.0f / m; // normalize
-
-		float d = dot(vec, normal);
-
-		float falloff = 1.0f / (this->falloff * m * m + 1.0f);
-
-		// diffuse
-		float diffuse = std::max(0.0f, -d);
-
-		// specular
-		Vec3f cameraVec = normalize(cameraPos - pos);
-		Vec3f reflectedVec = vec - normal * d * 2.0f;
-		float specular = specularIntensity * std::pow(
-			std::max(0.0f, dot(reflectedVec, cameraVec)),
-			specularExponent
-		);
-
-		return this->color * falloff * (diffuse + specular);
-	}
+        float falloff = 1.0f / (this->falloff * m * m + 1.0f) * std::pow(s, this->falloffExp);
+        return this->color * falloff * std::max(0.0f, -dot(vec, normal));
+    }
 
 
-	Vec3f SpotLight::getLight(
-		const Vec3f& pos,
-		const Vec3f& normal,
-		const Vec3f& cameraPos,
-		unsigned specularExponent,
-		float specularIntensity
-	) const {
-		// precalculate
-		Vec3f vec = pos - this->pos;
-		float m = mag(vec);
-		vec /= m; // normalize
+    Vec3f DirectionalLight::getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        const Vec3f& cameraPos,
+        unsigned specularExponent,
+        float specularIntensity
+    ) const {
+        // precalculate
+        float d = dot(normal, this->dir);
 
-		float s = std::max(0.0f, dot(vec, this->dir));
-		if (s < width) return Vec3f();
+        // diffuse
+        float diffuse = std::max(0.0f, -d);
 
-		float d = dot(vec, normal);
+        // specular
+        Vec3f cameraVec = normalize(cameraPos - pos);
+        Vec3f reflectedVec = this->dir - normal * d * 2.0f;
+        float specular = specularIntensity * std::pow(
+            std::max(0.0f, dot(reflectedVec, cameraVec)),
+            specularExponent
+        );
 
-		float falloff = 1.0f / (this->falloff * m * m + 1.0f) * std::pow(s, this->falloffExp);
+        return this->color * (diffuse + specular);
+    }
+    
 
-		// diffuse
-		float diffuse = std::max(0.0f, -d);
+    Vec3f PointLight::getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        const Vec3f& cameraPos,
+        unsigned specularExponent,
+        float specularIntensity
+    ) const {
+        // precalculate
+        Vec3f vec = pos - this->pos;
+        float m = mag(vec);
+        vec *= 1.0f / m; // normalize
 
-		// specular
-		Vec3f cameraVec = normalize(cameraPos - pos);
-		Vec3f reflectedVec = vec - normal * d * 2.0f;
-		float specular = specularIntensity * std::pow(
-			std::max(0.0f, dot(reflectedVec, cameraVec)),
-			specularExponent
-		);
+        float d = dot(vec, normal);
 
-		return this->color * falloff * (diffuse + specular);
-	}
+        float falloff = 1.0f / (this->falloff * m * m + 1.0f);
+
+        // diffuse
+        float diffuse = std::max(0.0f, -d);
+
+        // specular
+        Vec3f cameraVec = normalize(cameraPos - pos);
+        Vec3f reflectedVec = vec - normal * d * 2.0f;
+        float specular = specularIntensity * std::pow(
+            std::max(0.0f, dot(reflectedVec, cameraVec)),
+            specularExponent
+        );
+
+        return this->color * falloff * (diffuse + specular);
+    }
 
 
-	Vec3f LightingList::getAllLight(const Vec3f& pos, const Vec3f& normal) const {
-		Vec3f allLight = ambientLight;
-		for (auto& l : lights)
-			allLight += l->getLight(pos, normal);
-		return allLight;
-	}
+    Vec3f SpotLight::getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        const Vec3f& cameraPos,
+        unsigned specularExponent,
+        float specularIntensity
+    ) const {
+        // precalculate
+        Vec3f vec = pos - this->pos;
+        float m = mag(vec);
+        vec /= m; // normalize
 
-	Vec3f LightingListSpecular::getAllLight(const Vec3f& pos, const Vec3f& normal) const {
-		Vec3f allLight = ambientLight;
-		for (auto& l : lights)
-			allLight += l->getLight(pos, normal, cameraPos, specularExponent, specularIntensity);
-		return allLight;
-	}
+        float s = std::max(0.0f, dot(vec, this->dir));
+        if (s < width) return Vec3f();
+
+        float d = dot(vec, normal);
+
+        float falloff = 1.0f / (this->falloff * m * m + 1.0f) * std::pow(s, this->falloffExp);
+
+        // diffuse
+        float diffuse = std::max(0.0f, -d);
+
+        // specular
+        Vec3f cameraVec = normalize(cameraPos - pos);
+        Vec3f reflectedVec = vec - normal * d * 2.0f;
+        float specular = specularIntensity * std::pow(
+            std::max(0.0f, dot(reflectedVec, cameraVec)),
+            specularExponent
+        );
+
+        return this->color * falloff * (diffuse + specular);
+    }
+
+
+    Vec3f LightingList::getAllLight(const Vec3f& pos, const Vec3f& normal) const {
+        Vec3f allLight = ambientLight;
+        for (auto& l : lights)
+            allLight += l->getLight(pos, normal);
+        return allLight;
+    }
+
+    Vec3f LightingListSpecular::getAllLight(const Vec3f& pos, const Vec3f& normal) const {
+        Vec3f allLight = ambientLight;
+        for (auto& l : lights)
+            allLight += l->getLight(pos, normal, cameraPos, specularExponent, specularIntensity);
+        return allLight;
+    }
 
 }
