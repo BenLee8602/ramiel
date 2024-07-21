@@ -13,18 +13,46 @@ namespace {
 
     Vec3f pos = Vec3f();
     Vec3f rot = Vec3f();
-    Mat4x4f transform = id<float, 4>();
 
     float fov = 1.57f;
     float focalLength = 1.0f;
     float z0 = 0.2f;
     float z1 = 1000.0f;
 
+    Mat4x4f transform = id<float, 4>();
+
     Vec3f backgroundColor = Vec3f();
     
 }
 
 namespace ramiel {
+
+    const Vec2u& getRes() {
+        return res;
+    }
+
+    void setRes(Vec2u newSize) {
+        res = newSize;
+        halfRes = res / 2.0f;
+        bufferSize = res[X] * res[Y];
+        focalLength = halfRes[X] / std::tan(fov / 2.0f);
+        color = std::vector<Vec3f>(bufferSize);
+        depth = std::vector<float>(bufferSize);
+    }
+
+    size_t getBufferSize() {
+        return bufferSize;
+    }
+
+
+    ColorBufferIterator getColorBuffer() {
+        return color.begin();
+    }
+
+    DepthBufferIterator getDepthBuffer() {
+        return depth.begin();
+    }
+
 
     const Vec3f& getPos() {
         return pos;
@@ -44,14 +72,9 @@ namespace ramiel {
     }
 
 
-    const Vec3f& getBackgroundColor() {
-        return backgroundColor;
+    float getFov() {
+        return fov;
     }
-
-    void setBackgroundColor(const Vec3f& color) {
-        backgroundColor = color;
-    }
-
 
     float getZ0() {
         return z0;
@@ -62,6 +85,11 @@ namespace ramiel {
     }
 
 
+    void setFov(float deg) {
+        fov = deg * 0.01745f;
+        focalLength = halfRes[X] / std::tan(fov / 2.0f);
+    }
+
     void setZ0(float z0) {
         ::z0 = z0;
     }
@@ -71,49 +99,11 @@ namespace ramiel {
     }
 
 
-    size_t getBufferSize() {
-        return bufferSize;
-    }
-
-    const Vec2u& getRes() {
-        return res;
-    }
-
-    void setRes(Vec2u newSize) {
-        res = newSize;
-        halfRes = res / 2.0f;
-        bufferSize = res[X] * res[Y];
-        focalLength = halfRes[X] / std::tan(fov / 2.0f);
-        color = std::vector<Vec3f>(bufferSize);
-        depth = std::vector<float>(bufferSize);
-    }
-
-
-    float getFov() {
-        return fov;
-    }
-
-    void setFov(float deg) {
-        fov = deg * 0.01745f;
-        focalLength = halfRes[X] / std::tan(fov / 2.0f);
-    }
-
-
-    void resetBuffers() {
-        std::fill(color.begin(), color.end(), backgroundColor);
-        std::fill(depth.begin(), depth.end(), z1);
-
-        // temp
-        transform = matmat(translate(-pos), rotate(rot));
-    }
-
-
     Vec3f getCameraCoord(const Vec3f& in) {
         Vec4f in4 = { in[X], in[Y], in[Z], 1 };
         Vec4f out4 = matvec(transform, in4);
         return { out4[X], out4[Y], out4[Z] };
     }
-
 
     Vec2f getScreenCoord(const Vec3f& in) {
         if (in[Z] == 0.0f) return Vec2f();
@@ -124,14 +114,22 @@ namespace ramiel {
     }
 
 
-    ColorBufferIterator getColorBuffer() {
-        return color.begin();
+    const Vec3f& getBackgroundColor() {
+        return backgroundColor;
     }
 
-    DepthBufferIterator getDepthBuffer() {
-        return depth.begin();
+    void setBackgroundColor(const Vec3f& color) {
+        backgroundColor = color;
     }
 
+
+    void resetBuffers() {
+        std::fill(color.begin(), color.end(), backgroundColor);
+        std::fill(depth.begin(), depth.end(), z1);
+
+        // temp
+        transform = matmat(translate(-pos), rotate(rot));
+    }
 
     void clampColorBuffer() {
         for (auto& c : color) c = min(c, 255.0f);
