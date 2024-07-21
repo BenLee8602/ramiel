@@ -19,6 +19,7 @@ namespace ramiel {
 
     void setPos(const Vec3f& pos);
     void setRot(const Vec3f& rot);
+    void setPosRot(const Vec3f& pos, const Vec3f& rot);
 
     float getFov();
     float getZ0();
@@ -30,14 +31,5 @@ namespace ramiel {
 
     Vec3f getCameraCoord(const Vec3f& in);
     Vec2f getScreenCoord(const Vec3f& in);
-
-    const Vec3f& getBackgroundColor();
-    void setBackgroundColor(const Vec3f& color);
-
-    void resetBuffers();
-    void clampColorBuffer();
-
-    void getFrameDEC(int* frame);
-    void getFrameRGB(uint8_t* frame);
 
 }

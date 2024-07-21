@@ -11,6 +11,9 @@
 
 namespace ramiel {
 
+    const Vec3f& getBackgroundColor();
+    void setBackgroundColor(const Vec3f& color);
+
     void loadMesh(const char* meshName, MeshBase* mesh);
     template<class Vertex>
     void loadMesh(const char* filename, const char* meshname, bool loadvt = false, bool loadvn = false) {

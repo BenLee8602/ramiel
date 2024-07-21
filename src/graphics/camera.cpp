@@ -19,9 +19,12 @@ namespace {
     float z0 = 0.2f;
     float z1 = 1000.0f;
 
-    Mat4x4f transform = id<float, 4>();
+    Mat4x4f cameraTransform = id<float, 4>();
 
-    Vec3f backgroundColor = Vec3f();
+
+    void calcCameraTransform() {
+        cameraTransform = matmat(translate(-pos), rotate(rot));
+    }
     
 }
 
@@ -65,10 +68,18 @@ namespace ramiel {
 
     void setPos(const Vec3f& pos) {
         ::pos = pos;
+        calcCameraTransform();
     }
 
     void setRot(const Vec3f& rot) {
         ::rot = rot;
+        calcCameraTransform();
+    }
+
+    void setPosRot(const Vec3f& pos, const Vec3f& rot) {
+        ::pos = pos;
+        ::rot = rot;
+        calcCameraTransform();
     }
 
 
@@ -101,7 +112,7 @@ namespace ramiel {
 
     Vec3f getCameraCoord(const Vec3f& in) {
         Vec4f in4 = { in[X], in[Y], in[Z], 1 };
-        Vec4f out4 = matvec(transform, in4);
+        Vec4f out4 = matvec(cameraTransform, in4);
         return { out4[X], out4[Y], out4[Z] };
     }
 
@@ -111,42 +122,6 @@ namespace ramiel {
         out[X] = std::floor(in[X] * focalLength / in[Z] + halfRes[X]);
         out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfRes[Y]);
         return out;
-    }
-
-
-    const Vec3f& getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    void setBackgroundColor(const Vec3f& color) {
-        backgroundColor = color;
-    }
-
-
-    void resetBuffers() {
-        std::fill(color.begin(), color.end(), backgroundColor);
-        std::fill(depth.begin(), depth.end(), z1);
-
-        // temp
-        transform = matmat(translate(-pos), rotate(rot));
-    }
-
-    void clampColorBuffer() {
-        for (auto& c : color) c = min(c, 255.0f);
-    }
-
-
-    void getFrameDEC(int* frame) {
-        for (auto& c : color)
-            *frame++ = ((int)c[R] << 16) + ((int)c[G] << 8) + (int)c[B];
-    }
-
-    void getFrameRGB(uint8_t* frame) {
-        for (auto& c : color) {
-            *frame++ = c[R];
-            *frame++ = c[G];
-            *frame++ = c[B];
-        }
     }
 
 }

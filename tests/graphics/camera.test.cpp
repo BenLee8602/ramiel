@@ -10,21 +10,6 @@ TEST_CASE("camera buffer size", "[camera]") {
 }
 
 
-TEST_CASE("reset buffers", "[camera]") {
-    setRes({ 2, 1 });
-    setBackgroundColor({ 255, 0, 255 });
-    setZ1(10.0f);
-    resetBuffers();
-    
-    auto color = getColorBuffer();
-    auto depth = getDepthBuffer();
-    REQUIRE(color[0] == Vec3f{ 255, 0, 255 });
-    REQUIRE(color[1] == Vec3f{ 255, 0, 255 });
-    REQUIRE(depth[0] == 10.0f);
-    REQUIRE(depth[1] == 10.0f);
-}
-
-
 TEST_CASE("camera coordinates", "[camera]") {
     Vec3f in;
     Vec3f expected;
@@ -33,28 +18,24 @@ TEST_CASE("camera coordinates", "[camera]") {
     expected = { -4.8f, 2.3f, 7.6f };
     setRot({ 0.0f, 0.0f, 0.0f });
     setPos({ 0.0f, 0.0f, 0.0f });
-    resetBuffers();
     REQUIRE(equal(getCameraCoord(in), expected));
 
     in = { 9.9f, -5.3f, -9.7f };
     expected = { 10.1742f, 6.55266f, 8.58715f };
     setRot({ -5.4f, -1.3f, -4.5f });
     setPos({ 0.0f, 0.0f, 0.0f });
-    resetBuffers();
     REQUIRE(equal(getCameraCoord(in), expected));
 
     in = { -2.1f, 6.8f, 0.5f };
     expected = { -7.9f, 15.3f, 2.1f };
     setRot({ 0.0f, 0.0f, 0.0f });
     setPos({ 5.8f, -8.5f, -1.6f });
-    resetBuffers();
     REQUIRE(equal(getCameraCoord(in), expected));
 
     in = { 2.5f, -6.6f, -3.1f };
     expected = { -2.05688f, 5.63915f, 12.0108f };
     setRot({ -9.3f, 5.6f, 3.8f });
     setPos({ -8.7f, -6.9f, 4.3f });
-    resetBuffers();
     REQUIRE(equal(getCameraCoord(in), expected));
 }
 
@@ -85,51 +66,4 @@ TEST_CASE("screen coordinates", "[camera]") {
     in = { -2.0f, 5.6f, 12.0f };
     expected = { 1156, 1065 };
     REQUIRE(getScreenCoord(in) == expected);
-}
-
-
-TEST_CASE("clamp color buffer", "[camera]") {
-    setRes({ 2, 1 });
-    auto color = getColorBuffer();
-    color[0] = { 255, 0, 255 };
-    color[1] = { 300, 255, 100 };
-    clampColorBuffer();
-    REQUIRE(color[0] == Vec3f{ 255, 0, 255 });
-    REQUIRE(color[1] == Vec3f{ 255, 255, 100 });
-}
-
-
-TEST_CASE("get frame in rgb format", "[camera]") {
-    uint8_t* rgb = new uint8_t[6]();
-
-    setRes({ 2, 1 });
-    auto color = getColorBuffer();
-    color[0] = { 10, 3, 204 };
-    color[1] = { 122, 99, 255 };
-    getFrameRGB(rgb);
-
-    REQUIRE(rgb[0] == 10);
-    REQUIRE(rgb[1] == 3);
-    REQUIRE(rgb[2] == 204);
-    REQUIRE(rgb[3] == 122);
-    REQUIRE(rgb[4] == 99);
-    REQUIRE(rgb[5] == 255);
-
-    delete[] rgb;
-}
-
-
-TEST_CASE("get frame in dec format", "[camera]") {
-    int* dec = new int[2]();
-
-    setRes({ 2, 1 });
-    auto color = getColorBuffer();
-    color[0] = { 10, 204, 3 };
-    color[1] = { 122, 99, 255 };
-    getFrameDEC(dec);
-    
-    REQUIRE(dec[0] == 707587);
-    REQUIRE(dec[1] == 8020991);
-
-    delete[] dec;
 }

@@ -3,6 +3,7 @@ using namespace ramiel;
 
 namespace {
 
+    Vec3f backgroundColor = Vec3f();
     Vec3f ambientLight = Vec3f();
 
     std::unordered_map<std::string, MeshBase*> meshes;
@@ -18,6 +19,15 @@ namespace {
 }
 
 namespace ramiel {
+
+    const Vec3f& getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    void setBackgroundColor(const Vec3f& color) {
+        backgroundColor = color;
+    }
+
 
     void loadMesh(const char* meshName, MeshBase* mesh) {
         meshes[meshName] = mesh;
@@ -81,10 +91,15 @@ namespace ramiel {
 
 
     void renderFrame() {
-        resetBuffers();
+        std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
+        std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
+
         for (auto& e : entities) e->run();
         for (auto& e : effects)  e->run();
-        clampColorBuffer();
+
+        auto color = getColorBuffer();
+        for (size_t i = 0; i < getBufferSize(); ++i)
+            color[i] = min(color[i], 255.0f);
     }
 
 

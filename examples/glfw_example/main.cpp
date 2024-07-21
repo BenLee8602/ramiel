@@ -91,6 +91,16 @@ void cameraControls(GLFWwindow* window, float dtime) {
 }
 
 
+void getFrameRGB(uint8_t* frame) {
+    auto color = getColorBuffer();
+    for (size_t i = 0; i < getBufferSize(); ++i) {
+        *frame++ = color[i][R];
+        *frame++ = color[i][G];
+        *frame++ = color[i][B];
+    }
+}
+
+
 int main() {
     if (!glfwInit()) return -1;
 
