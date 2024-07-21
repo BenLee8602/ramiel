@@ -3,7 +3,6 @@ using namespace ramiel;
 
 namespace {
 
-    Camera camera;
     Vec3f ambientLight = Vec3f();
 
     std::unordered_map<std::string, MeshBase*> meshes;
@@ -19,11 +18,6 @@ namespace {
 }
 
 namespace ramiel {
-
-    Camera& cam() {
-        return camera;
-    }
-
 
     void loadMesh(const char* meshName, MeshBase* mesh) {
         meshes[meshName] = mesh;
@@ -74,7 +68,7 @@ namespace ramiel {
         return LightingListSpecular(
             ambientLight,
             lights,
-            camera.pos,
+            getPos(),
             specularExponent,
             specularIntensity
         );
@@ -87,10 +81,10 @@ namespace ramiel {
 
 
     void renderFrame() {
-        camera.resetBuffers();
-        for (auto& e : entities) e->run(camera);
-        for (auto& e : effects)  e->run(camera);
-        camera.clampColorBuffer();
+        resetBuffers();
+        for (auto& e : entities) e->run();
+        for (auto& e : effects)  e->run();
+        clampColorBuffer();
     }
 
 

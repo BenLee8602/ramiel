@@ -5,63 +5,41 @@
 
 namespace ramiel {
 
-    class Camera {
-        Vec2u res;
-        Vec2f halfRes;
-        size_t bufferSize;
-        float fov;
-        float focalLength;
-        std::vector<Vec3f> color;
-        std::vector<float> depth;
-    public:
-        Vec3f pos;
-        Vec3f rot;
-        Mat4x4f transform;
-        Vec3f backgroundColor;
-        float znear;
-        float zfar;
+    const Vec3f& getPos();
+    const Vec3f& getRot();
 
-        Camera() :
-            res(Vec2u()),
-            halfRes(Vec2f()),
-            bufferSize(0),
-            fov(1.57f),
-            focalLength(0.0f),
-            pos(Vec3f()),
-            rot(Vec3f()),
-            backgroundColor(Vec3f()),
-            znear(0.2f),
-            zfar(1000.0f)
-        {}
+    void setPos(const Vec3f& pos);
+    void setRot(const Vec3f& rot);
 
-        size_t getBufferSize() const;
-        const Vec2u& getRes() const;
-        void setRes(Vec2u size);
+    const Vec3f& getBackgroundColor();
+    void setBackgroundColor(const Vec3f& color);
 
-        float getFov() const;
-        void setFov(float fov);
+    float getZ0();
+    float getZ1();
 
-        void resetBuffers();
+    void setZ0(float z0);
+    void setZ1(float z1);
+    
+    size_t getBufferSize();
+    const Vec2u& getRes();
+    void setRes(Vec2u size);
 
-        Vec3f getCameraCoord(const Vec3f& in) const;
-        Vec2f getScreenCoord(const Vec3f& in) const;
+    float getFov();
+    void setFov(float fov);
 
-        typedef std::vector<Vec3f>::iterator ColorBufferIterator;
-        typedef std::vector<float>::iterator DepthBufferIterator;
-        ColorBufferIterator getColorBuffer();
-        DepthBufferIterator getDepthBuffer();
+    void resetBuffers();
 
-        void clampColorBuffer();
+    Vec3f getCameraCoord(const Vec3f& in);
+    Vec2f getScreenCoord(const Vec3f& in);
 
-        void getFrameDEC(int* frame) const;
-        void getFrameRGB(uint8_t* frame) const;
-    };
+    typedef std::vector<Vec3f>::iterator ColorBufferIterator;
+    typedef std::vector<float>::iterator DepthBufferIterator;
+    ColorBufferIterator getColorBuffer();
+    DepthBufferIterator getDepthBuffer();
 
+    void clampColorBuffer();
 
-    class CameraModifier {
-    public:
-        virtual void run(Camera& camera) const = 0;
-        virtual ~CameraModifier() {}
-    };
+    void getFrameDEC(int* frame);
+    void getFrameRGB(uint8_t* frame);
 
 }

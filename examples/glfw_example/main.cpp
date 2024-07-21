@@ -11,76 +11,83 @@ constexpr float cameraSpeedFaster = 10.0f;
 constexpr float cameraRotationSpeed = 1.57079f;
 
 
-void cameraControls(GLFWwindow* window, float dtime, Camera& camera) {
+void cameraControls(GLFWwindow* window, float dtime) {
+    // reset pos and rot
+    if (glfwGetKey(window, GLFW_KEY_Q)) {
+        setPos(Vec3f());
+        setRot(Vec3f());
+        return;
+    }
+
     // move faster
     float cameraSpeed = (
         glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) ?
         cameraSpeedFaster : cameraSpeedNormal
     );
-    float pos = cameraSpeed * dtime;
-    float rot = cameraRotationSpeed * dtime;
+    float dPos = cameraSpeed * dtime;
+    float dRot = cameraRotationSpeed * dtime;
 
-    // reset pos and rot
-    if (glfwGetKey(window, GLFW_KEY_Q)) {
-        camera.pos = Vec3f();
-        camera.rot = Vec3f();
-    }
+    Vec3f pos = getPos();
+    Vec3f rot = getRot();
 
     // move left
     if (glfwGetKey(window, GLFW_KEY_A)) {
-        camera.pos[X] -= pos * std::cos(camera.rot[Y]);
-        camera.pos[Z] -= pos * std::sin(camera.rot[Y]);
+        pos[X] -= dPos * std::cos(rot[Y]);
+        pos[Z] -= dPos * std::sin(rot[Y]);
     }
 
     // move right
     if (glfwGetKey(window, GLFW_KEY_D)) {
-        camera.pos[X] += pos * std::cos(camera.rot[Y]);
-        camera.pos[Z] += pos * std::sin(camera.rot[Y]);
+        pos[X] += dPos * std::cos(rot[Y]);
+        pos[Z] += dPos * std::sin(rot[Y]);
     }
 
     // move down
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
-        camera.pos[Y] -= pos;
+        pos[Y] -= dPos;
     }
 
     // move up
     if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-        camera.pos[Y] += pos;
+        pos[Y] += dPos;
     }
 
     // move backward
     if (glfwGetKey(window, GLFW_KEY_S)) {
-        camera.pos[X] += pos * std::sin( camera.rot[Y]);
-        camera.pos[Y] += pos * std::sin(-camera.rot[X]);
-        camera.pos[Z] -= pos * std::cos( camera.rot[Y]);
+        pos[X] += dPos * std::sin( rot[Y]);
+        pos[Y] += dPos * std::sin(-rot[X]);
+        pos[Z] -= dPos * std::cos( rot[Y]);
     }
 
     // move forward
     if (glfwGetKey(window, GLFW_KEY_W)) {
-        camera.pos[X] -= pos * std::sin( camera.rot[Y]);
-        camera.pos[Y] -= pos * std::sin(-camera.rot[X]);
-        camera.pos[Z] += pos * std::cos( camera.rot[Y]);
+        pos[X] -= dPos * std::sin( rot[Y]);
+        pos[Y] -= dPos * std::sin(-rot[X]);
+        pos[Z] += dPos * std::cos( rot[Y]);
     }
 
     // turn down
     if (glfwGetKey(window, GLFW_KEY_DOWN)) {
-        camera.rot[X] = std::max(camera.rot[X] - rot, -1.57079f);
+        rot[X] = std::max(rot[X] - dRot, -1.57079f);
     }
 
     // turn up
     if (glfwGetKey(window, GLFW_KEY_UP)) {
-        camera.rot[X] = std::min(camera.rot[X] + rot, 1.57079f);
+        rot[X] = std::min(rot[X] + dRot, 1.57079f);
     }
 
     // turn right
     if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-        camera.rot[Y] -= rot;
+        rot[Y] -= dRot;
     }
 
     // turn left
     if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-        camera.rot[Y] += rot;
+        rot[Y] += dRot;
     }
+
+    setPos(pos);
+    setRot(rot);
 }
 
 
@@ -94,7 +101,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
 
-    cam().setRes({ width, height });
+    setRes({ width, height });
 
     loadMesh<MeshVertex>("examples/assets/models/terrain.obj", "terrain");
     loadMesh<MeshVertexT>("examples/assets/models/cube.obj", "cube");
@@ -125,10 +132,10 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         frameStart = glfwGetTime();
 
-        cameraControls(window, (float)dtime, cam());
+        cameraControls(window, (float)dtime);
         simulatePhysics(dtime);
         renderFrame();
-        cam().getFrameRGB(frame);
+        getFrameRGB(frame);
         
         glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, frame);
         glfwSwapBuffers(window);

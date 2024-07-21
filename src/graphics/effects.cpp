@@ -3,47 +3,47 @@
 
 namespace ramiel {
 
-    void Brightness::run(Camera& camera) const {
-        auto color = camera.getColorBuffer();
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+    void Brightness::run() const {
+        auto color = getColorBuffer();
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             color[i] += brightness;
             color[i] = min(max(color[i], 0.0f), 255.0f);
         }
     }
 
 
-    void ColorFilter::run(Camera& camera) const {
-        auto color = camera.getColorBuffer();
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+    void ColorFilter::run() const {
+        auto color = getColorBuffer();
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             color[i] *= this->color;
             color[i] = min(color[i], 255.0f);
         }
     };
 
 
-    void Contrast::run(Camera& camera) const {
-        auto color = camera.getColorBuffer();
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+    void Contrast::run() const {
+        auto color = getColorBuffer();
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             color[i] = (color[i] - 127.5f) * contrast + 127.5f;
             color[i] = min(max(color[i], 0.0f), 255.0f);
         }
     }
 
 
-    void Exposure::run(Camera& camera) const {
-        auto color = camera.getColorBuffer();
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+    void Exposure::run() const {
+        auto color = getColorBuffer();
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             color[i] *= exposure;
             color[i] = min(color[i], 255.0f);
         }
     }
 
 
-    void Fog::run(Camera& camera) const {
-        auto color = camera.getColorBuffer();
-        auto depth = camera.getDepthBuffer();
+    void Fog::run() const {
+        auto color = getColorBuffer();
+        auto depth = getDepthBuffer();
 
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             if (depth[i] <= fogStart) continue;
             if (depth[i] >= fogEnd) {
                 color[i] = fogColor;
@@ -75,11 +75,11 @@ namespace ramiel {
     }
 
     // extended reinhard applied to luminance
-    void ToneMapping::run(Camera& camera) const {
-        auto color = camera.getColorBuffer();
+    void ToneMapping::run() const {
+        auto color = getColorBuffer();
 
         float maxLum = luminance(*std::max_element(
-            color, color + camera.getBufferSize(),
+            color, color + getBufferSize(),
             [](const Vec3f& p1, const Vec3f& p2) {
                 return luminance(p1) < luminance(p2);
             }
@@ -88,7 +88,7 @@ namespace ramiel {
         if (maxLum <= 1.0f) return;
 
         float ml = 1.0f / (maxLum * maxLum);
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             float oldLum = luminance(color[i]);
             float newLum = oldLum * (1.0f + oldLum * ml) / (1.0f + oldLum);
             changeLuminance(color[i], oldLum, newLum);
@@ -96,15 +96,15 @@ namespace ramiel {
     }
 
 
-    void Saturation::run(Camera& camera) const {
+    void Saturation::run() const {
         constexpr Vec3f rgbToLum = {
             0.2126f,
             0.7152f,
             0.0722f
         };
 
-        auto color = camera.getColorBuffer();
-        for (size_t i = 0; i < camera.getBufferSize(); ++i) {
+        auto color = getColorBuffer();
+        for (size_t i = 0; i < getBufferSize(); ++i) {
             float lum = dot(color[i], rgbToLum);
             Vec3f grey = { lum, lum, lum };
             color[i] = color[i] * saturation + grey * (1.0f - saturation);

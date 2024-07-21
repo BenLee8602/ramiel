@@ -4,14 +4,17 @@
 
 namespace ramiel {
 
-    typedef CameraModifier Effect;
+    class Effect {
+    public:
+        virtual void run() const = 0;
+    };
 
 
     class Brightness : public Effect {
         float brightness;
     public:
         Brightness(float brightness) : brightness(brightness) {}
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 
@@ -19,7 +22,7 @@ namespace ramiel {
         Vec3f color;
     public:
         ColorFilter(Vec3f color) : color(color / 255.0f) {}
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 
@@ -27,7 +30,7 @@ namespace ramiel {
         float contrast;
     public:
         Contrast(float contrast) : contrast(contrast) {}
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 
@@ -35,7 +38,7 @@ namespace ramiel {
         float exposure;
     public:
         Exposure(float exposure) : exposure(exposure) {}
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 
@@ -55,13 +58,13 @@ namespace ramiel {
             fogEnd(fogEnd),
             fogFactor(1.0f / (fogEnd - fogStart))
         {}
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 
     class ToneMapping : public Effect {
     public:
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 
@@ -69,7 +72,7 @@ namespace ramiel {
         float saturation;
     public:
         Saturation(float saturation) : saturation(saturation) {}
-        virtual void run(Camera& camera) const override;
+        virtual void run() const override;
     };
 
 }
