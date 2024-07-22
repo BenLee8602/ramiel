@@ -22,10 +22,12 @@ namespace ramiel {
     void setPosRot(const Vec3f& pos, const Vec3f& rot);
 
     float getFov();
+    float getFocalLen();
     float getZ0();
     float getZ1();
 
     void setFov(float fov);
+    void setFocalLen(float focalLen);
     void setZ0(float z0);
     void setZ1(float z1);
 

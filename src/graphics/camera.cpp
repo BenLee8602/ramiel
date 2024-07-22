@@ -14,8 +14,8 @@ namespace {
     Vec3f pos = Vec3f();
     Vec3f rot = Vec3f();
 
-    float fov = 1.57f;
-    float focalLength = 1.0f;
+    float fov = 1.570796f;
+    float focalLen = 1.0f;
     float z0 = 0.2f;
     float z1 = 1000.0f;
 
@@ -38,7 +38,7 @@ namespace ramiel {
         res = newSize;
         halfRes = res / 2.0f;
         bufferSize = res[X] * res[Y];
-        focalLength = halfRes[X] / std::tan(fov / 2.0f);
+        focalLen = halfRes[X] / std::tan(fov / 2.0f);
         color = std::vector<Vec3f>(bufferSize);
         depth = std::vector<float>(bufferSize);
     }
@@ -87,6 +87,10 @@ namespace ramiel {
         return fov;
     }
 
+    float getFocalLen() {
+        return focalLen;
+    }
+
     float getZ0() {
         return z0;
     }
@@ -98,7 +102,12 @@ namespace ramiel {
 
     void setFov(float deg) {
         fov = deg * 0.01745f;
-        focalLength = halfRes[X] / std::tan(fov / 2.0f);
+        focalLen = halfRes[X] / std::tan(fov / 2.0f);
+    }
+
+    void setFocalLen(float focalLen) {
+        ::focalLen = std::max(0.0f, focalLen);
+        ::fov = 2.0f * std::atan(halfRes[X] / ::focalLen);
     }
 
     void setZ0(float z0) {
@@ -119,8 +128,8 @@ namespace ramiel {
     Vec2f getScreenCoord(const Vec3f& in) {
         if (in[Z] == 0.0f) return Vec2f();
         Vec2f out = Vec2f();
-        out[X] = std::floor(in[X] * focalLength / in[Z] + halfRes[X]);
-        out[Y] = std::floor(in[Y] * focalLength / in[Z] + halfRes[Y]);
+        out[X] = std::floor(in[X] * focalLen / in[Z] + halfRes[X]);
+        out[Y] = std::floor(in[Y] * focalLen / in[Z] + halfRes[Y]);
         return out;
     }
 
