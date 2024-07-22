@@ -3,7 +3,6 @@
 #include "../src/graphics/camera.h"
 #include "../src/graphics/effects.h"
 #include "../src/graphics/entity.h"
-#include "../src/graphics/graphics.h"
 #include "../src/graphics/light.h"
 #include "../src/graphics/pixelshader.h"
 #include "../src/graphics/triangle.h"
