@@ -3,7 +3,6 @@ add_library(${PROJECT_NAME} STATIC
     physics/collisionhandle.cpp 
     physics/collisiondispatch.cpp 
     graphics/effects.cpp 
-    graphics/graphics.cpp 
     file/image.cpp 
     graphics/light.cpp 
     file/objloader.cpp 
