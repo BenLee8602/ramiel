@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cmath>
 #include "camera.h"
 using namespace ramiel;
@@ -101,20 +102,24 @@ namespace ramiel {
 
 
     void setFov(float deg) {
+        assert(deg >= 1e-6 && deg <= 180.0f && "invalid fov");
         fov = deg * 0.01745f;
         focalLen = halfRes[X] / std::tan(fov / 2.0f);
     }
 
     void setFocalLen(float focalLen) {
+        assert(focalLen >= 1e-6 && "invalid focal length");
         ::focalLen = std::max(0.0f, focalLen);
         ::fov = 2.0f * std::atan(halfRes[X] / ::focalLen);
     }
 
     void setZ0(float z0) {
+        assert(z0 >= 1e-6 && z0 <= ::z1 && "invalid z0");
         ::z0 = z0;
     }
 
     void setZ1(float z1) {
+        assert(z1 >= ::z0 && "invalid z1");
         ::z1 = z1;
     }
 
