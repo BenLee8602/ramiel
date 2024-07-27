@@ -61,12 +61,11 @@ namespace ramiel {
             Vec3f pos = (v[0].worldPos + v[1].worldPos + v[2].worldPos) / 3.0f;
             Vec3f normal = getNormal(v);
             light = lightingList.getAllLight(pos, normal);
-            for (size_t i = 0; i < 3; ++i) v[i].texturePos *= v[i].zinv;
         }
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            return light * texture->get(v.texturePos / v.zinv);
+            return light * texture->get(v.texturePos);
         }
     };
 
@@ -74,9 +73,7 @@ namespace ramiel {
     class PS_PerVertex {
     public:
         template<class Vertex_In>
-        void init(Vertex_In v[3]) {
-            return;
-        }
+        void init(Vertex_In v[3]) {}
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
@@ -91,13 +88,11 @@ namespace ramiel {
         PS_PerVertex_Textured(const Texture* texture) : texture(texture) {}
 
         template<class Vertex_In>
-        void init(Vertex_In v[3]) {
-            for (size_t i = 0; i < 3; ++i) v[i].texturePos *= v[i].zinv;
-        }
+        void init(Vertex_In v[3]) {}
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            return v.light * texture->get(v.texturePos / v.zinv);
+            return v.light * texture->get(v.texturePos);
         }
     };
 
@@ -119,13 +114,11 @@ namespace ramiel {
         template<class Vertex_In>
         void init(Vertex_In v[3]) {
             normal = getNormal(v);
-            for (int i = 0; i < 3; ++i) v[i].worldPos *= v[i].zinv;
         }
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f pos = v.worldPos / v.zinv;
-            Vec3f color = lightingList.getAllLight(pos, normal);
+            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
             return color * surfaceColor;
         }
     };
@@ -148,17 +141,12 @@ namespace ramiel {
         template<class Vertex_In>
         void init(Vertex_In v[3]) {
             normal = getNormal(v);
-            for (int i = 0; i < 3; ++i) {
-                v[i].worldPos *= v[i].zinv;
-                v[i].texturePos *= v[i].zinv;
-            }
         }
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f pos = v.worldPos / v.zinv;
-            Vec3f color = lightingList.getAllLight(pos, normal);
-            return color * texture->get(v.texturePos / v.zinv);
+            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
+            return color * texture->get(v.texturePos);
         }
     };
 
@@ -199,19 +187,13 @@ namespace ramiel {
             normal    = normalize(normal);
             tangent   = normalize(tangent);
             bitangent = normalize(bitangent);
-
-            for (int i = 0; i < 3; ++i) {
-                v[i].worldPos *= v[i].zinv;
-                v[i].texturePos *= v[i].zinv;
-            }
         }
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f normal_in = normalMap->get(v.texturePos / v.zinv);
+            Vec3f normal_in = normalMap->get(v.texturePos);
             Vec3f normal_out = tangent * normal_in[X] + bitangent * normal_in[Y] + normal * normal_in[Z];
-
-            Vec3f pos = v.worldPos / v.zinv;
+            Vec3f pos = v.worldPos;
             Vec3f color = lightingList.getAllLight(pos, normal_out);
             return color * surfaceColor;
         }
@@ -254,21 +236,14 @@ namespace ramiel {
             normal    = normalize(normal);
             tangent   = normalize(tangent);
             bitangent = normalize(bitangent);
-            
-            for (int i = 0; i < 3; ++i) {
-                v[i].worldPos *= v[i].zinv;
-                v[i].texturePos *= v[i].zinv;
-            }
         }
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f normal_in = normalMap->get(v.texturePos / v.zinv);
+            Vec3f normal_in = normalMap->get(v.texturePos);
             Vec3f normal_out = tangent * normal_in[X] + bitangent * normal_in[Y] + normal * normal_in[Z];
-
-            Vec3f pos = v.worldPos / v.zinv;
-            Vec3f color = lightingList.getAllLight(pos, normal_out);
-            return color * texture->get(v.texturePos / v.zinv);
+            Vec3f color = lightingList.getAllLight(v.worldPos, normal_out);
+            return color * texture->get(v.texturePos);
         }
     };
 
@@ -286,16 +261,12 @@ namespace ramiel {
         {}
 
         template<class Vertex_In>
-        void init(Vertex_In v[3]) {
-            for (int i = 0; i < 3; ++i) v[i].worldPos *= v[i].zinv;
-        }
+        void init(Vertex_In v[3]) {}
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
             Vec3f normal = normalize(v.normal);
-
-            Vec3f pos = v.worldPos / v.zinv;
-            Vec3f color = lightingList.getAllLight(pos, normal);
+            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
             return color * surfaceColor;
         }
     };
@@ -314,20 +285,13 @@ namespace ramiel {
         {}
 
         template<class Vertex_In>
-        void init(Vertex_In v[3]) {
-            for (int i = 0; i < 3; ++i) {
-                v[i].worldPos *= v[i].zinv;
-                v[i].texturePos *= v[i].zinv;
-            }
-        }
+        void init(Vertex_In v[3]) {}
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
             Vec3f normal = normalize(v.normal);
-
-            Vec3f pos = v.worldPos / v.zinv;
-            Vec3f color = lightingList.getAllLight(pos, normal);
-            return color * texture->get(v.texturePos / v.zinv);
+            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
+            return color * texture->get(v.texturePos);
         }
     };
 

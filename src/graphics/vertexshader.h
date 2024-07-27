@@ -1,5 +1,14 @@
 #pragma once
 
+#include <vertextypes/VtFlat.h>
+#include <vertextypes/VtFlatPixel.h>
+#include <vertextypes/VtFlatPixelTxt.h>
+#include <vertextypes/VtFlatTxt.h>
+#include <vertextypes/VtSmooth.h>
+#include <vertextypes/VtSmoothPixel.h>
+#include <vertextypes/VtSmoothPixelTxt.h>
+#include <vertextypes/VtSmoothTxt.h>
+
 #include <ramiel/ramiel.h>
 #include "vertex.h"
 #include "light.h"
@@ -12,16 +21,16 @@ namespace ramiel {
     public:
         VS_PerTri(PhysicsObject* phys) : phys(phys) {}
 
-        typedef Vertex_PerTri Vertex_Out;
+        using Vertex_Out = example::VtFlat;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
 
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(out.worldPos);
+            out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
+
             return out;
         }
     };
@@ -32,18 +41,17 @@ namespace ramiel {
     public:
         VS_PerTri_Textured(PhysicsObject* phys) : phys(phys) {}
 
-        typedef Vertex_PerTri_Textured Vertex_Out;
+        using Vertex_Out = example::VtFlatTxt;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
-            
-            out.cameraPos = getCameraCoord(out.worldPos);
-            out.zinv = 1.0f / out.cameraPos[Z];
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
+
+            out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
             out.texturePos = in.txt;
+
             return out;
         }
     };
@@ -64,17 +72,17 @@ namespace ramiel {
             phys(phys)
         {}
 
-        typedef Vertex_PerVertex Vertex_Out;
+        using Vertex_Out = example::VtSmooth;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            Vec3f worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(worldPos);
+            Vec3f worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
             out.color = surfaceColor * lightingList.getAllLight(worldPos, in.nml);
+
             return out;
         }
     };
@@ -92,19 +100,18 @@ namespace ramiel {
             lightingList(lightingList)
         {}
 
-        typedef Vertex_PerVertex_Textured Vertex_Out;
+        using Vertex_Out = example::VtSmoothTxt;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            Vec3f worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(worldPos);
+            Vec3f worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
             out.light = lightingList.getAllLight(worldPos, in.nml);
-            out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.txt;
+
             return out;
         }
     };
@@ -115,17 +122,16 @@ namespace ramiel {
     public:
         VS_PerPixel(PhysicsObject* phys) : phys(phys) {}
 
-        typedef Vertex_PerPixel Vertex_Out;
+        using Vertex_Out = example::VtFlatPixel;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(out.worldPos);
-            out.zinv = 1.0f / out.cameraPos[Z];
+            out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
+
             return out;
         }
     };
@@ -136,18 +142,17 @@ namespace ramiel {
     public:
         VS_PerPixel_Textured(PhysicsObject* phys) : phys(phys) {}
 
-        typedef Vertex_PerPixel_Textured Vertex_Out;
+        using Vertex_Out = example::VtFlatPixelTxt;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(out.worldPos);
-            out.zinv = 1.0f / out.cameraPos[Z];
+            out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
             out.texturePos = in.txt;
+
             return out;
         }
     };
@@ -158,18 +163,17 @@ namespace ramiel {
     public:
         VS_PerPixel_Smooth(PhysicsObject* phys) : phys(phys) {}
 
-        typedef Vertex_PerPixel_Smooth Vertex_Out;
+        using Vertex_Out = example::VtSmoothPixel;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(out.worldPos);
+            out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
             out.normal = in.nml;
-            out.zinv = 1.0f / out.cameraPos[Z];
+
             return out;
         }
     };
@@ -180,19 +184,18 @@ namespace ramiel {
     public:
         VS_PerPixel_Smooth_Textured(PhysicsObject* phys) : phys(phys) {}
 
-        typedef Vertex_PerPixel_Smooth_Textured Vertex_Out;
+        using Vertex_Out = example::VtSmoothPixelTxt;
         template<class Vertex_In>
         Vertex_Out operator()(const Vertex_In& in) const {
             Vertex_Out out;
             
             // temp, should only get transform once per frame
-            Vec4f wp4 = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
-            out.worldPos = { wp4[X], wp4[Y], wp4[Z] };
+            out.pos = matvec(phys->getTransform(), { in.pos[X], in.pos[Y], in.pos[Z], 1 });
 
-            out.cameraPos = getCameraCoord(out.worldPos);
+            out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
             out.normal = in.nml;
-            out.zinv = 1.0f / out.cameraPos[Z];
             out.texturePos = in.txt;
+
             return out;
         }
     };

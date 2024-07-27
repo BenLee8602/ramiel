@@ -124,17 +124,17 @@ namespace ramiel {
     }
 
 
-    Vec3f getCameraCoord(const Vec3f& in) {
-        Vec4f in4 = { in[X], in[Y], in[Z], 1 };
-        Vec4f out4 = matvec(cameraTransform, in4);
-        return { out4[X], out4[Y], out4[Z] };
+    Vec4f getCameraCoord(const Vec4f& in) {
+        return matvec(cameraTransform, in);
     }
 
-    Vec2f getScreenCoord(const Vec3f& in) {
-        if (in[Z] == 0.0f) return Vec2f();
-        Vec2f out = Vec2f();
+    Vec4f getScreenCoord(const Vec4f& in) {
+        if (in[Z] == 0.0f) return Vec4f();
+        Vec4f out = Vec4f();
         out[X] = std::floor(in[X] * focalLen / in[Z] + halfRes[X]);
         out[Y] = std::floor(in[Y] * focalLen / in[Z] + halfRes[Y]);
+        out[Z] = in[Z];
+        out[W] = in[W];
         return out;
     }
 

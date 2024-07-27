@@ -1,107 +1,31 @@
 #pragma once
 
+#include <type_traits>
 #include <ramiel/math.h>
 
 namespace ramiel {
 
-    struct Vertex_PerTri {
-        Vec3f worldPos;
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        Vertex_PerTri operator+(const Vertex_PerTri& other) const;
-        Vertex_PerTri operator-(const Vertex_PerTri& other) const;
-        Vertex_PerTri operator*(float n) const;
-        Vertex_PerTri operator/(float n) const;
-        Vertex_PerTri& operator+=(const Vertex_PerTri& other);
-    };
+    template<class T, typename = void>
+    struct IsValidVertex : std::false_type {};
 
-    struct Vertex_PerTri_Textured {
-        Vec3f worldPos;
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        float zinv;
-        Vec2f texturePos;
-        Vertex_PerTri_Textured operator+(const Vertex_PerTri_Textured& other) const;
-        Vertex_PerTri_Textured operator-(const Vertex_PerTri_Textured& other) const;
-        Vertex_PerTri_Textured operator*(float n) const;
-        Vertex_PerTri_Textured operator/(float n) const;
-        Vertex_PerTri_Textured& operator+=(const Vertex_PerTri_Textured& other);
-    };
+    template<class T>
+    struct IsValidVertex<T, std::void_t<decltype(T{}.pos)>>
+    : std::conjunction<
+        std::is_aggregate<T>,
+        std::is_same<Vec4f, decltype(T{}.pos)>,
+        std::bool_constant<(offsetof(T, pos) == 0)>
+    > {};
 
-    struct Vertex_PerVertex {
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        Vec3f color;
-        Vertex_PerVertex operator+(const Vertex_PerVertex& other) const;
-        Vertex_PerVertex operator-(const Vertex_PerVertex& other) const;
-        Vertex_PerVertex operator*(float n) const;
-        Vertex_PerVertex operator/(float n) const;
-        Vertex_PerVertex& operator+=(const Vertex_PerVertex& other);
-    };
-
-    struct Vertex_PerVertex_Textured {
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        Vec3f light;
-        float zinv;
-        Vec2f texturePos;
-        Vertex_PerVertex_Textured operator+(const Vertex_PerVertex_Textured& other) const;
-        Vertex_PerVertex_Textured operator-(const Vertex_PerVertex_Textured& other) const;
-        Vertex_PerVertex_Textured operator*(float n) const;
-        Vertex_PerVertex_Textured operator/(float n) const;
-        Vertex_PerVertex_Textured& operator+=(const Vertex_PerVertex_Textured& other);
-    };
-
-    struct Vertex_PerPixel {
-        Vec3f worldPos;
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        float zinv;
-        Vertex_PerPixel operator+(const Vertex_PerPixel& other) const;
-        Vertex_PerPixel operator-(const Vertex_PerPixel& other) const;
-        Vertex_PerPixel operator*(float n) const;
-        Vertex_PerPixel operator/(float n) const;
-        Vertex_PerPixel& operator+=(const Vertex_PerPixel& other);
-    };
-
-    struct Vertex_PerPixel_Textured {
-        Vec3f worldPos;
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        float zinv;
-        Vec2f texturePos;
-        Vertex_PerPixel_Textured operator+(const Vertex_PerPixel_Textured& other) const;
-        Vertex_PerPixel_Textured operator-(const Vertex_PerPixel_Textured& other) const;
-        Vertex_PerPixel_Textured operator*(float n) const;
-        Vertex_PerPixel_Textured operator/(float n) const;
-        Vertex_PerPixel_Textured& operator+=(const Vertex_PerPixel_Textured& other);
-    };
-
-    struct Vertex_PerPixel_Smooth {
-        Vec3f worldPos;
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        Vec3f normal;
-        float zinv;
-        Vertex_PerPixel_Smooth operator+(const Vertex_PerPixel_Smooth& other) const;
-        Vertex_PerPixel_Smooth operator-(const Vertex_PerPixel_Smooth& other) const;
-        Vertex_PerPixel_Smooth operator*(float n) const;
-        Vertex_PerPixel_Smooth operator/(float n) const;
-        Vertex_PerPixel_Smooth& operator+=(const Vertex_PerPixel_Smooth& other);
-    };
-
-    struct Vertex_PerPixel_Smooth_Textured {
-        Vec3f worldPos;
-        Vec3f cameraPos;
-        Vec2f screenPos;
-        Vec3f normal;
-        float zinv;
-        Vec2f texturePos;
-        Vertex_PerPixel_Smooth_Textured operator+(const Vertex_PerPixel_Smooth_Textured& other) const;
-        Vertex_PerPixel_Smooth_Textured operator-(const Vertex_PerPixel_Smooth_Textured& other) const;
-        Vertex_PerPixel_Smooth_Textured operator*(float n) const;
-        Vertex_PerPixel_Smooth_Textured operator/(float n) const;
-        Vertex_PerPixel_Smooth_Textured& operator+=(const Vertex_PerPixel_Smooth_Textured& other);
-    };
+    template<class T>
+    void assertValidVertex() {
+        static_assert(
+            IsValidVertex<T>::value,
+            "\na valid vertex type must satisfy the following:\n"
+            "    1. must be an aggregate type\n"
+            "    2. must contain the field \"pos\"\n"
+            "    3. \"pos\" must be of type \"ramiel::Vec4f\"\n"
+            "    4. \"pos\" must be the first field\n"
+        );
+    }
 
 }
