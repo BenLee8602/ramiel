@@ -1,11 +1,17 @@
 #pragma once
 
+#include <ramiel/data.h>
+#include "vertex.h"
+
+#define POS template get<0>()
+
 namespace ramiel {
 
     template<typename Vertex, class PixelShader>
     class Triangle {
+        using VtTuple = AsTuple<Vertex>;
+        VtTuple v[3];
         PixelShader pixelShader;
-        Vertex v[3];
 
         public:
         Triangle(PixelShader pixelShader) : pixelShader(pixelShader) {}
@@ -13,67 +19,69 @@ namespace ramiel {
 
         private:
         void raster() {
-            for (size_t i = 0; i < 3; ++i) v[i].screenPos = getScreenCoord(v[i].cameraPos);
+            for (size_t i = 0; i < 3; ++i) {
+                v[i].POS = getScreenCoord(v[i].POS);
+            }
 
             ColorIt color = getColorBuffer();
             DepthIt depth = getDepthBuffer();
             
-            if (v[0].screenPos[Y] > v[1].screenPos[Y]) std::swap(v[0], v[1]);
-            if (v[0].screenPos[Y] > v[2].screenPos[Y]) std::swap(v[0], v[2]);
-            if (v[1].screenPos[Y] > v[2].screenPos[Y]) std::swap(v[1], v[2]);
+            if (v[0].POS[Y] > v[1].POS[Y]) std::swap(v[0], v[1]);
+            if (v[0].POS[Y] > v[2].POS[Y]) std::swap(v[0], v[2]);
+            if (v[1].POS[Y] > v[2].POS[Y]) std::swap(v[1], v[2]);
 
-            Vertex dy1 = (v[2] - v[0]) / (v[2].screenPos[Y] - v[0].screenPos[Y]);
-            Vertex dy2 = (v[1] - v[0]) / (v[1].screenPos[Y] - v[0].screenPos[Y]);
-            Vertex* dy;
-            if (dy1.screenPos[X] > dy2.screenPos[X]) {
+            VtTuple dy1 = (v[2] - v[0]) / (v[2].POS[Y] - v[0].POS[Y]);
+            VtTuple dy2 = (v[1] - v[0]) / (v[1].POS[Y] - v[0].POS[Y]);
+            VtTuple* dy;
+            if (dy1.POS[X] > dy2.POS[X]) {
                 std::swap(dy1, dy2);
                 dy = &dy1;
             }
             else dy = &dy2;
 
-            int y = std::max<int>(0, v[0].screenPos[Y]);
-            int ymax = std::min<int>(v[1].screenPos[Y], getRes()[Y]);
-            Vertex sc1 = v[0] + dy1 * (float)(y - v[0].screenPos[Y]);
-            Vertex sc2 = v[0] + dy2 * (float)(y - v[0].screenPos[Y]);
+            int y = std::max<int>(0, v[0].POS[Y]);
+            int ymax = std::min<int>(v[1].POS[Y], getRes()[Y]);
+            VtTuple sc1 = v[0] + dy1 * (float)(y - v[0].POS[Y]);
+            VtTuple sc2 = v[0] + dy2 * (float)(y - v[0].POS[Y]);
             
             auto drawHalf = [&]() {
                 for (y; y < ymax; ++y) {
-                    Vertex dx = (sc2 - sc1) / (sc2.screenPos[X] - sc1.screenPos[X]);
+                    VtTuple dx = (sc2 - sc1) / (sc2.POS[X] - sc1.POS[X]);
 
-                    int x = std::max<int>(0, sc1.screenPos[X]);
-                    int xmax = std::min<int>(sc2.screenPos[X], getRes()[X]);
-                    Vertex p = sc1 + dx * (float)(x - sc1.screenPos[X]);
+                    int x = std::max<int>(0, sc1.POS[X]);
+                    int xmax = std::min<int>(sc2.POS[X], getRes()[X]);
+                    VtTuple p = sc1 + dx * (float)(x - sc1.POS[X]);
                     size_t i = getRes()[X] * y + x;
 
                     for (x; x < xmax; ++x) {
-                        if (p.cameraPos[Z] < depth[i]) {
-                            depth[i] = p.cameraPos[Z];
-                            color[i] = pixelShader.draw(p);
+                        if (p.POS[Z] < depth[i]) {
+                            depth[i] = p.POS[Z];
+                            color[i] = pixelShader.draw(reinterpret_cast<const Vertex&>(p));
                         }
                         ++i;
-                        p += dx;
+                        p = p + dx;
                     }
-                    sc1 += dy1;
-                    sc2 += dy2;
+                    sc1 = sc1 + dy1;
+                    sc2 = sc2 + dy2;
                 }
             };
             
             drawHalf();
 
-            ymax = std::min<int>(v[2].screenPos[Y], getRes()[Y]);
-            *dy = (v[2] - v[1]) / (v[2].screenPos[Y] - v[1].screenPos[Y]);
-            sc1 = v[2] - dy1 * (float)(v[2].screenPos[Y] - y);
-            sc2 = v[2] - dy2 * (float)(v[2].screenPos[Y] - y);
+            ymax = std::min<int>(v[2].POS[Y], getRes()[Y]);
+            *dy = (v[2] - v[1]) / (v[2].POS[Y] - v[1].POS[Y]);
+            sc1 = v[2] - dy1 * (float)(v[2].POS[Y] - y);
+            sc2 = v[2] - dy2 * (float)(v[2].POS[Y] - y);
             
             drawHalf();
         }
 
 
         private:
-        void clip1(Vertex& v0, Vertex& v1, Vertex& v2) {
+        void clip1(VtTuple& v0, VtTuple& v1, VtTuple& v2) {
             // ratio of line clipped
-            float c1 = (getZ0() - v1.cameraPos[Z]) / (v0.cameraPos[Z] - v1.cameraPos[Z]);
-            float c2 = (getZ0() - v1.cameraPos[Z]) / (v2.cameraPos[Z] - v1.cameraPos[Z]);
+            float c1 = (getZ0() - v1.POS[Z]) / (v0.POS[Z] - v1.POS[Z]);
+            float c2 = (getZ0() - v1.POS[Z]) / (v2.POS[Z] - v1.POS[Z]);
 
             // new tri formed from quad
             Triangle newtri = Triangle(pixelShader);
@@ -89,10 +97,10 @@ namespace ramiel {
 
 
         private:
-        void clip2(Vertex& v0, Vertex& v1, Vertex& v2) {
+        void clip2(VtTuple& v0, VtTuple& v1, VtTuple& v2) {
             // ratio of line clipped
-            float c1 = (getZ0() - v0.cameraPos[Z]) / (v1.cameraPos[Z] - v0.cameraPos[Z]);
-            float c2 = (getZ0() - v2.cameraPos[Z]) / (v1.cameraPos[Z] - v2.cameraPos[Z]);
+            float c1 = (getZ0() - v0.POS[Z]) / (v1.POS[Z] - v0.POS[Z]);
+            float c2 = (getZ0() - v2.POS[Z]) / (v1.POS[Z] - v2.POS[Z]);
 
             // clip
             v0 = v0 + (v1 - v0) * c1;
@@ -102,19 +110,19 @@ namespace ramiel {
 
         private:
         bool clip() {
-            if (v[0].cameraPos[Z] < getZ0()) {
-                if (v[1].cameraPos[Z] < getZ0()) {
-                    if (v[2].cameraPos[Z] < getZ0()) return false;
+            if (v[0].POS[Z] < getZ0()) {
+                if (v[1].POS[Z] < getZ0()) {
+                    if (v[2].POS[Z] < getZ0()) return false;
                     else clip2(v[1], v[2], v[0]);
                 }
-                else if (v[2].cameraPos[Z] < getZ0()) clip2(v[0], v[1], v[2]);
+                else if (v[2].POS[Z] < getZ0()) clip2(v[0], v[1], v[2]);
                 else clip1(v[2], v[0], v[1]);
             }
-            else if (v[1].cameraPos[Z] < getZ0()) {
-                if (v[2].cameraPos[Z] < getZ0()) clip2(v[2], v[0], v[1]);
+            else if (v[1].POS[Z] < getZ0()) {
+                if (v[2].POS[Z] < getZ0()) clip2(v[2], v[0], v[1]);
                 else clip1(v[0], v[1], v[2]);
             }
-            else if (v[2].cameraPos[Z] < getZ0()) clip1(v[1], v[2], v[0]);
+            else if (v[2].POS[Z] < getZ0()) clip1(v[1], v[2], v[0]);
             return true;
         }
 
@@ -125,10 +133,11 @@ namespace ramiel {
             const Vertex& v1,
             const Vertex& v2
         ) {
-            v[0] = v0;
-            v[1] = v1;
-            v[2] = v2;
-            pixelShader.init(v);
+            assertValidVertex<Vertex>();
+            v[0] = reinterpret_cast<const VtTuple&>(v0);
+            v[1] = reinterpret_cast<const VtTuple&>(v1);
+            v[2] = reinterpret_cast<const VtTuple&>(v2);
+            pixelShader.init(reinterpret_cast<Vertex*>(v));
             if (clip()) raster();
         }
 

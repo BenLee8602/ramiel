@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <ramiel/data.h>
 #include "triangle.h"
 
@@ -32,8 +31,13 @@ namespace ramiel {
         virtual void run() const override {
             // run vertex shader
             const std::vector<Vertex>& v_in = mesh.getVertices();
-            std::vector<typename VertexShader::Vertex_Out> v_out(v_in.size());
-            std::transform(v_in.begin(), v_in.end(), v_out.begin(), vertexShader);
+            const size_t numVertex = v_in.size();
+
+            std::vector<typename VertexShader::Vertex_Out> v_out(numVertex);
+            for (size_t i = 0; i < numVertex; ++i) {
+                v_out[i] = vertexShader(v_in[i]);
+                v_out[i].pos = getCameraCoord(v_out[i].pos);
+            }
 
             const std::vector<Vec3u>& triangles = mesh.getTriangles();
             Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(pixelShader);
@@ -41,9 +45,9 @@ namespace ramiel {
                 // backface culling
                 if (dot(
                     cross(
-                        v_out[t[1]].cameraPos - v_out[t[0]].cameraPos,
-                        v_out[t[2]].cameraPos - v_out[t[0]].cameraPos
-                    ),  v_out[t[0]].cameraPos
+                        v_out[t[1]].pos - v_out[t[0]].pos,
+                        v_out[t[2]].pos - v_out[t[0]].pos
+                    ),  v_out[t[0]].pos
                 ) >= 0.0f) continue;
                 
                 // assemble and draw triangle

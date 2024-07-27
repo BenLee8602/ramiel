@@ -12,6 +12,7 @@ add_executable("${PROJECT_NAME}_test"
     math/transform.test.cpp 
     data/tuple.test.cpp 
     math/vec.test.cpp 
+    graphics/vertex.test.cpp 
     data/voidbuffer.test.cpp 
 )
 target_include_directories(${PROJECT_NAME}_test PRIVATE ${CMAKE_SOURCE_DIR}/deps)

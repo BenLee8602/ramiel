@@ -31,7 +31,7 @@ namespace ramiel {
     void setZ0(float z0);
     void setZ1(float z1);
 
-    Vec3f getCameraCoord(const Vec3f& in);
-    Vec2f getScreenCoord(const Vec3f& in);
+    Vec4f getCameraCoord(const Vec4f& in);
+    Vec4f getScreenCoord(const Vec4f& in);
 
 }
