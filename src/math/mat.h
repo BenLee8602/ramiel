@@ -77,6 +77,14 @@ namespace ramiel {
         return in[0][0] * in[1][1] - in[0][1] * in[1][0];
     }
 
+    template<typename T>
+    T det(const Vec<Vec<T, 3>, 3>& in) {
+        T a = in[1][1] * in[2][2] - in[1][2] * in[2][1];
+        T b = in[1][0] * in[2][2] - in[1][2] * in[2][0];
+        T c = in[1][0] * in[2][1] - in[1][1] * in[2][0];
+        return in[0][0] * a - in[0][1] * b + in[0][2] * c;
+    }
+
     template<typename T, size_t N>
     T det(const Vec<Vec<T, N>, N>& in) {
         static_assert(N < 10, "matrix too large");
