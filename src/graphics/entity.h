@@ -36,21 +36,18 @@ namespace ramiel {
             std::vector<typename VertexShader::Vertex_Out> v_out(numVertex);
             for (size_t i = 0; i < numVertex; ++i) {
                 v_out[i] = vertexShader(v_in[i]);
-                v_out[i].pos = getCameraCoord(v_out[i].pos);
+                v_out[i].pos = getProjectionCoord(getCameraCoord(v_out[i].pos));
             }
 
             const std::vector<Vec3u>& triangles = mesh.getTriangles();
             Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(pixelShader);
             for (auto& t : triangles) {
-                // backface culling
-                if (dot(
-                    cross(
-                        v_out[t[1]].pos - v_out[t[0]].pos,
-                        v_out[t[2]].pos - v_out[t[0]].pos
-                    ),  v_out[t[0]].pos
-                ) >= 0.0f) continue;
+                if (!isFrontFacing(
+                    v_out[t[0]].pos,
+                    v_out[t[1]].pos,
+                    v_out[t[2]].pos
+                )) continue;
                 
-                // assemble and draw triangle
                 tri.draw(v_out[t[0]], v_out[t[1]], v_out[t[2]]);
             }
         }
