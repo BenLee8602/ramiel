@@ -1,11 +1,15 @@
 #pragma once
 
 #include <ramiel/data.h>
+#include "camera.h"
 #include "vertex.h"
 
 #define POS template get<0>()
 
 namespace ramiel {
+
+    bool isFrontFacing(const Vec4f& v1, const Vec4f& v2, const Vec4f& v3);
+
 
     template<typename Vertex, class PixelShader>
     class Triangle {
@@ -20,7 +24,7 @@ namespace ramiel {
         private:
         void raster() {
             for (size_t i = 0; i < 3; ++i) {
-                v[i].POS = getScreenCoord(v[i].POS);
+                v[i].POS = getScreenCoord(getNormalizedCoord(v[i].POS));
             }
 
             ColorIt color = getColorBuffer();
@@ -80,8 +84,8 @@ namespace ramiel {
         private:
         void clip1(VtTuple& v0, VtTuple& v1, VtTuple& v2) {
             // ratio of line clipped
-            float c1 = (getZ0() - v1.POS[Z]) / (v0.POS[Z] - v1.POS[Z]);
-            float c2 = (getZ0() - v1.POS[Z]) / (v2.POS[Z] - v1.POS[Z]);
+            float c1 = -v1.POS[Z] / (v0.POS[Z] - v1.POS[Z]);
+            float c2 = -v1.POS[Z] / (v2.POS[Z] - v1.POS[Z]);
 
             // new tri formed from quad
             Triangle newtri = Triangle(pixelShader);
@@ -99,8 +103,8 @@ namespace ramiel {
         private:
         void clip2(VtTuple& v0, VtTuple& v1, VtTuple& v2) {
             // ratio of line clipped
-            float c1 = (getZ0() - v0.POS[Z]) / (v1.POS[Z] - v0.POS[Z]);
-            float c2 = (getZ0() - v2.POS[Z]) / (v1.POS[Z] - v2.POS[Z]);
+            float c1 = -v0.POS[Z] / (v1.POS[Z] - v0.POS[Z]);
+            float c2 = -v2.POS[Z] / (v1.POS[Z] - v2.POS[Z]);
 
             // clip
             v0 = v0 + (v1 - v0) * c1;
@@ -110,19 +114,19 @@ namespace ramiel {
 
         private:
         bool clip() {
-            if (v[0].POS[Z] < getZ0()) {
-                if (v[1].POS[Z] < getZ0()) {
-                    if (v[2].POS[Z] < getZ0()) return false;
+            if (v[0].POS[Z] < 0.0f) {
+                if (v[1].POS[Z] < 0.0f) {
+                    if (v[2].POS[Z] < 0.0f) return false;
                     else clip2(v[1], v[2], v[0]);
                 }
-                else if (v[2].POS[Z] < getZ0()) clip2(v[0], v[1], v[2]);
+                else if (v[2].POS[Z] < 0.0f) clip2(v[0], v[1], v[2]);
                 else clip1(v[2], v[0], v[1]);
             }
-            else if (v[1].POS[Z] < getZ0()) {
-                if (v[2].POS[Z] < getZ0()) clip2(v[2], v[0], v[1]);
+            else if (v[1].POS[Z] < 0.0f) {
+                if (v[2].POS[Z] < 0.0f) clip2(v[2], v[0], v[1]);
                 else clip1(v[0], v[1], v[2]);
             }
-            else if (v[2].POS[Z] < getZ0()) clip1(v[1], v[2], v[0]);
+            else if (v[2].POS[Z] < 0.0f) clip1(v[1], v[2], v[0]);
             return true;
         }
 

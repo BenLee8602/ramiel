@@ -8,6 +8,7 @@ namespace ramiel {
     const Vec2u& getRes();
     void setRes(Vec2u size);
     size_t getBufferSize();
+    float getAspectRatio();
 
     typedef std::vector<Vec3f>::iterator ColorIt;
     typedef std::vector<float>::iterator DepthIt;
@@ -32,6 +33,8 @@ namespace ramiel {
     void setZ1(float z1);
 
     Vec4f getCameraCoord(const Vec4f& in);
+    Vec4f getProjectionCoord(const Vec4f& in);
+    Vec4f getNormalizedCoord(const Vec4f& in);
     Vec4f getScreenCoord(const Vec4f& in);
 
 }
