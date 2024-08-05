@@ -8,9 +8,9 @@ namespace ramiel::test {
 
     using TestFn = std::function<void()>;
 
-    void addTest(const std::string& name, TestFn testFn);
-    void runTests();
+    void addTest(const std::string& file, const std::string& name, TestFn testFn);
     void failCurrentTest();
+    void runTests();
 
 }
 
@@ -19,7 +19,7 @@ namespace ramiel::test {
     namespace { \
         struct RamielTestAdd##name { \
             RamielTestAdd##name() { \
-                ramiel::test::addTest(#name, ramielTestFn##name); \
+                ramiel::test::addTest(__FILE__, #name, ramielTestFn##name); \
             } \
         } ramielTestAdd##name; \
     } \
@@ -28,7 +28,7 @@ namespace ramiel::test {
 #define RAMIEL_TEST_ASSERT(expression) \
     if (!(expression)) {\
         ramiel::test::failCurrentTest(); \
-        std::cout << "\n    assertion failed:\n" \
-                  << "        at line " << __LINE__ << " in " << __FILE__ << '\n' \
-                  << "        " << #expression << '\n'; \
+        std::cout << "        assertion failed:\n" \
+                  << "            at line " << __LINE__ << " in " << __FILE__ << '\n' \
+                  << "            " << #expression << '\n'; \
     }
