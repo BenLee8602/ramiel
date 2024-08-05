@@ -5,15 +5,17 @@ using ramiel::test::TestFn;
 
 namespace {
 
+    const std::string divider = "================================================================";
+
     struct Test {
         std::string name;
         TestFn testFn;
     };
-    
-    bool curTestPassed;
 
     class TestList {
         std::vector<Test> tests;
+        bool curTestPassed = true;
+        size_t testsPassed = 0;
     public:
         static TestList& instance() {
             static TestList testList;
@@ -27,12 +29,24 @@ namespace {
         void runTests() {
             for (auto& test : tests) {
                 std::cout << '\n' << test.name << '\n';
+
                 curTestPassed = true;
                 test.testFn();
+
                 std::cout << "\n    "
                           << (curTestPassed ? "PASS" : "FAIL")
                           << "ED!\n";
+                
+                if (curTestPassed) ++testsPassed;
             }
+
+            std::cout << '\n' << divider << "\n\nsummary:\n\n"
+                      << "    tests passed: " << testsPassed << '\n'
+                      << "    tests failed: " << tests.size() - testsPassed << '\n';
+        }
+
+        void failCurrentTest() {
+            curTestPassed = false;
         }
     };
 
@@ -51,7 +65,7 @@ namespace ramiel::test {
 
 
     void failCurrentTest() {
-        curTestPassed = false;
+        TestList::instance().failCurrentTest();
     }
 
 }
