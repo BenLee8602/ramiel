@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <ramiel/test.h>
 #include <ramiel/physics.h>
 using namespace ramiel;
 
@@ -13,32 +13,32 @@ bool equal(const CollisionHandlerFactory& f1, const CollisionHandlerFactory& f2)
 }
 
 
-TEST_CASE("get collision handler, colliders", "[collisiondispatch]") {
+RAMIEL_TEST_ADD(CollisionDispatchGetHandlerByCollider) {
     SphereCollider collider(1.0f);
     CollisionHandler_P handler = getCollisionHandler(&collider, &collider);
-    REQUIRE(dynamic_cast<Collide_Sph_Sph*>(handler.get()));
+    RAMIEL_TEST_ASSERT(dynamic_cast<Collide_Sph_Sph*>(handler.get()));
 }
 
 
-TEST_CASE("get collision handler, types", "[collisiondispatch]") {
+RAMIEL_TEST_ADD(CollisionDispatchGetHandlerByType) {
     ColliderType aabbCollider = ColliderType(typeid(AabbCollider));
     CollisionHandlerFactory expected = collide<Collide_Aabb_Aabb>;
     CollisionHandlerFactory actual = getCollisionHandler(aabbCollider, aabbCollider);
-    REQUIRE(equal(expected, actual));
+    RAMIEL_TEST_ASSERT(equal(expected, actual));
 }
 
 
-TEST_CASE("set collision handler", "[collisiondispatch]") {
+RAMIEL_TEST_ADD(CollisionDispatchSetHandler) {
     ColliderType sphereCollider = ColliderType(typeid(SphereCollider));
     CollisionHandlerFactory myHandler = [](Collider* c1, Collider* c2) { return CollisionHandler_P(); };
     setCollisionHandler(sphereCollider, sphereCollider, myHandler);
     CollisionHandlerFactory res = getCollisionHandler(sphereCollider, sphereCollider);
-    REQUIRE(equal(res, myHandler));
+    RAMIEL_TEST_ASSERT(equal(res, myHandler));
 }
 
 
-TEST_CASE("delete collision handler", "[collisiondispatch]") {
+RAMIEL_TEST_ADD(CollisionDispatchDeleteHandler) {
     ColliderType aabbCollider = ColliderType(typeid(AabbCollider));
     deleteCollisionHandler(aabbCollider, aabbCollider);
-    REQUIRE(getCollisionHandler(aabbCollider, aabbCollider) == nullptr);
+    RAMIEL_TEST_ASSERT(getCollisionHandler(aabbCollider, aabbCollider) == nullptr);
 }

@@ -1,20 +1,19 @@
 #include <vector>
-#include <catch2/catch2.hpp>
+#include <ramiel/test.h>
 #include <ramiel/file.h>
 using namespace ramiel;
+#include <cassert>
 
-
-TEST_CASE("load image", "[image]") {
+RAMIEL_TEST_ADD(ImageLoad) {
     std::string filename;
     Vec2u res;
     std::vector<Vec3f> data;
 
     filename = std::string(ramiel_TEST_DATA_DIR) + "/doesnt_exist.png";
-    REQUIRE(!loadImage(filename, res, data));
+    RAMIEL_TEST_ASSERT(!loadImage(filename, res, data));
 
     filename = std::string(ramiel_TEST_DATA_DIR) + "/colortest.png";
-    REQUIRE(loadImage(filename, res, data));
-    REQUIRE(res == Vec2u{ 640, 480 });
-    REQUIRE(data.size() == res[X] * res[Y]);
-
+    RAMIEL_TEST_ASSERT(loadImage(filename, res, data));
+    RAMIEL_TEST_ASSERT((res == Vec2u{ 640, 480 }));
+    RAMIEL_TEST_ASSERT(data.size() == res[X] * res[Y]);
 }

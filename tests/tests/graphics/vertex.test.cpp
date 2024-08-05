@@ -1,4 +1,4 @@
-#include <catch2/catch2.hpp>
+#include <ramiel/test.h>
 #include <ramiel/graphics.h>
 using namespace ramiel;
 
@@ -32,10 +32,10 @@ struct Type5 {
 };
 
 
-TEST_CASE("validate vertex type", "[vertex]") {
-    REQUIRE_FALSE(IsValidVertex<Type1>::value);
-    REQUIRE_FALSE(IsValidVertex<Type2>::value);
-    REQUIRE_FALSE(IsValidVertex<Type3>::value);
-    REQUIRE_FALSE(IsValidVertex<Type4>::value);
-    REQUIRE(IsValidVertex<Type5>::value);
+RAMIEL_TEST_ADD(VertexValidate) {
+    RAMIEL_TEST_ASSERT(IsValidVertex<Type1>::value == false);
+    RAMIEL_TEST_ASSERT(IsValidVertex<Type2>::value == false);
+    RAMIEL_TEST_ASSERT(IsValidVertex<Type3>::value == false);
+    RAMIEL_TEST_ASSERT(IsValidVertex<Type4>::value == false);
+    RAMIEL_TEST_ASSERT(IsValidVertex<Type5>::value == true);
 }

@@ -1,22 +1,22 @@
 #include <sstream>
-#include <catch2/catch2.hpp>
+#include <ramiel/test.h>
 #include <ramiel/data.h>
 using namespace ramiel;
 
 
-TEST_CASE("parse vec", "[objloader]") {
+RAMIEL_TEST_ADD(ObjloaderParseVec) {
     std::istringstream vec2("0.2 0.3");
     std::istringstream vec3("0.4 0.5 0.6");
     Vec2f vec2_expected = { 0.2f, 0.3f };
     Vec3f vec3_expected = { 0.4f, 0.5f, 0.6f };
     Vec2f vec2_actual = parseVec2(vec2);
     Vec3f vec3_actual = parseVec3(vec3);
-    REQUIRE(vec2_expected == vec2_actual);
-    REQUIRE(vec3_expected == vec3_actual);
+    RAMIEL_TEST_ASSERT(vec2_expected == vec2_actual);
+    RAMIEL_TEST_ASSERT(vec3_expected == vec3_actual);
 }
 
 
-TEST_CASE("parse polygon vertex", "[objloader]") {
+RAMIEL_TEST_ADD(ObjloaderParsePolygonVertex) {
     std::string str_v   = "1";
     std::string str_vt  = "2/3";
     std::string str_vn  = "4//5";
@@ -32,14 +32,14 @@ TEST_CASE("parse polygon vertex", "[objloader]") {
     Vec3u actual_vn  = parsePolygonVertex(str_vn);
     Vec3u actual_vtn = parsePolygonVertex(str_vtn);
 
-    REQUIRE(expected_v   == actual_v);
-    REQUIRE(expected_vt  == actual_vt);
-    REQUIRE(expected_vn  == actual_vn);
-    REQUIRE(expected_vtn == actual_vtn);
+    RAMIEL_TEST_ASSERT(expected_v   == actual_v);
+    RAMIEL_TEST_ASSERT(expected_vt  == actual_vt);
+    RAMIEL_TEST_ASSERT(expected_vn  == actual_vn);
+    RAMIEL_TEST_ASSERT(expected_vtn == actual_vtn);
 }
 
 
-TEST_CASE("load obj", "[objloader]") {
+RAMIEL_TEST_ADD(ObjloaderLoad) {
     typedef MeshVertexT Vertex;
     std::vector<Vec3u> triangles;
     std::vector<Vertex> vertices;
@@ -60,7 +60,7 @@ TEST_CASE("load obj", "[objloader]") {
         {  4, 18, 19 },
         { 19, 15,  4 }
     };
-    REQUIRE(triangles == triangles_expected);
+    RAMIEL_TEST_ASSERT(triangles == triangles_expected);
 
     std::vector<Vertex> vertices_expected = {
         { Vec3f{ -0.5, -0.5, -0.5 }, Vec2f{ 0, 0 } },
@@ -84,8 +84,8 @@ TEST_CASE("load obj", "[objloader]") {
         { Vec3f{  0.5, -0.5,  0.5 }, Vec2f{ 1, 0 } },
         { Vec3f{ -0.5, -0.5,  0.5 }, Vec2f{ 1, 1 } }
     };
-    REQUIRE(vertices.size() == vertices_expected.size());
-    REQUIRE(std::equal(
+    RAMIEL_TEST_ASSERT(vertices.size() == vertices_expected.size());
+    RAMIEL_TEST_ASSERT(std::equal(
         vertices.begin(), vertices.end(), vertices_expected.begin(),
         [](const Vertex& v1, const Vertex& v2) {
             return v1.pos == v2.pos && v1.txt == v2.txt;

@@ -1,9 +1,9 @@
-#include <catch2/catch2.hpp>
+#include <ramiel/test.h>
 #include <ramiel/math.h>
 using namespace ramiel;
 
 
-TEST_CASE("translation matrix", "[transform]") {
+RAMIEL_TEST_ADD(TransformTranslate) {
     Mat4x4 expected = {
         Vec4{ 1, 0, 0, 3 },
         Vec4{ 0, 1, 0, 6 },
@@ -11,22 +11,22 @@ TEST_CASE("translation matrix", "[transform]") {
         Vec4{ 0, 0, 0, 1 }
     };
     Mat4x4 actual = translate(Vec3{ 3, 6, 9 });
-    REQUIRE(expected == actual);
+    RAMIEL_TEST_ASSERT(expected == actual);
 }
 
 
-TEST_CASE("2d rotation matrix", "[transform]") {
+RAMIEL_TEST_ADD(TransformRotate2D) {
     Mat3x3f expected = {
         Vec3f{  0.540302f, -0.841471f,  0.0f  },
         Vec3f{  0.841471f,  0.540302f,  0.0f  },
         Vec3f{     0.0f,       0.0f,    1.0f  }
     };
     Mat3x3f actual = rotate(1.0f);
-    REQUIRE(equal(expected, actual));
+    RAMIEL_TEST_ASSERT(equal(expected, actual));
 }
 
 
-TEST_CASE("3d rotation matrix", "[transform]") {
+RAMIEL_TEST_ADD(TransformRotate3D) {
     Mat4x4f expected = {
         Vec4f{  0.095105f,  0.646688f, -0.756802f,  0.0f  },
         Vec4f{ -0.311591f,  0.741385f,  0.594356f,  0.0f  },
@@ -34,11 +34,11 @@ TEST_CASE("3d rotation matrix", "[transform]") {
         Vec4f{     0.0f,       0.0f,       0.0f,    1.0f  }
     };
     Mat4x4f actual = rotate(Vec3f{ 2.0f, 4.0f, 8.0f });
-    REQUIRE(equal(expected, actual));
+    RAMIEL_TEST_ASSERT(equal(expected, actual));
 }
 
 
-TEST_CASE("scaling matrix", "[transform]") {
+RAMIEL_TEST_ADD(TransformScale) {
     Mat4x4f expected = {
         Vec4f{ 0.5f, 0.0f, 0.0f, 0.0f },
         Vec4f{ 0.0f, 1.0f, 0.0f, 0.0f },
@@ -46,5 +46,5 @@ TEST_CASE("scaling matrix", "[transform]") {
         Vec4f{ 0.0f, 0.0f, 0.0f, 1.0f }
     };
     Mat4x4f actual = scale(Vec3f{ 0.5f, 1.0f, 2.0f });
-    REQUIRE(equal(expected, actual));
+    RAMIEL_TEST_ASSERT(equal(expected, actual));
 }
