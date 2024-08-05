@@ -1,5 +1,5 @@
 
-#include <catch2/catch2.hpp>
+#include <ramiel/test.h>
 #include <ramiel/data.h>
 using namespace ramiel;
 
@@ -10,18 +10,18 @@ struct InstanceCount {
     ~InstanceCount() { count--; }
 };
 
-TEST_CASE("void buffer construction and destruction", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferConstructorDestructor) {
     count = 0;
     {
-        REQUIRE(count == 0);
+        RAMIEL_TEST_ASSERT(count == 0);
         VoidBuffer vb = makeVoidBuffer<InstanceCount>(64);
-        REQUIRE(count == 64);
+        RAMIEL_TEST_ASSERT(count == 64);
     }
-    REQUIRE(count == 0);
+    RAMIEL_TEST_ASSERT(count == 0);
 }
 
 
-TEST_CASE("void buffer copy constructor", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferCopyConstructor) {
     constexpr size_t length = 4;
     auto c = [](void* v) -> int& { return *static_cast<int*>(v); };
 
@@ -31,19 +31,19 @@ TEST_CASE("void buffer copy constructor", "[voidbuffer]") {
     
     VoidBuffer dest(src);
 
-    REQUIRE(dest.getType() == src.getType());
-    REQUIRE(dest.getSize() == src.getSize());
-    REQUIRE(dest.getLength() == src.getLength());
+    RAMIEL_TEST_ASSERT(dest.getType() == src.getType());
+    RAMIEL_TEST_ASSERT(dest.getSize() == src.getSize());
+    RAMIEL_TEST_ASSERT(dest.getLength() == src.getLength());
 
     for (size_t i = 0; i < length; ++i)
-        REQUIRE(c(dest[i]) == c(src[i]));
+        RAMIEL_TEST_ASSERT(c(dest[i]) == c(src[i]));
     
     c(dest[0]) = -1;
-    REQUIRE(c(dest[0]) != c(src[0]));
+    RAMIEL_TEST_ASSERT(c(dest[0]) != c(src[0]));
 }
 
 
-TEST_CASE("void buffer move constructor", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferMoveConstructor) {
     constexpr size_t length = 4;
     auto c = [](void* v) -> int& { return *static_cast<int*>(v); };
 
@@ -53,18 +53,18 @@ TEST_CASE("void buffer move constructor", "[voidbuffer]") {
     
     VoidBuffer dest(std::move(src));
 
-    REQUIRE(dest.getType() == typeid(int));
-    REQUIRE(dest.getSize() == sizeof(int));
-    REQUIRE(dest.getLength() == length);
+    RAMIEL_TEST_ASSERT(dest.getType() == typeid(int));
+    RAMIEL_TEST_ASSERT(dest.getSize() == sizeof(int));
+    RAMIEL_TEST_ASSERT(dest.getLength() == length);
 
     for (size_t i = 0; i < length; ++i)
-        REQUIRE(c(dest[i]) == i);
+        RAMIEL_TEST_ASSERT(c(dest[i]) == i);
     
-    REQUIRE(src.getLength() == 0);
+    RAMIEL_TEST_ASSERT(src.getLength() == 0);
 }
 
 
-TEST_CASE("void buffer copy assignment", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferCopyAssignment) {
     constexpr size_t length = 4;
     auto c = [](void* v) -> int& { return *static_cast<int*>(v); };
 
@@ -75,19 +75,19 @@ TEST_CASE("void buffer copy assignment", "[voidbuffer]") {
     VoidBuffer dest = makeVoidBuffer<double>(8);
     dest = src;
 
-    REQUIRE(dest.getType() == src.getType());
-    REQUIRE(dest.getSize() == src.getSize());
-    REQUIRE(dest.getLength() == src.getLength());
+    RAMIEL_TEST_ASSERT(dest.getType() == src.getType());
+    RAMIEL_TEST_ASSERT(dest.getSize() == src.getSize());
+    RAMIEL_TEST_ASSERT(dest.getLength() == src.getLength());
 
     for (size_t i = 0; i < length; ++i)
-        REQUIRE(c(dest[i]) == c(src[i]));
+        RAMIEL_TEST_ASSERT(c(dest[i]) == c(src[i]));
     
     c(dest[0]) = -1;
-    REQUIRE(c(dest[0]) != c(src[0]));
+    RAMIEL_TEST_ASSERT(c(dest[0]) != c(src[0]));
 }
 
 
-TEST_CASE("void buffer move assignment", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferMoveAssignment) {
     constexpr size_t length = 4;
     auto c = [](void* v) -> int& { return *static_cast<int*>(v); };
 
@@ -98,45 +98,45 @@ TEST_CASE("void buffer move assignment", "[voidbuffer]") {
     VoidBuffer dest = makeVoidBuffer<double>(8);
     dest = std::move(src);
 
-    REQUIRE(dest.getType() == typeid(int));
-    REQUIRE(dest.getSize() == sizeof(int));
-    REQUIRE(dest.getLength() == length);
+    RAMIEL_TEST_ASSERT(dest.getType() == typeid(int));
+    RAMIEL_TEST_ASSERT(dest.getSize() == sizeof(int));
+    RAMIEL_TEST_ASSERT(dest.getLength() == length);
 
     for (size_t i = 0; i < length; ++i)
-        REQUIRE(c(dest[i]) == i);
+        RAMIEL_TEST_ASSERT(c(dest[i]) == i);
     
-    REQUIRE(src.getLength() == 0);
+    RAMIEL_TEST_ASSERT(src.getLength() == 0);
 }
 
 
-TEST_CASE("void buffer get type", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferGetType) {
     VoidBuffer vb = makeVoidBuffer<char>(32);
     std::type_index expected = typeid(char);
     std::type_index actual = vb.getType();
-    REQUIRE(expected == actual);
+    RAMIEL_TEST_ASSERT(expected == actual);
 }
 
 
-TEST_CASE("void buffer get size", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferGetSize) {
     VoidBuffer vb = makeVoidBuffer<int16_t>(16);
     size_t expected = sizeof(int16_t);
     size_t actual = vb.getSize();
-    REQUIRE(expected == actual);
+    RAMIEL_TEST_ASSERT(expected == actual);
 }
 
 
-TEST_CASE("void buffer length", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferGetLength) {
     VoidBuffer vb = makeVoidBuffer<char>();
-    REQUIRE(vb.getLength() == 0);
+    RAMIEL_TEST_ASSERT(vb.getLength() == 0);
 
     size_t expected = 8;
     vb.setLength(expected);
     size_t actual = vb.getLength();
-    REQUIRE(expected == actual);
+    RAMIEL_TEST_ASSERT(expected == actual);
 }
 
 
-TEST_CASE("void buffer iterate", "[voidbuffer]") {
+RAMIEL_TEST_ADD(VoidBufferIterate) {
     VoidBuffer vb = makeVoidBuffer<int>(4);
 
     for (size_t i = 0; i < vb.getLength(); ++i)
@@ -144,5 +144,5 @@ TEST_CASE("void buffer iterate", "[voidbuffer]") {
     
     int* it = static_cast<int*>(vb[0]);
     for (size_t i = 0; i < vb.getLength(); ++i, ++it)
-        REQUIRE(*it == i);
+        RAMIEL_TEST_ASSERT(*it == i);
 }
