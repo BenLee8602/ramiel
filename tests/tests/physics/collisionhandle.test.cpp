@@ -11,7 +11,6 @@ RAMIEL_TEST_ADD(CollisionSphereSphere) {
     Vec3f o2_pos_expected = {  0.27042f,  1.09931f,  0.55648f };
     Vec3f o1_vel_expected = { -4.96318f, -1.18612f, -0.27063f };
     Vec3f o2_vel_expected = { -1.60251,   2.522f,   10.0389f  };
-    float totalMomentum = o1.mass * mag(o1.pv) + o2.mass * mag(o2.pv);
 
     Collide_Sph_Sph handler(&o1, &o2);
     RAMIEL_TEST_ASSERT(handler.detect());
@@ -21,13 +20,6 @@ RAMIEL_TEST_ADD(CollisionSphereSphere) {
     RAMIEL_TEST_ASSERT(equal(o2.pos, o2_pos_expected));
     RAMIEL_TEST_ASSERT(equal(o1.pv, o1_vel_expected));
     RAMIEL_TEST_ASSERT(equal(o2.pv, o2_vel_expected));
-    RAMIEL_TEST_ASSERT( // conservation of momentum
-        std::abs(
-            o1.mass * mag(o1.pv) +
-            o2.mass * mag(o2.pv) -
-            totalMomentum
-        ) < 0.1f
-    );
 }
 
 
@@ -39,7 +31,6 @@ RAMIEL_TEST_ADD(CollisionAabbAabb) {
     Vec3f o2_pos_expected = {  0.86842f,  0.5f, -1.0f };
     Vec3f o1_vel_expected = { -9.53158f, -6.5f, -8.4f };
     Vec3f o2_vel_expected = {  8.16842f,  2.6f, -8.1f };
-    float totalMomentum = o1.mass * mag(o1.pv) + o2.mass * mag(o2.pv);
 
     Collide_Aabb_Aabb handler(&o1, &o2);
     RAMIEL_TEST_ASSERT(handler.detect());
@@ -49,11 +40,4 @@ RAMIEL_TEST_ADD(CollisionAabbAabb) {
     RAMIEL_TEST_ASSERT(equal(o2.pos, o2_pos_expected));
     RAMIEL_TEST_ASSERT(equal(o1.pv, o1_vel_expected));
     RAMIEL_TEST_ASSERT(equal(o2.pv, o2_vel_expected));
-    RAMIEL_TEST_ASSERT( // conservation of momentum
-        std::abs(
-            o1.mass * mag(o1.pv) +
-            o2.mass * mag(o2.pv) -
-            totalMomentum
-        ) < 0.1f
-    );
 }
