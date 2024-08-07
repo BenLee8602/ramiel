@@ -25,6 +25,10 @@ namespace ramiel {
         void raster() {
             for (size_t i = 0; i < 3; ++i) {
                 v[i].POS = getScreenCoord(getNormalizedCoord(v[i].POS));
+
+                // temp!! rasterization will be redone soon
+                v[i].POS[X] = std::floor(v[i].POS[X]);
+                v[i].POS[Y] = std::floor(v[i].POS[Y]);
             }
 
             ColorIt color = getColorBuffer();
