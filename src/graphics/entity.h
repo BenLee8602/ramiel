@@ -7,7 +7,7 @@ namespace ramiel {
 
     class EntityBase {
     public:
-        virtual void run() const = 0;
+        virtual void run() = 0;
     };
 
 
@@ -28,7 +28,7 @@ namespace ramiel {
         {}
 
 
-        virtual void run() const override {
+        virtual void run() override {
             // run vertex shader
             const std::vector<Vertex>& v_in = mesh.getVertices();
             const size_t numVertex = v_in.size();
@@ -40,7 +40,6 @@ namespace ramiel {
             }
 
             const std::vector<Vec3u>& triangles = mesh.getTriangles();
-            Triangle<typename VertexShader::Vertex_Out, PixelShader> tri(pixelShader);
             for (auto& t : triangles) {
                 if (!isFrontFacing(
                     v_out[t[0]].pos,
@@ -48,7 +47,7 @@ namespace ramiel {
                     v_out[t[2]].pos
                 )) continue;
                 
-                tri.draw(v_out[t[0]], v_out[t[1]], v_out[t[2]]);
+                draw(pixelShader, v_out[t[0]], v_out[t[1]], v_out[t[2]]);
             }
         }
 
