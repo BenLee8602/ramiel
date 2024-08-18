@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <forward_list>
+
 #include <ramiel/data.h>
 #include "camera.h"
 #include "vertex.h"
@@ -75,25 +78,24 @@ namespace ramiel {
     }
 
 
-    template<class PixelShader, class Vertex>
-    void clip1(PixelShader& ps, AsTuple<Vertex>& v0, AsTuple<Vertex>& v1, AsTuple<Vertex>& v2) {
+    template<class Vertex>
+    std::array<AsTuple<Vertex>, 3> clip1(AsTuple<Vertex>& v0, AsTuple<Vertex>& v1, AsTuple<Vertex>& v2) {
         // ratio of line clipped
         float c1 = -v1.POS[Z] / (v0.POS[Z] - v1.POS[Z]);
         float c2 = -v1.POS[Z] / (v2.POS[Z] - v1.POS[Z]);
 
         // new tri formed from quad
-        std::array<AsTuple<Vertex>, 3> v = {
+        std::array<AsTuple<Vertex>, 3> tri = {
             v1 + (v0 - v1) * c1,
             v1 + (v2 - v1) * c2,
             v2
         };
-        raster<PixelShader, Vertex>(ps, v);
-
-        v1 = v[0];
+        v1 = tri[0];
+        return tri;
     }
 
 
-    template<class PixelShader, class Vertex>
+    template<class Vertex>
     void clip2(AsTuple<Vertex>& v0, AsTuple<Vertex>& v1, AsTuple<Vertex>& v2) {
         // ratio of line clipped
         float c1 = -v0.POS[Z] / (v1.POS[Z] - v0.POS[Z]);
@@ -105,21 +107,21 @@ namespace ramiel {
     }
 
 
-    template<class PixelShader, class Vertex>
-    bool clip(PixelShader& ps, std::array<AsTuple<Vertex>, 3>& v) {
-        if (v[0].POS[Z] < 0.0f) {
-            if (v[1].POS[Z] < 0.0f) {
-                if (v[2].POS[Z] < 0.0f) return false;
-                else clip2<PixelShader, Vertex>(v[1], v[2], v[0]);
+    template<class Vertex>
+    bool clip(std::array<AsTuple<Vertex>, 3>& tri, std::forward_list<std::array<AsTuple<Vertex>, 3>>& moreTris) {
+        if (tri[0].POS[Z] < 0.0f) {
+            if (tri[1].POS[Z] < 0.0f) {
+                if (tri[2].POS[Z] < 0.0f) return false;
+                else clip2<Vertex>(tri[1], tri[2], tri[0]);
             }
-            else if (v[2].POS[Z] < 0.0f) clip2<PixelShader, Vertex>(v[0], v[1], v[2]);
-            else clip1<PixelShader, Vertex>(ps, v[2], v[0], v[1]);
+            else if (tri[2].POS[Z] < 0.0f) clip2<Vertex>(tri[0], tri[1], tri[2]);
+            else moreTris.push_front(clip1<Vertex>(tri[2], tri[0], tri[1]));
         }
-        else if (v[1].POS[Z] < 0.0f) {
-            if (v[2].POS[Z] < 0.0f) clip2<PixelShader, Vertex>(v[2], v[0], v[1]);
-            else clip1<PixelShader, Vertex>(ps, v[0], v[1], v[2]);
+        else if (tri[1].POS[Z] < 0.0f) {
+            if (tri[2].POS[Z] < 0.0f) clip2<Vertex>(tri[2], tri[0], tri[1]);
+            else moreTris.push_front(clip1<Vertex>(tri[0], tri[1], tri[2]));
         }
-        else if (v[2].POS[Z] < 0.0f) clip1<PixelShader, Vertex>(ps, v[1], v[2], v[0]);
+        else if (tri[2].POS[Z] < 0.0f) moreTris.push_front(clip1<Vertex>(tri[1], tri[2], tri[0]));
         return true;
     }
 
@@ -132,13 +134,20 @@ namespace ramiel {
         const Vertex& v2
     ) {
         assertValidVertex<Vertex>();
-        std::array<AsTuple<Vertex>, 3> v = {
+        std::array<AsTuple<Vertex>, 3> tri = {
             reinterpret_cast<const AsTuple<Vertex>&>(v0),
             reinterpret_cast<const AsTuple<Vertex>&>(v1),
             reinterpret_cast<const AsTuple<Vertex>&>(v2)
         };
-        ps.init(reinterpret_cast<Vertex*>(&v));
-        if (clip<PixelShader, Vertex>(ps, v)) raster<PixelShader, Vertex>(ps, v);
+        ps.init(reinterpret_cast<Vertex*>(&tri));
+
+        std::forward_list<std::array<AsTuple<Vertex>, 3>> moreTris;
+        if (!clip<Vertex>(tri, moreTris)) return;
+        
+        raster<PixelShader, Vertex>(ps, tri);
+        for (auto& t : moreTris) {
+            raster<PixelShader, Vertex>(ps, t);
+        }
     }
 
 }
