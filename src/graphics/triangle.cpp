@@ -3,6 +3,9 @@ using namespace ramiel;
 
 namespace {
 
+    float homogeneousCameraDepth = 0.0f;
+
+
     Vec4f intersect(
         const Vec4f& v0,
         const Vec4f& v1
@@ -39,15 +42,15 @@ namespace {
 namespace ramiel {
 
     TriInterpolate3d::TriInterpolate3d(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2) {
-        this->v1 = reinterpret_cast<const Vec3f&>(v1);
-        x = reinterpret_cast<const Vec3f&>(v0) - reinterpret_cast<const Vec3f&>(v1);
-        y = reinterpret_cast<const Vec3f&>(v2) - reinterpret_cast<const Vec3f&>(v1);
+        this->v1 = sizeView<3>(v1);
+        x = sizeView<3>(v0 - v1);
+        y = sizeView<3>(v2 - v1);
         z = normalize(cross(x, y));
         a = 1.0f / det(Mat3x3f{ x, y, z });
     }
 
     Vec3f TriInterpolate3d::operator()(const Vec4f& p) const {
-        Vec3f vp = reinterpret_cast<const Vec3f&>(p) - v1;
+        Vec3f vp = sizeView<3>(p) - v1;
         Vec3f weights;
         weights[0] = det(Mat3x3f{ vp, y, z }) * a;
         weights[2] = det(Mat3x3f{ x, vp, z }) * a;
@@ -56,12 +59,16 @@ namespace ramiel {
     }
 
 
-    bool isFrontFacing(const Vec4f& v1, const Vec4f& v2, const Vec4f& v3) {
-        return 0.0f > det(Mat3x3f{
-            Vec3f{ v1[X], v1[Y], v1[Z] },
-            Vec3f{ v2[X], v2[Y], v2[Z] },
-            Vec3f{ v3[X], v3[Y], v3[Z] }
-        });
+    // declaration in camera.cpp ;)
+    void setHomogeneousCameraDepth(float z) {
+        homogeneousCameraDepth = z;
+    }
+
+    bool isFrontFacing(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2) {
+        Vec3f triNormal = cross(sizeView<3>(v1 - v0), sizeView<3>(v2 - v0));
+        Vec3f cameraToTri = sizeView<3>(v0);
+        cameraToTri[Z] -= homogeneousCameraDepth;
+        return dot(triNormal, cameraToTri) < 0.0f;
     }
 
 

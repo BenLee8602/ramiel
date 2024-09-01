@@ -92,6 +92,19 @@ namespace ramiel {
     }
 
 
+    template<size_t M, typename T, size_t N>
+    const Vec<T, M>& sizeView(const Vec<T, N>& v) {
+        static_assert(M < N, "vector size view can only reduce size");
+        return reinterpret_cast<const Vec<T, M>&>(v);
+    }
+
+    template<size_t M, typename T, size_t N>
+    Vec<T, M>& sizeView(Vec<T, N>& v) {
+        static_assert(M < N, "vector size view can only reduce size");
+        return reinterpret_cast<Vec<T, M>&>(v);
+    }
+
+
     template<typename T, size_t N>
     T dot(const Vec<T, N>& v1, const Vec<T, N>& v2) {
         T d = (T)0;
