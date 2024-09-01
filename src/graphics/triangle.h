@@ -11,7 +11,24 @@
 
 namespace ramiel {
 
+    class TriInterpolate3d {
+    public:
+        TriInterpolate3d(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2);
+        Vec3f operator()(const Vec4f& p) const;
+    private:
+        Vec3f v1;
+        Vec3f x;
+        Vec3f y;
+        Vec3f z;
+        float a;
+    };
+
     bool isFrontFacing(const Vec4f& v1, const Vec4f& v2, const Vec4f& v3);
+
+    using Tri = std::array<Vec4f, 3>;
+    using TriList = std::forward_list<Tri>;
+
+    bool clip(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2, TriList& clippedTris);
 
 
     template<class PixelShader, class Vertex>
@@ -78,54 +95,6 @@ namespace ramiel {
     }
 
 
-    template<class Vertex>
-    std::array<AsTuple<Vertex>, 3> clip1(AsTuple<Vertex>& v0, AsTuple<Vertex>& v1, AsTuple<Vertex>& v2) {
-        // ratio of line clipped
-        float c1 = -v1.POS[Z] / (v0.POS[Z] - v1.POS[Z]);
-        float c2 = -v1.POS[Z] / (v2.POS[Z] - v1.POS[Z]);
-
-        // new tri formed from quad
-        std::array<AsTuple<Vertex>, 3> tri = {
-            v1 + (v0 - v1) * c1,
-            v1 + (v2 - v1) * c2,
-            v2
-        };
-        v1 = tri[0];
-        return tri;
-    }
-
-
-    template<class Vertex>
-    void clip2(AsTuple<Vertex>& v0, AsTuple<Vertex>& v1, AsTuple<Vertex>& v2) {
-        // ratio of line clipped
-        float c1 = -v0.POS[Z] / (v1.POS[Z] - v0.POS[Z]);
-        float c2 = -v2.POS[Z] / (v1.POS[Z] - v2.POS[Z]);
-
-        // clip
-        v0 = v0 + (v1 - v0) * c1;
-        v2 = v2 + (v1 - v2) * c2;
-    }
-
-
-    template<class Vertex>
-    bool clip(std::array<AsTuple<Vertex>, 3>& tri, std::forward_list<std::array<AsTuple<Vertex>, 3>>& moreTris) {
-        if (tri[0].POS[Z] < 0.0f) {
-            if (tri[1].POS[Z] < 0.0f) {
-                if (tri[2].POS[Z] < 0.0f) return false;
-                else clip2<Vertex>(tri[1], tri[2], tri[0]);
-            }
-            else if (tri[2].POS[Z] < 0.0f) clip2<Vertex>(tri[0], tri[1], tri[2]);
-            else moreTris.push_front(clip1<Vertex>(tri[2], tri[0], tri[1]));
-        }
-        else if (tri[1].POS[Z] < 0.0f) {
-            if (tri[2].POS[Z] < 0.0f) clip2<Vertex>(tri[2], tri[0], tri[1]);
-            else moreTris.push_front(clip1<Vertex>(tri[0], tri[1], tri[2]));
-        }
-        else if (tri[2].POS[Z] < 0.0f) moreTris.push_front(clip1<Vertex>(tri[1], tri[2], tri[0]));
-        return true;
-    }
-
-
     template<class PixelShader, class Vertex>
     void draw(
         PixelShader& ps,
@@ -141,12 +110,26 @@ namespace ramiel {
         };
         ps.init(reinterpret_cast<Vertex*>(&tri));
 
-        std::forward_list<std::array<AsTuple<Vertex>, 3>> moreTris;
-        if (!clip<Vertex>(tri, moreTris)) return;
-        
-        raster<PixelShader, Vertex>(ps, tri);
-        for (auto& t : moreTris) {
-            raster<PixelShader, Vertex>(ps, t);
+        TriList clippedTris;
+        if (!clip(tri[0].POS, tri[1].POS, tri[2].POS, clippedTris)) return;
+
+        if (clippedTris.empty()) {
+            raster<PixelShader, Vertex>(ps, tri);
+            return;
+        }
+
+        TriInterpolate3d interpolate(tri[0].POS, tri[1].POS, tri[2].POS);
+        for (auto& t : clippedTris) {
+            std::array<AsTuple<Vertex>, 3> tri_c;
+            for (size_t i = 0; i < 3; ++i) {
+                Vec3f weights = interpolate(t[i]);
+                tri_c[i] = (
+                    tri[0] * weights[0] +
+                    tri[1] * weights[1] +
+                    tri[2] * weights[2]
+                );
+            }
+            raster<PixelShader, Vertex>(ps, tri_c);
         }
     }
 
