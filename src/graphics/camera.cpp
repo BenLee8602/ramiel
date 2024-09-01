@@ -1,7 +1,16 @@
 #include <cassert>
 #include <cmath>
+
 #include "camera.h"
+#include "triangle.h"
 using namespace ramiel;
+
+namespace ramiel {
+
+    // definition in triangle.cpp ;)
+    void setHomogeneousCameraDepth(float z);
+
+}
 
 namespace {
 
@@ -39,6 +48,7 @@ namespace {
             Vec4f{ 0,    0,    z, -z0 * z },
             Vec4f{ 0,    0,    1,    0    }
         };
+        setHomogeneousCameraDepth(-z0 * z);
     }
 
     void calcScreenTransform() {

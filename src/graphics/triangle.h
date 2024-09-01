@@ -23,7 +23,7 @@ namespace ramiel {
         float a;
     };
 
-    bool isFrontFacing(const Vec4f& v1, const Vec4f& v2, const Vec4f& v3);
+    bool isFrontFacing(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2);
 
     using Tri = std::array<Vec4f, 3>;
     using TriList = std::forward_list<Tri>;
