@@ -156,10 +156,13 @@ namespace ramiel {
     // blog: https://alexpolt.github.io/type-loophole.html
     // github: https://github.com/alexpolt/luple/
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-template-friend"
     template<class T, int N>
     struct FieldIndex {
         friend auto getFieldType(FieldIndex<T, N>);
     };
+#pragma GCC diagnostic pop
 
     template<class T, typename U, int N>
     struct GetFieldType_t {
