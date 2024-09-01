@@ -3,6 +3,9 @@
 #include <type_traits>
 #include <ramiel/math.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+
 namespace ramiel {
 
     template<class T, typename = void>
@@ -29,3 +32,5 @@ namespace ramiel {
     }
 
 }
+
+#pragma GCC diagnostic pop
