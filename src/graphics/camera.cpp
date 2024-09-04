@@ -8,7 +8,7 @@ using namespace ramiel;
 namespace ramiel {
 
     // definition in triangle.cpp ;)
-    void setHomogeneousCameraDepth(float z);
+    void updateViewFrustum();
 
 }
 
@@ -48,7 +48,7 @@ namespace {
             Vec4f{ 0,    0,    z, -z0 * z },
             Vec4f{ 0,    0,    1,    0    }
         };
-        setHomogeneousCameraDepth(-z0 * z);
+        updateViewFrustum();
     }
 
     void calcScreenTransform() {
