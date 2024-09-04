@@ -1,7 +1,7 @@
 #pragma once
 
 #include <array>
-#include <forward_list>
+#include <list>
 
 #include <ramiel/data.h>
 #include "camera.h"
@@ -23,10 +23,8 @@ namespace ramiel {
         float a;
     };
 
-    bool isFrontFacing(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2);
-
     using Tri = std::array<Vec4f, 3>;
-    using TriList = std::forward_list<Tri>;
+    using TriList = std::list<Tri>;
 
     bool clip(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2, TriList& clippedTris);
 
@@ -34,7 +32,7 @@ namespace ramiel {
     template<class PixelShader, class Vertex>
     void raster(PixelShader& ps, std::array<AsTuple<Vertex>, 3>& v) {
         for (size_t i = 0; i < 3; ++i) {
-            v[i].POS = getScreenCoord(getNormalizedCoord(v[i].POS));
+            v[i].POS = getScreenCoord(getNormalizedCoord(getProjectionCoord(v[i].POS)));
 
             // temp!! rasterization will be redone soon
             v[i].POS[X] = std::floor(v[i].POS[X]);
@@ -108,10 +106,11 @@ namespace ramiel {
             reinterpret_cast<const AsTuple<Vertex>&>(v1),
             reinterpret_cast<const AsTuple<Vertex>&>(v2)
         };
-        ps.init(reinterpret_cast<Vertex*>(&tri));
 
         TriList clippedTris;
         if (!clip(tri[0].POS, tri[1].POS, tri[2].POS, clippedTris)) return;
+
+        ps.init(reinterpret_cast<Vertex*>(&tri));
 
         if (clippedTris.empty()) {
             raster<PixelShader, Vertex>(ps, tri);
