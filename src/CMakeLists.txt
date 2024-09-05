@@ -1,5 +1,6 @@
 add_library(${PROJECT_NAME} STATIC 
     graphics/camera.cpp 
+    graphics/clip.cpp 
     physics/collisionhandle.cpp 
     physics/collisiondispatch.cpp 
     graphics/effects.cpp 
