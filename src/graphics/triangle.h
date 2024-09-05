@@ -6,6 +6,7 @@
 #include <ramiel/data.h>
 #include "camera.h"
 #include "vertex.h"
+#include "clip.h"
 
 #define POS template get<0>()
 
@@ -22,11 +23,6 @@ namespace ramiel {
         Vec3f z;
         float a;
     };
-
-    using Tri = std::array<Vec4f, 3>;
-    using TriList = std::list<Tri>;
-
-    bool clip(const Vec4f& v0, const Vec4f& v1, const Vec4f& v2, TriList& clippedTris);
 
 
     template<class PixelShader, class Vertex>
