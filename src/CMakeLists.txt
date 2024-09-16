@@ -5,11 +5,12 @@ add_library(${PROJECT_NAME} STATIC
     physics/collisiondispatch.cpp 
     graphics/effects.cpp 
     file/image.cpp 
+    math/interpolate.cpp 
     graphics/light.cpp 
     file/objloader.cpp 
     ramiel.cpp 
+    graphics/rasterize.cpp 
     data/texture.cpp 
-    graphics/triangle.cpp 
     data/voidbuffer.cpp 
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)
