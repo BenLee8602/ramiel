@@ -1,7 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include <ramiel/math.h>
+#include <ramiel/data.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
@@ -29,6 +29,16 @@ namespace ramiel {
             "    3. \"pos\" must be of type \"ramiel::Vec4f\"\n"
             "    4. \"pos\" must be the first field\n"
         );
+    }
+
+    template<class T, class... Ts>
+    Vec4f& vPos(Tuple<T, Ts...>& v) {
+        return reinterpret_cast<Vec4f&>(v);
+    }
+
+    template<class T, class... Ts>
+    const Vec4f& vPos(const Tuple<T, Ts...>& v) {
+        return reinterpret_cast<const Vec4f&>(v);
     }
 
 }

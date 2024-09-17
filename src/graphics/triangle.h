@@ -9,29 +9,33 @@
 #include "clip.h"
 #include "rasterize.h"
 
-#define POS template get<0>()
-
 namespace ramiel {
 
     template<class PixelShader, class Vertex>
     void raster(PixelShader& ps, std::array<AsTuple<Vertex>, 3>& v) {
         for (size_t i = 0; i < 3; ++i) {
-            v[i].POS = getScreenCoord(getNormalizedCoord(getProjectionCoord(v[i].POS)));
+            Vec4f& vp = vPos(v[i]);
+            vp = getProjectionCoord(vp);
+            float zinv = 1.0f / vp[W];
+            v[i] = v[i] * zinv;
+            vp = getScreenCoord(vp);
+            vp[W] = zinv;
         }
         
-        TriInterpolate2d interpolate(v[0].POS, v[1].POS, v[2].POS);
+        TriInterpolate2d interpolate(vPos(v[0]), vPos(v[1]), vPos(v[2]));
 
-        rasterizeTri(v[0].POS, v[1].POS, v[2].POS, [&](const Vec2f& pixel) {
+        rasterizeTri(vPos(v[0]), vPos(v[1]), vPos(v[2]), [&](const Vec2f& pixel) {
             Vec3f weights = interpolate(pixel);
             AsTuple<Vertex> attr = (
                 v[0] * weights[0] +
                 v[1] * weights[1] +
                 v[2] * weights[2]
             );
+            attr = attr / vPos(attr)[W];
 
             size_t i = (size_t)pixel[X] + (size_t)pixel[Y] * getRes()[X];
-            if (getDepthBuffer()[i] > attr.POS[Z]) {
-                getDepthBuffer()[i] = attr.POS[Z];
+            if (getDepthBuffer()[i] > vPos(attr)[Z]) {
+                getDepthBuffer()[i] = vPos(attr)[Z];
                 getColorBuffer()[i] = ps.draw(reinterpret_cast<Vertex&>(attr));
             }
         });
@@ -53,7 +57,7 @@ namespace ramiel {
         };
 
         TriList clippedTris;
-        if (!clip(tri[0].POS, tri[1].POS, tri[2].POS, clippedTris)) return;
+        if (!clip(vPos(tri[0]), vPos(tri[1]), vPos(tri[2]), clippedTris)) return;
 
         ps.init(reinterpret_cast<Vertex*>(&tri));
 
@@ -62,7 +66,7 @@ namespace ramiel {
             return;
         }
 
-        TriInterpolate3d interpolate(tri[0].POS, tri[1].POS, tri[2].POS);
+        TriInterpolate3d interpolate(vPos(tri[0]), vPos(tri[1]), vPos(tri[2]));
         for (auto& t : clippedTris) {
             std::array<AsTuple<Vertex>, 3> tri_c;
             for (size_t i = 0; i < 3; ++i) {
