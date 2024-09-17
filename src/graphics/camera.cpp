@@ -172,10 +172,6 @@ namespace ramiel {
         return matvec(projectionTransform, in);
     }
 
-    Vec4f getNormalizedCoord(const Vec4f& in) {
-        return in / in[W];
-    }
-
     Vec4f getScreenCoord(const Vec4f& in) {
         return matvec(screenTransform, in);
     }

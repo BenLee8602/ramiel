@@ -34,7 +34,6 @@ namespace ramiel {
 
     Vec4f getCameraCoord(const Vec4f& in);
     Vec4f getProjectionCoord(const Vec4f& in);
-    Vec4f getNormalizedCoord(const Vec4f& in);
     Vec4f getScreenCoord(const Vec4f& in);
 
 }
