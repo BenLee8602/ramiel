@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vertextypes/VtFlat.h>
-#include <vertextypes/VtFlatPixel.h>
-#include <vertextypes/VtFlatPixelTxt.h>
-#include <vertextypes/VtFlatTxt.h>
-#include <vertextypes/VtSmooth.h>
-#include <vertextypes/VtSmoothPixel.h>
-#include <vertextypes/VtSmoothPixelTxt.h>
-#include <vertextypes/VtSmoothTxt.h>
+#include <shaders/vertextypes/VtFlat.h>
+#include <shaders/vertextypes/VtFlatPixel.h>
+#include <shaders/vertextypes/VtFlatPixelTxt.h>
+#include <shaders/vertextypes/VtFlatTxt.h>
+#include <shaders/vertextypes/VtSmooth.h>
+#include <shaders/vertextypes/VtSmoothPixel.h>
+#include <shaders/vertextypes/VtSmoothPixelTxt.h>
+#include <shaders/vertextypes/VtSmoothTxt.h>
 
 #include <ramiel/ramiel.h>
 #include "vertex.h"
