@@ -13,5 +13,8 @@ add_library(${PROJECT_NAME} STATIC
     data/texture.cpp 
     data/voidbuffer.cpp 
 )
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_deps_stb)
