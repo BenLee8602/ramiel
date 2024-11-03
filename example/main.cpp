@@ -166,12 +166,12 @@ int main() {
     addEntity<MeshVertex>(
         "terrain",
         VS_PerTri(new PhysicsObject({ -64, 0, -64 })),
-        PS_PerTri(getLightingList(8, 1.0f), Vec3f{ 255, 255, 255 })
+        PS_PerTri(Vec3f{ 255, 255, 255 })
     );
     addEntity<MeshVertexT>(
         "cube",
         VS_PerPixel_Textured(new PhysicsObject()),
-        PS_PerPixel_Textured(getLightingList(8, 1.0f), getTexture("brickwall"))
+        PS_PerPixel_Textured(getTexture("brickwall"))
     );
     addEffect(new Fog({ 150, 110, 110 }, 20, 100));
 

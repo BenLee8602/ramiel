@@ -67,21 +67,17 @@ namespace ramiel {
         lights.push_back(light);
     }
 
-    LightingList getLightingList() {
-        return LightingList(ambientLight, lights);
-    }
-
-    LightingListSpecular getLightingList(
-        uint16_t specularExponent,
+    Vec3f getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        unsigned specularExponent,
         float specularIntensity
     ) {
-        return LightingListSpecular(
-            ambientLight,
-            lights,
-            getPos(),
-            specularExponent,
-            specularIntensity
-        );
+        Vec3f light = ambientLight;
+        for (auto l : lights) {
+            light += l->getLight(pos, normal, specularExponent, specularIntensity);
+        }
+        return light;
     }
 
 

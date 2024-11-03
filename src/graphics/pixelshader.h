@@ -1,7 +1,6 @@
 #pragma once
 
-#include <ramiel/data.h>
-#include "light.h"
+#include <ramiel/ramiel.h>
 
 namespace ramiel {
 
@@ -15,15 +14,12 @@ namespace ramiel {
 
 
     class PS_PerTri {
-        LightingListSpecular lightingList;
         Vec3f surfaceColor;
         Vec3f color;
     public:
         PS_PerTri(
-            LightingListSpecular lightingList,
             Vec3f surfaceColor
         ) :
-            lightingList(lightingList),
             surfaceColor(surfaceColor / 255.0f),
             color(Vec3f())
         {}
@@ -32,7 +28,7 @@ namespace ramiel {
         void init(Vertex_In v[3]) {
             Vec3f pos = (v[0].worldPos + v[1].worldPos + v[2].worldPos) / 3.0f;
 		    Vec3f normal = getNormal(v);
-		    color = surfaceColor * lightingList.getAllLight(pos, normal);
+		    color = surfaceColor * getLight(pos, normal);
         }
 
         template<class Vertex_In>
@@ -43,15 +39,12 @@ namespace ramiel {
 
 
     class PS_PerTri_Textured {
-        LightingListSpecular lightingList;
         const Texture* texture;
         Vec3f light;
     public:
         PS_PerTri_Textured(
-            LightingListSpecular lightingList,
             const Texture* texture
         ) :
-            lightingList(lightingList),
             texture(texture),
             light(Vec3f())
         {}
@@ -60,7 +53,7 @@ namespace ramiel {
         void init(Vertex_In v[3]) {
             Vec3f pos = (v[0].worldPos + v[1].worldPos + v[2].worldPos) / 3.0f;
             Vec3f normal = getNormal(v);
-            light = lightingList.getAllLight(pos, normal);
+            light = getLight(pos, normal);
         }
 
         template<class Vertex_In>
@@ -98,15 +91,12 @@ namespace ramiel {
 
 
     class PS_PerPixel {
-        LightingListSpecular lightingList;
         Vec3f surfaceColor;
         Vec3f normal;
     public:
         PS_PerPixel(
-            LightingListSpecular lightingList,
             Vec3f surfaceColor
         ) :
-            lightingList(lightingList),
             surfaceColor(surfaceColor / 255.0f),
             normal(Vec3f())
         {}
@@ -118,22 +108,19 @@ namespace ramiel {
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
+            Vec3f color = getLight(v.worldPos, normal);
             return color * surfaceColor;
         }
     };
 
 
     class PS_PerPixel_Textured {
-        LightingListSpecular lightingList;
         const Texture* texture;
         Vec3f normal;
     public:
         PS_PerPixel_Textured(
-            LightingListSpecular lightingList,
             const Texture* texture
         ) :
-            lightingList(lightingList),
             texture(texture),
             normal(Vec3f())
         {}
@@ -145,14 +132,13 @@ namespace ramiel {
 
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
-            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
+            Vec3f color = getLight(v.worldPos, normal);
             return color * texture->get(v.texturePos);
         }
     };
 
 
     class PS_PerPixel_NormalMapped {
-        LightingListSpecular lightingList;
         const Texture* normalMap;
         Vec3f surfaceColor;
         Vec3f normal;
@@ -160,11 +146,9 @@ namespace ramiel {
         Vec3f bitangent;
     public:
         PS_PerPixel_NormalMapped(
-            LightingListSpecular lightingList,
             const Texture* normalMap,
             Vec3f surfaceColor
         ) :
-            lightingList(lightingList),
             normalMap(normalMap),
             surfaceColor(surfaceColor / 255.0f),
             normal(Vec3f()),
@@ -194,14 +178,13 @@ namespace ramiel {
             Vec3f normal_in = normalMap->get(v.texturePos);
             Vec3f normal_out = tangent * normal_in[X] + bitangent * normal_in[Y] + normal * normal_in[Z];
             Vec3f pos = v.worldPos;
-            Vec3f color = lightingList.getAllLight(pos, normal_out);
+            Vec3f color = getLight(pos, normal_out);
             return color * surfaceColor;
         }
     };
 
 
     class PS_PerPixel_Textured_NormalMapped {
-        LightingListSpecular lightingList;
         const Texture* texture;
         const Texture* normalMap;
         Vec3f normal;
@@ -209,11 +192,9 @@ namespace ramiel {
         Vec3f bitangent;
     public:
         PS_PerPixel_Textured_NormalMapped(
-            LightingListSpecular lightingList,
             const Texture* texture,
             const Texture* normalMap
         ) :
-            lightingList(lightingList),
             texture(texture),
             normalMap(normalMap),
             normal(Vec3f()),
@@ -242,21 +223,18 @@ namespace ramiel {
         Vec3f draw(const Vertex_In& v) {
             Vec3f normal_in = normalMap->get(v.texturePos);
             Vec3f normal_out = tangent * normal_in[X] + bitangent * normal_in[Y] + normal * normal_in[Z];
-            Vec3f color = lightingList.getAllLight(v.worldPos, normal_out);
+            Vec3f color = getLight(v.worldPos, normal_out);
             return color * texture->get(v.texturePos);
         }
     };
 
 
     class PS_PerPixel_Smooth {
-        LightingListSpecular lightingList;
         Vec3f surfaceColor;
     public:
         PS_PerPixel_Smooth(
-            LightingListSpecular lightingList,
             Vec3f surfaceColor
         ) :
-            lightingList(lightingList),
             surfaceColor(surfaceColor / 255.0f)
         {}
 
@@ -266,21 +244,18 @@ namespace ramiel {
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
             Vec3f normal = normalize(v.normal);
-            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
+            Vec3f color = getLight(v.worldPos, normal);
             return color * surfaceColor;
         }
     };
 
 
     class PS_PerPixel_Smooth_Textured {
-        LightingListSpecular lightingList;
         const Texture* texture;
     public:
         PS_PerPixel_Smooth_Textured(
-            LightingListSpecular lightingList,
             const Texture* texture
         ) :
-            lightingList(lightingList),
             texture(texture)
         {}
 
@@ -290,7 +265,7 @@ namespace ramiel {
         template<class Vertex_In>
         Vec3f draw(const Vertex_In& v) {
             Vec3f normal = normalize(v.normal);
-            Vec3f color = lightingList.getAllLight(v.worldPos, normal);
+            Vec3f color = getLight(v.worldPos, normal);
             return color * texture->get(v.texturePos);
         }
     };

@@ -43,8 +43,12 @@ namespace ramiel {
     const Vec3f& getAmbientLight();
     void setAmbientLight(const Vec3f& color);
     void addLight(Light* light);
-    LightingList getLightingList();
-    LightingListSpecular getLightingList(uint16_t specularExponent, float specularIntensity);
+    Vec3f getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        unsigned specularExponent = 0,
+        float specularIntensiry = 0.0f
+    );
 
     void addEffect(Effect* effect);
 
