@@ -10,3 +10,5 @@ target_include_directories(${PROJECT_NAME}_graphics PUBLIC ${CMAKE_SOURCE_DIR}/d
 target_include_directories(${PROJECT_NAME}_graphics PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(${PROJECT_NAME}_graphics PUBLIC ${PROJECT_NAME}_data)
+
+add_subdirectory(shaderlang)
