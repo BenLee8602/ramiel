@@ -4,10 +4,10 @@
 
 namespace ramiel::shaderlang {
 
-    std::string readShaderFunc() {
-        auto& funcHeader = popToken();
-        if (funcHeader != "FUNC") {
-            std::cout << "error: expected \"FUNC\", got \"" << funcHeader << "\"\n";
+    std::string readShaderFunc(const std::string& header) {
+        auto& headerToken = popToken();
+        if (headerToken != header) {
+            std::cout << "error: expected \"" << header << "\", got \"" << headerToken << "\"\n";
             exit(1);
         }
 
