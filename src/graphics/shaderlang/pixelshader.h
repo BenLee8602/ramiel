@@ -4,6 +4,6 @@
 
 namespace ramiel::shaderlang {
 
-    std::string readShaderFunc(const std::string& header);
+    void parsePixelShader(const std::string& outPath);
 
 }
