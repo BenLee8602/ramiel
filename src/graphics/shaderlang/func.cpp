@@ -17,17 +17,14 @@ namespace ramiel::shaderlang {
             exit(1);
         }
 
-        std::string shaderFunc;
-        std::string prevToken;
-        std::string curToken;
-        while (tryPopToken(curToken)) {
-            shaderFunc += prevToken;
-            prevToken = std::move(curToken);
-        }
-
-        if (prevToken != "}") {
-            std::cout << "error: expected \"}\", got \"" << prevToken << "\"\n";
-            exit(1);
+        std::string shaderFunc = "{";
+        size_t braceDepth = 1;
+        
+        while (braceDepth) {
+            auto& token = popToken();
+            if (token == "{") braceDepth++;
+            else if (token == "}") braceDepth--;
+            shaderFunc += token;
         }
 
         return shaderFunc;
