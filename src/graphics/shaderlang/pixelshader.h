@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
+#include "template.h"
 
 namespace ramiel::shaderlang {
 
-    void parsePixelShader(const std::string& outPath);
+    TemplateArgs compilePixelShader();
 
 }

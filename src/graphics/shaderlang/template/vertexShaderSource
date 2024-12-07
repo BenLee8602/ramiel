@@ -1,0 +1,75 @@
+#include "${NAME}.h"
+using namespace ramiel;
+
+
+${NAME}::${NAME}(
+    ${CTOR_ARGS}
+) :
+    ${CTOR_INIT}
+{
+    size_t n = getAttrInType().size();
+    attrInPos = std::vector<uint8_t>(n);
+    for (size_t i = 0; i < n; i++) {
+        attrInPos[i] = i;
+    }
+}
+
+
+${NAME}::${NAME}(
+    std::initializer_list<uint8_t> attrInPos,
+    ${CTOR_ARGS}
+) :
+    attrInPos(attrInPos),
+    ${CTOR_INIT}
+{}
+
+
+std::vector<uint8_t> ${NAME}::getAttrInType() const {
+    return ${ATTR_IN_TYPE};
+}
+
+std::vector<uint8_t>& ${NAME}::getAttrInPos() {
+    return attrInPos;
+}
+
+std::vector<uint8_t> ${NAME}::getAttrOutType() const {
+    return ${ATTR_OUT_TYPE};
+}
+
+std::vector<uint8_t> ${NAME}::getAttrOutPos() const {
+    return ${ATTR_OUT_POS};
+}
+
+size_t ${NAME}::getAttrOutSize() const {
+    return ${ATTR_OUT_SIZE};
+}
+
+
+struct ${NAME}::In {
+    ${ATTR_IN_DEF}
+};
+
+struct ${NAME}::Out {
+    ${ATTR_OUT_DEF}
+};
+
+
+${NAME}::In ${NAME}::interpretVertex(const float* v) const {
+    return {
+        ${ATTR_IN_INTERPRET}
+    };
+}
+
+
+void ${NAME}::run(const float* in, float* out) const {
+    In i = interpretVertex(in);
+    Out& o = reinterpret_cast<Out&>(*out);
+
+    run(i, o);
+    o.pos = getCameraCoord(o.pos);
+}
+
+
+void ${NAME}::run(const In& in, Out& out) const {
+    ${FUNC}
+}

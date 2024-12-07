@@ -2,6 +2,14 @@
 #include "func.h"
 #include "token.h"
 
+namespace {
+
+    bool isPunctuation(const std::string& token) {
+        return token.length() == 1 && !std::isalnum(token[0]) && token[0] != '_';
+    }
+
+}
+
 namespace ramiel::shaderlang {
 
     std::string readShaderFunc(const std::string& header) {
@@ -25,6 +33,9 @@ namespace ramiel::shaderlang {
             if (token == "{") braceDepth++;
             else if (token == "}") braceDepth--;
             shaderFunc += token;
+
+            // this is a freaky workaround until we stop relying on c++
+            if (!isPunctuation(token)) shaderFunc += ' ';
         }
 
         return shaderFunc;
