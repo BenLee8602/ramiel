@@ -2,7 +2,6 @@
 #include <cmath>
 
 #include "camera.h"
-#include "triangle.h"
 using namespace ramiel;
 
 namespace ramiel {
