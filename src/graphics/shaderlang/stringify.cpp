@@ -28,7 +28,7 @@ namespace {
         { "Mat4x2", "ramiel::Mat4x2f" },
         { "Mat4x3", "ramiel::Mat4x3f" },
         { "Mat4x4", "ramiel::Mat4x4f" },
-        { "Buffer", "std::shared_ptr<ramiel::Texture>" }
+        { "Texture", "std::shared_ptr<ramiel::Texture>" }
     };
 
     const SizeMap sizeMap = {

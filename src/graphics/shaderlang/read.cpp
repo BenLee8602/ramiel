@@ -6,29 +6,9 @@ namespace {
 
     constexpr size_t maxAttrs = 16;
 
-    bool isValidAttrType(const std::string& token) {
-        const char* validAttrTypes[] = {
-            "Scalar",
-            "Vec2",   "Vec3",   "Vec4",
-            "Mat2x2", "Mat2x3", "Mat2x4",
-            "Mat3x2", "Mat3x3", "Mat3x4",
-            "Mat4x2", "Mat4x3", "Mat4x4"
-        };
-        constexpr size_t n = sizeof(validAttrTypes) / sizeof(const char*);
-
-        for (size_t i = 0; i < n; i++) {
-            if (token == validAttrTypes[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     bool isValidAttrName(const std::string& token) {
         return std::isalpha(token[0]) || token[0] == '_';
     }
-    
 
     bool isPunctuation(const std::string& token) {
         return token.length() == 1 && !std::isalnum(token[0]) && token[0] != '_';
@@ -75,10 +55,6 @@ namespace ramiel::shaderlang {
             std::string attrType = popToken();
             if (attrType == "}") {
                 return attrs;
-            }
-            if (!isValidAttrType(attrType)) {
-                std::cout << "error: invalid attribute type \"" << attrType << "\"\n";
-                exit(1);
             }
 
             std::string attrName = popToken();
