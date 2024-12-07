@@ -16,4 +16,6 @@ namespace ramiel::shaderlang {
 
     std::vector<Attr> readAttrList(const std::string& header);
 
+    std::string readShaderFunc(const std::string& header);
+
 }
