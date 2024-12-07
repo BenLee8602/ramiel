@@ -38,6 +38,16 @@ namespace ramiel::shaderlang {
     }
 
 
+    const std::string& getToken() {
+        if (i < tokens.size()) {
+            return tokens[i];
+        }
+
+        std::cout << "error: expected token, got eof\n";
+        exit(1);
+    }
+
+
     const std::string& popToken() {
         if (i < tokens.size()) {
             return tokens[i++];

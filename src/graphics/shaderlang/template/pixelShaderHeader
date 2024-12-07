@@ -1,0 +1,38 @@
+#pragma once
+
+#include <ramiel/ramiel.h>
+
+class ${NAME} : public ramiel::PixelShaderBase {
+public:
+    ${STATE}
+
+    ${NAME}(
+        ${CTOR_ARGS}
+    );
+
+    ${NAME}(
+        std::initializer_list<uint8_t> attrInPos,
+        ${CTOR_ARGS}
+    );
+
+    virtual ~${NAME}() {}
+
+    virtual void init(
+        const float* v0,
+        const float* v1,
+        const float* v2
+    ) override;
+
+    virtual ramiel::Vec3f run(const float* in) const override;
+
+private:
+    std::vector<uint8_t> attrInPos;
+    virtual std::vector<uint8_t> getAttrInType() const override;
+    virtual std::vector<uint8_t>& getAttrInPos() override;
+
+    struct In;
+    In interpretVertex(const float* v) const;
+    void init(const In& v0, const In& v1, const In& v2);
+    void run(const In& in, ramiel::Vec3f& out) const;
+
+};
