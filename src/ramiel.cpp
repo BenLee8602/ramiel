@@ -1,4 +1,6 @@
 #include "ramiel.h"
+#include "graphics/vertexshader.h"
+#include "graphics/pixelshader.h"
 using namespace ramiel;
 
 namespace {
@@ -6,10 +8,7 @@ namespace {
     Vec3f backgroundColor = Vec3f();
     Vec3f ambientLight = Vec3f();
 
-    std::unordered_map<std::string, MeshBase*> meshes;
-    std::unordered_map<std::string, Texture*>  textures;
-
-    std::vector<EntityBase*> entities;
+    std::vector<Entity> entities;
     std::vector<Light*> lights;
     std::vector<Effect*> effects;
 
@@ -29,29 +28,8 @@ namespace ramiel {
     }
 
 
-    void loadMesh(const char* meshName, MeshBase* mesh) {
-        meshes[meshName] = mesh;
-    }
-
-    MeshBase* getMesh(const char* meshName) {
-        return meshes[meshName];
-    }
-
-
-    bool loadTexture(const char* filename, const char* textureName, Mat4x4f format) {
-        if (!std::ifstream(filename).good()) return false;
-        if (textures[textureName]) return false;
-        textures[textureName] = new Texture(filename, format);
-        return true;
-    }
-
-    Texture* getTexture(const char* textureName) {
-        return (*textures.find(textureName)).second;
-    }
-
-
-    void addEntity(EntityBase* entity) {
-        entities.push_back(entity);
+    void addEntity(Entity&& entity) {
+        entities.emplace_back(std::move(entity));
     }
 
 
@@ -90,7 +68,7 @@ namespace ramiel {
         std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
         std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
 
-        for (auto& e : entities) e->run();
+        for (auto& e : entities) e.draw();
         for (auto& e : effects)  e->run();
 
         auto color = getColorBuffer();
@@ -145,10 +123,6 @@ namespace ramiel {
         dynamicObjects = std::vector<Kinematics*>();
         colliders = std::vector<Collider*>();
 
-        for (auto& mesh : meshes) delete mesh.second;
-        for (auto& texture : textures) delete texture.second;
-        
-        for (auto& entity : entities) delete entity;
         for (auto& light : lights) delete light;
     }
 

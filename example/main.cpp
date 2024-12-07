@@ -4,6 +4,9 @@
 #include <ramiel/ramiel.h>
 using namespace ramiel;
 
+#include <VertexShaderTextured.h>
+#include <PixelShaderTextured.h>
+
 bool run = true;
 
 constexpr int width = 1280;
@@ -156,24 +159,25 @@ int main() {
 
     setRes({ width, height });
 
-    loadMesh<MeshVertex>("example/assets/models/terrain.obj", "terrain");
-    loadMesh<MeshVertexT>("example/assets/models/cube.obj", "cube");
+    std::shared_ptr<Mesh> mesh(new Mesh({
+        { 3, 2 },
+        {
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f
+        },
+        { 0, 1, 2 }
+    }));
 
-    loadTexture("example/assets/textures/brickwall_texture.jpg", "brickwall", rgb1);
+    const char* brickwall_texture = "example/assets/textures/brickwall_texture.jpg";
+    std::shared_ptr<Texture> texture(new Texture(brickwall_texture, rgb1));
 
-    setAmbientLight({ 100, 80, 100 });
-    addLight(new DirectionalLight({ 155, 40, 0 }, 1.0f, { -10, 1, 0 }));
-    addEntity<MeshVertex>(
-        "terrain",
-        VS_PerTri(new PhysicsObject({ -64, 0, -64 })),
-        PS_PerTri(Vec3f{ 255, 255, 255 })
-    );
-    addEntity<MeshVertexT>(
-        "cube",
-        VS_PerPixel_Textured(new PhysicsObject()),
-        PS_PerPixel_Textured(getTexture("brickwall"))
-    );
-    addEffect(new Fog({ 150, 110, 110 }, 20, 100));
+    std::unique_ptr<VertexShaderBase> vs(new VertexShaderTextured(translate(Vec3f{ 0, 0, 4 })));
+    std::unique_ptr<PixelShaderBase> ps(new PixelShaderTextured(texture, Vec3f{}));
+    Entity entity(mesh, std::move(vs), std::move(ps));
+
+    addEntity(std::move(entity));
+    addLight(new PointLight({ 255, 100, 200 }, 4.0f, { -1, 1, 3 }, 1.0f));
 
     uint8_t* frame = new uint8_t[width * height * 3];
     auto frameTimeStart = std::chrono::steady_clock::now();

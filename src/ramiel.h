@@ -14,31 +14,7 @@ namespace ramiel {
     const Vec3f& getBackgroundColor();
     void setBackgroundColor(const Vec3f& color);
 
-    void loadMesh(const char* meshName, MeshBase* mesh);
-    template<class Vertex>
-    void loadMesh(const char* filename, const char* meshname, bool loadvt = false, bool loadvn = false) {
-        std::vector<Vertex> vertices;
-        std::vector<Vec3u> triangles;
-        getObj(filename, vertices, triangles);
-        MeshBase* mesh = new Mesh<Vertex>(std::move(triangles), std::move(vertices));
-        loadMesh(meshname, mesh);
-    }
-    MeshBase* getMesh(const char* meshName);
-
-    bool loadTexture(const char* filename, const char* textureName, Mat4x4f format);
-    Texture* getTexture(const char* textureName);
-
-    void addEntity(EntityBase* entity);
-    template<class Vertex, class VertexShader, class PixelShader>
-    void addEntity(
-        const char* meshName,
-        VertexShader vertexShader,
-        PixelShader pixelShader
-    ) {
-        Mesh<Vertex>* mesh = static_cast<Mesh<Vertex>*>(getMesh(meshName));
-        EntityBase* entity = new Entity(*mesh, vertexShader, pixelShader);
-        addEntity(entity);
-    }
+    void addEntity(Entity&& entity);
 
     const Vec3f& getAmbientLight();
     void setAmbientLight(const Vec3f& color);
