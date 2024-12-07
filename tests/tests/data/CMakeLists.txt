@@ -1,7 +1,5 @@
 add_library(${PROJECT_NAME}_tests_data OBJECT
     texture.test.cpp
-    tuple.test.cpp
-    voidbuffer.test.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_tests_data PRIVATE ${CMAKE_SOURCE_DIR}/deps)

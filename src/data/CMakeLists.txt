@@ -1,7 +1,6 @@
 add_library(${PROJECT_NAME}_data STATIC
     mesh.cpp
     texture.cpp
-    voidbuffer.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_data PUBLIC ${CMAKE_SOURCE_DIR}/deps)

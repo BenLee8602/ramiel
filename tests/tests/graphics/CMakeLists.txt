@@ -2,7 +2,6 @@ add_library(${PROJECT_NAME}_tests_graphics OBJECT
     camera.test.cpp
     effects.test.cpp
     light.test.cpp
-    vertex.test.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_tests_graphics PRIVATE ${CMAKE_SOURCE_DIR}/deps)

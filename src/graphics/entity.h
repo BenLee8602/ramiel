@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <ramiel/data.h>
-#include "triangle.h"
 
 namespace ramiel {
 
