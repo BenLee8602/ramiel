@@ -6,58 +6,33 @@
 
 namespace ramiel {
 
-    class MeshBase {
-    protected:
-        std::vector<Vec3u> triangles;
+    class Mesh {
+        friend class Entity;
+
     public:
-        const std::vector<Vec3u>& getTriangles() const { return triangles; }
-        virtual ~MeshBase() {}
-    };
+        Mesh(
+            const std::vector<uint8_t>& attr,
+            const std::vector<float>& vertices,
+            const std::vector<uint32_t>& triangles
+        );
+        Mesh(
+            const std::vector<uint8_t>& attr,
+            std::vector<float>&& vertices,
+            std::vector<uint32_t>&& triangles
+        );
 
-    template<class Vertex>
-    class Mesh : public MeshBase {
-        std::vector<Vertex> vertices;
-    public:
-        Mesh(const std::vector<Vec3u>& triangles, const std::vector<Vertex>& vertices) {
-            this->triangles = std::move(triangles);
-            this->vertices  = std::move(vertices);
-        }
-        Mesh(const std::string& filename) {
-            getObj<Vertex>(filename, vertices, triangles);
-        }
-        const std::vector<Vertex>& getVertices() const { return vertices; }
-    };
+        const std::vector<float>& getVertices() const;
+        const std::vector<uint32_t>& getTriangles() const;
 
+    private:
+        std::vector<uint8_t> getAttrOutType() const;
+        std::vector<uint8_t> getAttrOutPos() const;
+        size_t getAttrOutSize() const;
 
-    struct MeshVertex {
-        Vec3f pos;
-        MeshVertex(Vec3f pos = Vec3f()) : pos(pos) {}
-        MeshVertex(Vec3f pos, Vec2f txt, Vec3f nml) : pos(pos) {}
-    };
-
-    struct MeshVertexT {
-        Vec3f pos;
-        Vec2f txt;
-        MeshVertexT(Vec3f pos = Vec3f(), Vec2f txt = Vec2f()) : pos(pos), txt(txt) {}
-        MeshVertexT(Vec3f pos, Vec2f txt, Vec3f nml) : pos(pos), txt(txt) {}
-    };
-
-    struct MeshVertexN {
-        Vec3f pos;
-        Vec3f nml;
-        MeshVertexN(Vec3f pos = Vec3f(), Vec3f nml = Vec3f()) : pos(pos), nml(nml) {}
-        MeshVertexN(Vec3f pos, Vec2f txt, Vec3f nml) : pos(pos), nml(nml) {}
-    };
-
-    struct MeshVertexTN {
-        Vec3f pos;
-        Vec2f txt;
-        Vec3f nml;
-        MeshVertexTN(
-            Vec3f pos = Vec3f(),
-            Vec2f txt = Vec2f(),
-            Vec3f nml = Vec3f()
-        ) : pos(pos), txt(txt), nml(nml) {}
+    private:
+        std::vector<uint8_t> attr;
+        std::vector<float> vertices;
+        std::vector<uint32_t> triangles;
     };
 
 }

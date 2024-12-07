@@ -1,4 +1,5 @@
 add_library(${PROJECT_NAME}_data STATIC
+    mesh.cpp
     texture.cpp
     voidbuffer.cpp
 )

@@ -2,6 +2,7 @@ add_library(${PROJECT_NAME}_graphics STATIC
     camera.cpp
     clip.cpp
     effects.cpp
+    entity.cpp
     light.cpp
     rasterize.cpp
 )

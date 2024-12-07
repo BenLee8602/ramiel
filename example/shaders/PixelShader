@@ -1,0 +1,24 @@
+RAMIEL
+PIXEL_SHADER PixelShader
+
+STATE {
+    Vec3 surfaceColor
+    Vec3 normal
+}
+
+IN {
+    Vec4 pos
+    Vec3 worldPos
+}
+
+INIT {
+    normal = normalize(cross(
+        v1.worldPos - v0.worldPos,
+        v2.worldPos - v0.worldPos
+    ));
+}
+
+SHADER {
+    Vec3f color = getLight(in.worldPos, normal);
+    out = color * surfaceColor;
+}
