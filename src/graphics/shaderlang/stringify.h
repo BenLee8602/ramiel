@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "attribute.h"
+#include "read.h"
 
 namespace ramiel::shaderlang {
 

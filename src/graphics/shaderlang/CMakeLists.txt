@@ -1,11 +1,9 @@
 add_executable(${PROJECT_NAME}_shaderlang
-    attribute.cpp
-    func.cpp
     main.cpp
-    pixelshader.cpp
+    read.cpp
+    shader.cpp
     shaderlang.cpp
     stringify.cpp
     template.cpp
     token.cpp
-    vertexshader.cpp
 )

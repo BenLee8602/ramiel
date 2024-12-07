@@ -4,11 +4,8 @@
 
 #include "shaderlang.h"
 #include "token.h"
-#include "attribute.h"
-#include "func.h"
-
-#include "vertexshader.h"
-#include "pixelshader.h"
+#include "read.h"
+#include "shader.h"
 
 namespace {
 
