@@ -1,39 +1,96 @@
-#include <sstream>
 #include <ramiel/test.h>
-#include <ramiel/data.h>
+#include <ramiel/file.h>
 using namespace ramiel;
 
-
-RAMIEL_TEST_ADD(ObjloaderParseVec) {
-    std::istringstream vec2("0.2 0.3");
-    std::istringstream vec3("0.4 0.5 0.6");
-    Vec2f vec2_expected = { 0.2f, 0.3f };
-    Vec3f vec3_expected = { 0.4f, 0.5f, 0.6f };
-    Vec2f vec2_actual = parseVec2(vec2);
-    Vec3f vec3_actual = parseVec3(vec3);
-    RAMIEL_TEST_ASSERT(vec2_expected == vec2_actual);
-    RAMIEL_TEST_ASSERT(vec3_expected == vec3_actual);
-}
+#ifdef ramiel_TEST_DATA_DIR
+const std::string testDataDir = ramiel_TEST_DATA_DIR;
+#else
+const std::string testDataDir = ".";
+#endif
 
 
-RAMIEL_TEST_ADD(ObjloaderParsePolygonVertex) {
-    std::string str_v   = "1";
-    std::string str_vt  = "2/3";
-    std::string str_vn  = "4//5";
-    std::string str_vtn = "6/7/8";
+RAMIEL_TEST_ADD(ObjLoader) {
+    using FaceVtx = ObjData::FaceVtx;
+    using Face = ObjData::Face;
 
-    Vec3u expected_v   = { 1, 0, 0 };
-    Vec3u expected_vt  = { 2, 3, 0 };
-    Vec3u expected_vn  = { 4, 0, 5 };
-    Vec3u expected_vtn = { 6, 7, 8 };
+    const std::vector<Face> fExpected = {
+        { FaceVtx{ 1, 1, 0 }, { 3, 2, 0 }, { 7, 3, 0 } },
+        { FaceVtx{ 1, 1, 0 }, { 7, 3, 0 }, { 5, 4, 0 } },
+        { FaceVtx{ 5, 1, 0 }, { 7, 2, 0 }, { 8, 3, 0 } },
+        { FaceVtx{ 5, 1, 0 }, { 8, 3, 0 }, { 6, 4, 0 } },
+        { FaceVtx{ 6, 1, 0 }, { 8, 2, 0 }, { 4, 3, 0 } },
+        { FaceVtx{ 6, 1, 0 }, { 4, 3, 0 }, { 2, 4, 0 } },
+        { FaceVtx{ 2, 1, 0 }, { 4, 2, 0 }, { 3, 3, 0 } },
+        { FaceVtx{ 2, 1, 0 }, { 3, 3, 0 }, { 1, 4, 0 } },
+        { FaceVtx{ 3, 1, 0 }, { 4, 2, 0 }, { 8, 3, 0 } },
+        { FaceVtx{ 8, 3, 0 }, { 7, 4, 0 }, { 3, 1, 0 } },
+        { FaceVtx{ 5, 1, 0 }, { 6, 2, 0 }, { 2, 3, 0 } },
+        { FaceVtx{ 2, 3, 0 }, { 1, 4, 0 }, { 5, 1, 0 } }
+    };
+    const std::vector<Vec3f> vExpected = {
+        {  0.0f,  0.0f,  0.0f },
+        { -0.5f, -0.5f, -0.5f },
+        { -0.5f, -0.5f,  0.5f },
+        { -0.5f,  0.5f, -0.5f },
+        { -0.5f,  0.5f,  0.5f },
+        {  0.5f, -0.5f, -0.5f },
+        {  0.5f, -0.5f,  0.5f },
+        {  0.5f,  0.5f, -0.5f },
+        {  0.5f,  0.5f,  0.5f }
+    };
+    const std::vector<Vec2f> vtExpected = {
+        { 0.0f, 0.0f },
+        { 0.0f, 0.0f },
+        { 1.0f, 0.0f },
+        { 1.0f, 1.0f },
+        { 0.0f, 1.0f }
+    };
 
-    Vec3u actual_v   = parsePolygonVertex(str_v);
-    Vec3u actual_vt  = parsePolygonVertex(str_vt);
-    Vec3u actual_vn  = parsePolygonVertex(str_vn);
-    Vec3u actual_vtn = parsePolygonVertex(str_vtn);
+    ObjData data = loadObj(testDataDir + "/cube_withquads.obj");
 
-    RAMIEL_TEST_ASSERT(expected_v   == actual_v);
-    RAMIEL_TEST_ASSERT(expected_vt  == actual_vt);
-    RAMIEL_TEST_ASSERT(expected_vn  == actual_vn);
-    RAMIEL_TEST_ASSERT(expected_vtn == actual_vtn);
+    RAMIEL_TEST_ASSERT(data.f == fExpected);
+    RAMIEL_TEST_ASSERT(data.v == vExpected);
+    RAMIEL_TEST_ASSERT(data.vt == vtExpected);
+
+    VertexBuffer vertexBuffer = makeVertexBuffer(data);
+
+    const std::vector<uint32_t> fbExpected = {
+         0,  1,  2,
+         0,  2,  3,
+         4,  5,  6,
+         4,  6,  7,
+         8,  9, 10,
+         8, 10, 11,
+        12, 13, 14,
+        12, 14, 15,
+        16, 13,  6,
+         6, 17, 16,
+         4, 18, 19,
+        19, 15,  4
+    };
+    const std::vector<float> vbExpected = {
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 1.0f, 1.0f
+    };
+
+    RAMIEL_TEST_ASSERT(vertexBuffer.f == fbExpected);
+    RAMIEL_TEST_ASSERT(vertexBuffer.v == vbExpected);
 }

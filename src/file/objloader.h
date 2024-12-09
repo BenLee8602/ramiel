@@ -2,47 +2,47 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <array>
+#include <functional>
 
 #include <ramiel/math.h>
 
-
 namespace ramiel {
 
-    struct Hash_Vec3u {
-        size_t operator()(const Vec3u& key) const {
-            return key[0] << 20 + key[1] << 10 + key[2];
-        }
-    };
+    struct ObjData {
+        using FaceVtx = std::array<uint32_t, 3>;
+        using Face = std::array<FaceVtx, 3>;
 
-    Vec2f parseVec2(std::istream& str);
-    Vec3f parseVec3(std::istream& str);
-    Vec3u parsePolygonVertex(std::string& str);
-
-    bool loadObj(
-        const std::string& filename,
-        std::vector<Vec3u>& f,
-        std::vector<Vec3f>& v,
-        std::vector<Vec2f>& vt,
-        std::vector<Vec3f>& vn,
-        std::unordered_map<Vec3u, size_t, Hash_Vec3u>& vertexIndices
-    );
-
-
-    template<class Vertex>
-    bool getObj(const std::string& filename, std::vector<Vertex>& v_out, std::vector<Vec3u>& f_out) {
+        std::vector<Face> f;
         std::vector<Vec3f> v;
         std::vector<Vec2f> vt;
         std::vector<Vec3f> vn;
-        std::unordered_map<Vec3u, size_t, Hash_Vec3u> vertexIndices;
+    };
 
-        if (!loadObj(filename, f_out, v, vt, vn, vertexIndices)) return false;
+    ObjData loadObj(const std::string& filename);
 
-        v_out = std::vector<Vertex>(vertexIndices.size());
-        for (auto& [key, value] : vertexIndices) {
-            v_out[value] = Vertex(v[key[0]], vt[key[1]], vn[key[2]]);
-        }
-        return true;
-    }
+    struct VertexBuffer {
+        std::vector<uint32_t> f;
+        std::vector<float> v;
+    };
+    
+    VertexBuffer makeVertexBuffer(const ObjData& data);
 
+    using VertexFactory = std::function<void(
+        const Vec3f& v,
+        const Vec2f& vt,
+        const Vec3f& vn,
+        float* out
+    )>;
+
+    VertexBuffer makeVertexBuffer(
+        const ObjData& data,
+        size_t vertexSize,
+        VertexFactory vertexFactory
+    );
+
+    VertexFactory make_v();
+    VertexFactory make_vt();
+    VertexFactory make_vn();
+    VertexFactory make_vtn();
 }

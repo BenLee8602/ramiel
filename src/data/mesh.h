@@ -2,13 +2,10 @@
 
 #include <vector>
 #include <string>
-#include <ramiel/file.h>
 
 namespace ramiel {
 
     class Mesh {
-        friend class Entity;
-
     public:
         Mesh(
             const std::vector<uint8_t>& attr,
@@ -20,11 +17,13 @@ namespace ramiel {
             std::vector<float>&& vertices,
             std::vector<uint32_t>&& triangles
         );
+        Mesh(const std::string& filename);
 
         const std::vector<float>& getVertices() const;
         const std::vector<uint32_t>& getTriangles() const;
 
     private:
+        friend class Entity;
         std::vector<uint8_t> getAttrOutType() const;
         std::vector<uint8_t> getAttrOutPos() const;
         size_t getAttrOutSize() const;

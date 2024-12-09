@@ -159,25 +159,19 @@ int main() {
 
     setRes({ width, height });
 
-    std::shared_ptr<Mesh> mesh(new Mesh({
-        { 3, 2 },
-        {
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f
-        },
-        { 0, 1, 2 }
-    }));
+    const char* meshFile = "example/assets/models/cube.obj";
+    const char* textureFile = "example/assets/textures/brickwall_texture.jpg";
 
-    const char* brickwall_texture = "example/assets/textures/brickwall_texture.jpg";
-    std::shared_ptr<Texture> texture(new Texture(brickwall_texture, rgb1));
+    auto mesh = std::make_shared<Mesh>(meshFile);
+    auto texture = std::make_unique<Texture>(textureFile, rgb1);
 
-    std::unique_ptr<VertexShaderBase> vs(new VertexShaderTextured(translate(Vec3f{ 0, 0, 4 })));
-    std::unique_ptr<PixelShaderBase> ps(new PixelShaderTextured(texture, Vec3f{}));
+    auto vs = std::make_unique<VertexShaderTextured>(translate(Vec3f{ 0, 0, 4 }));
+    auto ps = std::make_unique<PixelShaderTextured>(std::move(texture), Vec3f{});
     Entity entity(mesh, std::move(vs), std::move(ps));
 
     addEntity(std::move(entity));
-    addLight(new PointLight({ 255, 100, 200 }, 4.0f, { -1, 1, 3 }, 1.0f));
+    setAmbientLight({ 25, 10, 20 });
+    addLight(new PointLight({ 255, 100, 200 }, 4.0f, { 1, 1.5, 2 }, 0.5f));
 
     uint8_t* frame = new uint8_t[width * height * 3];
     auto frameTimeStart = std::chrono::steady_clock::now();
