@@ -1,3 +1,4 @@
+#include <ramiel/file.h>
 #include "mesh.h"
 
 namespace ramiel {
@@ -21,6 +22,19 @@ namespace ramiel {
         this->attr = attr;
         this->vertices = std::move(vertices);
         this->triangles = std::move(triangles);
+    }
+
+
+    Mesh::Mesh(const std::string& filename) {
+        ObjData data = loadObj(filename);
+
+        attr.push_back(3);
+        if (data.vt.size() > 1) attr.push_back(2);
+        if (data.vn.size() > 1) attr.push_back(3);
+
+        VertexBuffer vertexBuffer = makeVertexBuffer(data);
+        vertices = std::move(vertexBuffer.v);
+        triangles = std::move(vertexBuffer.f);
     }
 
 

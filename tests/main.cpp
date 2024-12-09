@@ -2,5 +2,4 @@
 
 int main() {
     ramiel::test::runTests();
-    std::cin.get();
 }
