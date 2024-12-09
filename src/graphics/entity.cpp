@@ -159,7 +159,7 @@ namespace ramiel {
         }
         
         const std::vector<uint32_t>& tris = mesh->getTriangles();
-        for (auto t = tris.begin(); t < tris.end(); t += vSize * 3) {
+        for (auto t = tris.begin(); t < tris.end(); t += 3) {
             const float* v0 = &v[t[0] * vSize];
             const float* v1 = &v[t[1] * vSize];
             const float* v2 = &v[t[2] * vSize];
