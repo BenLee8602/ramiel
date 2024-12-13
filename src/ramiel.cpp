@@ -10,7 +10,6 @@ namespace {
 
     std::vector<Entity> entities;
     std::vector<Light*> lights;
-    std::vector<Effect*> effects;
 
     std::vector<Kinematics*> dynamicObjects;
     std::vector<Collider*> colliders;
@@ -59,17 +58,11 @@ namespace ramiel {
     }
 
 
-    void addEffect(Effect* effect) {
-        effects.push_back(effect);
-    }
-
-
     void renderFrame() {
         std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
         std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
 
         for (auto& e : entities) e.draw();
-        for (auto& e : effects)  e->run();
 
         auto color = getColorBuffer();
         for (size_t i = 0; i < getBufferSize(); ++i)

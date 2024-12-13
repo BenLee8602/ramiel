@@ -4,45 +4,25 @@
 
 namespace ramiel {
 
-    class Effect {
-    public:
-        virtual void run() const = 0;
-    };
-
-
-    class Brightness : public Effect {
+    struct Brightness {
         float brightness;
-    public:
-        Brightness(float brightness) : brightness(brightness) {}
-        virtual void run() const override;
+        Vec3f operator()(const Vec3f& pixel) const;
     };
 
 
-    class ColorFilter : public Effect {
-        Vec3f color;
-    public:
-        ColorFilter(Vec3f color) : color(color / 255.0f) {}
-        virtual void run() const override;
-    };
-
-
-    class Contrast : public Effect {
+    struct Contrast {
         float contrast;
-    public:
-        Contrast(float contrast) : contrast(contrast) {}
-        virtual void run() const override;
+        Vec3f operator()(const Vec3f& pixel) const;
     };
 
 
-    class Exposure : public Effect {
+    struct Exposure {
         float exposure;
-    public:
-        Exposure(float exposure) : exposure(exposure) {}
-        virtual void run() const override;
+        Vec3f operator()(const Vec3f& pixel) const;
     };
 
 
-    class Fog : public Effect {
+    class Fog {
         Vec3f fogColor;
         float fogStart;
         float fogEnd;
@@ -58,21 +38,13 @@ namespace ramiel {
             fogEnd(fogEnd),
             fogFactor(1.0f / (fogEnd - fogStart))
         {}
-        virtual void run() const override;
+        Vec3f operator()(const Vec3f& pixel, float depth) const;
     };
 
 
-    class ToneMapping : public Effect {
-    public:
-        virtual void run() const override;
-    };
-
-
-    class Saturation : public Effect {
+    struct Saturation {
         float saturation;
-    public:
-        Saturation(float saturation) : saturation(saturation) {}
-        virtual void run() const override;
+        Vec3f operator()(const Vec3f& pixel) const;
     };
 
 }

@@ -26,8 +26,6 @@ namespace ramiel {
         float specularIntensiry = 0.0f
     );
 
-    void addEffect(Effect* effect);
-
     void renderFrame();
 
 
