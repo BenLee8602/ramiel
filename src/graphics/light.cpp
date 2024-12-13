@@ -1,7 +1,50 @@
 #include <cmath>
+#include <vector>
+#include <algorithm>
 #include "light.h"
+using namespace ramiel;
+
+namespace {
+
+    Vec3f ambientLight;
+    std::vector<std::shared_ptr<Light>> lights;
+
+}
 
 namespace ramiel {
+
+    void addLight(std::shared_ptr<Light> light) {
+        auto i = std::find(lights.begin(), lights.end(), light);
+        if (i == lights.end()) lights.push_back(light);
+    }
+
+    void removeLight(const std::shared_ptr<Light>& light) {
+        auto i = std::remove(lights.begin(), lights.end(), light);
+        lights.erase(i, lights.end());
+    }
+
+    void setAmbientLight(const Vec3f& color) {
+        ambientLight = min(max(color, 0.0f), 255.0f);
+    }
+
+    Vec3f getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        float specularExponent,
+        float specularIntensity
+    ) {
+        Vec3f light = ambientLight;
+        for (auto& l : lights) {
+            light += l->getLight(
+                pos,
+                normal,
+                specularExponent,
+                specularIntensity
+            );
+        }
+        return light;
+    }
+
 
     Light::Light(Vec3f color, float intensity) {
         this->color = color;

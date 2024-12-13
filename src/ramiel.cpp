@@ -6,10 +6,8 @@ using namespace ramiel;
 namespace {
 
     Vec3f backgroundColor = Vec3f();
-    Vec3f ambientLight = Vec3f();
 
     std::vector<Entity> entities;
-    std::vector<Light*> lights;
 
     std::vector<Kinematics*> dynamicObjects;
     std::vector<Collider*> colliders;
@@ -29,32 +27,6 @@ namespace ramiel {
 
     void addEntity(Entity&& entity) {
         entities.emplace_back(std::move(entity));
-    }
-
-
-    const Vec3f& getAmbientLight() {
-        return ambientLight;
-    }
-
-    void setAmbientLight(const Vec3f& color) {
-        ambientLight = color;
-    }
-
-    void addLight(Light* light) {
-        lights.push_back(light);
-    }
-
-    Vec3f getLight(
-        const Vec3f& pos,
-        const Vec3f& normal,
-        unsigned specularExponent,
-        float specularIntensity
-    ) {
-        Vec3f light = ambientLight;
-        for (auto l : lights) {
-            light += l->getLight(pos, normal, specularExponent, specularIntensity);
-        }
-        return light;
     }
 
 
@@ -115,8 +87,6 @@ namespace ramiel {
     void destroy() {
         dynamicObjects = std::vector<Kinematics*>();
         colliders = std::vector<Collider*>();
-
-        for (auto& light : lights) delete light;
     }
 
 }
