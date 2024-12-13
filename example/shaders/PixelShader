@@ -3,6 +3,8 @@ PIXEL_SHADER PixelShader
 
 STATE {
     Vec3 surfaceColor
+    Scalar specularExponent
+    Scalar specularIntensity
     Vec3 normal
 }
 
@@ -19,6 +21,6 @@ INIT {
 }
 
 SHADER {
-    Vec3f color = getLight(in.worldPos, normal);
+    Vec3f color = getLight(in.worldPos, normal, specularExponent, specularIntensity);
     out = color * surfaceColor;
 }

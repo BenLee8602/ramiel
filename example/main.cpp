@@ -163,15 +163,15 @@ int main() {
     const char* textureFile = "example/assets/textures/brickwall_texture.jpg";
 
     auto mesh = std::make_shared<Mesh>(meshFile);
-    auto texture = std::make_unique<Texture>(textureFile, rgb1);
+    auto texture = std::make_shared<Texture>(textureFile, rgb1);
 
     auto vs = std::make_unique<VertexShaderTextured>(translate(Vec3f{ 0, 0, 4 }));
-    auto ps = std::make_unique<PixelShaderTextured>(std::move(texture), Vec3f{});
+    auto ps = std::make_unique<PixelShaderTextured>(texture, 8.0f, 1.0f, Vec3f{});
     Entity entity(mesh, std::move(vs), std::move(ps));
 
     addEntity(std::move(entity));
     setAmbientLight({ 25, 10, 20 });
-    addLight(new PointLight({ 255, 100, 200 }, 4.0f, { 1, 1.5, 2 }, 0.5f));
+    addLight(std::make_shared<PointLight>(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
 
     uint8_t* frame = new uint8_t[width * height * 3];
     auto frameTimeStart = std::chrono::steady_clock::now();

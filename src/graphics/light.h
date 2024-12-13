@@ -1,8 +1,21 @@
 #pragma once
 
+#include <memory>
 #include "camera.h"
 
 namespace ramiel {
+
+    class Light;
+
+    void addLight(std::shared_ptr<Light> light);
+    void removeLight(const std::shared_ptr<Light>& light);
+    void setAmbientLight(const Vec3f& color);
+    Vec3f getLight(
+        const Vec3f& pos,
+        const Vec3f& normal,
+        float specularExponent = 0.0f,
+        float specularIntensity = 0.0f
+    );
 
     class Light {
     protected:
