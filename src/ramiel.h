@@ -11,14 +11,6 @@
 
 namespace ramiel {
 
-    const Vec3f& getBackgroundColor();
-    void setBackgroundColor(const Vec3f& color);
-
-    void addEntity(Entity&& entity);
-
-    void renderFrame();
-
-
     bool addDynamicObject(Kinematics* dynamicObject);
     bool removeDynamicObject(Kinematics* dynamicObject);
 
@@ -26,8 +18,5 @@ namespace ramiel {
     bool removeCollider(Collider* collider);
 
     void simulatePhysics(float dtime);
-
-
-    void destroy();
 
 }

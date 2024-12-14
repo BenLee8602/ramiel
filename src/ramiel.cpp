@@ -5,42 +5,12 @@ using namespace ramiel;
 
 namespace {
 
-    Vec3f backgroundColor = Vec3f();
-
-    std::vector<Entity> entities;
-
     std::vector<Kinematics*> dynamicObjects;
     std::vector<Collider*> colliders;
 
 }
 
 namespace ramiel {
-
-    const Vec3f& getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    void setBackgroundColor(const Vec3f& color) {
-        backgroundColor = color;
-    }
-
-
-    void addEntity(Entity&& entity) {
-        entities.emplace_back(std::move(entity));
-    }
-
-
-    void renderFrame() {
-        std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
-        std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
-
-        for (auto& e : entities) e.draw();
-
-        auto color = getColorBuffer();
-        for (size_t i = 0; i < getBufferSize(); ++i)
-            color[i] = min(color[i], 255.0f);
-    }
-
 
     bool addDynamicObject(Kinematics* dynamicObject) {
         if (!dynamicObject) return false;
@@ -81,12 +51,6 @@ namespace ramiel {
                 if (handler && handler->detect()) handler->resolve();
             }
         }
-    }
-
-
-    void destroy() {
-        dynamicObjects = std::vector<Kinematics*>();
-        colliders = std::vector<Collider*>();
     }
 
 }
