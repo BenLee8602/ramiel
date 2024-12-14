@@ -104,9 +104,9 @@ void cameraControls(float dtime) {
 void getFrameRGB(uint8_t* frame) {
     auto color = getColorBuffer();
     for (size_t i = 0; i < getBufferSize(); ++i) {
-        *frame++ = color[i][B];
-        *frame++ = color[i][G];
-        *frame++ = color[i][R];
+        *frame++ = std::min(color[i][B], 255.0f);
+        *frame++ = std::min(color[i][G], 255.0f);
+        *frame++ = std::min(color[i][R], 255.0f);
     }
 }
 
@@ -169,7 +169,6 @@ int main() {
     auto ps = std::make_unique<PixelShaderTextured>(texture, 8.0f, 1.0f, Vec3f{});
     Entity entity(mesh, std::move(vs), std::move(ps));
 
-    addEntity(std::move(entity));
     setAmbientLight({ 25, 10, 20 });
     addLight(std::make_shared<PointLight>(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
 
@@ -190,7 +189,9 @@ int main() {
 
         cameraControls((float)dtime);
         simulatePhysics(dtime);
-        renderFrame();
+        std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), Vec3f{});
+        std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
+        entity.draw();
         getFrameRGB(frame);
 
         StretchDIBits(
@@ -203,7 +204,6 @@ int main() {
     }
 
     DestroyWindow(window);
-    destroy();
     delete[] frame;
     return 0;
 }
