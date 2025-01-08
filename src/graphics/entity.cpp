@@ -146,20 +146,21 @@ namespace ramiel {
     void Entity::draw() {
         if (!(*this)) return;
 
-        const size_t vInSize = mesh->getAttrOutSize();
-        const std::vector<float>& vIn = mesh->getVertices();
+        const size_t vCount = mesh->getVertexCount();
 
-        const size_t vCount = vIn.size() / vInSize;
+        const size_t vInSize = mesh->getVertexSize();
+        const float* vIn = mesh->vtxBegin();
 
         const size_t vSize = vertexShader->getAttrOutSize();
         std::vector<float> v(vSize * vCount);
 
         for (size_t i = 0; i < vCount; i++) {
-            vertexShader->run(&vIn[i * vInSize], &v[i * vSize]);
+            auto in = vIn + i * vInSize;
+            auto out = v.data() + i * vSize;
+            vertexShader->run(in, out);
         }
         
-        const std::vector<uint32_t>& tris = mesh->getTriangles();
-        for (auto t = tris.begin(); t < tris.end(); t += 3) {
+        for (auto t = mesh->triBegin(); t < mesh->triEnd(); t += 3) {
             const float* v0 = &v[t[0] * vSize];
             const float* v1 = &v[t[1] * vSize];
             const float* v2 = &v[t[2] * vSize];
