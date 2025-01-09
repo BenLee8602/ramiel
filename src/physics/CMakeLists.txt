@@ -1,6 +1,6 @@
 add_library(${PROJECT_NAME}_physics STATIC
-    collisiondispatch.cpp
-    collisionhandle.cpp
+    constraint.cpp
+    physics.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_physics PUBLIC ${CMAKE_SOURCE_DIR}/deps)

@@ -1,6 +1,5 @@
 add_library(${PROJECT_NAME}_tests_physics OBJECT
-    collisiondispatch.test.cpp
-    collisionhandle.test.cpp
+    physics.test.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_tests_physics PRIVATE ${CMAKE_SOURCE_DIR}/deps)
