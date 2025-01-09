@@ -1,6 +1,7 @@
 add_library(${PROJECT_NAME}_physics STATIC
     constraint.cpp
     physics.cpp
+    softbody.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_physics PUBLIC ${CMAKE_SOURCE_DIR}/deps)
