@@ -5,13 +5,13 @@
 namespace ramiel {
 
     class Constraint;
-    class PhysicsEntity;
+    class Particle;
 
     void addConstraint(Constraint* constraint);
     void removeConstraint(Constraint* constraint);
 
-    void addEntity(PhysicsEntity* entity);
-    void removeEntity(PhysicsEntity* entity);
+    void addEntity(Particle* entity);
+    void removeEntity(Particle* entity);
 
     void simulatePhysics(float dt, uint32_t steps);
 

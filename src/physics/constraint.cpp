@@ -8,8 +8,8 @@ namespace ramiel {
     DistanceConstraint::DistanceConstraint(
         float l0,
         float a,
-        PhysicsEntity* e1,
-        PhysicsEntity* e2
+        Particle* e1,
+        Particle* e2
     )
         : l0(l0)
         , a(a)        
@@ -35,7 +35,7 @@ namespace ramiel {
     }
 
 
-    GroundConstraint::GroundConstraint(PhysicsEntity* e)
+    GroundConstraint::GroundConstraint(Particle* e)
         : e(e)
     {
         assert(e);

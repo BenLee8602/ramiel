@@ -7,27 +7,27 @@ namespace ramiel {
         virtual void solve(float dt) = 0;
     };
 
-    class PhysicsEntity;
+    class Particle;
 
 
     class DistanceConstraint : public Constraint {
     public:
-        DistanceConstraint(float l0, float a, PhysicsEntity* e1, PhysicsEntity* e2);
+        DistanceConstraint(float l0, float a, Particle* e1, Particle* e2);
         virtual void solve(float dt) override;
 
         float l0;
         float a;
-        PhysicsEntity* e1;
-        PhysicsEntity* e2;
+        Particle* e1;
+        Particle* e2;
     };
 
 
     class GroundConstraint : public Constraint {
     public:
-        GroundConstraint(PhysicsEntity* e);
+        GroundConstraint(Particle* e);
         virtual void solve(float dt) override;
 
-        PhysicsEntity* e;
+        Particle* e;
     };
 
 }

@@ -7,7 +7,7 @@
 namespace ramiel {
 
     class Constraint;
-    class PhysicsEntity;
+    class Particle;
 
     class SoftBody {
     public:
@@ -32,7 +32,7 @@ namespace ramiel {
         bool enabled;
 
         std::vector<Constraint*> constraints;
-        std::vector<PhysicsEntity*> entities;
+        std::vector<Particle*> entities;
     };
 
 }

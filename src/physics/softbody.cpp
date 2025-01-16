@@ -9,7 +9,7 @@ using namespace ramiel;
 
 namespace {
 
-    using Edge = std::pair<PhysicsEntity*, PhysicsEntity*>;
+    using Edge = std::pair<Particle*, Particle*>;
     
     class HashEdge {
     public:
@@ -36,7 +36,7 @@ namespace ramiel {
         entities.reserve(mesh.getVertexCount());
         for (auto v = mesh.vtxBegin(); v < mesh.vtxEnd(); v += mesh.getVertexSize()) {
             auto pos = reinterpret_cast<const Vec3f*>(v);
-            auto c = new PhysicsEntity({ *pos, Vec3f{}, 1.0f });
+            auto c = new Particle({ *pos, Vec3f{}, 1.0f });
             entities.emplace_back(c);
         }
 
@@ -44,8 +44,8 @@ namespace ramiel {
         edgeMap.reserve(mesh.getTriangleCount() * 3);
         for (auto t = mesh.triBegin(); t < mesh.triEnd(); t += 3) {
             for (uint32_t i = 0; i < 3; i++) {
-                PhysicsEntity* v0 = entities[t[i]];
-                PhysicsEntity* v1 = entities[t[(i + 1) % 3]];
+                Particle* v0 = entities[t[i]];
+                Particle* v1 = entities[t[(i + 1) % 3]];
 
                 if (edgeMap.find(std::make_pair(v0, v1)) != edgeMap.end()) continue;
                 if (edgeMap.find(std::make_pair(v1, v0)) != edgeMap.end()) continue;

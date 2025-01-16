@@ -10,7 +10,7 @@ using namespace ramiel;
 namespace {
 
     std::vector<Constraint*> constraints;
-    std::vector<PhysicsEntity*> entities;
+    std::vector<Particle*> entities;
 
 
     template<class T>
@@ -39,13 +39,13 @@ namespace ramiel {
     }
 
 
-    void addEntity(PhysicsEntity* entity) {
+    void addEntity(Particle* entity) {
         assert(entity);
         assert(!hasValue(entities, entity));
         entities.push_back(entity);
     }
 
-    void removeEntity(PhysicsEntity* entity) {
+    void removeEntity(Particle* entity) {
         assert(hasValue(entities, entity));
         removeByValue(entities, entity);
     }
