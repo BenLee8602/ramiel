@@ -4,7 +4,7 @@
 
 namespace ramiel {
 
-    struct PhysicsEntity {
+    struct Particle {
         Vec3f pos;
         Vec3f vel;
         float wass;
