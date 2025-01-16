@@ -54,21 +54,17 @@ namespace ramiel {
     void simulatePhysics(float dt, uint32_t steps) {
         dt /= steps;
 
-        std::vector<Vec3f> pos(entities.size());
-
         for (uint32_t step = 0; step < steps; step++) {
-            for (size_t i = 0; i < entities.size(); i++) {
-                entities[i]->vel[Y] -= 9.8f * dt;
-                pos[i] = entities[i]->pos;
-                entities[i]->pos += entities[i]->vel * dt;
+            for (auto& e : entities) {
+                e->integrate(dt);
             }
 
-            for (size_t i = 0; i < constraints.size(); i++) {
-                constraints[i]->solve(dt);
+            for (auto& c : constraints) {
+                c->solve(dt);
             }
 
-            for (size_t i = 0; i < entities.size(); i++) {
-                entities[i]->vel = (entities[i]->pos - pos[i]) / dt;
+            for (auto& e : entities) {
+                e->update(dt);
             }
         }
     }
