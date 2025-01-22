@@ -36,7 +36,7 @@ namespace ramiel {
         entities.reserve(mesh.getVertexCount());
         for (auto v = mesh.vtxBegin(); v < mesh.vtxEnd(); v += mesh.getVertexSize()) {
             auto pos = reinterpret_cast<const Vec3f*>(v);
-            auto c = new Particle({ *pos, Vec3f{}, 1.0f });
+            auto c = new Particle(*pos, Vec3f{}, 1.0f);
             entities.emplace_back(c);
         }
 

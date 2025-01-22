@@ -10,12 +10,13 @@ using namespace ramiel;
 namespace {
 
     std::vector<Constraint*> constraints;
-    std::vector<Particle*> entities;
+    std::vector<Particle*> particles;
+    std::vector<RigidBody*> rigidBodies;
 
 
     template<class T>
     bool hasValue(const std::vector<T>& c, const T& v) {
-        return std::find(c.begin(), c.end(), v) == c.end();
+        return std::find(c.begin(), c.end(), v) != c.end();
     }
 
     template<class T>
@@ -41,13 +42,25 @@ namespace ramiel {
 
     void addEntity(Particle* entity) {
         assert(entity);
-        assert(!hasValue(entities, entity));
-        entities.push_back(entity);
+        assert(!hasValue(particles, entity));
+        particles.push_back(entity);
     }
 
     void removeEntity(Particle* entity) {
-        assert(hasValue(entities, entity));
-        removeByValue(entities, entity);
+        assert(hasValue(particles, entity));
+        removeByValue(particles, entity);
+    }
+
+
+    void addEntity(RigidBody* entity) {
+        assert(entity);
+        assert(!hasValue(rigidBodies, entity));
+        rigidBodies.push_back(entity);
+    }
+
+    void removeEntity(RigidBody* entity) {
+        assert(hasValue(rigidBodies, entity));
+        removeByValue(rigidBodies, entity);
     }
 
 
@@ -55,17 +68,13 @@ namespace ramiel {
         dt /= steps;
 
         for (uint32_t step = 0; step < steps; step++) {
-            for (auto& e : entities) {
-                e->integrate(dt);
-            }
+            for (auto e : particles) e->integrate(dt);
+            for (auto e : rigidBodies) e->integrate(dt);
 
-            for (auto& c : constraints) {
-                c->solve(dt);
-            }
+            for (auto c : constraints) c->solve(dt);
 
-            for (auto& e : entities) {
-                e->update(dt);
-            }
+            for (auto e : particles) e->update(dt);
+            for (auto e : rigidBodies) e->update(dt);
         }
     }
 

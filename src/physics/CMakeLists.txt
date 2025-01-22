@@ -1,6 +1,7 @@
 add_library(${PROJECT_NAME}_physics STATIC
     constraint.cpp
     entity.cpp
+    inertia.cpp
     physics.cpp
     softbody.cpp
 )
