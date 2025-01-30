@@ -93,6 +93,13 @@ namespace {
 
 namespace ramiel {
 
+    Entity::Entity()
+        : mesh(nullptr)
+        , vertexShader(nullptr)
+        , pixelShader(nullptr)
+    {}
+
+
     Entity::Entity(
         std::shared_ptr<Mesh> mesh,
         std::unique_ptr<VertexShaderBase>&& vertexShader,

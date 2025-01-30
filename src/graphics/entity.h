@@ -11,6 +11,7 @@ namespace ramiel {
 
     class Entity {
     public:
+        Entity();
         Entity(
             std::shared_ptr<Mesh> mesh,
             std::unique_ptr<VertexShaderBase>&& vertexShader,
