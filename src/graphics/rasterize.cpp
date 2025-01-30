@@ -23,7 +23,7 @@ namespace ramiel {
         const Vec4f& v0_,
         const Vec4f& v1_,
         const Vec4f& v2_,
-        PixelFn pixelFn
+        TriPixelFn pixelFn
     ) {
         Vec2f v0 = sizeView<2>(v0_);
         Vec2f v1 = sizeView<2>(v1_);
@@ -62,4 +62,28 @@ namespace ramiel {
             ymax = v2[Y];
         }
     }
+
+
+    void rasterizeLine(
+        const Vec4f& v0_,
+        const Vec4f& v1_,
+        LinePixelFn pixelFn
+    ) {
+        Vec2f v0 = { std::floor(v0_[X]), std::floor(v0_[Y]) };
+        Vec2f v1 = { std::floor(v1_[X]), std::floor(v1_[Y]) };
+
+        Vec2f d = v1 - v0;
+        uint8_t a0 = std::abs(d[X]) > std::abs(d[Y]) ? X : Y;
+        uint8_t a1 = !a0;
+        d[a0] = 1.0f / d[a0];
+
+        Vec2f inc;
+        inc[a0] = v0[a0] < v1[a0] ? 1.0f : -1.0f;
+        inc[a1] = inc[a0] * d[a1] * d[a0];
+
+        for (Vec2f v = v0; v[a0] != v1[a0]; v += inc) {
+            pixelFn(v, std::abs((v[a0] - v1[a0]) * d[a0]));
+        }
+    }
+
 }
