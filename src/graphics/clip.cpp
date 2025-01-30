@@ -146,4 +146,17 @@ namespace ramiel {
         return true;
     }
 
+
+    bool clipLine(Vec4f& v0, Vec4f& v1) {
+        for (auto& p : viewFrustum) {
+            if (comparePlanePoint(p, v0)) {
+                if (comparePlanePoint(p, v1)) return false;
+                else v0 = intersectPlaneLine(p, v0, v1 - v0);
+            }
+            else if (comparePlanePoint(p, v1))
+                v1 = intersectPlaneLine(p, v0, v1 - v0);
+        }
+        return true;
+    }
+
 }
