@@ -4,6 +4,7 @@ add_library(${PROJECT_NAME}_graphics STATIC
     effects.cpp
     entity.cpp
     light.cpp
+    line.cpp
     rasterize.cpp
 )
 
