@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "collider.h"
 #include "collision.h"
 #include "broadcollision.h"
 
