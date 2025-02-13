@@ -166,9 +166,6 @@ namespace ramiel {
 
         assert(broadCollisionFn);
         auto colliderPairs = broadCollisionFn(colliders);
-        std::vector<Constraint*> collisionConstraints;
-        collisionConstraints.reserve(colliderPairs.size());
-
         for (auto& cp : colliderPairs) {
             CollisionDetector detector = findCollisionDetector(
                 cp.first->getColliderType(),
@@ -179,17 +176,11 @@ namespace ramiel {
             Constraint* constraint = detector(cp.first, cp.second);
             if (!constraint) continue;
 
-            collisionConstraints.emplace_back(std::move(constraint));
-            constraints.push_back(collisionConstraints[collisionConstraints.size() - 1]);
+            constraint->solve(dt);
+            delete constraint;
         }
 
         for (auto c : constraints) c->solve(dt);
-
-        for (auto& c : collisionConstraints) delete c;
-        constraints.erase(
-            constraints.end() - collisionConstraints.size(),
-            constraints.end()
-        );
 
         for (auto e : particles) e->update(dt);
         for (auto e : rigidBodies) e->update(dt);
