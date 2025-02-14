@@ -1,7 +1,8 @@
 add_library(${PROJECT_NAME}_physics STATIC
     broadcollision.cpp
     collider.cpp
-    collision.cpp
+    collisiondetect.cpp
+    collisionresolve.cpp
     constraint.cpp
     entity.cpp
     inertia.cpp

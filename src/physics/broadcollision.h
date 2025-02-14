@@ -3,9 +3,9 @@
 #include <functional>
 #include <vector>
 
-#include "collision.h"
-
 namespace ramiel {
+
+    class Collider;
 
     using ColliderPair = std::pair<Collider*, Collider*>;
 

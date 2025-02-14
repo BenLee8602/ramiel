@@ -33,8 +33,17 @@ namespace {
     std::vector<RigidBody*> rigidBodies;
     
     std::vector<Collider*> colliders;
-    CollisionDetectorMap collisionDetectors;
     BroadCollisionFn broadCollisionFn;
+    CollisionDetectorMap collisionDetectors = {
+        { { typeid(ParticleCollider), typeid(PlaneCollider) }, collideParticlePlane() },
+        { { typeid(ParticleCollider), typeid(SphereCollider) }, collideParticleSphere() },
+        { { typeid(ParticleCollider), typeid(BoxCollider) }, collideParticleBox() },
+        { { typeid(PlaneCollider), typeid(SphereCollider) }, collidePlaneSphere() },
+        { { typeid(PlaneCollider), typeid(BoxCollider) }, collidePlaneBox() },
+        { { typeid(SphereCollider), typeid(SphereCollider) }, collideSphereSphere() },
+        { { typeid(SphereCollider), typeid(BoxCollider) }, collideSphereBox() },
+        { { typeid(BoxCollider), typeid(BoxCollider) }, collideBoxBox() },
+    };
 
 
     template<class T>

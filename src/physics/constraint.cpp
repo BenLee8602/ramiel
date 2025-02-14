@@ -8,7 +8,7 @@ namespace {
 
     float rigidWass(RigidBody* e, Vec3f p, Vec3f n) {
         if (e->wass == 0.0f) return 0.0f;
-        Vec3f pn = qtnvec(qtninv(e->rot), cross(p - e->pos, n));
+        Vec3f pn = qtnvec(qtninv(e->rot), cross(p, n));
         Vec3f w = pn * pn * e->woi;
         return w[X] + w[Y] + w[Z] + e->wass;
     }
