@@ -106,15 +106,4 @@ namespace ramiel {
         rigidRotCorrection(e2, p2, cor);
     }
 
-
-    GroundConstraint::GroundConstraint(Particle* e)
-        : e(e)
-    {
-        assert(e);
-    }
-
-    void GroundConstraint::solve(float dt) {
-        e->pos[Y] = std::max(0.0f, e->pos[Y]);
-    }
-
 }

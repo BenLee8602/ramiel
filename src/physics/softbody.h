@@ -8,6 +8,7 @@ namespace ramiel {
 
     class Constraint;
     class Particle;
+    class ParticleCollider;
 
     class SoftBody {
     public:
@@ -33,6 +34,7 @@ namespace ramiel {
 
         std::vector<Constraint*> constraints;
         std::vector<Particle*> entities;
+        std::vector<ParticleCollider*> colliders;
     };
 
 }
