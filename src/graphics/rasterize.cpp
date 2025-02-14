@@ -69,8 +69,8 @@ namespace ramiel {
         const Vec4f& v1_,
         LinePixelFn pixelFn
     ) {
-        Vec2f v0 = { std::floor(v0_[X]), std::floor(v0_[Y]) };
-        Vec2f v1 = { std::floor(v1_[X]), std::floor(v1_[Y]) };
+        auto& v0 = sizeView<2>(v0_);
+        auto& v1 = sizeView<2>(v1_);
 
         Vec2f d = v1 - v0;
         uint8_t a0 = std::abs(d[X]) > std::abs(d[Y]) ? X : Y;
