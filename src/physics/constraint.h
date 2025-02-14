@@ -52,13 +52,4 @@ namespace ramiel {
         Vec3f r2;
     };
 
-
-    class GroundConstraint : public Constraint {
-    public:
-        GroundConstraint(Particle* e);
-        virtual void solve(float dt) override;
-
-        Particle* e;
-    };
-
 }

@@ -34,10 +34,14 @@ namespace ramiel {
         assert(mesh.getAttrOutType()[0] == 3);
 
         entities.reserve(mesh.getVertexCount());
+        colliders.reserve(mesh.getVertexCount());
         for (auto v = mesh.vtxBegin(); v < mesh.vtxEnd(); v += mesh.getVertexSize()) {
             auto pos = reinterpret_cast<const Vec3f*>(v);
-            auto c = new Particle(*pos, Vec3f{}, 1.0f);
-            entities.emplace_back(c);
+            auto e = new Particle(*pos, Vec3f{}, 1.0f);
+            entities.emplace_back(e);
+
+            auto c = new ParticleCollider(e);
+            colliders.emplace_back(c);
         }
 
         EdgeMap edgeMap;
@@ -53,16 +57,10 @@ namespace ramiel {
             }
         }
 
-        constraints.reserve(edgeMap.size() + entities.size());
+        constraints.reserve(edgeMap.size());
         for (auto& edge : edgeMap) {
             float l0 = mag(edge.first->pos - edge.second->pos);
             auto c = new DistanceConstraint(l0, k, edge.first, edge.second);
-            constraints.emplace_back(c);
-        }
-
-        // temp: add ground constraints
-        for (auto e : entities) {
-            auto c = new GroundConstraint(e);
             constraints.emplace_back(c);
         }
     }
@@ -73,6 +71,7 @@ namespace ramiel {
         
         for (auto c : constraints) delete c;
         for (auto e : entities) delete e;
+        for (auto c : colliders) delete c;
     }
 
 
@@ -87,6 +86,7 @@ namespace ramiel {
 
         for (auto c : constraints) addConstraint(c);
         for (auto e : entities) addEntity(e);
+        for (auto c : colliders) addCollider(c);
     }
 
 
@@ -96,6 +96,7 @@ namespace ramiel {
 
         for (auto c : constraints) removeConstraint(c);
         for (auto e : entities) removeEntity(e);
+        for (auto c : colliders) removeCollider(c);
     }
 
 
