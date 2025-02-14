@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "line.h"
 #include "camera.h"
 #include "clip.h"
@@ -12,8 +14,8 @@ namespace {
         v *= zinv;
         v = getScreenCoord(v);
         v[W] = zinv;
-        v[X] = std::max(0.0f, std::floor(v[X]));
-        v[Y] = std::max(0.0f, std::floor(v[Y]));
+        v[X] = std::clamp(std::floor(v[X]), 0.0f, getRes()[X] - 1.0f);
+        v[Y] = std::clamp(std::floor(v[Y]), 0.0f, getRes()[Y] - 1.0f);
         return v;
     }
 
