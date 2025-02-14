@@ -2,8 +2,8 @@
 
 #include <cstdint>
 #include "collider.h"
-#include "collision.h"
 #include "broadcollision.h"
+#include "collisiondetect.h"
 
 namespace ramiel {
 
