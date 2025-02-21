@@ -1,4 +1,5 @@
 add_library(${PROJECT_NAME}_data STATIC
+    json.cpp
     mesh.cpp
     texture.cpp
 )
