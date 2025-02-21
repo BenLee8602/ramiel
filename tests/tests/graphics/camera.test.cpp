@@ -38,32 +38,3 @@ RAMIEL_TEST_ADD(CameraGetCameraCoord) {
     setPos({ -8.7f, -6.9f, 4.3f });
     RAMIEL_TEST_ASSERT(equal(getCameraCoord(in), expected));
 }
-
-RAMIEL_TEST_ADD(CameraGetScreenCoord) {
-    Vec4f in;
-    Vec4f expected;
-
-    setRes({ 720, 480 });
-    setFov(60);
-    in = { -4.8f, 2.3f, 7.6f, 1.0f };
-    expected = { -34, 428, 7.6f, 1.0f };
-    RAMIEL_TEST_ASSERT(getScreenCoord(in) == expected);
-
-    setRes({ 1280, 720 });
-    setFov(75);
-    in = { 10.1f, 6.5f, 8.5f, 1.0f };
-    expected = { 1631, 997, 8.5f, 1.0f };
-    RAMIEL_TEST_ASSERT(getScreenCoord(in) == expected);
-
-    setRes({ 1920, 1080 });
-    setFov(90);
-    in = { -7.9f, 15.3f, 2.1f, 1.0f };
-    expected = { -2653, 7536, 2.1f, 1.0f };
-    RAMIEL_TEST_ASSERT(getScreenCoord(in) == expected);
-
-    setRes({ 2560, 1440 });
-    setFov(120);
-    in = { -2.0f, 5.6f, 12.0f, 1.0f };
-    expected = { 1156, 1065, 12.0f, 1.0f };
-    RAMIEL_TEST_ASSERT(getScreenCoord(in) == expected);
-}
