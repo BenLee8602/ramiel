@@ -1,2 +1,5 @@
-add_library(${PROJECT_NAME}_testframework STATIC test.cpp)
+add_library(${PROJECT_NAME}_testframework STATIC
+    test.cpp
+    util.cpp
+)
 target_include_directories(${PROJECT_NAME}_testframework PUBLIC include)
