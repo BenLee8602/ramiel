@@ -1,121 +1,53 @@
 #pragma once
 
+#include <typeindex>
 #include <ramiel/math.h>
-#include "dynamics.h"
 
 namespace ramiel {
 
-    class SphereCollider;
-    class AabbCollider;
-    class ObbCollider;
-    class MeshCollider;
-
-
-    struct Collider : public Dynamics {
-        bool responsive;
-        float mass;
-
-        Collider(
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) :
-            Dynamics(dynamics),
-            responsive(responsive),
-            mass(mass)
-        {}
-
-        virtual ~Collider() {}
-
-        virtual void collideWith(Collider* other) = 0;
-        virtual void collideWith(SphereCollider* other) = 0;
-        virtual void collideWith(AabbCollider* other) = 0;
-        virtual void collideWith(ObbCollider* other) = 0;
-        virtual void collideWith(MeshCollider* other) = 0;
+    class Collider {
+    public:
+        using Type = std::type_index;
+        virtual Type getColliderType() const = 0;
     };
 
+    class Particle;
+    class RigidBody;
 
-    struct SphereCollider : public Collider {
-        float hbxrad;
 
-        SphereCollider(
-            float hbxrad,
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) : 
-            Collider(dynamics, responsive, mass),
-            hbxrad(hbxrad)
-        {}
-
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
+    class ParticleCollider : public Collider {
+    public:
+        virtual Type getColliderType() const override;
+        virtual ~ParticleCollider() {}
+        ParticleCollider(Particle* e);
+        Particle* e;
     };
 
+    class PlaneCollider : public Collider {
+    public:
+        virtual Type getColliderType() const override;
+        virtual ~PlaneCollider() {}
+        PlaneCollider(Vec3f n, float d);
+        Vec3f n;
+        float d;
+    };
 
-    struct AabbCollider : public Collider {
+    class SphereCollider : public Collider {
+    public:
+        virtual Type getColliderType() const override;
+        virtual ~SphereCollider() {}
+        SphereCollider(RigidBody* e, float r);
+        RigidBody* e;
+        float r;
+    };
+
+    class BoxCollider : public Collider {
+    public:
+        virtual Type getColliderType() const override;
+        virtual ~BoxCollider() {}
+        BoxCollider(RigidBody* e, Vec3f size);
+        RigidBody* e;
         Vec3f size;
-
-        AabbCollider(
-            Vec3f size,
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) : 
-            Collider(dynamics, responsive, mass),
-            size(size)
-        {}
-
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
-    };
-
-
-    struct ObbCollider : public Collider {
-        Vec3f size;
-
-        ObbCollider(
-            Vec3f size,
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) : 
-            Collider(dynamics, responsive, mass),
-            size(size)
-        {}
-
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
-    };
-
-
-    struct MeshCollider : public Collider {
-        Mesh<MeshVertex>& mesh;
-
-        MeshCollider(
-            Mesh<MeshVertex>& mesh,
-            Dynamics dynamics = Dynamics(),
-            bool responsive = true,
-            float mass = 1.0f
-        ) : 
-            Collider(dynamics, responsive, mass),
-            mesh(mesh)
-        {}
-
-        virtual void collideWith(Collider*       other) override;
-        virtual void collideWith(SphereCollider* other) override;
-        virtual void collideWith(AabbCollider*   other) override;
-        virtual void collideWith(ObbCollider*    other) override;
-        virtual void collideWith(MeshCollider*   other) override;
     };
 
 }

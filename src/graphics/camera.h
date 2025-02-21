@@ -4,63 +4,36 @@
 #include <ramiel/math.h>
 
 namespace ramiel {
+    
+    const Vec2u& getRes();
+    void setRes(Vec2u size);
+    size_t getBufferSize();
+    float getAspectRatio();
 
-	class Camera {
-		Vec2u res;
-        Vec2f halfRes;
-        size_t bufferSize;
-		float fov;
-		float focalLength;
-        std::vector<Vec3f> color;
-        std::vector<float> depth;
-	public:
-		Vec3f pos;
-		Rotation rot;
-		Vec3f backgroundColor;
-		float znear;
-		float zfar;
+    typedef std::vector<Vec3f>::iterator ColorIt;
+    typedef std::vector<float>::iterator DepthIt;
+    ColorIt getColorBuffer();
+    DepthIt getDepthBuffer();
 
-		Camera() :
-			res(Vec2u()),
-			halfRes(Vec2f()),
-			bufferSize(0),
-			fov(1.57f),
-			focalLength(0.0f),
-			pos(Vec3f()),
-			rot(Vec3f()),
-			backgroundColor(Vec3f()),
-			znear(0.2f),
-			zfar(1000.0f)
-		{}
+    const Vec3f& getPos();
+    const Vec3f& getRot();
 
-		size_t getBufferSize() const;
-		const Vec2u& getRes() const;
-		void setRes(Vec2u size);
+    void setPos(const Vec3f& pos);
+    void setRot(const Vec3f& rot);
+    void setPosRot(const Vec3f& pos, const Vec3f& rot);
 
-		float getFov() const;
-		void setFov(float fov);
+    float getFov();
+    float getFocalLen();
+    float getZ0();
+    float getZ1();
 
-		void resetBuffers();
+    void setFov(float fov);
+    void setFocalLen(float focalLen);
+    void setZ0(float z0);
+    void setZ1(float z1);
 
-		Vec3f getCameraCoord(const Vec3f& in) const;
-		Vec2f getScreenCoord(const Vec3f& in) const;
-
-		typedef std::vector<Vec3f>::iterator ColorBufferIterator;
-		typedef std::vector<float>::iterator DepthBufferIterator;
-		ColorBufferIterator getColorBuffer();
-		DepthBufferIterator getDepthBuffer();
-
-		void clampColorBuffer();
-
-		void getFrameDEC(int* frame) const;
-		void getFrameRGB(uint8_t* frame) const;
-	};
-
-
-	class CameraModifier {
-	public:
-		virtual void run(Camera& camera) const = 0;
-		virtual ~CameraModifier() {}
-	};
+    Vec4f getCameraCoord(const Vec4f& in);
+    Vec4f getProjectionCoord(const Vec4f& in);
+    Vec4f getScreenCoord(const Vec4f& in);
 
 }

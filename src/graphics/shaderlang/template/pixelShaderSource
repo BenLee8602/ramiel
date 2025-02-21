@@ -1,0 +1,75 @@
+#include "${NAME}.h"
+using namespace ramiel;
+
+
+${NAME}::${NAME}(
+    ${CTOR_ARGS}
+) :
+    ${CTOR_INIT}
+{
+    size_t n = getAttrInType().size();
+    attrInPos = std::vector<uint8_t>(n);
+    for (size_t i = 0; i < n; i++) {
+        attrInPos[i] = i;
+    }
+}
+
+
+${NAME}::${NAME}(
+    std::initializer_list<uint8_t> attrInPos,
+    ${CTOR_ARGS}
+) :
+    attrInPos(attrInPos),
+    ${CTOR_INIT}
+{}
+
+
+std::vector<uint8_t> ${NAME}::getAttrInType() const {
+    return ${ATTR_IN_TYPE};
+}
+
+std::vector<uint8_t>& ${NAME}::getAttrInPos() {
+    return attrInPos;
+}
+
+
+struct ${NAME}::In {
+    ${ATTR_IN_DEF}
+};
+
+
+${NAME}::In ${NAME}::interpretVertex(const float* v) const {
+    return {
+        ${ATTR_IN_INTERPRET}
+    };
+}
+
+
+void ${NAME}::init(
+    const float* v0,
+    const float* v1,
+    const float* v2
+) {
+    init(
+        interpretVertex(v0),
+        interpretVertex(v1),
+        interpretVertex(v2)
+    );
+}
+
+
+Vec3f ${NAME}::run(const float* in) const {
+    Vec3f out;
+    run(interpretVertex(in), out);
+    return out;
+}
+
+
+void ${NAME}::init(const In& v0, const In& v1, const In& v2) {
+    ${FUNC_INIT}
+}
+
+
+void ${NAME}::run(const In& in, Vec3f& out) const {
+    ${FUNC}
+}

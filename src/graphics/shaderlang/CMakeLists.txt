@@ -1,0 +1,9 @@
+add_executable(${PROJECT_NAME}_shaderlang
+    main.cpp
+    read.cpp
+    shader.cpp
+    shaderlang.cpp
+    stringify.cpp
+    template.cpp
+    token.cpp
+)

@@ -1,0 +1,23 @@
+RAMIEL
+VERTEX_SHADER VertexShaderTextured
+
+STATE {
+    Mat4x4 worldTransform
+}
+
+IN {
+    Vec3 pos
+    Vec2 texturePos
+}
+
+OUT {
+    Vec4 pos
+    Vec3 worldPos
+    Vec2 texturePos
+}
+
+SHADER {
+    out.pos = matvec(worldTransform, { in.pos[X], in.pos[Y], in.pos[Z], 1 });
+    out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
+    out.texturePos = in.texturePos;
+}

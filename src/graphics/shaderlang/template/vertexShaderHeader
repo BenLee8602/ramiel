@@ -1,0 +1,35 @@
+#pragma once
+
+#include <ramiel/ramiel.h>
+
+class ${NAME} : public ramiel::VertexShaderBase {
+public:
+    ${STATE}
+
+    ${NAME}(
+        ${CTOR_ARGS}
+    );
+
+    ${NAME}(
+        std::initializer_list<uint8_t> attrInPos,
+        ${CTOR_ARGS}
+    );
+
+    virtual ~${NAME}() {}
+
+    virtual void run(const float* in, float* out) const override;
+
+private:
+    std::vector<uint8_t> attrInPos;
+    virtual std::vector<uint8_t> getAttrInType() const override;
+    virtual std::vector<uint8_t>& getAttrInPos() override;
+    virtual std::vector<uint8_t> getAttrOutType() const override;
+    virtual std::vector<uint8_t> getAttrOutPos() const override;
+    virtual size_t getAttrOutSize() const override;
+
+    struct In;
+    struct Out;
+    In interpretVertex(const float* v) const;
+    void run(const In& in, Out& out) const;
+    
+};

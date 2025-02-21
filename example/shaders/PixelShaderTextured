@@ -1,0 +1,28 @@
+RAMIEL
+PIXEL_SHADER PixelShaderTextured
+
+STATE {
+    Texture texture
+    Scalar specularExponent
+    Scalar specularIntensity
+    Vec3 normal
+}
+
+IN {
+    Vec4 pos
+    Vec3 worldPos
+    Vec2 texturePos
+}
+
+INIT {
+    normal = normalize(cross(
+        v1.worldPos - v0.worldPos,
+        v2.worldPos - v0.worldPos
+    ));
+}
+
+SHADER {
+    Vec3f color = getLight(in.worldPos, normal, specularExponent, specularIntensity);
+    Vec3f surfaceColor = texture->get(in.texturePos);
+    out = color * surfaceColor;
+}

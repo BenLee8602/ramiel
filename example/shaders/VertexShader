@@ -1,0 +1,20 @@
+RAMIEL
+VERTEX_SHADER VertexShader
+
+STATE {
+    Mat4x4 worldTransform
+}
+
+IN {
+    Vec3 pos
+}
+
+OUT {
+    Vec4 pos
+    Vec3 worldPos
+}
+
+SHADER {
+    out.pos = matvec(worldTransform, { in.pos[X], in.pos[Y], in.pos[Z], 1 });
+    out.worldPos = { out.pos[X], out.pos[Y], out.pos[Z] };
+}

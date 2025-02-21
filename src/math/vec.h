@@ -19,18 +19,20 @@ namespace ramiel {
         template<typename U> explicit operator Vec<U, N>() const { Vec<U, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = (U)vec[i]; return temp; }
 
         // scalar comparison
-        template<typename U> bool operator==(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] != num) return false; return true; }
-        template<typename U> bool operator<=(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] > num) return false; return true; }
-        template<typename U> bool operator>=(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] < num) return false; return true; }
-        template<typename U> bool operator<(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] >= num) return false; return true; }
-        template<typename U> bool operator>(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] <= num) return false; return true; }
+        template<typename U> bool operator==(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] == num)) return false; return true; }
+        template<typename U> bool operator!=(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] != num)) return false; return true; }
+        template<typename U> bool operator<=(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <= num)) return false; return true; }
+        template<typename U> bool operator>=(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >= num)) return false; return true; }
+        template<typename U> bool operator< (const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <  num)) return false; return true; }
+        template<typename U> bool operator> (const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >  num)) return false; return true; }
 
         // vector comparison
-        template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] != v[i]) return false; return true; }
-        template<typename U> bool operator<=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] > v[i]) return false; return true; }
-        template<typename U> bool operator>=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] < v[i]) return false; return true; }
-        template<typename U> bool operator<(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] >= v[i]) return false; return true; }
-        template<typename U> bool operator>(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] <= v[i]) return false; return true; }
+        template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] == v[i])) return false; return true; }
+        template<typename U> bool operator!=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] != v[i])) return false; return true; }
+        template<typename U> bool operator<=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <= v[i])) return false; return true; }
+        template<typename U> bool operator>=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >= v[i])) return false; return true; }
+        template<typename U> bool operator< (const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <  v[i])) return false; return true; }
+        template<typename U> bool operator> (const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >  v[i])) return false; return true; }
 
         // assignment
         template<typename U> Vec<T, N>& operator=(const Vec<U, N>& v) { for (size_t i = 0; i < N; ++i) vec[i] = v[i]; return *this; }
@@ -87,6 +89,19 @@ namespace ramiel {
     bool equal(const Vec<T, N>& v1, const U& v2, float thres = 0.0001) {
         Vec<T, N> v = v1 - v2;
         return v <= thres && v >= -thres;
+    }
+
+
+    template<size_t M, typename T, size_t N>
+    const Vec<T, M>& sizeView(const Vec<T, N>& v) {
+        static_assert(M < N, "vector size view can only reduce size");
+        return reinterpret_cast<const Vec<T, M>&>(v);
+    }
+
+    template<size_t M, typename T, size_t N>
+    Vec<T, M>& sizeView(Vec<T, N>& v) {
+        static_assert(M < N, "vector size view can only reduce size");
+        return reinterpret_cast<Vec<T, M>&>(v);
     }
 
 
