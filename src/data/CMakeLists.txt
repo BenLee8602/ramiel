@@ -2,6 +2,7 @@ add_library(${PROJECT_NAME}_data STATIC
     json.cpp
     mesh.cpp
     texture.cpp
+    tree.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_data PUBLIC ${CMAKE_SOURCE_DIR}/deps)
