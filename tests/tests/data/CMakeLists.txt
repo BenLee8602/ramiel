@@ -1,6 +1,7 @@
 add_library(${PROJECT_NAME}_tests_data OBJECT
     json.test.cpp
     texture.test.cpp
+    tree.test.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_tests_data PRIVATE ${CMAKE_SOURCE_DIR}/deps)
