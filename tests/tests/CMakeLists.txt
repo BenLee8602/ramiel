@@ -1,4 +1,5 @@
 add_subdirectory(data)
+add_subdirectory(engine)
 add_subdirectory(file)
 add_subdirectory(graphics)
 add_subdirectory(math)
