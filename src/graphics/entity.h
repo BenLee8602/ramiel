@@ -26,6 +26,10 @@ namespace ramiel {
         Entity(Entity&&) = default;
         Entity& operator=(Entity&&) = default;
 
+        std::shared_ptr<Mesh> getMesh() const;
+        VertexShaderBase* getVertexShader() const;
+        PixelShaderBase* getPixelShader() const;
+
     private:
         std::shared_ptr<Mesh> mesh;
         std::unique_ptr<VertexShaderBase> vertexShader;

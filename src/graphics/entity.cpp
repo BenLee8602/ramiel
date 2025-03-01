@@ -206,4 +206,17 @@ namespace ramiel {
         }
     }
 
+
+    std::shared_ptr<Mesh> Entity::getMesh() const {
+        return mesh;
+    }
+
+    VertexShaderBase* Entity::getVertexShader() const {
+        return vertexShader.get();
+    }
+
+    PixelShaderBase* Entity::getPixelShader() const {
+        return pixelShader.get();
+    }
+
 }
