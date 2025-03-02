@@ -18,8 +18,9 @@ namespace ramiel {
             float wass = 1.0f
         );
 
-        void integrate(float dt);
-        void update(float dt);
+        virtual void integrate(float dt);
+        virtual void update(float dt);
+        virtual Mat4x4f getTransform() const;
     };
 
 
@@ -40,8 +41,9 @@ namespace ramiel {
             const Vec3f& woi = { 1, 1, 1 }
         );
 
-        void integrate(float dt);
-        void update(float dt);
+        virtual void integrate(float dt) override;
+        virtual void update(float dt) override;
+        virtual Mat4x4f getTransform() const override;
     };
 
 }
