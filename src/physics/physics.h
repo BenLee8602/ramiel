@@ -17,9 +17,6 @@ namespace ramiel {
     void addEntity(Particle* entity);
     void removeEntity(Particle* entity);
 
-    void addEntity(RigidBody* entity);
-    void removeEntity(RigidBody* entity);
-
     void addCollider(Collider* collider);
     void removeCollider(Collider* collider);
 

@@ -24,6 +24,10 @@ namespace ramiel {
         vel = (pos - posPrev) / dt;
     }
 
+    Mat4x4f Particle::getTransform() const {
+        return translate(pos);
+    }
+
 
     RigidBody::RigidBody(
         const Vec3f& pos,
@@ -53,6 +57,10 @@ namespace ramiel {
         Quaternion drot = qtnqtn(rot, qtninv(rotPrev));
         rotAxis = sizeView<3>(drot) * 2.0f / dt;
         if (drot[W] < 0.0f) rotAxis = -rotAxis;
+    }
+
+    Mat4x4f RigidBody::getTransform() const {
+        return matmat(qtnmat(rot), Particle::getTransform());
     }
 
 }
