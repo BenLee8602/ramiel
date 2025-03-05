@@ -31,9 +31,9 @@ RAMIEL_TEST_ADD(Tree) {
     RAMIEL_TEST_ASSERT(four->getParent() == two);
     RAMIEL_TEST_ASSERT(one->getParent() == nullptr);
 
-    RAMIEL_TEST_ASSERT(five->getRelative("parent.parent.three") == three);
-    RAMIEL_TEST_ASSERT(six->getRelative("parent.null") == nullptr);
-    RAMIEL_TEST_ASSERT(two->getRelative("parent.parent") == nullptr);
+    RAMIEL_TEST_ASSERT(five->getRelative("../../three") == three);
+    RAMIEL_TEST_ASSERT(six->getRelative("../null") == nullptr);
+    RAMIEL_TEST_ASSERT(two->getRelative("../..") == nullptr);
 
     RAMIEL_TEST_ASSERT(one->erase("second") == two);
     RAMIEL_TEST_ASSERT(one->getKid("second") == nullptr);

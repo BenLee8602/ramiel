@@ -8,11 +8,6 @@ using namespace ramiel;
 
 namespace {
 
-    bool validName(const std::string& name) {
-        return name != "parent" && name.find('.') == std::string::npos;
-    }
-
-
     std::vector<std::string> split(std::string str, char delim) {
         std::istringstream s(str);
         std::vector<std::string> out;
@@ -49,12 +44,21 @@ namespace ramiel {
     }
 
 
+    bool Tree::validName(const std::string& name) {
+        if (name.empty()) return false;
+        if (!std::isalpha(name[0]) && name[0] != '_') return false;
+        for (char c : name) {
+            if (!std::isalnum(c) && c != '_') return false;
+        }
+        return true;
+    }
+
     const std::string& Tree::getName() const {
         return name;
     }
 
     void Tree::setName(const std::string& name) {
-        assert(validName(name));
+        assert(Tree::validName(name));
         if (parent) {
             assert(!parent->getKid(name));
             Tree::H cur = parent->getKid(this->name);
@@ -63,6 +67,17 @@ namespace ramiel {
             parent->kids.insert(std::make_pair(name, cur));
         }
         this->name = name;
+    }
+
+    std::string Tree::getPath() const {
+        std::string path = parent ? parent->getPath() : "";
+        path += '/' + name;
+        return path;
+    }
+
+
+    size_t Tree::numKids() const {
+        return kids.size();
     }
 
 
@@ -77,9 +92,9 @@ namespace ramiel {
 
     Tree::H Tree::getRelative(const std::string& path) {
         Tree::H cur = shared_from_this();
-        for (auto& s : split(path, '.')) {
+        for (auto& s : split(path, '/')) {
             if (!cur) break;
-            cur = s == "parent" ? cur->getParent() : cur->getKid(s);
+            cur = s == ".." ? cur->getParent() : cur->getKid(s);
         }
         return cur;
     }
@@ -103,6 +118,14 @@ namespace ramiel {
         kid->parent = nullptr;
         kids.erase(name);
         return kid;
+    }
+
+
+    bool Tree::forEachKid(Tree::Fn fn) const {
+        for (auto& [_, t] : kids) {
+            if (!fn(t)) return false;
+        }
+        return true;
     }
 
 }
