@@ -3,17 +3,23 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <functional>
 
 namespace ramiel {
 
     class Tree : public std::enable_shared_from_this<Tree> {
     public:
         using H = std::shared_ptr<Tree>;
+        using Fn = std::function<bool(Tree::H)>;
 
         static Tree::H make(const std::string& name);
 
+        static bool validName(const std::string& name);
         const std::string& getName() const;
         void setName(const std::string& name);
+        std::string getPath() const;
+
+        size_t numKids() const;
 
         Tree::H getKid(const std::string& name) const;
         Tree::H getParent() const;
@@ -21,6 +27,8 @@ namespace ramiel {
 
         void insert(Tree::H kid);
         Tree::H erase(const std::string& name);
+
+        bool forEachKid(Tree::Fn fn) const;
 
         virtual ~Tree() {}
         
