@@ -7,3 +7,5 @@
 #include "../src/graphics/line.h"
 #include "../src/graphics/pixelshader.h"
 #include "../src/graphics/vertexshader.h"
+
+#include "../src/graphics/shaders/shaders.h"

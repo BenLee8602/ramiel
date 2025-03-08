@@ -1,4 +1,5 @@
 #include "entity.h"
+#include "camera.h"
 #include "vertexshader.h"
 #include "pixelshader.h"
 #include "clip.h"

@@ -1,6 +1,6 @@
 #include <ramiel/test.h>
+#include <ramiel/data.h>
 #include <ramiel/file.h>
-#include <ramiel/graphics.h>
 using namespace ramiel;
 
 
