@@ -7,18 +7,18 @@ using namespace ramiel;
 namespace {
 
     Vec3f ambientLight;
-    std::vector<std::shared_ptr<Light>> lights;
+    std::vector<Light*> lights;
 
 }
 
 namespace ramiel {
 
-    void addLight(std::shared_ptr<Light> light) {
+    void addLight(Light* light) {
         auto i = std::find(lights.begin(), lights.end(), light);
         if (i == lights.end()) lights.push_back(light);
     }
 
-    void removeLight(const std::shared_ptr<Light>& light) {
+    void removeLight(Light* light) {
         auto i = std::remove(lights.begin(), lights.end(), light);
         lights.erase(i, lights.end());
     }
