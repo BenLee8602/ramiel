@@ -22,3 +22,4 @@ add_library(${PROJECT_NAME}_graphics_shaders OBJECT
 
 target_include_directories(${PROJECT_NAME}_graphics_shaders PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME}_graphics_shaders PUBLIC ${CMAKE_BINARY_DIR}/src/graphics/shaders)
+target_include_directories(${PROJECT_NAME}_graphics_shaders PRIVATE ${CMAKE_SOURCE_DIR}/src/graphics)

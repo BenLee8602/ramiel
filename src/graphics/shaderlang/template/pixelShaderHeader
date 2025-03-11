@@ -1,6 +1,7 @@
 #pragma once
 
-#include <ramiel/ramiel.h>
+#include <ramiel/data.h>
+#include <pixelshader.h>
 
 class ${NAME} : public ramiel::PixelShaderBase {
 public:
