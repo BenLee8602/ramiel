@@ -7,8 +7,8 @@ namespace ramiel {
 
     class Light;
 
-    void addLight(std::shared_ptr<Light> light);
-    void removeLight(const std::shared_ptr<Light>& light);
+    void addLight(Light* light);
+    void removeLight(Light* light);
     void setAmbientLight(const Vec3f& color);
     Vec3f getLight(
         const Vec3f& pos,
