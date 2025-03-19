@@ -7,11 +7,9 @@ namespace ramiel {
         return typeid(ParticleCollider);
     }
 
-    ParticleCollider::ParticleCollider(Particle* e)
+    ParticleCollider::ParticleCollider(Particle e)
         : e(e)
-    {
-        assert(e);
-    }
+    {}
 
 
     Collider::Type PlaneCollider::getColliderType() const {
@@ -30,11 +28,10 @@ namespace ramiel {
         return typeid(SphereCollider);
     }
 
-    SphereCollider::SphereCollider(RigidBody* e, float r)
+    SphereCollider::SphereCollider(RigidBody e, float r)
         : e(e)
         , r(r)
     {
-        assert(e);
         assert(r > 0.0f);
     }
 
@@ -43,11 +40,10 @@ namespace ramiel {
         return typeid(BoxCollider);
     }
 
-    BoxCollider::BoxCollider(RigidBody* e, Vec3f size)
+    BoxCollider::BoxCollider(RigidBody e, Vec3f size)
         : e(e)
         , size(size)
     {
-        assert(e);
         assert(size[X] > 0.0f);
         assert(size[Y] > 0.0f);
         assert(size[Z] > 0.0f);
