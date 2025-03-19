@@ -7,6 +7,7 @@ namespace ramiel {
     
     class CollisionConstraint_PP : public Constraint {
     public:
+        CollisionConstraint_PP() = default;
         CollisionConstraint_PP(
             Particle* e1,
             Particle* e2
@@ -19,6 +20,7 @@ namespace ramiel {
 
     class CollisionConstraint_RR : public Constraint {
     public:
+        CollisionConstraint_RR() = default;
         CollisionConstraint_RR(
             RigidBody* e1,
             RigidBody* e2,
@@ -35,6 +37,7 @@ namespace ramiel {
 
     class CollisionConstraint_PR : public Constraint {
     public:
+        CollisionConstraint_PR() = default;
         CollisionConstraint_PR(
             Particle* e1,
             RigidBody* e2,
@@ -49,6 +52,7 @@ namespace ramiel {
 
     class CollisionConstraint_P : public Constraint {
     public:
+        CollisionConstraint_P() = default;
         CollisionConstraint_P(
             Vec3f e1,
             Particle* e2
@@ -61,6 +65,7 @@ namespace ramiel {
     
     class CollisionConstraint_R : public Constraint {
     public:
+        CollisionConstraint_R() = default;
         CollisionConstraint_R(
             Vec3f e1,
             RigidBody* e2,
