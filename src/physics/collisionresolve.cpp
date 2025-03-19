@@ -35,13 +35,13 @@ namespace ramiel {
     )
         : e1(e1)
         , e2(e2)
-    {
-        assert(e1);
-        assert(e2);
-    }
+    {}
 
 
     void CollisionConstraint_PP::solve(float dt) {
+        assert(e1);
+        assert(e2);
+
         float w = e1->wass + e2->wass;
         if (w == 0.0f) return;
 
@@ -65,13 +65,13 @@ namespace ramiel {
         , e2(e2)
         , p1(p1)
         , p2(p2)
-    {
-        assert(e1);
-        assert(e2);
-    }
+    {}
 
 
     void CollisionConstraint_RR::solve(float dt) {
+        assert(e1);
+        assert(e2);
+
         Vec3f r1 = qtnvec(qtninv(e1->rot), p1 - e1->pos);
         Vec3f r2 = qtnvec(qtninv(e2->rot), p2 - e2->pos);
 
@@ -101,13 +101,13 @@ namespace ramiel {
         : e1(e1)
         , e2(e2)
         , p2(p2)
-    {
-        assert(e1);
-        assert(e2);
-    }
+    {}
 
 
     void CollisionConstraint_PR::solve(float dt) {
+        assert(e1);
+        assert(e2);
+
         Vec3f r2 = qtnvec(qtninv(e2->rot), p2 - e2->pos);
 
         Vec3f p = p2 - e1->pos;
@@ -133,12 +133,11 @@ namespace ramiel {
     )
         : e1(e1)
         , e2(e2)
-    {
-        assert(e2);
-    }
+    {}
 
 
     void CollisionConstraint_P::solve(float dt) {
+        assert(e2);
         e2->pos = e1;
     }
 
@@ -150,9 +149,7 @@ namespace ramiel {
     )
         : e1(e1, Vec3f{}, 0.0f)
         , constraint(&this->e1, e2, p)
-    {
-        assert(e2);
-    }
+    {}
 
 
     void CollisionConstraint_R::solve(float dt) {

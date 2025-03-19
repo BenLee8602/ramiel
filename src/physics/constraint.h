@@ -15,6 +15,7 @@ namespace ramiel {
 
     class DistanceConstraint : public Constraint {
     public:
+        DistanceConstraint() = default;
         DistanceConstraint(
             float l0,
             float a,
@@ -32,6 +33,7 @@ namespace ramiel {
 
     class RopeConstraint : public Constraint {
     public:
+        RopeConstraint() = default;
         RopeConstraint(
             float l0,
             float a,

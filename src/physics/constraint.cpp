@@ -41,14 +41,14 @@ namespace ramiel {
         , a(a)        
         , e1(e1)
         , e2(e2)
-    {
+    {}
+
+    void DistanceConstraint::solve(float dt) {
         assert(l0 >= 0.0f);
         assert(a >= 0.0f && a <= 1.0f);
         assert(e1);
         assert(e2);
-    }
 
-    void DistanceConstraint::solve(float dt) {
         Vec3f p = e2->pos - e1->pos;
         float l = mag(p);
 
@@ -75,14 +75,14 @@ namespace ramiel {
         , r1(r1)
         , e2(e2)
         , r2(r2)
-    {
+    {}
+
+    void RopeConstraint::solve(float dt) {
         assert(l0 >= 0.0f);
         assert(a >= 0.0f && a <= 1.0f);
         assert(e1);
         assert(e2);
-    }
 
-    void RopeConstraint::solve(float dt) {
         Vec3f p1 = qtnvec(e1->rot, r1) + e1->pos;
         Vec3f p2 = qtnvec(e2->rot, r2) + e2->pos;
 
