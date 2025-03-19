@@ -20,15 +20,14 @@ namespace {
         assert(plane_ && cldrIs<PlaneCollider>(plane_));
         auto particle = static_cast<ParticleCollider*>(particle_);
         auto plane = static_cast<PlaneCollider*>(plane_);
-        assert(particle->e);
 
-        Vec3f& v = particle->e->pos;
+        Vec3f& v = particle->e.pos;
         Vec3f dn = plane->n * plane->d;
         
         if (dot(plane->n, dn - v) <= 0.0f) return nullptr;
 
         Vec3f p = v - plane->n * (dot(plane->n, v) - plane->d);
-        return new CollisionConstraint_P(p, particle->e);
+        return new CollisionConstraint_P(p, &particle->e);
     }
 
 
@@ -37,10 +36,8 @@ namespace {
         assert(sphere_ && cldrIs<SphereCollider>(sphere_));
         auto particle = static_cast<ParticleCollider*>(particle_);
         auto sphere = static_cast<SphereCollider*>(sphere_);
-        assert(particle->e);
-        assert(sphere->e);
 
-        Vec3f n = particle->e->pos - sphere->e->pos;
+        Vec3f n = particle->e.pos - sphere->e.pos;
         float d = dot(n, n);
         float r = sphere->r;
 
@@ -49,8 +46,8 @@ namespace {
         d = std::sqrt(d);
         n = normalize(n, d);
 
-        Vec3f c = sphere->e->pos + n * r;
-        return new CollisionConstraint_PR(particle->e, sphere->e, c);
+        Vec3f c = sphere->e.pos + n * r;
+        return new CollisionConstraint_PR(&particle->e, &sphere->e, c);
     }
 
 
@@ -59,11 +56,9 @@ namespace {
         assert(box_ && cldrIs<BoxCollider>(box_));
         auto particle = static_cast<ParticleCollider*>(particle_);
         auto box = static_cast<BoxCollider*>(box_);
-        assert(particle->e);
-        assert(box->e);
         
-        Vec3f pos = particle->e->pos - box->e->pos;
-        pos = qtnvec(qtninv(box->e->rot), pos);
+        Vec3f pos = particle->e.pos - box->e.pos;
+        pos = qtnvec(qtninv(box->e.rot), pos);
 
         Vec3f c;
         float dmin = std::numeric_limits<float>::max();
@@ -85,8 +80,8 @@ namespace {
             }
         }
 
-        c = qtnvec(box->e->rot, c) + box->e->pos;
-        return new CollisionConstraint_PR(particle->e, box->e, c);
+        c = qtnvec(box->e.rot, c) + box->e.pos;
+        return new CollisionConstraint_PR(&particle->e, &box->e, c);
     }
 
 
@@ -95,15 +90,14 @@ namespace {
         assert(sphere_ && cldrIs<SphereCollider>(sphere_));
         auto plane = static_cast<PlaneCollider*>(plane_);
         auto sphere = static_cast<SphereCollider*>(sphere_);
-        assert(sphere->e);
 
-        Vec3f v = sphere->e->pos - plane->n * sphere->r;
+        Vec3f v = sphere->e.pos - plane->n * sphere->r;
         Vec3f dn = plane->n * plane->d;
         
         if (dot(plane->n, dn - v) <= 0.0f) return nullptr;
 
         Vec3f p = v - plane->n * (dot(plane->n, v) - plane->d);
-        return new CollisionConstraint_R(p, sphere->e, v);
+        return new CollisionConstraint_R(p, &sphere->e, v);
     }
 
 
@@ -112,7 +106,6 @@ namespace {
         assert(box_ && cldrIs<BoxCollider>(box_));
         auto plane = static_cast<PlaneCollider*>(plane_);
         auto box = static_cast<BoxCollider*>(box_);
-        assert(box->e);
 
         Vec3f& bs = box->size;
         std::array<Vec3f, 8> vtx = {
@@ -132,7 +125,7 @@ namespace {
         Vec3f c0;
         Vec3f c1;
         for (auto& v : vtx) {
-            v = qtnvec(box->e->rot, v) + box->e->pos;
+            v = qtnvec(box->e.rot, v) + box->e.pos;
             if (dot(plane->n, dn - v) <= 0.0f) continue;
 
             float d = dot(plane->n, v) - plane->d;
@@ -144,7 +137,7 @@ namespace {
         }
 
         if (!dmax) return nullptr;
-        return new CollisionConstraint_R(c0, box->e, c1);
+        return new CollisionConstraint_R(c0, &box->e, c1);
     }
 
 
@@ -153,10 +146,8 @@ namespace {
         assert(sphere1_ && cldrIs<SphereCollider>(sphere1_));
         auto sphere0 = static_cast<SphereCollider*>(sphere0_);
         auto sphere1 = static_cast<SphereCollider*>(sphere1_);
-        assert(sphere0->e);
-        assert(sphere1->e);
 
-        Vec3f n = sphere1->e->pos - sphere0->e->pos;
+        Vec3f n = sphere1->e.pos - sphere0->e.pos;
         float d = dot(n, n);
         float r = sphere0->r + sphere1->r;
 
@@ -165,9 +156,9 @@ namespace {
         d = std::sqrt(d);
         n = normalize(n, d);
 
-        Vec3f c0 = sphere0->e->pos + n * sphere0->r;
-        Vec3f c1 = sphere1->e->pos - n * sphere1->r;
-        return new CollisionConstraint_RR(sphere0->e, sphere1->e, c0, c1);
+        Vec3f c0 = sphere0->e.pos + n * sphere0->r;
+        Vec3f c1 = sphere1->e.pos - n * sphere1->r;
+        return new CollisionConstraint_RR(&sphere0->e, &sphere1->e, c0, c1);
     }
 
 
@@ -176,8 +167,6 @@ namespace {
         assert(box_ && cldrIs<BoxCollider>(box_));
         auto sphere = static_cast<SphereCollider*>(sphere_);
         auto box = static_cast<BoxCollider*>(box_);
-        assert(sphere->e);
-        assert(box->e);
 
         // this is kinda complicated so im leaving this stub for now
         return nullptr;
@@ -189,8 +178,6 @@ namespace {
         assert(box1_ && cldrIs<BoxCollider>(box1_));
         auto box0 = static_cast<BoxCollider*>(box0_);
         auto box1 = static_cast<BoxCollider*>(box1_);
-        assert(box0->e);
-        assert(box1->e);
 
         // this is kinda complicated so im leaving this stub for now
         return nullptr;

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <typeindex>
+
 #include <ramiel/math.h>
+#include "entity.h"
 
 namespace ramiel {
 
@@ -11,16 +13,13 @@ namespace ramiel {
         virtual Type getColliderType() const = 0;
     };
 
-    class Particle;
-    class RigidBody;
-
 
     class ParticleCollider : public Collider {
     public:
         virtual Type getColliderType() const override;
         virtual ~ParticleCollider() {}
-        ParticleCollider(Particle* e);
-        Particle* e;
+        ParticleCollider(Particle e);
+        Particle e;
     };
 
     class PlaneCollider : public Collider {
@@ -36,8 +35,8 @@ namespace ramiel {
     public:
         virtual Type getColliderType() const override;
         virtual ~SphereCollider() {}
-        SphereCollider(RigidBody* e, float r);
-        RigidBody* e;
+        SphereCollider(RigidBody e, float r);
+        RigidBody e;
         float r;
     };
 
@@ -45,8 +44,8 @@ namespace ramiel {
     public:
         virtual Type getColliderType() const override;
         virtual ~BoxCollider() {}
-        BoxCollider(RigidBody* e, Vec3f size);
-        RigidBody* e;
+        BoxCollider(RigidBody e, Vec3f size);
+        RigidBody e;
         Vec3f size;
     };
 

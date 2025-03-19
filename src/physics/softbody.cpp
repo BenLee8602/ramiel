@@ -37,11 +37,10 @@ namespace ramiel {
         colliders.reserve(mesh.getVertexCount());
         for (auto v = mesh.vtxBegin(); v < mesh.vtxEnd(); v += mesh.getVertexSize()) {
             auto pos = reinterpret_cast<const Vec3f*>(v);
-            auto e = new Particle(*pos, Vec3f{}, 1.0f);
-            entities.emplace_back(e);
 
-            auto c = new ParticleCollider(e);
+            auto c = new ParticleCollider(Particle(*pos, Vec3f{}, 1.0f));
             colliders.emplace_back(c);
+            entities.emplace_back(&c->e);
         }
 
         EdgeMap edgeMap;
