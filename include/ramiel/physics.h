@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ramiel/data.h>
+
 #include "../src/physics/broadcollision.h"
 #include "../src/physics/collider.h"
 #include "../src/physics/collisiondetect.h"

@@ -1,7 +1,8 @@
 #include <chrono>
 #include <windows.h>
 
-#include <ramiel/ramiel.h>
+#include <ramiel/graphics.h>
+#include <ramiel/physics.h>
 using namespace ramiel;
 
 #include <VertexShaderTextured.h>
@@ -170,7 +171,7 @@ int main() {
     Entity entity(mesh, std::move(vs), std::move(ps));
 
     setAmbientLight({ 25, 10, 20 });
-    addLight(std::make_shared<PointLight>(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
+    addLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
 
     uint8_t* frame = new uint8_t[width * height * 3];
     auto frameTimeStart = std::chrono::steady_clock::now();

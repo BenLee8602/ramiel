@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ramiel/data.h>
+
 #include "../src/graphics/camera.h"
 #include "../src/graphics/effects.h"
 #include "../src/graphics/entity.h"
