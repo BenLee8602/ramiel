@@ -31,7 +31,7 @@ namespace {
     std::vector<Particle*> entities;
     
     std::vector<Collider*> colliders;
-    BroadCollisionFn broadCollisionFn;
+    BroadCollisionFn broadCollisionFn = bruteForce();
     CollisionDetectorMap collisionDetectors = {
         { { typeid(ParticleCollider), typeid(PlaneCollider) }, collideParticlePlane() },
         { { typeid(ParticleCollider), typeid(SphereCollider) }, collideParticleSphere() },

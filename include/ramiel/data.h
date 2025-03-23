@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ramiel/file.h>
+
 #include "../src/data/json.h"
 #include "../src/data/mesh.h"
 #include "../src/data/texture.h"

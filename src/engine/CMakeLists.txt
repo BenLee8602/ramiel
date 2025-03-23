@@ -1,8 +1,9 @@
-add_library(${PROJECT_NAME}_engine STATIC
+add_executable(${PROJECT_NAME}_engine
     engine.cpp
     entity.cpp
     event.cpp
     graphics.cpp
+    main.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_engine PUBLIC ${CMAKE_SOURCE_DIR}/deps)
