@@ -1,5 +1,5 @@
 #include "entity.h"
-#include "graphicsprivate.h"
+#include "graphics.h"
 #include "engine.h"
 
 namespace ramiel {

@@ -3,7 +3,6 @@
 
 #include <ramiel/graphics.h>
 #include "graphics.h"
-#include "graphicsprivate.h"
 using namespace ramiel;
 
 namespace {
