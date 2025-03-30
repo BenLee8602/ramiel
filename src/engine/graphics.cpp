@@ -1,17 +1,27 @@
 #include <cassert>
 #include <unordered_set>
 
-#include <ramiel/graphics.h>
 #include "graphics.h"
 using namespace ramiel;
 
 namespace {
 
+    Vec3f backgroundColor = {};
     std::unordered_set<Entity*> entities;
 
 }
 
 namespace ramiel {
+
+    Vec3f getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    void setBackgroundColor(Vec3f color) {
+        assert(color > 0.0f);
+        backgroundColor = color;
+    }
+
 
     void addGraphicsEntity(Entity* e) {
         assert(e);
@@ -25,7 +35,7 @@ namespace ramiel {
 
 
     void renderFrame(uint8_t* frame) {
-        std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), Vec3f{});
+        std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
         std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
 
         for (auto& e : entities) e->draw();
