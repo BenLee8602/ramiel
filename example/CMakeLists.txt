@@ -1,7 +1,0 @@
-add_executable(${PROJECT_NAME}_example main.cpp)
-
-target_include_directories(${PROJECT_NAME}_example PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-target_link_libraries(${PROJECT_NAME}_example PUBLIC gdi32)
-target_link_libraries(${PROJECT_NAME}_example PUBLIC ${PROJECT_NAME}_graphics)
-target_link_libraries(${PROJECT_NAME}_example PUBLIC ${PROJECT_NAME}_physics)
