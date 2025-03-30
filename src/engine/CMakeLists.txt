@@ -4,6 +4,7 @@ add_executable(${PROJECT_NAME}_engine
     event.cpp
     graphics.cpp
     main.cpp
+    window.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_engine PUBLIC ${CMAKE_SOURCE_DIR}/deps)
