@@ -1,24 +1,20 @@
 #pragma once
 
-#include <vector>
 #include <string>
-#include <memory>
-
-#include "entity.h"
+#include <vector>
 
 namespace ramiel {
 
-    std::string pwd();
-    bool cd(std::string path);
-    std::vector<std::string> ls();
-    EngineEntity* get(std::string path = "");
-    bool mkdir(std::string name);
-    void add(std::string name, std::unique_ptr<EngineEntity>&& e);
-    bool rm(std::string name);
+    void nav(std::string path);
 
-    template<class EngineEntityType>
-    EngineEntityType* get(std::string path = "") {
-        return dynamic_cast<EngineEntityType*>(get("path"));
-    }
+    void make_dir(std::string name);
+
+    std::string get_path();
+    std::string get_name();
+    std::vector<std::string> get_kids();
+
+    void set_name(std::string name);
+
+    void del(std::string kid);
 
 }
