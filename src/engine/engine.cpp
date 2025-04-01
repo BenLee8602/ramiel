@@ -1,8 +1,6 @@
 #include <cassert>
 
 #include <ramiel/data.h>
-#include <ramiel/graphics.h>
-#include <ramiel/physics.h>
 #include "engine.h"
 using namespace ramiel;
 
@@ -29,72 +27,55 @@ namespace {
 
 namespace ramiel {
 
-    using EngineEntityNode = TreeData<std::unique_ptr<EngineEntity>>;
+    void nav(std::string path) {
+        Tree::H next = navTree(path);
+        if (next) dir = next;
+    }
 
 
-    std::string pwd() {
+    void make_dir(std::string name) {
+        assert(dir);
+        if (!Tree::validName(name)) return;
+        if (dir->getKid(name)) return;
+        dir->insert(Tree::make(name));
+    }
+
+
+    std::string get_path() {
+        assert(dir && root);
         return dir == root ? "/" : dir->getPath().substr(5);
     }
 
 
-    bool cd(std::string path) {
-        Tree::H next = navTree(path);
-        if (next) dir = next;
-        return next != nullptr;
+    std::string get_name() {
+        assert(dir);
+        return dir->getName();
     }
 
 
-    std::vector<std::string> ls() {
+    std::vector<std::string> get_kids() {
         assert(dir);
-        std::vector<std::string> out;
-        out.reserve(dir->numKids());
-
-        dir->forEachKid([&out](const Tree::H t) {
-            out.emplace_back(t->getName());
+        std::vector<std::string> kids;
+        kids.reserve(dir->numKids());
+        dir->forEachKid([&kids](Tree::H kid) {
+            kids.push_back(kid->getName());
             return true;
         });
-
-        return out;
+        return kids;
     }
 
 
-    EngineEntity* get(std::string path) {
-        auto node = EngineEntityNode::cast(navTree(path));
-        return node ? node->get().get() : nullptr;
-    }
-
-
-    bool mkdir(std::string name) {
+    void set_name(std::string name) {
         assert(dir);
-        if (dir->getKid(name)) return false;
-        dir->insert(Tree::make(name));
-        return true;
+        if (!Tree::validName(name)) return;
+        if (dir->getParent() && dir->getParent()->getKid(name)) return;
+        dir->setName(name);
     }
 
 
-    void add(std::string name, std::unique_ptr<EngineEntity>&& e) {
+    void del(std::string kid) {
         assert(dir);
-        assert(e);
-        e->add();
-        dir->insert(EngineEntityNode::make(name, std::move(e)));
-    }
-
-
-    bool rm(std::string name) {
-        assert(dir);
-
-        Tree::H erased = dir->erase(name);
-        if (!erased) return false;
-
-        Tree::Fn fn = [fn](Tree::H n) {
-            auto node = EngineEntityNode::cast(n);
-            if (node) node->get()->remove();
-            n->forEachKid(fn);
-            return true;
-        };
-
-        fn(erased);
-        return true;
+        dir->erase(kid);
     }
 
 }

@@ -1,8 +1,11 @@
 #include <chrono>
+#include <thread>
 
 #include <ramiel/graphics.h>
 #include <ramiel/physics.h>
 
+#include "engine.h"
+#include "command.h"
 #include "window.h"
 using namespace ramiel;
 
@@ -101,8 +104,19 @@ void getFrameRGB(uint8_t* frame) {
 }
 
 
+void runCommandLine() {
+    std::string command;
+    while (true) {
+        std::cout << get_path() << "> ";
+        std::getline(std::cin, command);
+        runCommand(command);
+    }
+}
+
+
 int main() {
     if (!initWindow()) return 0;
+    std::thread(runCommandLine).detach();
 
     setRes({
         static_cast<unsigned>(windowWidth()),
