@@ -16,13 +16,89 @@ namespace {
 
 namespace ramiel {
 
+    Vec2u getCameraRes() {
+        std::lock_guard lock(mutex);
+        return getRes();
+    }
+
+    void setCameraRes(Vec2u res) {
+        if (res[X] == 0 || res[Y] == 0) return;
+        std::lock_guard lock(mutex);
+        setRes(res);
+    }
+
+
+    float getCameraAspectRatio() {
+        std::lock_guard lock(mutex);
+        return getAspectRatio();
+    }
+
+
+    Vec3f getCameraPos() {
+        std::lock_guard lock(mutex);
+        return getPos();
+    }
+
+    void setCameraPos(Vec3f pos) {
+        std::lock_guard lock(mutex);
+        setPos(pos);
+    }
+
+
+    Vec3f getCameraRot() {
+        std::lock_guard lock(mutex);
+        return getRot();
+    }
+
+    void setCameraRot(Vec3f rot) {
+        std::lock_guard lock(mutex);
+        setRot(rot);
+    }
+
+
+    float getCameraFov() {
+        std::lock_guard lock(mutex);
+        return getFov();
+    }
+
+    void setCameraFov(float fov) {
+        if (fov < 1e-6f || fov > 180.0f) return;
+        std::lock_guard lock(mutex);
+        setFov(fov);
+    }
+
+
+    float getCameraFocalLength() {
+        std::lock_guard lock(mutex);
+        return getFocalLen();
+    }
+
+    void setCameraFocalLength(float focalLength) {
+        if (focalLength < 1e-6f) return;
+        std::lock_guard lock(mutex);
+        setFocalLen(focalLength);
+    }
+
+
+    Vec3f getAmbientLightColor() {
+        std::lock_guard lock(mutex);
+        return getAmbientLight();
+    }
+
+    void setAmbientLightColor(Vec3f color) {
+        if (color < 0.0f) return;
+        std::lock_guard lock(mutex);
+        setAmbientLight(color);
+    }
+
+
     Vec3f getBackgroundColor() {
         std::lock_guard lock(mutex);
         return backgroundColor;
     }
 
     void setBackgroundColor(Vec3f color) {
-        assert(color > 0.0f);
+        if (color < 0.0f) return;
         std::lock_guard lock(mutex);
         backgroundColor = color;
     }
@@ -54,21 +130,13 @@ namespace ramiel {
     }
 
 
-    void renderFrame(uint8_t* frame) {
+    void renderFrame() {
         std::lock_guard lock(mutex);
 
         std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
         std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
 
         for (auto& e : entities) e->draw();
-
-        assert(frame);
-        auto color = getColorBuffer();
-        for (size_t i = 0; i < getBufferSize(); ++i) {
-            *frame++ = std::min(color[i][B], 255.0f);
-            *frame++ = std::min(color[i][G], 255.0f);
-            *frame++ = std::min(color[i][R], 255.0f);
-        }
     }
 
 }

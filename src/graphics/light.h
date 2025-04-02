@@ -9,7 +9,10 @@ namespace ramiel {
 
     void addLight(Light* light);
     void removeLight(Light* light);
+
+    Vec3f getAmbientLight();
     void setAmbientLight(const Vec3f& color);
+
     Vec3f getLight(
         const Vec3f& pos,
         const Vec3f& normal,
