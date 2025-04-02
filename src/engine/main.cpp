@@ -7,6 +7,7 @@
 #include "engine.h"
 #include "command.h"
 #include "window.h"
+#include "graphics.h"
 using namespace ramiel;
 
 
@@ -134,9 +135,10 @@ int main() {
         std::make_unique<VertexShaderTextured>(translate(Vec3f{ 0, 0, 4 })),
         std::make_unique<PixelShaderTextured>(texture, 8.0f, 1.0f, Vec3f{})
     );
+    addGraphicsEntity(&entity);
 
     setAmbientLight({ 25, 10, 20 });
-    addLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
+    addGraphicsLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
 
     std::vector<uint8_t> frame(windowWidth() * windowHeight() * 3);
     auto frameTimeStart = std::chrono::steady_clock::now();
@@ -152,12 +154,9 @@ int main() {
         cameraControls((float)dtime);
 
         simulatePhysics(dtime);
+        renderFrame();
 
-        std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), Vec3f{});
-        std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
-        entity.draw();
         getFrameRGB(frame.data());
-
         drawToWindow(frame.data());
     }
 

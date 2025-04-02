@@ -23,9 +23,15 @@ namespace ramiel {
         lights.erase(i, lights.end());
     }
 
+
+    Vec3f getAmbientLight() {
+        return ambientLight;
+    }
+
     void setAmbientLight(const Vec3f& color) {
         ambientLight = min(max(color, 0.0f), 255.0f);
     }
+
 
     Vec3f getLight(
         const Vec3f& pos,
