@@ -8,6 +8,7 @@
 #include "command.h"
 #include "window.h"
 #include "graphics.h"
+#include "task.h"
 using namespace ramiel;
 
 
@@ -138,13 +139,14 @@ int main() {
     addGraphicsEntity(&entity);
 
     setAmbientLight({ 25, 10, 20 });
-    addGraphicsLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
+    addLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
 
     std::vector<uint8_t> frame(windowWidth() * windowHeight() * 3);
     auto frameTimeStart = std::chrono::steady_clock::now();
     auto frameTimeEnd = std::chrono::steady_clock::now();
 
     while (windowGood()) {
+        execTasks();
         pollWindowMessages();
 
         frameTimeEnd = std::chrono::steady_clock::now();

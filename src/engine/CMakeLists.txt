@@ -5,6 +5,7 @@ add_executable(${PROJECT_NAME}_engine
     event.cpp
     graphics.cpp
     main.cpp
+    task.cpp
     window.cpp
 )
 

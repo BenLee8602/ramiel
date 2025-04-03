@@ -1,5 +1,6 @@
 #include "entity.h"
 #include "graphics.h"
+#include "task.h"
 
 namespace ramiel {
 
@@ -14,11 +15,11 @@ namespace ramiel {
 
 
     void EngineGraphicsEntity::ctor() {
-        addGraphicsEntity(&e);
+        addTask([this]() { addGraphicsEntity(&e); });
     }
 
     EngineGraphicsEntity::~EngineGraphicsEntity() {
-        removeGraphicsEntity(&e);
+        addTask([this]() { removeGraphicsEntity(&e); });
     }
 
     Entity& EngineGraphicsEntity::get() {
@@ -27,11 +28,11 @@ namespace ramiel {
 
 
     void EngineDirectionalLight::ctor() {
-        addGraphicsLight(&light);
+        addTask([this] () { addLight(&light); });
     }
 
     EngineDirectionalLight::~EngineDirectionalLight() {
-        removeLight(&light);
+        addTask([this]() { removeLight(&light); });
     }
 
     DirectionalLight& EngineDirectionalLight::get() {
@@ -40,11 +41,11 @@ namespace ramiel {
 
 
     void EnginePointLight::ctor() {
-        addGraphicsLight(&light);
+        addTask([this] () { addLight(&light); });
     }
 
     EnginePointLight::~EnginePointLight() {
-        removeLight(&light);
+        addTask([this]() { removeLight(&light); });
     }
 
     PointLight& EnginePointLight::get() {
@@ -53,11 +54,11 @@ namespace ramiel {
 
 
     void EngineSpotLight::ctor() {
-        addGraphicsLight(&light);
+        addTask([this] () { addLight(&light); });
     }
 
     EngineSpotLight::~EngineSpotLight() {
-        removeLight(&light);
+        addTask([this]() { removeLight(&light); });
     }
 
     SpotLight& EngineSpotLight::get() {
