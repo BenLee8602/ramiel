@@ -9,6 +9,7 @@
 #include "command.h"
 #include "engine.h"
 #include "graphics.h"
+#include "task.h"
 using namespace ramiel;
 
 namespace {
@@ -92,37 +93,37 @@ namespace {
 
     void get_cameraRes(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getCameraRes() << '\n';
+        std::cout << getRes() << '\n';
     }
 
     void get_cameraAspectRatio(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getCameraAspectRatio() << '\n';
+        std::cout << getAspectRatio() << '\n';
     }
 
     void get_cameraPos(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getCameraPos() << '\n';
+        std::cout << getPos() << '\n';
     }
 
     void get_cameraRot(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getCameraRot() << '\n';
+        std::cout << getRot() << '\n';
     }
 
     void get_cameraFov(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getCameraFov() << '\n';
+        std::cout << getFov() << '\n';
     }
 
     void get_cameraFocalLength(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getCameraFocalLength() << '\n';
+        std::cout << getFocalLen() << '\n';
     }
 
     void get_ambientLight(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getAmbientLightColor() << '\n';
+        std::cout << getAmbientLight() << '\n';
     }
 
     void get_backgroundColor(Command cmd) {
@@ -140,6 +141,7 @@ namespace {
         Vec2u res;
         if (!fromString(cmd.args[2], res[X])) return;
         if (!fromString(cmd.args[3], res[Y])) return;
+        if (res[X] == 0 || res[Y] == 0) return;
         // todo: resize window
     }
 
@@ -149,7 +151,7 @@ namespace {
         if (!fromString(cmd.args[2], pos[X])) return;
         if (!fromString(cmd.args[3], pos[Y])) return;
         if (!fromString(cmd.args[4], pos[Z])) return;
-        setCameraPos(pos);
+        addTask([pos]() { setPos(pos); });
     }
 
     void set_cameraRot(Command cmd) {
@@ -158,21 +160,23 @@ namespace {
         if (!fromString(cmd.args[2], rot[X])) return;
         if (!fromString(cmd.args[3], rot[Y])) return;
         if (!fromString(cmd.args[4], rot[Z])) return;
-        setCameraRot(rot);
+        addTask([rot]() { setRot(rot); });
     }
 
     void set_cameraFov(Command cmd) {
         if (cmd.args.size() != 3) return;
         float fov;
         if (!fromString(cmd.args[2], fov)) return;
-        setCameraFov(fov);
+        if (fov < 1e-6f || fov > 180.0f) return;
+        addTask([fov]() { setFov(fov); });
     }
 
     void set_cameraFocalLength(Command cmd) {
         if (cmd.args.size() != 3) return;
         float focalLength;
         if (!fromString(cmd.args[2], focalLength)) return;
-        setCameraFocalLength(focalLength);
+        if (focalLength < 1e-6f) return;
+        addTask([focalLength]() { setFocalLen(focalLength); });
     }
 
     void set_ambientLight(Command cmd) {
@@ -181,7 +185,8 @@ namespace {
         if (!fromString(cmd.args[2], ambientLight[R])) return;
         if (!fromString(cmd.args[3], ambientLight[G])) return;
         if (!fromString(cmd.args[4], ambientLight[B])) return;
-        setAmbientLightColor(ambientLight);
+        if (ambientLight < 0.0f) return;
+        addTask([ambientLight]() { setAmbientLight(ambientLight); });
     }
 
     void set_backgroundColor(Command cmd) {
@@ -190,7 +195,7 @@ namespace {
         if (!fromString(cmd.args[2], backgroundColor[R])) return;
         if (!fromString(cmd.args[3], backgroundColor[G])) return;
         if (!fromString(cmd.args[4], backgroundColor[B])) return;
-        setBackgroundColor(backgroundColor);
+        addTask([backgroundColor]() { setBackgroundColor(backgroundColor); });
     }
 
     void del(Command cmd) {
