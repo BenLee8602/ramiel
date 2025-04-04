@@ -96,16 +96,6 @@ void cameraControls(float dtime) {
 }
 
 
-void getFrameRGB(uint8_t* frame) {
-    auto color = getColorBuffer();
-    for (size_t i = 0; i < getBufferSize(); ++i) {
-        *frame++ = std::min(color[i][B], 255.0f);
-        *frame++ = std::min(color[i][G], 255.0f);
-        *frame++ = std::min(color[i][R], 255.0f);
-    }
-}
-
-
 void runCommandLine() {
     std::string command;
     while (true) {
@@ -119,11 +109,6 @@ void runCommandLine() {
 int main() {
     if (!initWindow()) return 0;
     std::thread(runCommandLine).detach();
-
-    setRes({
-        static_cast<unsigned>(windowWidth()),
-        static_cast<unsigned>(windowHeight())
-    });
 
     const char* meshFile = "example/assets/models/cube.obj";
     const char* textureFile = "example/assets/textures/brickwall_texture.jpg";
@@ -141,7 +126,6 @@ int main() {
     setAmbientLight({ 25, 10, 20 });
     addLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
 
-    std::vector<uint8_t> frame(windowWidth() * windowHeight() * 3);
     auto frameTimeStart = std::chrono::steady_clock::now();
     auto frameTimeEnd = std::chrono::steady_clock::now();
 
@@ -158,8 +142,7 @@ int main() {
         simulatePhysics(dtime);
         renderFrame();
 
-        getFrameRGB(frame.data());
-        drawToWindow(frame.data());
+        updateFrame();
     }
 
     return 0;

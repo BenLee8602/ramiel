@@ -19,13 +19,13 @@ namespace ramiel {
     bool windowGood();
     void pollWindowMessages();
 
-    size_t windowWidth();
-    size_t windowHeight();
+    Vec2u getWindowSize();
+    void setWindowSize(Vec2u size);
 
     bool keyDown(Key key);
     bool keyPressed(Key key);
     bool keyUp(Key key);
 
-    void drawToWindow(uint8_t* frame);
+    void updateFrame();
 
 }

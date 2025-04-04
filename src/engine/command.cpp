@@ -10,6 +10,7 @@
 #include "engine.h"
 #include "graphics.h"
 #include "task.h"
+#include "window.h"
 using namespace ramiel;
 
 namespace {
@@ -142,7 +143,7 @@ namespace {
         if (!fromString(cmd.args[2], res[X])) return;
         if (!fromString(cmd.args[3], res[Y])) return;
         if (res[X] == 0 || res[Y] == 0) return;
-        // todo: resize window
+        addTask([res]() { setWindowSize(res); });
     }
 
     void set_cameraPos(Command cmd) {
