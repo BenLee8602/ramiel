@@ -19,16 +19,16 @@ namespace ramiel {
         template<typename U> explicit operator Vec<U, N>() const { Vec<U, N> temp; for (size_t i = 0; i < N; ++i) temp[i] = (U)vec[i]; return temp; }
 
         // scalar comparison
+        template<typename U> bool operator!=(const U& num) const { for (size_t i = 0; i < N; ++i) if (vec[i] != num) return true; return false; }
         template<typename U> bool operator==(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] == num)) return false; return true; }
-        template<typename U> bool operator!=(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] != num)) return false; return true; }
         template<typename U> bool operator<=(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <= num)) return false; return true; }
         template<typename U> bool operator>=(const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >= num)) return false; return true; }
         template<typename U> bool operator< (const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <  num)) return false; return true; }
         template<typename U> bool operator> (const U& num) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >  num)) return false; return true; }
 
         // vector comparison
+        template<typename U> bool operator!=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (vec[i] != v[i]) return true; return false; }
         template<typename U> bool operator==(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] == v[i])) return false; return true; }
-        template<typename U> bool operator!=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] != v[i])) return false; return true; }
         template<typename U> bool operator<=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <= v[i])) return false; return true; }
         template<typename U> bool operator>=(const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] >= v[i])) return false; return true; }
         template<typename U> bool operator< (const Vec<U, N>& v) const { for (size_t i = 0; i < N; ++i) if (!(vec[i] <  v[i])) return false; return true; }
