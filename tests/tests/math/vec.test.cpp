@@ -27,9 +27,9 @@ RAMIEL_TEST_ADD(VecVectorEqual) {
 }
 
 RAMIEL_TEST_ADD(VecVectorNotEqual) {
-    Vec3 v1 = { 10, -1, 3 };
-    Vec3 v2 = { 7, 5, -8 };
-    Vec3 v3 = { 10, -1, 3 };
+    Vec3 v1 = { 1, 1, 1 };
+    Vec3 v2 = { 1, 1, 2 };
+    Vec3 v3 = { 1, 1, 1 };
     RAMIEL_TEST_ASSERT(v1 != v2);
     RAMIEL_TEST_ASSERT(!(v1 != v3));
 }
