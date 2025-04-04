@@ -104,10 +104,6 @@ namespace {
 
     HWND window;
     HDC deviceContext;
-    BITMAPINFO frameInfo;
-
-    constexpr int defaultWidth = 1280;
-    constexpr int defaultHeight = 720;
 
 
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -130,6 +126,12 @@ namespace {
                 uint8_t key = static_cast<uint8_t>(keyIt->second);
                 keyStates[key] = false;
             }
+            return 0;
+        }
+        if (uMsg == WM_SIZE) {
+            unsigned width  = static_cast<unsigned>(LOWORD(lParam));
+            unsigned height = static_cast<unsigned>(HIWORD(lParam));
+            setRes({ width, height });
             return 0;
         }
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -157,8 +159,8 @@ namespace ramiel {
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            defaultWidth,
-            defaultHeight,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
             nullptr,
             nullptr,
             nullptr,
@@ -167,14 +169,6 @@ namespace ramiel {
         if (!window) return false;
 
         deviceContext = GetDC(window);
-
-        frameInfo = {};
-        frameInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        frameInfo.bmiHeader.biWidth = defaultWidth;
-        frameInfo.bmiHeader.biHeight = defaultHeight;
-        frameInfo.bmiHeader.biPlanes = 1;
-        frameInfo.bmiHeader.biBitCount = 24;
-        frameInfo.bmiHeader.biCompression = BI_RGB;
 
         ShowWindow(window, SW_SHOW);
         return true;
@@ -199,14 +193,35 @@ namespace ramiel {
     }
 
 
-    size_t windowWidth() {
+    Vec2u getWindowSize() {
         assert(init && good);
-        return frameInfo.bmiHeader.biWidth;
+        RECT rect;
+        GetClientRect(window, &rect);
+        unsigned width  = static_cast<unsigned>(rect.right - rect.left);
+        unsigned height = static_cast<unsigned>(rect.bottom - rect.top);
+        return { width, height };
     }
 
-    size_t windowHeight() {
+    void setWindowSize(Vec2u size) {
         assert(init && good);
-        return frameInfo.bmiHeader.biHeight;
+        RECT rect = {
+            0, 0,
+            static_cast<int>(size[X]),
+            static_cast<int>(size[Y])
+        };
+        AdjustWindowRectEx(
+            &rect,
+            GetWindowLongPtr(window, GWL_STYLE),
+            static_cast<bool>(GetMenu(window)),
+            GetWindowLongPtr(window, GWL_EXSTYLE)
+        );
+        SetWindowPos(
+            window, nullptr,
+            0, 0,
+            rect.right - rect.left,
+            rect.bottom - rect.top,
+            SWP_NOMOVE | SWP_NOZORDER
+        );
     }
 
 
@@ -229,20 +244,48 @@ namespace ramiel {
     }
 
 
-    void drawToWindow(uint8_t* frame) {
-        assert(init && good);
-        assert(frame);
+    void updateFrame() {
+        static std::vector<uint8_t> frame;
+        static Vec2u res = {};
+        static size_t padding = 0;
 
-        int width = frameInfo.bmiHeader.biWidth;
-        int height = frameInfo.bmiHeader.biHeight;
+        assert(init && good);
+        assert(getRes() == getWindowSize());
+
+        if (res != getWindowSize()) {
+            res = getWindowSize();
+            size_t width = ((res[X] * 3 + 3) / 4) * 4;
+            padding = width - res[X] * 3;
+            frame = std::vector<uint8_t>(width * res[Y]);
+        }
+
+        auto in = getColorBuffer();
+        auto out = frame.begin();
+        for (size_t y = 0; y < res[Y]; y++) {
+            for (size_t x = 0; x < res[X]; x++) {
+                *out++ = std::min((*in)[B], 255.0f);
+                *out++ = std::min((*in)[G], 255.0f);
+                *out++ = std::min((*in)[R], 255.0f);
+                in++;
+            }
+            out += padding;
+        }
+
+        BITMAPINFO frameInfo = {};
+        frameInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        frameInfo.bmiHeader.biWidth = res[X];
+        frameInfo.bmiHeader.biHeight = res[Y];
+        frameInfo.bmiHeader.biPlanes = 1;
+        frameInfo.bmiHeader.biBitCount = 24;
+        frameInfo.bmiHeader.biCompression = BI_RGB;
 
         SetDIBitsToDevice(
             deviceContext,
             0, 0,
-            width, height,
+            res[X], res[Y],
             0, 0,
-            0, height,
-            frame,
+            0, res[Y],
+            frame.data(),
             &frameInfo,
             DIB_RGB_COLORS
         );

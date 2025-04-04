@@ -35,6 +35,8 @@ namespace ramiel {
 
 
     void renderFrame() {
+        if (!getRes()[X] || !getRes()[Y]) return;
+
         std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
         std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());
 
