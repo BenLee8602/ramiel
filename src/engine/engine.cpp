@@ -66,9 +66,10 @@ namespace ramiel {
 
 
     void set_name(std::string name) {
-        assert(dir);
+        assert(dir && root);
+        if (dir == root) return;
         if (!Tree::validName(name)) return;
-        if (dir->getParent() && dir->getParent()->getKid(name)) return;
+        if (dir->getParent()->getKid(name)) return;
         dir->setName(name);
     }
 
