@@ -4,23 +4,62 @@
 #include <unordered_map>
 #include <sstream>
 #include <charconv>
+#include <algorithm>
 
 #include <ramiel/data.h>
 #include "command.h"
-#include "engine.h"
 #include "graphics.h"
 #include "task.h"
 #include "window.h"
+#include "entity.h"
 using namespace ramiel;
 
 namespace {
 
+    Tree::H root = Tree::make("root");
+    Tree::H dir = root;
+
+
+    Tree::H navTree(std::string path) {
+        if (path.empty()) return dir;
+        Tree::H next = dir;
+
+        if (path[0] == '/') {
+            next = root;
+            path = path.substr(1);
+        }
+
+        next = next->getRelative(path);
+        return next;
+    }
+
+    bool insertTree(Tree::H t) {
+        assert(t);
+        if (!Tree::validName(t->getName())) return false;
+        if (dir->getKid(t->getName())) return false;
+        dir->insert(t);
+        return true;
+    }
+
+
     template<typename T>
-    bool fromString(std::string src, T& des) {
+    bool fromString(const std::string& src, T& des) {
         auto first = src.data();
         auto last = src.data() + src.size();
         auto res = std::from_chars(first, last, des);
         return res.ec == std::errc() && res.ptr == last;
+    }
+
+    template<typename T, size_t N>
+    bool fromString(const std::string& src, Vec<T, N>& des) {
+        if (std::count(src.begin(), src.end(), ',') != N - 1) return false;
+        std::istringstream srcstr(src);
+        for (size_t i = 0; i < N; i++) {
+            std::string elem;
+            if (!std::getline(srcstr, elem, ',')) return false;
+            if (!fromString(elem, des[i])) return false;
+        }
+        return true;
     }
 
 
@@ -29,6 +68,28 @@ namespace {
     struct Command {
         std::vector<std::string> args;
         std::unordered_map<std::string, std::string> flags;
+
+        std::string getFlag(
+            const std::string& name,
+            const char* defaultValue = nullptr
+        ) {
+            auto flag = flags.find(name);
+            if (flag != flags.end() && !flag->second.empty()) {
+                return flag->second;
+            }
+
+            bool manual = flags.find("manual") != flags.end();
+            if (!manual && defaultValue) return defaultValue;
+
+            std::string value;
+            std::cout << "enter property " << name << ": ";
+            std::getline(std::cin, value);
+            return value;
+        }
+
+        bool hasFlag(const std::string& name) {
+            return flags.find(name) != flags.end();
+        }
     };
 
 
@@ -64,31 +125,206 @@ namespace {
 
     void nav(Command cmd) {
         if (cmd.args.size() != 2) return;
-        ramiel::nav(cmd.args[1]);
+        Tree::H next = navTree(cmd.args[1]);
+        if (!next) return;
+        dir = next;
     }
 
     void make_dir(Command cmd) {
+        assert(dir);
         if (cmd.args.size() != 3) return;
-        ramiel::make_dir(cmd.args[2]);
+        insertTree(Tree::make(cmd.args[2]));
     }
 
+    void make_mesh(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string filename = cmd.getFlag("filename");
+        
+        EngineMesh::H mesh = EngineEntity::make<EngineMesh>(
+            cmd.args[2], filename
+        );
+        if (mesh->get()->getTriangleCount() == 0) return;
+
+        insertTree(mesh);
+    }
+
+    void make_texture(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string filename = cmd.getFlag("filename");
+
+        EngineTexture::H texture = EngineEntity::make<EngineTexture>(
+            cmd.args[2], filename, rgb1
+        );
+        if (texture->get()->getSize() == Vec2u{}) return;
+
+        insertTree(texture);
+    }
+
+    void make_entity(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string meshPath = cmd.getFlag("mesh");
+        EngineMesh::H mesh = EngineEntity::cast<EngineMesh>(navTree(meshPath));
+        if (!mesh) return;
+
+        std::string vsPosStr = cmd.getFlag("vs.pos", "0,0,0");
+        Vec3f vsPos;
+        if (!fromString(vsPosStr, vsPos)) return;
+
+        std::string vsRotStr = cmd.getFlag("vs.rot", "0,0,0");
+        Vec3f vsRot;
+        if (!fromString(vsRotStr, vsRot)) return;
+
+        std::string vsScaleStr = cmd.getFlag("vs.scale", "1,1,1");
+        Vec3f vsScale;
+        if (!fromString(vsScaleStr, vsScale)) return;
+
+        std::string psSpecExponentStr = cmd.getFlag("ps.specexponent", "8");
+        float psSpecExponent;
+        if (!fromString(psSpecExponentStr, psSpecExponent)) return;
+
+        std::string psSpecIntensityStr = cmd.getFlag("ps.specintensity", "1");
+        float psSpecIntensity;
+        if (!fromString(psSpecIntensityStr, psSpecIntensity)) return;
+
+        std::unique_ptr<VertexShaderBase> vs;
+        std::unique_ptr<PixelShaderBase> ps;
+
+        if (cmd.hasFlag("texture")) {
+            std::string psTexturePath = cmd.getFlag("texture");
+            EngineTexture::H texture = EngineEntity::cast<EngineTexture>(
+                navTree(psTexturePath));
+            vs = std::make_unique<VertexShaderTextured>(
+                matmat(matmat(scale(vsScale), rotate(vsRot)), translate(vsPos)));
+            ps = std::make_unique<PixelShaderTextured>(
+                texture->get(), psSpecExponent, psSpecIntensity, Vec3f{});
+        } else {
+            std::string psColorStr = cmd.getFlag("color", "255,255,255");
+            Vec3f psColor;
+            if (!fromString(psColorStr, psColor)) return;
+            vs = std::make_unique<VertexShader>(
+                matmat(matmat(scale(vsScale), rotate(vsRot)), translate(vsPos)));
+            ps = std::make_unique<PixelShader>(
+                psColor / 255.0f, psSpecExponent, psSpecIntensity, Vec3f{});
+        }
+
+        EngineGraphicsEntity::H entity = EngineEntity::make<EngineGraphicsEntity>(
+            cmd.args[2], mesh->get(), std::move(vs), std::move(ps)
+        );
+        if (!entity) return;
+
+        insertTree(entity);
+    }
+
+    void make_dirlight(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string colorStr = cmd.getFlag("color", "255,255,255");
+        Vec3f color;
+        if (!fromString(colorStr, color)) return;
+
+        std::string intensityStr = cmd.getFlag("intensity", "1");
+        float intensity;
+        if (!fromString(intensityStr, intensity)) return;
+
+        std::string dirString = cmd.getFlag("dir");
+        Vec3f dir;
+        if (!fromString(dirString, dir)) return;
+
+        EngineDirectionalLight::H light = EngineEntity::make<EngineDirectionalLight>(
+            cmd.args[2], color, intensity, dir
+        );
+
+        insertTree(light);
+    }
+
+    void make_pointlight(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string colorStr = cmd.getFlag("color", "255,255,255");
+        Vec3f color;
+        if (!fromString(colorStr, color)) return;
+
+        std::string intensityStr = cmd.getFlag("intensity", "1");
+        float intensity;
+        if (!fromString(intensityStr, intensity)) return;
+
+        std::string posStr = cmd.getFlag("pos");
+        Vec3f pos;
+        if (!fromString(posStr, pos)) return;
+
+        std::string falloffStr = cmd.getFlag("falloff", "1");
+        float falloff;
+        if (!fromString(falloffStr, falloff)) return;
+
+        EnginePointLight::H light = EngineEntity::make<EnginePointLight>(
+            cmd.args[2], color, intensity, pos, falloff
+        );
+
+        insertTree(light);
+    }
+
+    void make_spotlight(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string colorStr = cmd.getFlag("color", "255,255,255");
+        Vec3f color;
+        if (!fromString(colorStr, color)) return;
+
+        std::string intensityStr = cmd.getFlag("intensity", "1");
+        float intensity;
+        if (!fromString(intensityStr, intensity)) return;
+
+        std::string posStr = cmd.getFlag("pos");
+        Vec3f pos;
+        if (!fromString(posStr, pos)) return;
+
+        std::string dirString = cmd.getFlag("dir");
+        Vec3f dir;
+        if (!fromString(dirString, dir)) return;
+
+        std::string falloffStr = cmd.getFlag("falloff", "1");
+        float falloff;
+        if (!fromString(falloffStr, falloff)) return;
+
+        std::string widthStr = cmd.getFlag("width", "0.785398");
+        float width;
+        if (!fromString(widthStr, width)) return;
+
+        std::string falloffExpStr = cmd.getFlag("falloffexp", "1");
+        float falloffExp;
+        if (!fromString(falloffExpStr, falloffExp)) return;
+
+        EngineSpotLight::H light = EngineEntity::make<EngineSpotLight>(
+            cmd.args[2], color, intensity, pos, dir, falloff, width, falloffExp
+        );
+
+        insertTree(light);
+    }
+
+
     void get_path(Command cmd) {
+        assert(dir && root);
         if (cmd.args.size() != 2) return;
-        std::cout << ramiel::get_path() << '\n';
+        std::cout << getPath() << '\n';
     }
 
     void get_name(Command cmd) {
+        assert(dir);
         if (cmd.args.size() != 2) return;
-        std::cout << ramiel::get_name() << '\n';
+        std::cout << dir->getName() << '\n';
     }
 
     void get_kids(Command cmd) {
+        assert(dir);
         if (cmd.args.size() != 2) return;
-        std::vector<std::string> kids = ramiel::get_kids();
         std::cout << "[\n";
-        for (auto& k : kids) {
-            std::cout << "    " << k << '\n';
-        }
+        dir->forEachKid([](Tree::H kid) {
+            std::cout << "    " << kid->getName() << '\n';
+            return true;
+        });
         std::cout << "]\n";
     }
 
@@ -133,8 +369,12 @@ namespace {
     }
 
     void set_name(Command cmd) {
+        assert(dir && root);
         if (cmd.args.size() != 3) return;
-        ramiel::set_name(cmd.args[2]);
+        if (dir == root) return;
+        if (!Tree::validName(cmd.args[2])) return;
+        if (dir->getParent()->getKid(cmd.args[2])) return;
+        dir->setName(cmd.args[2]);
     }
 
     void set_cameraRes(Command cmd) {
@@ -200,8 +440,9 @@ namespace {
     }
 
     void del(Command cmd) {
+        assert(dir);
         if (cmd.args.size() != 2) return;
-        ramiel::del(cmd.args[1]);
+        dir->erase(cmd.args[1]);
     }
 
 
@@ -217,6 +458,12 @@ namespace {
 
         Tree::H cmdTreeMake = Tree::make("make");
         cmdTreeMake->insert(CommandNode::make("dir", make_dir));
+        cmdTreeMake->insert(CommandNode::make("mesh", make_mesh));
+        cmdTreeMake->insert(CommandNode::make("texture", make_texture));
+        cmdTreeMake->insert(CommandNode::make("entity", make_entity));
+        cmdTreeMake->insert(CommandNode::make("dirlight", make_dirlight));
+        cmdTreeMake->insert(CommandNode::make("pointlight", make_pointlight));
+        cmdTreeMake->insert(CommandNode::make("spotlight", make_spotlight));
         cmdTree->insert(cmdTreeMake);
 
         Tree::H cmdTreeGet = Tree::make("get");
@@ -268,6 +515,11 @@ namespace ramiel {
             cmdFn->get()(cmd);
             break;
         }
+    }
+
+
+    std::string getPath() {
+        return dir == root ? "/" : dir->getPath().substr(5);
     }
 
 }

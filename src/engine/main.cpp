@@ -4,7 +4,6 @@
 #include <ramiel/graphics.h>
 #include <ramiel/physics.h>
 
-#include "engine.h"
 #include "command.h"
 #include "window.h"
 #include "graphics.h"
@@ -99,7 +98,7 @@ void cameraControls(float dtime) {
 void runCommandLine() {
     std::string command;
     while (true) {
-        std::cout << get_path() << "> ";
+        std::cout << getPath() << "> ";
         std::getline(std::cin, command);
         runCommand(command);
     }

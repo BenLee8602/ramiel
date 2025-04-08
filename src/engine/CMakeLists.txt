@@ -1,6 +1,5 @@
 add_executable(${PROJECT_NAME}_engine
     command.cpp
-    engine.cpp
     entity.cpp
     event.cpp
     graphics.cpp
