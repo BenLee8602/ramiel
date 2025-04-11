@@ -30,14 +30,14 @@ namespace ramiel {
 
         bool forEachKid(Tree::Fn fn) const;
 
-        virtual ~Tree() {}
+        virtual ~Tree();
         
     protected:
         Tree(const std::string& name);
 
     private:
         std::string name;
-        Tree::H parent;
+        Tree* parent;
         std::unordered_map<std::string, Tree::H> kids;
     };
 

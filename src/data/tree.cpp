@@ -39,6 +39,7 @@ namespace ramiel {
 
     Tree::Tree(const std::string& name)
         : name(name)
+        , parent(nullptr)
     {
         assert(validName(name));
     }
@@ -87,7 +88,7 @@ namespace ramiel {
     }
 
     Tree::H Tree::getParent() const {
-        return parent;
+        return parent ? parent->shared_from_this() : nullptr;
     }
 
     Tree::H Tree::getRelative(const std::string& path) {
@@ -107,14 +108,14 @@ namespace ramiel {
         assert(!getKid(kid->name));
         kids.insert(std::make_pair(kid->name, kid));
         if (kid->parent) kid->parent->kids.erase(kid->name);
-        kid->parent = shared_from_this();
+        kid->parent = this;
     }
 
     Tree::H Tree::erase(const std::string& name) {
         Tree::H kid = getKid(name);
         if (!kid) return nullptr;
         assert(kid->name == name);
-        assert(kid->parent == shared_from_this());
+        assert(kid->parent == this);
         kid->parent = nullptr;
         kids.erase(name);
         return kid;
@@ -126,6 +127,13 @@ namespace ramiel {
             if (!fn(t)) return false;
         }
         return true;
+    }
+
+
+    Tree::~Tree() {
+        for (auto& [_, k] : kids) {
+            k->parent = nullptr;
+        }
     }
 
 }
