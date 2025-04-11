@@ -46,3 +46,30 @@ RAMIEL_TEST_ADD(Tree) {
     RAMIEL_TEST_ASSERT(six_);
     RAMIEL_TEST_ASSERT(six_->get() == 7);
 }
+
+
+class InstanceCount {
+public:
+    InstanceCount() { count++; }
+    ~InstanceCount() { count--; }
+    static size_t get() { return count; }
+private:
+    static size_t count;
+};
+size_t InstanceCount::count = 0;
+
+RAMIEL_TEST_ADD(TreeDealloc) {
+    Tree::H tree = TreeData<InstanceCount>::make("one");
+    tree->insert(TreeData<InstanceCount>::make("two"));
+    RAMIEL_TEST_ASSERT(InstanceCount::get() == 2);
+
+    tree = tree->getKid("two");
+    RAMIEL_TEST_ASSERT(InstanceCount::get() == 1);
+    RAMIEL_TEST_ASSERT(tree->getParent() == nullptr);
+
+    tree->insert(TreeData<InstanceCount>::make("three"));
+    RAMIEL_TEST_ASSERT(InstanceCount::get() == 2);
+
+    tree = nullptr;
+    RAMIEL_TEST_ASSERT(InstanceCount::get() == 0);
+}
