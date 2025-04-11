@@ -442,7 +442,8 @@ namespace {
     void del(Command cmd) {
         assert(dir);
         if (cmd.args.size() != 2) return;
-        dir->erase(cmd.args[1]);
+        Tree::H tree = dir->erase(cmd.args[1]);
+        addTask([tree]() {});
     }
 
 

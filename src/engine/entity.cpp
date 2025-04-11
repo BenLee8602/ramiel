@@ -35,7 +35,7 @@ namespace ramiel {
     }
 
     EngineGraphicsEntity::~EngineGraphicsEntity() {
-        addTask([e = &e]() { removeGraphicsEntity(e); });
+        removeGraphicsEntity(&e);
     }
 
     Entity& EngineGraphicsEntity::get() {
@@ -56,7 +56,7 @@ namespace ramiel {
     }
 
     EngineDirectionalLight::~EngineDirectionalLight() {
-        addTask([this]() { removeLight(&light); });
+        removeLight(&light);
     }
 
     DirectionalLight& EngineDirectionalLight::get() {
@@ -77,7 +77,7 @@ namespace ramiel {
     }
 
     EnginePointLight::~EnginePointLight() {
-        addTask([this]() { removeLight(&light); });
+        removeLight(&light);
     }
 
     PointLight& EnginePointLight::get() {
@@ -98,7 +98,7 @@ namespace ramiel {
     }
 
     EngineSpotLight::~EngineSpotLight() {
-        addTask([this]() { removeLight(&light); });
+        removeLight(&light);
     }
 
     SpotLight& EngineSpotLight::get() {
