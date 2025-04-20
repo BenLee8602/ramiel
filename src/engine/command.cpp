@@ -2,9 +2,6 @@
 #include <cassert>
 #include <vector>
 #include <unordered_map>
-#include <sstream>
-#include <charconv>
-#include <algorithm>
 
 #include <ramiel/data.h>
 #include "command.h"
@@ -12,6 +9,7 @@
 #include "task.h"
 #include "window.h"
 #include "entity.h"
+#include "serialize.h"
 using namespace ramiel;
 
 namespace {
@@ -38,27 +36,6 @@ namespace {
         if (!Tree::validName(t->getName())) return false;
         if (dir->getKid(t->getName())) return false;
         dir->insert(t);
-        return true;
-    }
-
-
-    template<typename T>
-    bool fromString(const std::string& src, T& des) {
-        auto first = src.data();
-        auto last = src.data() + src.size();
-        auto res = std::from_chars(first, last, des);
-        return res.ec == std::errc() && res.ptr == last;
-    }
-
-    template<typename T, size_t N>
-    bool fromString(const std::string& src, Vec<T, N>& des) {
-        if (std::count(src.begin(), src.end(), ',') != N - 1) return false;
-        std::istringstream srcstr(src);
-        for (size_t i = 0; i < N; i++) {
-            std::string elem;
-            if (!std::getline(srcstr, elem, ',')) return false;
-            if (!fromString(elem, des[i])) return false;
-        }
         return true;
     }
 
@@ -328,6 +305,18 @@ namespace {
         std::cout << "]\n";
     }
 
+
+    void get_prop(Command cmd) {
+        if (cmd.args.size() != 3) return;
+        
+        assert(dir);
+        EngineEntity::H e = EngineEntity::cast<EngineEntity>(dir);
+        if (!e) return;
+
+        std::cout << e->getProperty(cmd.args[2]) << '\n';
+    }
+
+
     void get_cameraRes(Command cmd) {
         if (cmd.args.size() != 2) return;
         std::cout << getRes() << '\n';
@@ -376,6 +365,18 @@ namespace {
         if (dir->getParent()->getKid(cmd.args[2])) return;
         dir->setName(cmd.args[2]);
     }
+
+
+    void set_prop(Command cmd) {
+        if (cmd.args.size() != 4) return;
+
+        assert(dir);
+        EngineEntity::H e = EngineEntity::cast<EngineEntity>(dir);
+        if (!e) return;
+
+        e->setProperty(cmd.args[2], cmd.args[3]);
+    }
+
 
     void set_cameraRes(Command cmd) {
         if (cmd.args.size() != 4) return;
@@ -471,6 +472,7 @@ namespace {
         cmdTreeGet->insert(CommandNode::make("path", get_path));
         cmdTreeGet->insert(CommandNode::make("name", get_name));
         cmdTreeGet->insert(CommandNode::make("kids", get_kids));
+        cmdTreeGet->insert(CommandNode::make("prop", get_prop));
         cmdTreeGet->insert(CommandNode::make("cameraRes", get_cameraRes));
         cmdTreeGet->insert(CommandNode::make("cameraAspectRatio", get_cameraAspectRatio));
         cmdTreeGet->insert(CommandNode::make("cameraPos", get_cameraPos));
@@ -483,6 +485,7 @@ namespace {
 
         Tree::H cmdTreeSet = Tree::make("set");
         cmdTreeSet->insert(CommandNode::make("name", set_name));
+        cmdTreeSet->insert(CommandNode::make("prop", set_prop));
         cmdTreeSet->insert(CommandNode::make("cameraRes", set_cameraRes));
         cmdTreeSet->insert(CommandNode::make("cameraPos", set_cameraPos));
         cmdTreeSet->insert(CommandNode::make("cameraRot", set_cameraRot));

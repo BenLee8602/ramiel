@@ -20,51 +20,75 @@ namespace ramiel {
         float specularIntensity = 0.0f
     );
 
+
     class Light {
-    protected:
-        Vec3f color;
-        float intensity;
     public:
         Light(Vec3f color, float intensity);
+
         virtual Vec3f getLight(
             const Vec3f& pos,
             const Vec3f& normal,
             unsigned specularExponent,
             float specularIntensity
         ) const = 0;
+
+        Vec3f getColor() const;
+        float getIntensity() const;
+
+        void setColor(Vec3f color);
+        void setIntensity(float intensity);
+
+    protected:
+        Vec3f hue;
+        float intensity;
+        Vec3f color;
     };
 
+
     class DirectionalLight : public Light {
-    protected:
-        Vec3f dir;
     public:
         DirectionalLight(Vec3f color, float intensity, Vec3f dir);
+
         virtual Vec3f getLight(
             const Vec3f& pos,
             const Vec3f& normal,
             unsigned specularExponent,
             float specularIntensity
         ) const override;
+
+        Vec3f getDir() const;
+
+        void setDir(Vec3f dir);
+
+    protected:
+        Vec3f dir;
     };
 
+
     class PointLight : public Light {
+    public:
+        PointLight(Vec3f color, float intensity, Vec3f pos, float falloff);
+
+        virtual Vec3f getLight(
+            const Vec3f& pos,
+            const Vec3f& normal,
+            unsigned specularExponent,
+            float specularIntensity
+        ) const override;
+
+        Vec3f getPos() const;
+        float getFalloff() const;
+
+        void setPos(Vec3f pos);
+        void setFalloff(float falloff);
+
     protected:
         Vec3f pos;
         float falloff;
-    public:
-        PointLight(Vec3f color, float intensity, Vec3f pos, float falloff);
-        virtual Vec3f getLight(
-            const Vec3f& pos,
-            const Vec3f& normal,
-            unsigned specularExponent,
-            float specularIntensity
-        ) const override;
     };
 
+
     class SpotLight : public PointLight {
-        Vec3f dir;
-        float width;
-        float falloffExp;
     public:
         SpotLight(
             Vec3f color,
@@ -75,12 +99,26 @@ namespace ramiel {
             float width,
             float falloffExp
         );
+
         virtual Vec3f getLight(
             const Vec3f& pos,
             const Vec3f& normal,
             unsigned specularExponent,
             float specularIntensity
         ) const override;
+
+        Vec3f getDir() const;
+        float getWidth() const;
+        float getFalloffExp() const;
+
+        void setDir(Vec3f dir);
+        void setWidth(float width);
+        void setFalloffExp(float falloffExp);
+        
+    protected:
+        Vec3f dir;
+        float width;
+        float falloffExp;
     };
 
 }
