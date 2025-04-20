@@ -1,6 +1,8 @@
+#include <cassert>
 #include <cmath>
 #include <vector>
 #include <algorithm>
+
 #include "light.h"
 using namespace ramiel;
 
@@ -53,20 +55,48 @@ namespace ramiel {
 
 
     Light::Light(Vec3f color, float intensity) {
-        this->color = color;
-        max(Vec3f(), this->color);
-        this->intensity = std::max(0.0f, intensity);
-        this->color *= this->intensity;
+        setColor(color);
+        setIntensity(intensity);
     }
+
+    Vec3f Light::getColor() const {
+        return hue;
+    }
+
+    float Light::getIntensity() const {
+        return intensity;
+    }
+
+    void Light::setColor(Vec3f color) {
+        assert(color >= 0.0f);
+        this->hue = color;
+        this->color = this->hue * this->intensity;
+    }
+
+    void Light::setIntensity(float intensity) {
+        assert(intensity >= 0.0f);
+        this->intensity = intensity;
+        this->color = this->hue * this->intensity;
+    }
+
 
     DirectionalLight::DirectionalLight(
         Vec3f color,
         float intensity,
         Vec3f dir
     ) : Light(color, intensity) {
-        if (!dir) dir[Z] = 1.0f;
+        setDir(dir);
+    }
+    
+    Vec3f DirectionalLight::getDir() const {
+        return dir;
+    }
+
+    void DirectionalLight::setDir(Vec3f dir) {
+        assert(dir);
         this->dir = normalize(dir);
     }
+
 
     PointLight::PointLight(
         Vec3f color,
@@ -74,10 +104,27 @@ namespace ramiel {
         Vec3f pos,
         float falloff
     ) : Light(color, intensity) {
-        if (falloff < 0.0f) falloff = 1.0f;
+        setPos(pos);
+        setFalloff(falloff);
+    }
+    
+    Vec3f PointLight::getPos() const {
+        return pos;
+    }
+
+    float PointLight::getFalloff() const {
+        return falloff;
+    }
+
+    void PointLight::setPos(Vec3f pos) {
         this->pos = pos;
+    }
+
+    void PointLight::setFalloff(float falloff) {
+        assert(falloff >= 0.0f);
         this->falloff = falloff;
     }
+
 
     SpotLight::SpotLight(
         Vec3f color,
@@ -88,10 +135,34 @@ namespace ramiel {
         float width,
         float falloffExp
     ) : PointLight(color, intensity, pos, falloff) {
-        if (!dir[X] && !dir[Y] && !dir[Z]) dir[Z] = 1.0f;
-        if (falloff < 0.0f) this->falloff = 0.1f;
+        setDir(dir);
+        setWidth(width);
+        setFalloffExp(falloffExp);
+    }
+
+    Vec3f SpotLight::getDir() const {
+        return dir;
+    }
+
+    float SpotLight::getWidth() const {
+        return 1.0f - width;
+    }
+
+    float SpotLight::getFalloffExp() const {
+        return falloffExp;
+    }
+
+    void SpotLight::setDir(Vec3f dir) {
+        assert(dir);
         this->dir = normalize(dir);
-        this->width = 1.0f - (width / 3.14159265f);
+    }
+
+    void SpotLight::setWidth(float width) {
+        assert(0.0f <= width && width <= 1.0f);
+        this->width = 1.0f - width;
+    }
+
+    void SpotLight::setFalloffExp(float falloffExp) {
         this->falloffExp = falloffExp;
     }
 
