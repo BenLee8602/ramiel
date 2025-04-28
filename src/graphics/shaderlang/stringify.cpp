@@ -28,7 +28,7 @@ namespace {
         { "Mat4x2", "ramiel::Mat4x2f" },
         { "Mat4x3", "ramiel::Mat4x3f" },
         { "Mat4x4", "ramiel::Mat4x4f" },
-        { "Texture", "std::shared_ptr<ramiel::Texture>" }
+        { "Texture", "ramiel::Texture*" }
     };
 
     const SizeMap sizeMap = {
@@ -63,7 +63,7 @@ namespace ramiel::shaderlang {
     std::string stringifyCtorArgs(const std::vector<Attr>& attr) {
         std::string out;
         for (auto& a : attr) {
-            out += "const " + getType(stateTypeMap, a.type) + "& " + a.name + ',';
+            out += getType(stateTypeMap, a.type) + ' ' + a.name + ',';
         }
         out.pop_back();
         return out;

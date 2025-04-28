@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <ramiel/data.h>
 
 namespace ramiel {
@@ -13,9 +12,9 @@ namespace ramiel {
     public:
         Entity();
         Entity(
-            std::shared_ptr<Mesh> mesh,
-            std::unique_ptr<VertexShaderBase>&& vertexShader,
-            std::unique_ptr<PixelShaderBase>&& pixelShader
+            Mesh* mesh,
+            VertexShaderBase* vertexShader,
+            PixelShaderBase* pixelShader
         );
         operator bool();
         void draw();
@@ -26,14 +25,14 @@ namespace ramiel {
         Entity(Entity&&) = default;
         Entity& operator=(Entity&&) = default;
 
-        std::shared_ptr<Mesh> getMesh() const;
+        Mesh* getMesh() const;
         VertexShaderBase* getVertexShader() const;
         PixelShaderBase* getPixelShader() const;
 
     private:
-        std::shared_ptr<Mesh> mesh;
-        std::unique_ptr<VertexShaderBase> vertexShader;
-        std::unique_ptr<PixelShaderBase> pixelShader;
+        Mesh* mesh;
+        VertexShaderBase* vertexShader;
+        PixelShaderBase* pixelShader;
     };
 
 }

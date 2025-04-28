@@ -5,6 +5,7 @@
 
 #include <ramiel/graphics.h>
 #include <ramiel/physics.h>
+#include "shader.h"
 
 namespace ramiel {
 
@@ -38,7 +39,7 @@ namespace ramiel {
     public:
         using H = std::shared_ptr<EngineMesh>;
 
-        std::shared_ptr<Mesh> get();
+        Mesh& get();
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
 
@@ -48,10 +49,10 @@ namespace ramiel {
         template<class... Ts>
         EngineMesh(const std::string& name, Ts&&... args)
             : EngineEntity(name)
-            , mesh(std::make_shared<Mesh>(std::forward<Ts>(args)...))
+            , mesh(std::forward<Ts>(args)...)
         {}
 
-        std::shared_ptr<Mesh> mesh; // using shared_ptr for graphics api
+        Mesh mesh;
     };
 
 
@@ -59,7 +60,7 @@ namespace ramiel {
     public:
         using H = std::shared_ptr<EngineTexture>;
 
-        std::shared_ptr<Texture> get();
+        Texture& get();
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
 
@@ -69,10 +70,10 @@ namespace ramiel {
         template<class... Ts>
         EngineTexture(const std::string& name, Ts&&... args)
             : EngineEntity(name)
-            , texture(std::make_shared<Texture>(std::forward<Ts>(args)...))
+            , texture(std::forward<Ts>(args)...)
         {}
 
-        std::shared_ptr<Texture> texture; // using shared_ptr for graphics api
+        Texture texture;
     };
 
 
@@ -88,14 +89,17 @@ namespace ramiel {
     private:
         friend EngineEntity;
 
-        template<class... Ts>
-        EngineGraphicsEntity(const std::string& name, Ts&&... args)
-            : EngineEntity(name)
-            , e(std::forward<Ts>(args)...)
-        { ctor(); }
-        void ctor();
+        EngineGraphicsEntity(
+            const std::string& name,
+            const std::string& mesh,
+            std::unique_ptr<EngineVertexShaderBase>&& vs,
+            std::unique_ptr<EnginePixelShaderBase>&& ps
+        );
 
         Entity e;
+        std::string mesh;
+        std::unique_ptr<EngineVertexShaderBase> vs;
+        std::unique_ptr<EnginePixelShaderBase> ps;
     };
 
 

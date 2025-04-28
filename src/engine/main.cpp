@@ -112,14 +112,12 @@ int main() {
     const char* meshFile = "example/assets/models/cube.obj";
     const char* textureFile = "example/assets/textures/brickwall_texture.jpg";
 
-    auto mesh = std::make_shared<Mesh>(meshFile);
-    auto texture = std::make_shared<Texture>(textureFile, rgb1);
+    Mesh mesh(meshFile);
+    Texture texture(textureFile, rgb1);
 
-    Entity entity(
-        mesh,
-        std::make_unique<VertexShaderTextured>(translate(Vec3f{ 0, 0, 4 })),
-        std::make_unique<PixelShaderTextured>(texture, 8.0f, 1.0f, Vec3f{})
-    );
+    VertexShaderTextured vs(translate(Vec3f{ 0, 0, 4 }));
+    PixelShaderTextured ps(&texture, 8.0f, 1.0f, Vec3f{});
+    Entity entity(&mesh, &vs, &ps);
     addGraphicsEntity(&entity);
 
     setAmbientLight({ 25, 10, 20 });

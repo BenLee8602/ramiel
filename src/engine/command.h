@@ -7,5 +7,6 @@ namespace ramiel {
     void runCommand(std::string command);
 
     std::string getPath();
+    Tree::H getTree(std::string path = "");
 
 }
