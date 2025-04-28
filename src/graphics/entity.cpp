@@ -30,7 +30,7 @@ namespace {
 
 
     void rasterize(
-        const std::unique_ptr<PixelShaderBase>& ps,
+        PixelShaderBase* ps,
         const uint32_t vSize,
         float* v0,
         float* v1,
@@ -69,7 +69,7 @@ namespace {
 
 
     void rasterize(
-        const std::unique_ptr<PixelShaderBase>& ps,
+        PixelShaderBase* ps,
         const uint32_t vSize,
         const float* v0,
         const float* v1,
@@ -102,14 +102,16 @@ namespace ramiel {
 
 
     Entity::Entity(
-        std::shared_ptr<Mesh> mesh,
-        std::unique_ptr<VertexShaderBase>&& vertexShader,
-        std::unique_ptr<PixelShaderBase>&& pixelShader
+        Mesh* mesh,
+        VertexShaderBase* vertexShader,
+        PixelShaderBase* pixelShader
     ) :
         mesh(nullptr),
         vertexShader(nullptr),
         pixelShader(nullptr)
     {
+        if (!mesh || !vertexShader || !pixelShader) return;
+
         auto meshAttrOutType = mesh->getAttrOutType();
         auto meshAttrOutPos = mesh->getAttrOutPos();
         auto vsAttrInType = vertexShader->getAttrInType();
@@ -141,8 +143,8 @@ namespace ramiel {
         }
 
         this->mesh = mesh;
-        this->vertexShader = std::move(vertexShader);
-        this->pixelShader = std::move(pixelShader);
+        this->vertexShader = vertexShader;
+        this->pixelShader = pixelShader;
     }
 
 
@@ -208,16 +210,16 @@ namespace ramiel {
     }
 
 
-    std::shared_ptr<Mesh> Entity::getMesh() const {
+    Mesh* Entity::getMesh() const {
         return mesh;
     }
 
     VertexShaderBase* Entity::getVertexShader() const {
-        return vertexShader.get();
+        return vertexShader;
     }
 
     PixelShaderBase* Entity::getPixelShader() const {
-        return pixelShader.get();
+        return pixelShader;
     }
 
 }

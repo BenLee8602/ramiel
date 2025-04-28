@@ -17,20 +17,6 @@ namespace {
     Tree::H root = Tree::make("root");
     Tree::H dir = root;
 
-
-    Tree::H navTree(std::string path) {
-        if (path.empty()) return dir;
-        Tree::H next = dir;
-
-        if (path[0] == '/') {
-            next = root;
-            path = path.substr(1);
-        }
-
-        next = next->getRelative(path);
-        return next;
-    }
-
     bool insertTree(Tree::H t) {
         assert(t);
         if (!Tree::validName(t->getName())) return false;
@@ -102,7 +88,7 @@ namespace {
 
     void nav(Command cmd) {
         if (cmd.args.size() != 2) return;
-        Tree::H next = navTree(cmd.args[1]);
+        Tree::H next = getTree(cmd.args[1]);
         if (!next) return;
         dir = next;
     }
@@ -121,7 +107,7 @@ namespace {
         EngineMesh::H mesh = EngineEntity::make<EngineMesh>(
             cmd.args[2], filename
         );
-        if (mesh->get()->getTriangleCount() == 0) return;
+        if (mesh->get().getTriangleCount() == 0) return;
 
         insertTree(mesh);
     }
@@ -134,7 +120,7 @@ namespace {
         EngineTexture::H texture = EngineEntity::make<EngineTexture>(
             cmd.args[2], filename, rgb1
         );
-        if (texture->get()->getSize() == Vec2u{}) return;
+        if (texture->get().getSize() == Vec2u{}) return;
 
         insertTree(texture);
     }
@@ -143,8 +129,6 @@ namespace {
         if (cmd.args.size() != 3) return;
 
         std::string meshPath = cmd.getFlag("mesh");
-        EngineMesh::H mesh = EngineEntity::cast<EngineMesh>(navTree(meshPath));
-        if (!mesh) return;
 
         std::string vsPosStr = cmd.getFlag("vs.pos", "0,0,0");
         Vec3f vsPos;
@@ -158,39 +142,38 @@ namespace {
         Vec3f vsScale;
         if (!fromString(vsScaleStr, vsScale)) return;
 
-        std::string psSpecExponentStr = cmd.getFlag("ps.specexponent", "8");
+        std::string psSpecExponentStr = cmd.getFlag("ps.specexp", "8");
         float psSpecExponent;
         if (!fromString(psSpecExponentStr, psSpecExponent)) return;
 
-        std::string psSpecIntensityStr = cmd.getFlag("ps.specintensity", "1");
+        std::string psSpecIntensityStr = cmd.getFlag("ps.specint", "1");
         float psSpecIntensity;
         if (!fromString(psSpecIntensityStr, psSpecIntensity)) return;
+        if (psSpecIntensity < 0.0f) return;
 
-        std::unique_ptr<VertexShaderBase> vs;
-        std::unique_ptr<PixelShaderBase> ps;
-
+        std::unique_ptr<EngineVertexShaderBase> vs;
+        std::unique_ptr<EnginePixelShaderBase> ps;
         if (cmd.hasFlag("texture")) {
             std::string psTexturePath = cmd.getFlag("texture");
-            EngineTexture::H texture = EngineEntity::cast<EngineTexture>(
-                navTree(psTexturePath));
-            vs = std::make_unique<VertexShaderTextured>(
-                matmat(matmat(scale(vsScale), rotate(vsRot)), translate(vsPos)));
-            ps = std::make_unique<PixelShaderTextured>(
-                texture->get(), psSpecExponent, psSpecIntensity, Vec3f{});
+            vs = std::make_unique<EngineVertexShaderTextured>(
+                vsPos, vsRot, vsScale);
+            ps = std::make_unique<EnginePixelShaderTextured>(
+                psTexturePath, psSpecExponent, psSpecIntensity);
         } else {
             std::string psColorStr = cmd.getFlag("color", "255,255,255");
             Vec3f psColor;
             if (!fromString(psColorStr, psColor)) return;
-            vs = std::make_unique<VertexShader>(
-                matmat(matmat(scale(vsScale), rotate(vsRot)), translate(vsPos)));
-            ps = std::make_unique<PixelShader>(
-                psColor / 255.0f, psSpecExponent, psSpecIntensity, Vec3f{});
+            if (psColor < 0.0f || psColor > 255.0f) return;
+            vs = std::make_unique<EngineVertexShader>(
+                vsPos, vsRot, vsScale);
+            ps = std::make_unique<EnginePixelShader>(
+                psColor, psSpecExponent, psSpecIntensity);
         }
 
         EngineGraphicsEntity::H entity = EngineEntity::make<EngineGraphicsEntity>(
-            cmd.args[2], mesh->get(), std::move(vs), std::move(ps)
+            cmd.args[2], meshPath, std::move(vs), std::move(ps)
         );
-        if (!entity) return;
+        if (!entity->get()) return;
 
         insertTree(entity);
     }
@@ -524,6 +507,19 @@ namespace ramiel {
 
     std::string getPath() {
         return dir == root ? "/" : dir->getPath().substr(5);
+    }
+
+    Tree::H getTree(std::string path) {
+        if (path.empty()) return dir;
+        Tree::H next = dir;
+
+        if (path[0] == '/') {
+            next = root;
+            path = path.substr(1);
+        }
+
+        next = next->getRelative(path);
+        return next;
     }
 
 }

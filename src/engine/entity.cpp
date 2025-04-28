@@ -2,6 +2,7 @@
 #include "graphics.h"
 #include "task.h"
 #include "serialize.h"
+#include "command.h"
 using namespace ramiel;
 
 namespace {
@@ -83,32 +84,48 @@ namespace {
 
 namespace ramiel {
 
-    std::shared_ptr<Mesh> EngineMesh::get() {
+    Mesh& EngineMesh::get() {
         return mesh;
     }
 
     std::string EngineMesh::getProperty(std::string property) const {
-        if (property == "vtxcount") return toString(mesh->getVertexCount());
-        if (property == "tricount") return toString(mesh->getTriangleCount());
+        if (property == "vtxcount") return toString(mesh.getVertexCount());
+        if (property == "tricount") return toString(mesh.getTriangleCount());
         return "";
     }
 
     void EngineMesh::setProperty(std::string property, std::string value) {}
 
 
-    std::shared_ptr<Texture> EngineTexture::get() {
+    Texture& EngineTexture::get() {
         return texture;
     }
 
     std::string EngineTexture::getProperty(std::string property) const {
-        if (property == "size") return toString(texture->getSize());
+        if (property == "size") return toString(texture.getSize());
         return "";
     }
 
     void EngineTexture::setProperty(std::string property, std::string value) {}
 
 
-    void EngineGraphicsEntity::ctor() {
+    EngineGraphicsEntity::EngineGraphicsEntity(
+        const std::string& name,
+        const std::string& meshpath,
+        std::unique_ptr<EngineVertexShaderBase>&& vs_,
+        std::unique_ptr<EnginePixelShaderBase>&& ps_
+    )
+        : EngineEntity(name)
+        , vs(std::move(vs_))
+        , ps(std::move(ps_))
+    {
+        auto meshnode = EngineEntity::cast<EngineMesh>(getTree(meshpath));
+        if (!meshnode) return;
+        mesh = meshpath;
+
+        e = Entity(&meshnode->get(), vs->get(), ps->get());
+        if (!e) return;
+
         addTask([this]() { addGraphicsEntity(&e); });
     }
 
@@ -120,12 +137,25 @@ namespace ramiel {
         return e;
     }
 
-    std::string EngineGraphicsEntity::getProperty(std::string property) const {
-        return "entity property";
+    std::string EngineGraphicsEntity::getProperty(std::string prop) const {
+        if (prop == "mesh") return mesh;
+        std::string prefix = prop.substr(0, 3);
+        if (prefix == "vs.") return vs->getProp(prop.substr(3));
+        if (prefix == "ps.") return ps->getProp(prop.substr(3));
+        return "";
     }
 
-    void EngineGraphicsEntity::setProperty(std::string property, std::string value) {
-
+    void EngineGraphicsEntity::setProperty(std::string prop, std::string val) {
+        if (prop == "mesh") {
+            auto meshnode = EngineEntity::cast<EngineMesh>(getTree(val));
+            if (!meshnode) return;
+            Entity e2(&meshnode->get(), vs->get(), ps->get());
+            if (e2) e = std::move(e2);
+            return;
+        }
+        std::string prefix = prop.substr(0, 3);
+        if (prefix == "vs.") vs->setProp(prop.substr(3), val);
+        if (prefix == "ps.") ps->setProp(prop.substr(3), val);
     }
 
 
