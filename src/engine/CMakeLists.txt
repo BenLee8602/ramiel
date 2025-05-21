@@ -4,6 +4,7 @@ add_executable(${PROJECT_NAME}_engine
     event.cpp
     graphics.cpp
     main.cpp
+    physics.cpp
     shader.cpp
     task.cpp
     window.cpp
