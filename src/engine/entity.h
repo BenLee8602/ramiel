@@ -27,8 +27,18 @@ namespace ramiel {
             return std::dynamic_pointer_cast<T>(t);
         }
 
+        static bool enableAll(Tree::H e);
+        static bool disableAll(Tree::H e);
+
+        static Tree::H copyAll(Tree::H e);
+
         virtual std::string getProperty(std::string property) const = 0;
         virtual void setProperty(std::string property, std::string value) = 0;
+
+        virtual void enable() {}
+        virtual void disable() {}
+
+        virtual EngineEntity::H copy() const = 0;
 
     protected:
         EngineEntity(const std::string& name) : Tree(name) {}
@@ -40,8 +50,11 @@ namespace ramiel {
         using H = std::shared_ptr<EngineMesh>;
 
         Mesh& get();
+
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
+
+        virtual EngineEntity::H copy() const override;
 
     private:
         friend EngineEntity;
@@ -49,10 +62,15 @@ namespace ramiel {
         template<class... Ts>
         EngineMesh(const std::string& name, Ts&&... args)
             : EngineEntity(name)
-            , mesh(std::forward<Ts>(args)...)
+            , mesh(std::make_shared<Mesh>(std::forward<Ts>(args)...))
         {}
 
-        Mesh mesh;
+        EngineMesh(const std::string& name, std::shared_ptr<Mesh> mesh)
+            : EngineEntity(name)
+            , mesh(mesh)
+        {}
+
+        std::shared_ptr<Mesh> mesh;
     };
 
 
@@ -61,8 +79,11 @@ namespace ramiel {
         using H = std::shared_ptr<EngineTexture>;
 
         Texture& get();
+
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
+
+        virtual EngineEntity::H copy() const override;
 
     private:
         friend EngineEntity;
@@ -70,10 +91,15 @@ namespace ramiel {
         template<class... Ts>
         EngineTexture(const std::string& name, Ts&&... args)
             : EngineEntity(name)
-            , texture(std::forward<Ts>(args)...)
+            , texture(std::make_shared<Texture>(std::forward<Ts>(args)...))
         {}
 
-        Texture texture;
+        EngineTexture(const std::string& name, std::shared_ptr<Texture> texture)
+            : EngineEntity(name)
+            , texture(texture)
+        {}
+
+        std::shared_ptr<Texture> texture;
     };
 
 
@@ -81,10 +107,15 @@ namespace ramiel {
     public:
         using H = std::shared_ptr<EngineGraphicsEntity>;
 
-        ~EngineGraphicsEntity();
         Entity& get();
+
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
 
     private:
         friend EngineEntity;
@@ -107,10 +138,15 @@ namespace ramiel {
     public:
         using H = std::shared_ptr<EngineDirectionalLight>;
 
-        ~EngineDirectionalLight();
         DirectionalLight& get();
+
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
 
     private:
         friend EngineEntity;
@@ -119,8 +155,7 @@ namespace ramiel {
         EngineDirectionalLight(const std::string& name, Ts&&... args)
             : EngineEntity(name)
             , light(std::forward<Ts>(args)...)
-        { ctor(); }
-        void ctor();
+        {}
 
         DirectionalLight light;
     };
@@ -130,10 +165,15 @@ namespace ramiel {
     public:
         using H = std::shared_ptr<EnginePointLight>;
 
-        ~EnginePointLight();
         PointLight& get();
+
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
 
     private:
         friend EngineEntity;
@@ -142,8 +182,7 @@ namespace ramiel {
         EnginePointLight(const std::string& name, Ts&&... args)
             : EngineEntity(name)
             , light(std::forward<Ts>(args)...)
-        { ctor(); }
-        void ctor();
+        {}
 
         PointLight light;
     };
@@ -153,10 +192,15 @@ namespace ramiel {
     public:
         using H = std::shared_ptr<EngineSpotLight>;
 
-        ~EngineSpotLight();
         SpotLight& get();
+
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
 
     private:
         friend EngineEntity;
@@ -165,8 +209,7 @@ namespace ramiel {
         EngineSpotLight(const std::string& name, Ts&&... args)
             : EngineEntity(name)
             , light(std::forward<Ts>(args)...)
-        { ctor(); }
-        void ctor();
+        {}
 
         SpotLight light;
     };

@@ -6,6 +6,7 @@
 #include <ramiel/data.h>
 #include "command.h"
 #include "graphics.h"
+#include "physics.h"
 #include "task.h"
 #include "window.h"
 #include "entity.h"
@@ -16,6 +17,9 @@ namespace {
 
     Tree::H root = Tree::make("root");
     Tree::H dir = root;
+
+    Tree::H rootSnap;
+    Tree::H dirSnap;
 
     bool insertTree(Tree::H t) {
         assert(t);
@@ -176,6 +180,7 @@ namespace {
         if (!entity->get()) return;
 
         insertTree(entity);
+        addTask([entity]() { entity->enable(); });
     }
 
     void make_dirlight(Command cmd) {
@@ -198,6 +203,7 @@ namespace {
         );
 
         insertTree(light);
+        addTask([light]() { light->enable(); });
     }
 
     void make_pointlight(Command cmd) {
@@ -224,6 +230,7 @@ namespace {
         );
 
         insertTree(light);
+        addTask([light]() { light->enable(); });
     }
 
     void make_spotlight(Command cmd) {
@@ -262,6 +269,7 @@ namespace {
         );
 
         insertTree(light);
+        addTask([light]() { light->enable(); });
     }
 
 
@@ -357,7 +365,7 @@ namespace {
         EngineEntity::H e = EngineEntity::cast<EngineEntity>(dir);
         if (!e) return;
 
-        e->setProperty(cmd.args[2], cmd.args[3]);
+        addTask([e, cmd]() { e->setProperty(cmd.args[2], cmd.args[3]); });
     }
 
 
@@ -427,7 +435,28 @@ namespace {
         assert(dir);
         if (cmd.args.size() != 2) return;
         Tree::H tree = dir->erase(cmd.args[1]);
-        addTask([tree]() {});
+        addTask([tree]() { EngineEntity::disableAll(tree); });
+    }
+
+
+    void sim_start(Command cmd) {
+        if (cmd.args.size() != 2) return;
+        addTask([]() {
+            rootSnap = EngineEntity::copyAll(root);
+            dirSnap = rootSnap->getRelative(dir->getPath().substr(dir == root ? 5 : 6));
+            simStart();
+        });
+    }
+
+    void sim_stop(Command cmd) {
+        if (cmd.args.size() != 2) return;
+        addTask([]() {
+            EngineEntity::disableAll(root);
+            EngineEntity::enableAll(rootSnap);
+            root = std::move(rootSnap);
+            dir = std::move(dirSnap);
+            simStop();
+        });
     }
 
 
@@ -479,6 +508,11 @@ namespace {
         cmdTree->insert(cmdTreeSet);
 
         cmdTree->insert(CommandNode::make("del", del));
+
+        Tree::H cmdTreeSim = Tree::make("sim");
+        cmdTreeSim->insert(CommandNode::make("start", sim_start));
+        cmdTreeSim->insert(CommandNode::make("stop", sim_stop));
+        cmdTree->insert(cmdTreeSim);
 
         return cmdTree;
     }

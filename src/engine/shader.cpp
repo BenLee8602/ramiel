@@ -1,11 +1,3 @@
-/*
-vs: pos, rot, scale
-vst: pos, rot, scale
-ps: color, specexp, specint
-pst: texture, specexp, specint
-mesh
-*/
-
 #include "shader.h"
 #include "command.h"
 #include "entity.h"
@@ -85,6 +77,15 @@ namespace ramiel {
         return &vs;
     }
 
+    EngineVertexShaderBase* EngineVertexShader::copy() const {
+        // attrInPos is changed when linking attributes,
+        // so when we try to do trivial copy, we copy
+        // the modified values. when we go to link
+        // again, it fails.
+        //return new EngineVertexShader(*this);
+        return new EngineVertexShader(pos, rot, scale);
+    }
+
 
     EngineVertexShaderTextured::EngineVertexShaderTextured(
         Vec3f pos,
@@ -109,6 +110,10 @@ namespace ramiel {
 
     VertexShaderBase* EngineVertexShaderTextured::get() {
         return &vs;
+    }
+
+    EngineVertexShaderBase* EngineVertexShaderTextured::copy() const {
+        return new EngineVertexShaderTextured(pos, rot, scale);
     }
 
 
@@ -138,6 +143,14 @@ namespace ramiel {
 
     PixelShaderBase* EnginePixelShader::get() {
         return &ps;
+    }
+
+    EnginePixelShaderBase* EnginePixelShader::copy() const {
+        return new EnginePixelShader(
+            ps.surfaceColor * 255,
+            ps.specularExponent,
+            ps.specularIntensity
+        );
     }
 
 
@@ -172,6 +185,14 @@ namespace ramiel {
 
     PixelShaderBase* EnginePixelShaderTextured::get() {
         return &ps;
+    }
+
+    EnginePixelShaderBase* EnginePixelShaderTextured::copy() const {
+        return new EnginePixelShaderTextured(
+            texture,
+            ps.specularExponent,
+            ps.specularIntensity
+        );
     }
 
 }
