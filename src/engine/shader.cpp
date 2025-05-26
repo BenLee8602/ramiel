@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "shader.h"
 #include "command.h"
 #include "entity.h"
@@ -13,8 +15,6 @@ namespace {
 
     template<class Vs>
     std::string getVsProp(const Vs& vs, std::string prop) {
-        if (prop == "pos") return toString(vs.pos);
-        if (prop == "rot") return toString(vs.rot);
         if (prop == "scale") return toString(vs.scale);
         return "";
     }
@@ -29,10 +29,7 @@ namespace {
 
     template<class Vs>
     void setVsProp(Vs& vs, std::string prop, std::string val) {
-        if (prop == "pos") fromString(val, vs.pos);
-        else if (prop == "rot") fromString(val, vs.rot);
-        else if (prop == "scale") fromString(val, vs.scale);
-        vs.vs.worldTransform = getWorldTransform(vs.pos, vs.rot, vs.scale);
+        if (prop == "scale") fromString(val, vs.scale);
     }
 
     template<class Ps>
@@ -58,8 +55,6 @@ namespace ramiel {
         Vec3f scale
     )
         : vs({})
-        , pos(pos)
-        , rot(rot)
         , scale(scale)
     {
         vs.worldTransform = getWorldTransform(pos, rot, scale);
@@ -83,7 +78,11 @@ namespace ramiel {
         // the modified values. when we go to link
         // again, it fails.
         //return new EngineVertexShader(*this);
-        return new EngineVertexShader(pos, rot, scale);
+        return new EngineVertexShader(Vec3f{}, Vec3f{}, scale);
+    }
+
+    void EngineVertexShader::setTransform(Mat4x4f transform) {
+        vs.worldTransform = matmat(ramiel::scale(scale), transform);
     }
 
 
@@ -93,8 +92,6 @@ namespace ramiel {
         Vec3f scale
     )
         : vs({})
-        , pos(pos)
-        , rot(rot)
         , scale(scale)
     {
         vs.worldTransform = getWorldTransform(pos, rot, scale);
@@ -113,7 +110,11 @@ namespace ramiel {
     }
 
     EngineVertexShaderBase* EngineVertexShaderTextured::copy() const {
-        return new EngineVertexShaderTextured(pos, rot, scale);
+        return new EngineVertexShaderTextured(Vec3f{}, Vec3f{}, scale);
+    }
+
+    void EngineVertexShaderTextured::setTransform(Mat4x4f transform) {
+        vs.worldTransform = matmat(ramiel::scale(scale), transform);
     }
 
 
@@ -155,20 +156,20 @@ namespace ramiel {
 
 
     EnginePixelShaderTextured::EnginePixelShaderTextured(
-        std::string texturepath,
+        Tree::H texture,
         float specexp,
         float specint
     )
         : ps({}, {}, {}, {})
+        , texture(texture)
     {
-        auto texturenode = EngineEntity::cast<EngineTexture>(getTree(texturepath));
-        if (!texturenode) return;
-        ps = PixelShaderTextured(&texturenode->get(), specexp, specint, Vec3f{});
-        texture = texturepath;
+        assert(EngineEntity::cast<EngineTexture>(texture));
+        auto t = &EngineEntity::cast<EngineTexture>(texture)->get();
+        ps = PixelShaderTextured(t, specexp, specint, Vec3f{});
     }
 
     std::string EnginePixelShaderTextured::getProp(std::string prop) const {
-        if (prop == "texture") return texture;
+        if (prop == "texture") return texture->getPath();
         return getPsProp(ps, prop);
     }
 
@@ -180,7 +181,7 @@ namespace ramiel {
         auto texturenode = EngineEntity::cast<EngineTexture>(getTree(val));
         if (!texturenode) return;
         ps.texture = &texturenode->get();
-        texture = val;
+        texture = texturenode;
     }
 
     PixelShaderBase* EnginePixelShaderTextured::get() {

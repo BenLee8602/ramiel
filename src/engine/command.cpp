@@ -39,7 +39,7 @@ namespace {
         std::string getFlag(
             const std::string& name,
             const char* defaultValue = nullptr
-        ) {
+        ) const {
             auto flag = flags.find(name);
             if (flag != flags.end() && !flag->second.empty()) {
                 return flag->second;
@@ -54,7 +54,7 @@ namespace {
             return value;
         }
 
-        bool hasFlag(const std::string& name) {
+        bool hasFlag(const std::string& name) const {
             return flags.find(name) != flags.end();
         }
     };
@@ -87,6 +87,89 @@ namespace {
                 out.args.emplace_back(std::move(token));
         }
         return out;
+    }
+
+
+    bool parseParticle(const Command& cmd, Particle& p) {
+        if (!fromString(cmd.getFlag("pos", "0,0,0"), p.pos)) return false;
+        if (!fromString(cmd.getFlag("vel", "0,0,0"), p.vel)) return false;
+        
+        float mass;
+        if (!fromString(cmd.getFlag("mass", "0"), mass)) return false;
+        if (mass > 0.0f) return false;
+        p.wass = mass ? 1.0f / mass : 0.0f;
+
+        return true;
+    }
+
+    bool parseRigidBody(const Command& cmd, RigidBody& rb) {
+        if (!parseParticle(cmd, rb)) return false;
+
+        if (!fromString(cmd.getFlag("rot", "0,0,0,1"), rb.rot)) return false;
+        if (!fromString(cmd.getFlag("rotaxis", "0,0,0"), rb.rotAxis)) return false;
+        
+        Vec3f moi;
+        if (!fromString(cmd.getFlag("moi", "1,1,1"), moi)) return false;
+        if (!(moi >= 0.0f)) return false;
+        rb.woi = { 1.0f / moi[X], 1.0f / moi[Y], 1.0f / moi[Z] };
+
+        return true;
+    }
+
+
+    EngineParticle::H makeParticle(Command cmd) {
+        if (cmd.args.size() != 3) return nullptr;
+
+        Particle e;
+        if (!parseParticle(cmd, e)) return nullptr;
+
+        return EngineEntity::make<EngineParticle>(cmd.args[2], e);
+    }
+
+    EngineRigidBody::H makeRigidBody(Command cmd) {
+        if (cmd.args.size() != 3) return nullptr;
+
+        RigidBody e;
+        if (!parseRigidBody(cmd, e)) return nullptr;
+
+        return EngineEntity::make<EngineRigidBody>(cmd.args[2], e);
+    }
+
+    EngineParticleCollider::H makeParticleCollider(Command cmd) {
+        if (cmd.args.size() != 3) return nullptr;
+
+        Particle e;
+        if (!parseParticle(cmd, e)) return nullptr;
+
+        return EngineEntity::make<EngineParticleCollider>(cmd.args[2], e);
+    }
+
+    EngineSphereCollider::H makeSphereCollider(Command cmd) {
+        if (cmd.args.size() != 3) return nullptr;
+
+        RigidBody e;
+        if (!parseRigidBody(cmd, e)) return nullptr;
+
+        std::string rStr = cmd.getFlag("radius");
+        float r;
+        if (!fromString(rStr, r)) return nullptr;
+        if (r < 0.0f) return nullptr;
+
+        return EngineEntity::make<EngineSphereCollider>(cmd.args[2], e, r);
+    }
+
+    EngineBoxCollider::H makeBoxCollider(Command cmd) {
+        if (cmd.args.size() != 3) return nullptr;
+
+        RigidBody e;
+        if (!parseRigidBody(cmd, e)) return nullptr;
+
+        std::string sizeStr = cmd.getFlag("size");
+        Vec3f size;
+        if (!fromString(sizeStr, size)) return nullptr;
+        if (size < 0.0f) return nullptr;
+
+        return EngineEntity::make<EngineBoxCollider>(cmd.args[2], e, size);
     }
 
 
@@ -133,6 +216,29 @@ namespace {
         if (cmd.args.size() != 3) return;
 
         std::string meshPath = cmd.getFlag("mesh");
+        auto mesh = EngineEntity::cast<EngineMesh>(getTree(meshPath));
+        if (!mesh) return;
+
+        EnginePhysicsEntity::H phys;
+        std::string physType = cmd.getFlag("phys", "static");
+        if (physType == "static") {
+            Vec3f pos;
+            Vec3f rot;
+            if (!fromString(cmd.getFlag("pos", "0,0,0"), pos)) return;
+            if (!fromString(cmd.getFlag("rot", "0,0,0"), rot)) return;
+            phys = EngineEntity::make<EngineStaticPhysics>(cmd.args[2], pos, rot);
+        } else if (physType == "particle") {
+            phys = makeParticle(cmd);
+        } else if (physType == "rigidbody") {
+            phys = makeRigidBody(cmd);
+        } else if (physType == "particlecollider") {
+            phys = makeParticleCollider(cmd);
+        } else if (physType == "spherecollider") {
+            phys = makeSphereCollider(cmd);
+        } else if (physType == "boxcollider") {
+            phys = makeBoxCollider(cmd);
+        } else return;
+        if (!phys) return;
 
         std::string vsPosStr = cmd.getFlag("vs.pos", "0,0,0");
         Vec3f vsPos;
@@ -158,11 +264,13 @@ namespace {
         std::unique_ptr<EngineVertexShaderBase> vs;
         std::unique_ptr<EnginePixelShaderBase> ps;
         if (cmd.hasFlag("texture")) {
-            std::string psTexturePath = cmd.getFlag("texture");
+            auto texture = EngineEntity::cast<EngineTexture>(
+                getTree(cmd.getFlag("texture")));
+            if (!texture) return;
             vs = std::make_unique<EngineVertexShaderTextured>(
                 vsPos, vsRot, vsScale);
             ps = std::make_unique<EnginePixelShaderTextured>(
-                psTexturePath, psSpecExponent, psSpecIntensity);
+                texture, psSpecExponent, psSpecIntensity);
         } else {
             std::string psColorStr = cmd.getFlag("color", "255,255,255");
             Vec3f psColor;
@@ -175,7 +283,7 @@ namespace {
         }
 
         EngineGraphicsEntity::H entity = EngineEntity::make<EngineGraphicsEntity>(
-            cmd.args[2], meshPath, std::move(vs), std::move(ps)
+            cmd.args[2], mesh, phys, std::move(vs), std::move(ps)
         );
         if (!entity->get()) return;
 
@@ -270,6 +378,122 @@ namespace {
 
         insertTree(light);
         addTask([light]() { light->enable(); });
+    }
+
+
+    void make_particle(Command cmd) {
+        auto e = makeParticle(cmd);
+        if (!e) return;
+        insertTree(e);
+        addTask([e]() { e->enable(); });
+    }
+
+    void make_rigidbody(Command cmd) {
+        auto e = makeRigidBody(cmd);
+        if (!e) return;
+        insertTree(e);
+        addTask([e]() { e->enable(); });
+    }
+
+    void make_particlecollider(Command cmd) {
+        auto c = makeParticleCollider(cmd);
+        if (!c) return;
+        insertTree(c);
+        addTask([c]() { c->enable(); });
+    }
+
+    void make_planecollider(Command cmd) {
+        if (cmd.args.size() != 3) return;
+
+        std::string nStr = cmd.getFlag("normal");
+        Vec3f n;
+        if (!fromString(nStr, n)) return;
+
+        std::string dStr = cmd.getFlag("distance");
+        float d;
+        if (!fromString(dStr, d)) return;
+
+        auto c = EngineEntity::make<EnginePlaneCollider>(cmd.args[2], n, d);
+        insertTree(c);
+        addTask([c]() { c->enable(); });
+    }
+
+    void make_spherecollider(Command cmd) {
+        auto c = makeSphereCollider(cmd);
+        if (!c) return;
+        insertTree(c);
+        addTask([c]() { c->enable(); });
+    }
+
+    void make_boxcollider(Command cmd) {
+        auto c = makeBoxCollider(cmd);
+        if (!c) return;
+        insertTree(c);
+        addTask([c]() { c->enable(); });
+    }
+
+    void make_distanceconstraint(Command cmd) {
+        if (cmd.args.size() != 5) return;
+
+        auto e1 = EngineEntity::cast<EngineParticle>(getTree(cmd.args[3]));
+        auto e2 = EngineEntity::cast<EngineParticle>(getTree(cmd.args[4]));
+        if (!e1 || !e2) return;
+
+        bool visible = cmd.hasFlag("visible");
+
+        std::string lengthStr = cmd.getFlag("length");
+        float l0;
+        if (!fromString(lengthStr, l0)) return;
+        if (l0 < 0.0f) return;
+
+        std::string complianceStr = cmd.getFlag("compliance", "0");
+        float a;
+        if (!fromString(complianceStr, a)) return;
+        if (a < 0.0f) return;
+
+        auto c = EngineEntity::make<EngineDistanceConstraint>(
+            cmd.args[2],
+            visible,
+            DistanceConstraint(l0, a, &e1->get(), &e2->get())
+        );
+        insertTree(c);
+        addTask([c]() { c->enable(); });
+    }
+
+    void make_ropeconstraint(Command cmd) {
+        if (cmd.args.size() != 5) return;
+
+        auto e1 = EngineEntity::cast<EngineRigidBody>(getTree(cmd.args[3]));
+        auto e2 = EngineEntity::cast<EngineRigidBody>(getTree(cmd.args[4]));
+        if (!e1 || !e2) return;
+
+        bool visible = cmd.hasFlag("visible");
+
+        std::string lengthStr = cmd.getFlag("length");
+        float l0;
+        if (!fromString(lengthStr, l0)) return;
+        if (l0 < 0.0f) return;
+
+        std::string complianceStr = cmd.getFlag("compliance", "0");
+        float a;
+        if (!fromString(complianceStr, a)) return;
+        if (a < 0.0f) return;
+
+        std::string posStr1 = cmd.getFlag("pos1", "0,0,0");
+        Vec3f r1;
+        if (!fromString(posStr1, r1)) return;
+
+        std::string posStr2 = cmd.getFlag("pos2", "0,0,0");
+        Vec3f r2;
+        if (!fromString(posStr2, r2)) return;
+
+        auto c = EngineEntity::make<EngineRopeConstraint>(
+            cmd.args[2],
+            visible,
+            RopeConstraint(l0, a, &e1->get(), r1, &e2->get(), r2)
+        );
+        insertTree(c);
+        addTask([c]() { c->enable(); });
     }
 
 
@@ -478,6 +702,14 @@ namespace {
         cmdTreeMake->insert(CommandNode::make("dirlight", make_dirlight));
         cmdTreeMake->insert(CommandNode::make("pointlight", make_pointlight));
         cmdTreeMake->insert(CommandNode::make("spotlight", make_spotlight));
+        cmdTreeMake->insert(CommandNode::make("particle", make_particle));
+        cmdTreeMake->insert(CommandNode::make("rigidbody", make_rigidbody));
+        cmdTreeMake->insert(CommandNode::make("particlecollider", make_particlecollider));
+        cmdTreeMake->insert(CommandNode::make("planecollider", make_planecollider));
+        cmdTreeMake->insert(CommandNode::make("spherecollider", make_spherecollider));
+        cmdTreeMake->insert(CommandNode::make("boxcollider", make_boxcollider));
+        cmdTreeMake->insert(CommandNode::make("distanceconstraint", make_distanceconstraint));
+        cmdTreeMake->insert(CommandNode::make("ropeconstraint", make_ropeconstraint));
         cmdTree->insert(cmdTreeMake);
 
         Tree::H cmdTreeGet = Tree::make("get");

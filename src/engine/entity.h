@@ -45,6 +45,19 @@ namespace ramiel {
     };
 
 
+    class EnginePhysicsEntity : public EngineEntity {
+    public:
+        using H = std::shared_ptr<EnginePhysicsEntity>;
+
+        virtual Mat4x4f getTransform() const = 0;
+
+    protected:
+        EnginePhysicsEntity(const std::string& name)
+            : EngineEntity(name)
+        {}
+    };
+
+
     class EngineMesh : public EngineEntity {
     public:
         using H = std::shared_ptr<EngineMesh>;
@@ -108,6 +121,7 @@ namespace ramiel {
         using H = std::shared_ptr<EngineGraphicsEntity>;
 
         Entity& get();
+        void updatePhys();
 
         virtual std::string getProperty(std::string property) const override;
         virtual void setProperty(std::string property, std::string value) override;
@@ -122,13 +136,24 @@ namespace ramiel {
 
         EngineGraphicsEntity(
             const std::string& name,
-            const std::string& mesh,
+            EngineMesh::H mesh,
+            EnginePhysicsEntity::H phys,
             std::unique_ptr<EngineVertexShaderBase>&& vs,
             std::unique_ptr<EnginePixelShaderBase>&& ps
-        );
+        )
+            : EngineEntity(name)
+            , mesh(mesh)
+            , phys(phys)
+            , vs(std::move(vs))
+            , ps(std::move(ps))
+            , e(&mesh->get(), vs->get(), ps->get())
+        {}
 
         Entity e;
-        std::string mesh;
+
+        EnginePhysicsEntity::H phys;
+        EngineMesh::H mesh;
+
         std::unique_ptr<EngineVertexShaderBase> vs;
         std::unique_ptr<EnginePixelShaderBase> ps;
     };
@@ -212,6 +237,269 @@ namespace ramiel {
         {}
 
         SpotLight light;
+    };
+
+
+    class EngineStaticPhysics : public EnginePhysicsEntity {
+    public:
+        using H = std::shared_ptr<EngineStaticPhysics>;
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual EngineEntity::H copy() const override;
+
+        virtual Mat4x4f getTransform() const override;
+
+    private:
+        friend EngineEntity;
+
+        EngineStaticPhysics(const std::string& name, Vec3f pos, Vec3f rot)
+            : EnginePhysicsEntity(name)
+            , pos(pos)
+            , rot(rot)
+        {}
+
+        Vec3f pos;
+        Vec3f rot;
+    };
+
+
+    class EngineParticle : public EnginePhysicsEntity {
+    public:
+        using H = std::shared_ptr<EngineParticle>;
+
+        Particle& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+        virtual Mat4x4f getTransform() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineParticle(const std::string& name, Ts&&... args)
+            : EnginePhysicsEntity(name)
+            , e(std::forward<Ts>(args)...)
+        {}
+
+        Particle e;
+    };
+
+
+    class EngineRigidBody : public EnginePhysicsEntity {
+    public:
+        using H = std::shared_ptr<EngineRigidBody>;
+
+        RigidBody& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+        virtual Mat4x4f getTransform() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineRigidBody(const std::string& name, Ts&&... args)
+            : EnginePhysicsEntity(name)
+            , e(std::forward<Ts>(args)...)
+        {}
+
+        RigidBody e;
+    };
+
+
+    class EngineParticleCollider : public EnginePhysicsEntity {
+    public:
+        using H = std::shared_ptr<EngineParticleCollider>;
+
+        ParticleCollider& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+        virtual Mat4x4f getTransform() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineParticleCollider(const std::string& name, Ts&&... args)
+            : EnginePhysicsEntity(name)
+            , e(std::forward<Ts>(args)...)
+        {}
+
+        ParticleCollider e;
+    };
+
+
+    class EnginePlaneCollider : public EngineEntity {
+    public:
+        using H = std::shared_ptr<EnginePlaneCollider>;
+
+        PlaneCollider& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EnginePlaneCollider(const std::string& name, Ts&&... args)
+            : EngineEntity(name)
+            , e(std::forward<Ts>(args)...)
+        {}
+
+        PlaneCollider e;
+    };
+
+
+    class EngineSphereCollider : public EnginePhysicsEntity {
+    public:
+        using H = std::shared_ptr<EngineSphereCollider>;
+
+        SphereCollider& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+        virtual Mat4x4f getTransform() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineSphereCollider(const std::string& name, Ts&&... args)
+            : EnginePhysicsEntity(name)
+            , e(std::forward<Ts>(args)...)
+        {}
+
+        SphereCollider e;
+    };
+
+
+    class EngineBoxCollider : public EnginePhysicsEntity {
+    public:
+        using H = std::shared_ptr<EngineBoxCollider>;
+
+        BoxCollider& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+        virtual Mat4x4f getTransform() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineBoxCollider(const std::string& name, Ts&&... args)
+            : EnginePhysicsEntity(name)
+            , e(std::forward<Ts>(args)...)
+        {}
+
+        BoxCollider e;
+    };
+
+
+    class EngineDistanceConstraint : public EngineEntity {
+    public:
+        using H = std::shared_ptr<EngineDistanceConstraint>;
+
+        DistanceConstraint& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineDistanceConstraint(
+            const std::string& name,
+            bool visible,
+            Ts&&... args
+        )
+            : EngineEntity(name)
+            , visible(visible)
+            , c(std::forward<Ts>(args)...)
+        {}
+
+        bool visible;
+        DistanceConstraint c;
+    };
+
+
+    class EngineRopeConstraint : public EngineEntity {
+    public:
+        using H = std::shared_ptr<EngineRopeConstraint>;
+
+        RopeConstraint& get();
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual void enable() override;
+        virtual void disable() override;
+
+        virtual EngineEntity::H copy() const override;
+
+    private:
+        friend EngineEntity;
+
+        template<class... Ts>
+        EngineRopeConstraint(
+            const std::string& name,
+            bool visible,
+            Ts&&... args
+        )
+            : EngineEntity(name)
+            , visible(visible)
+            , c(std::forward<Ts>(args)...)
+        {}
+
+        bool visible;
+        RopeConstraint c;
     };
 
 }

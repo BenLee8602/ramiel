@@ -7,6 +7,7 @@
 #include "command.h"
 #include "window.h"
 #include "graphics.h"
+#include "physics.h"
 #include "task.h"
 using namespace ramiel;
 
@@ -109,20 +110,6 @@ int main() {
     if (!initWindow()) return 0;
     std::thread(runCommandLine).detach();
 
-    const char* meshFile = "example/assets/models/cube.obj";
-    const char* textureFile = "example/assets/textures/brickwall_texture.jpg";
-
-    Mesh mesh(meshFile);
-    Texture texture(textureFile, rgb1);
-
-    VertexShaderTextured vs(translate(Vec3f{ 0, 0, 4 }));
-    PixelShaderTextured ps(&texture, 8.0f, 1.0f, Vec3f{});
-    Entity entity(&mesh, &vs, &ps);
-    addGraphicsEntity(&entity);
-
-    setAmbientLight({ 25, 10, 20 });
-    addLight(new PointLight(Vec3f{ 255, 100, 200 }, 4.0f, Vec3f{ 1, 1.5, 2 }, 0.5f));
-
     auto frameTimeStart = std::chrono::steady_clock::now();
     auto frameTimeEnd = std::chrono::steady_clock::now();
 
@@ -136,7 +123,7 @@ int main() {
 
         cameraControls((float)dtime);
 
-        simulatePhysics(dtime);
+        simStep(dtime);
         renderFrame();
 
         updateFrame();
