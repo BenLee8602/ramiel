@@ -16,6 +16,7 @@ namespace ramiel {
     public:
         virtual VertexShaderBase* get() = 0;
         virtual EngineVertexShaderBase* copy() const = 0;
+        virtual void setTransform(Mat4x4f transform) = 0;
     };
 
     class EngineVertexShader : public EngineVertexShaderBase {
@@ -27,10 +28,9 @@ namespace ramiel {
 
         virtual VertexShaderBase* get() override;
         virtual EngineVertexShaderBase* copy() const override;
+        virtual void setTransform(Mat4x4f transform) override;
 
         VertexShader vs;
-        Vec3f pos;
-        Vec3f rot;
         Vec3f scale;
     };
 
@@ -43,10 +43,9 @@ namespace ramiel {
 
         virtual VertexShaderBase* get() override;
         virtual EngineVertexShaderBase* copy() const override;
+        virtual void setTransform(Mat4x4f transform) override;
 
         VertexShaderTextured vs;
-        Vec3f pos;
-        Vec3f rot;
         Vec3f scale;
     };
 
@@ -72,7 +71,7 @@ namespace ramiel {
 
     class EnginePixelShaderTextured : public EnginePixelShaderBase {
     public:
-        EnginePixelShaderTextured(std::string texture, float specexp, float specint);
+        EnginePixelShaderTextured(Tree::H texture, float specexp, float specint);
 
         virtual std::string getProp(std::string prop) const override;
         virtual void setProp(std::string prop, std::string val) override;
@@ -81,7 +80,7 @@ namespace ramiel {
         virtual EnginePixelShaderBase* copy() const override;
 
         PixelShaderTextured ps;
-        std::string texture;
+        Tree::H texture;
     };
 
 }
