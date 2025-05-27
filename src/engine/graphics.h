@@ -12,6 +12,7 @@ namespace ramiel {
     void addGraphicsEntity(EngineGraphicsEntity* e);
     void removeGraphicsEntity(EngineGraphicsEntity* e);
 
-    void renderFrame();
+    void renderNeeded();
+    void render();
 
 }

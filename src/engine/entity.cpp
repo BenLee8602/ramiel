@@ -203,16 +203,19 @@ namespace ramiel {
         vs->setProp(prop, val);
         ps->setProp(prop, val);
         phys->setProperty(prop, val);
+        renderNeeded();
     }
 
     void EngineGraphicsEntity::enable() {
         addGraphicsEntity(this);
         phys->enable();
+        renderNeeded();
     }
 
     void EngineGraphicsEntity::disable() {
         removeGraphicsEntity(this);
         phys->disable();
+        renderNeeded();
     }
 
     EngineEntity::H EngineGraphicsEntity::copy() const {
@@ -241,14 +244,17 @@ namespace ramiel {
 
     void EngineDirectionalLight::setProperty(std::string property, std::string value) {
         setDirLightProp(property, value, light);
+        renderNeeded();
     }
 
     void EngineDirectionalLight::enable() {
         addLight(&light);
+        renderNeeded();
     }
 
     void EngineDirectionalLight::disable() {
         removeLight(&light);
+        renderNeeded();
     }
 
     EngineEntity::H EngineDirectionalLight::copy() const {
@@ -272,14 +278,17 @@ namespace ramiel {
 
     void EnginePointLight::setProperty(std::string property, std::string value) {
         setPointLightProp(property, value, light);
+        renderNeeded();
     }
 
     void EnginePointLight::enable() {
         addLight(&light);
+        renderNeeded();
     }
 
     void EnginePointLight::disable() {
         removeLight(&light);
+        renderNeeded();
     }
 
     EngineEntity::H EnginePointLight::copy() const {
@@ -307,14 +316,17 @@ namespace ramiel {
 
     void EngineSpotLight::setProperty(std::string property, std::string value) {
         setSpotLightProp(property, value, light);
+        renderNeeded();
     }
 
     void EngineSpotLight::enable() {
         addLight(&light);
+        renderNeeded();
     }
 
     void EngineSpotLight::disable() {
         removeLight(&light);
+        renderNeeded();
     }
 
     EngineEntity::H EngineSpotLight::copy() const {

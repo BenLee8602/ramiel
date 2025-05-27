@@ -18,9 +18,10 @@ void cameraControls(float dtime) {
     constexpr float cameraRotationSpeed = 1.57079f;
 
     // reset pos and rot
-    if (keyPressed(Key::Q)) {
+    if (keyUp(Key::Q)) {
         setPos(Vec3f());
         setRot(Vec3f());
+        renderNeeded();
         return;
     }
 
@@ -39,22 +40,26 @@ void cameraControls(float dtime) {
     if (keyPressed(Key::A)) {
         pos[X] -= dPos * std::cos(rot[Y]);
         pos[Z] -= dPos * std::sin(rot[Y]);
+        renderNeeded();
     }
 
     // move right
     if (keyPressed(Key::D)) {
         pos[X] += dPos * std::cos(rot[Y]);
         pos[Z] += dPos * std::sin(rot[Y]);
+        renderNeeded();
     }
 
     // move down
     if (keyPressed(Key::CONTROL)) {
         pos[Y] -= dPos;
+        renderNeeded();
     }
 
     // move up
     if (keyPressed(Key::SPACE)) {
         pos[Y] += dPos;
+        renderNeeded();
     }
 
     // move backward
@@ -62,6 +67,7 @@ void cameraControls(float dtime) {
         pos[X] += dPos * std::sin( rot[Y]);
         pos[Y] += dPos * std::sin(-rot[X]);
         pos[Z] -= dPos * std::cos( rot[Y]);
+        renderNeeded();
     }
 
     // move forward
@@ -69,26 +75,31 @@ void cameraControls(float dtime) {
         pos[X] -= dPos * std::sin( rot[Y]);
         pos[Y] -= dPos * std::sin(-rot[X]);
         pos[Z] += dPos * std::cos( rot[Y]);
+        renderNeeded();
     }
 
     // turn down
     if (keyPressed(Key::DOWN)) {
         rot[X] = std::max(rot[X] - dRot, -1.57079f);
+        renderNeeded();
     }
 
     // turn up
     if (keyPressed(Key::UP)) {
         rot[X] = std::min(rot[X] + dRot, 1.57079f);
+        renderNeeded();
     }
 
     // turn right
     if (keyPressed(Key::RIGHT)) {
         rot[Y] -= dRot;
+        renderNeeded();
     }
 
     // turn left
     if (keyPressed(Key::LEFT)) {
         rot[Y] += dRot;
+        renderNeeded();
     }
 
     setPos(pos);
@@ -124,7 +135,7 @@ int main() {
         cameraControls((float)dtime);
 
         simStep(dtime);
-        renderFrame();
+        render();
 
         updateFrame();
     }
