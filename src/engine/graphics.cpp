@@ -10,6 +10,8 @@ namespace {
     Vec3f backgroundColor = {};
     std::unordered_set<EngineGraphicsEntity*> entities;
 
+    bool renderIsNeeded = true;
+
 }
 
 namespace ramiel {
@@ -35,8 +37,15 @@ namespace ramiel {
     }
 
 
-    void renderFrame() {
+    void renderNeeded() {
+        renderIsNeeded = true;
+    }
+
+    void render() {
         if (!getRes()[X] || !getRes()[Y]) return;
+
+        if (!renderIsNeeded) return;
+        renderIsNeeded = false;
 
         std::fill(getColorBuffer(), getColorBuffer() + getBufferSize(), backgroundColor);
         std::fill(getDepthBuffer(), getDepthBuffer() + getBufferSize(), getZ1());

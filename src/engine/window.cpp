@@ -7,6 +7,7 @@
 
 #include <ramiel/graphics.h>
 #include "window.h"
+#include "graphics.h"
 using namespace ramiel;
 
 namespace {
@@ -132,6 +133,7 @@ namespace {
             unsigned width  = static_cast<unsigned>(LOWORD(lParam));
             unsigned height = static_cast<unsigned>(HIWORD(lParam));
             setRes({ width, height });
+            renderNeeded();
             return 0;
         }
         return DefWindowProc(hwnd, uMsg, wParam, lParam);

@@ -608,7 +608,10 @@ namespace {
         if (!fromString(cmd.args[2], pos[X])) return;
         if (!fromString(cmd.args[3], pos[Y])) return;
         if (!fromString(cmd.args[4], pos[Z])) return;
-        addTask([pos]() { setPos(pos); });
+        addTask([pos]() {
+            setPos(pos);
+            renderNeeded();
+        });
     }
 
     void set_cameraRot(Command cmd) {
@@ -617,7 +620,10 @@ namespace {
         if (!fromString(cmd.args[2], rot[X])) return;
         if (!fromString(cmd.args[3], rot[Y])) return;
         if (!fromString(cmd.args[4], rot[Z])) return;
-        addTask([rot]() { setRot(rot); });
+        addTask([rot]() {
+            setRot(rot);
+            renderNeeded();
+        });
     }
 
     void set_cameraFov(Command cmd) {
@@ -625,7 +631,10 @@ namespace {
         float fov;
         if (!fromString(cmd.args[2], fov)) return;
         if (fov < 1e-6f || fov > 180.0f) return;
-        addTask([fov]() { setFov(fov); });
+        addTask([fov]() {
+            setFov(fov);
+            renderNeeded();
+        });
     }
 
     void set_cameraFocalLength(Command cmd) {
@@ -633,7 +642,10 @@ namespace {
         float focalLength;
         if (!fromString(cmd.args[2], focalLength)) return;
         if (focalLength < 1e-6f) return;
-        addTask([focalLength]() { setFocalLen(focalLength); });
+        addTask([focalLength]() {
+            setFocalLen(focalLength);
+            renderNeeded();
+        });
     }
 
     void set_ambientLight(Command cmd) {
@@ -643,7 +655,10 @@ namespace {
         if (!fromString(cmd.args[3], ambientLight[G])) return;
         if (!fromString(cmd.args[4], ambientLight[B])) return;
         if (ambientLight < 0.0f) return;
-        addTask([ambientLight]() { setAmbientLight(ambientLight); });
+        addTask([ambientLight]() {
+            setAmbientLight(ambientLight);
+            renderNeeded();
+        });
     }
 
     void set_backgroundColor(Command cmd) {
@@ -652,7 +667,10 @@ namespace {
         if (!fromString(cmd.args[2], backgroundColor[R])) return;
         if (!fromString(cmd.args[3], backgroundColor[G])) return;
         if (!fromString(cmd.args[4], backgroundColor[B])) return;
-        addTask([backgroundColor]() { setBackgroundColor(backgroundColor); });
+        addTask([backgroundColor]() {
+            setBackgroundColor(backgroundColor);
+            renderNeeded();
+        });
     }
 
     void del(Command cmd) {
