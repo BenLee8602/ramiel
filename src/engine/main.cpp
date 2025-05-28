@@ -126,7 +126,6 @@ int main() {
 
     while (windowGood()) {
         execTasks();
-        pollWindowMessages();
 
         frameTimeEnd = std::chrono::steady_clock::now();
         double dtime = (frameTimeEnd - frameTimeStart).count() / 1e9;
@@ -138,6 +137,7 @@ int main() {
         render();
 
         updateFrame();
+        pollWindowMessages();
     }
 
     return 0;
