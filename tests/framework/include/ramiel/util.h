@@ -9,4 +9,23 @@ namespace ramiel::test {
 
     std::string readFile(std::string filename);
 
+
+    class TempFile {
+    public:
+        TempFile();
+
+        TempFile(const TempFile&) = delete;
+        TempFile& operator=(const TempFile&) = delete;
+
+        TempFile(TempFile&&) = default;
+        TempFile& operator=(TempFile&&) = default;
+
+        ~TempFile();
+
+        std::string file();
+
+    private:
+        std::string filename;
+    };
+
 }

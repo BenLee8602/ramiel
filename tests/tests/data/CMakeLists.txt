@@ -1,4 +1,5 @@
 add_library(${PROJECT_NAME}_tests_data OBJECT
+    binary.test.cpp
     json.test.cpp
     texture.test.cpp
     tree.test.cpp
