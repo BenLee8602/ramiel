@@ -1,4 +1,6 @@
 #include <fstream>
+#include <filesystem>
+
 #include <ramiel/util.h>
 
 namespace ramiel::test {
@@ -19,6 +21,21 @@ namespace ramiel::test {
             std::istreambuf_iterator<char>(file)),
             std::istreambuf_iterator<char>()
         );
+    }
+
+
+    TempFile::TempFile() {
+        static size_t count = 0;
+        filename = std::filesystem::temp_directory_path().string();
+        filename += "ramielTestTempFile" + std::to_string(count++);
+    }
+
+    TempFile::~TempFile() {
+        std::remove(filename.c_str());
+    }
+
+    std::string TempFile::file() {
+        return filename;
     }
 
 }

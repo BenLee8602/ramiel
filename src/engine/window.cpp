@@ -1,6 +1,7 @@
 #include <windows.h>
 #undef min
 #undef max
+#undef ERROR
 
 #include <cassert>
 #include <vector>
