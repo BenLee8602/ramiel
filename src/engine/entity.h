@@ -14,11 +14,9 @@ namespace ramiel {
         using H = std::shared_ptr<EngineEntity>;
 
         template<class T, class... Ts>
-        static typename T::H make(const std::string& name, Ts&&... args) {
+        static typename T::H make(Ts&&... args) {
             static_assert(std::is_base_of_v<EngineEntity, T>);
-            return typename T::H(
-                new T(name, std::forward<Ts>(args)...)
-            );
+            return typename T::H(new T(std::forward<Ts>(args)...));
         }
 
         template<class T>
@@ -27,10 +25,15 @@ namespace ramiel {
             return std::dynamic_pointer_cast<T>(t);
         }
 
-        static bool enableAll(Tree::H e);
-        static bool disableAll(Tree::H e);
+        static void enableAll(Tree::H e);
+        static void disableAll(Tree::H e);
 
-        static Tree::H copyAll(Tree::H e);
+        static EngineEntity::H copyAll(Tree::H e);
+
+        static void serializeAll(BinaryWriter& file, Tree::H t);
+        static EngineEntity::H deserializeAll(BinaryReader& file);
+
+        static void addRef(std::string path, std::function<void(Tree::H)> fn);
 
         virtual std::string getProperty(std::string property) const = 0;
         virtual void setProperty(std::string property, std::string value) = 0;
@@ -39,6 +42,7 @@ namespace ramiel {
         virtual void disable() {}
 
         virtual EngineEntity::H copy() const = 0;
+        virtual void serialize(BinaryWriter& file) const = 0;
 
     protected:
         EngineEntity(const std::string& name) : Tree(name) {}
@@ -50,11 +54,34 @@ namespace ramiel {
         using H = std::shared_ptr<EnginePhysicsEntity>;
 
         virtual Mat4x4f getTransform() const = 0;
+        virtual Particle* getParticle();
+        virtual RigidBody* getRigidBody();
 
     protected:
         EnginePhysicsEntity(const std::string& name)
             : EngineEntity(name)
         {}
+    };
+
+
+    class EngineDir : public EngineEntity {
+    public:
+        using H = std::shared_ptr<EngineDir>;
+
+        virtual std::string getProperty(std::string property) const override;
+        virtual void setProperty(std::string property, std::string value) override;
+
+        virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
+
+    private:
+        friend EngineEntity;
+
+        EngineDir(const std::string& name)
+            : EngineEntity(name)
+        {}
+
+        EngineDir(BinaryReader& file);
     };
 
 
@@ -68,6 +95,7 @@ namespace ramiel {
         virtual void setProperty(std::string property, std::string value) override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
@@ -83,6 +111,8 @@ namespace ramiel {
             , mesh(mesh)
         {}
 
+        EngineMesh(BinaryReader& file);
+
         std::shared_ptr<Mesh> mesh;
     };
 
@@ -97,6 +127,7 @@ namespace ramiel {
         virtual void setProperty(std::string property, std::string value) override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
@@ -112,11 +143,13 @@ namespace ramiel {
             , texture(texture)
         {}
 
+        EngineTexture(BinaryReader& file);
+
         std::shared_ptr<Texture> texture;
     };
 
 
-    class EngineGraphicsEntity : public EngineEntity {
+    class EngineGraphicsEntity : public EnginePhysicsEntity {
     public:
         using H = std::shared_ptr<EngineGraphicsEntity>;
 
@@ -130,9 +163,23 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
+
+        virtual Mat4x4f getTransform() const override;
+        virtual Particle* getParticle() override;
+        virtual RigidBody* getRigidBody() override;
 
     private:
         friend EngineEntity;
+
+        EngineGraphicsEntity(const std::string& name)
+            : EnginePhysicsEntity(name)
+            , mesh(nullptr)
+            , phys(nullptr)
+            , vs(nullptr)
+            , ps(nullptr)
+            , e()
+        {}
 
         EngineGraphicsEntity(
             const std::string& name,
@@ -141,13 +188,15 @@ namespace ramiel {
             std::unique_ptr<EngineVertexShaderBase>&& vs,
             std::unique_ptr<EnginePixelShaderBase>&& ps
         )
-            : EngineEntity(name)
+            : EnginePhysicsEntity(name)
             , mesh(mesh)
             , phys(phys)
             , vs(std::move(vs))
             , ps(std::move(ps))
             , e(&mesh->get(), vs->get(), ps->get())
         {}
+
+        EngineGraphicsEntity(BinaryReader& file);
 
         Entity e;
 
@@ -172,6 +221,7 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
@@ -181,6 +231,8 @@ namespace ramiel {
             : EngineEntity(name)
             , light(std::forward<Ts>(args)...)
         {}
+
+        EngineDirectionalLight(BinaryReader& file);
 
         DirectionalLight light;
     };
@@ -199,6 +251,7 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
@@ -208,6 +261,8 @@ namespace ramiel {
             : EngineEntity(name)
             , light(std::forward<Ts>(args)...)
         {}
+
+        EnginePointLight(BinaryReader& file);
 
         PointLight light;
     };
@@ -226,6 +281,7 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
@@ -235,6 +291,8 @@ namespace ramiel {
             : EngineEntity(name)
             , light(std::forward<Ts>(args)...)
         {}
+
+        EngineSpotLight(BinaryReader& file);
 
         SpotLight light;
     };
@@ -248,6 +306,7 @@ namespace ramiel {
         virtual void setProperty(std::string property, std::string value) override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
         virtual Mat4x4f getTransform() const override;
 
@@ -259,6 +318,8 @@ namespace ramiel {
             , pos(pos)
             , rot(rot)
         {}
+
+        EngineStaticPhysics(BinaryReader& file);
 
         Vec3f pos;
         Vec3f rot;
@@ -278,8 +339,10 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
         virtual Mat4x4f getTransform() const override;
+        virtual Particle* getParticle() override;
 
     private:
         friend EngineEntity;
@@ -289,6 +352,8 @@ namespace ramiel {
             : EnginePhysicsEntity(name)
             , e(std::forward<Ts>(args)...)
         {}
+
+        EngineParticle(BinaryReader& file);
 
         Particle e;
     };
@@ -307,8 +372,11 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
         virtual Mat4x4f getTransform() const override;
+        virtual Particle* getParticle() override;
+        virtual RigidBody* getRigidBody() override;
 
     private:
         friend EngineEntity;
@@ -318,6 +386,8 @@ namespace ramiel {
             : EnginePhysicsEntity(name)
             , e(std::forward<Ts>(args)...)
         {}
+
+        EngineRigidBody(BinaryReader& file);
 
         RigidBody e;
     };
@@ -336,8 +406,10 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
         virtual Mat4x4f getTransform() const override;
+        virtual Particle* getParticle() override;
 
     private:
         friend EngineEntity;
@@ -347,6 +419,8 @@ namespace ramiel {
             : EnginePhysicsEntity(name)
             , e(std::forward<Ts>(args)...)
         {}
+
+        EngineParticleCollider(BinaryReader& file);
 
         ParticleCollider e;
     };
@@ -365,6 +439,7 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
@@ -374,6 +449,8 @@ namespace ramiel {
             : EngineEntity(name)
             , e(std::forward<Ts>(args)...)
         {}
+
+        EnginePlaneCollider(BinaryReader& file);
 
         PlaneCollider e;
     };
@@ -392,8 +469,11 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
         virtual Mat4x4f getTransform() const override;
+        virtual Particle* getParticle() override;
+        virtual RigidBody* getRigidBody() override;
 
     private:
         friend EngineEntity;
@@ -403,6 +483,8 @@ namespace ramiel {
             : EnginePhysicsEntity(name)
             , e(std::forward<Ts>(args)...)
         {}
+
+        EngineSphereCollider(BinaryReader& file);
 
         SphereCollider e;
     };
@@ -421,8 +503,11 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
         virtual Mat4x4f getTransform() const override;
+        virtual Particle* getParticle() override;
+        virtual RigidBody* getRigidBody() override;
 
     private:
         friend EngineEntity;
@@ -432,6 +517,8 @@ namespace ramiel {
             : EnginePhysicsEntity(name)
             , e(std::forward<Ts>(args)...)
         {}
+
+        EngineBoxCollider(BinaryReader& file);
 
         BoxCollider e;
     };
@@ -450,23 +537,32 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
 
-        template<class... Ts>
         EngineDistanceConstraint(
             const std::string& name,
             bool visible,
-            Ts&&... args
+            float l0,
+            float a,
+            EnginePhysicsEntity::H e1,
+            EnginePhysicsEntity::H e2
         )
             : EngineEntity(name)
             , visible(visible)
-            , c(std::forward<Ts>(args)...)
+            , c(l0, a, e1->getParticle(), e2->getParticle())
+            , e1(e1)
+            , e2(e2)
         {}
+
+        EngineDistanceConstraint(BinaryReader& file);
 
         bool visible;
         DistanceConstraint c;
+        EnginePhysicsEntity::H e1;
+        EnginePhysicsEntity::H e2;
     };
 
 
@@ -483,23 +579,34 @@ namespace ramiel {
         virtual void disable() override;
 
         virtual EngineEntity::H copy() const override;
+        virtual void serialize(BinaryWriter& file) const override;
 
     private:
         friend EngineEntity;
 
-        template<class... Ts>
         EngineRopeConstraint(
             const std::string& name,
             bool visible,
-            Ts&&... args
+            float l0,
+            float a,
+            EnginePhysicsEntity::H e1,
+            EnginePhysicsEntity::H e2,
+            Vec3f r1,
+            Vec3f r2
         )
             : EngineEntity(name)
             , visible(visible)
-            , c(std::forward<Ts>(args)...)
+            , c(l0, a, e1->getRigidBody(), r1, e2->getRigidBody(), r2)
+            , e1(e1)
+            , e2(e2)
         {}
+
+        EngineRopeConstraint(BinaryReader& file);
 
         bool visible;
         RopeConstraint c;
+        EnginePhysicsEntity::H e1;
+        EnginePhysicsEntity::H e2;
     };
 
 }

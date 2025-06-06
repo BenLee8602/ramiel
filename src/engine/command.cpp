@@ -2,6 +2,7 @@
 #include <cassert>
 #include <vector>
 #include <unordered_map>
+#include <fstream>
 
 #include <ramiel/data.h>
 #include "command.h"
@@ -15,13 +16,13 @@ using namespace ramiel;
 
 namespace {
 
-    Tree::H root = Tree::make("root");
-    Tree::H dir = root;
+    EngineEntity::H root = EngineEntity::make<EngineDir>("root");
+    EngineEntity::H dir = root;
 
-    Tree::H rootSnap;
-    Tree::H dirSnap;
+    EngineEntity::H rootSnap;
+    EngineEntity::H dirSnap;
 
-    bool insertTree(Tree::H t) {
+    bool insertTree(EngineEntity::H t) {
         assert(t);
         if (!Tree::validName(t->getName())) return false;
         if (dir->getKid(t->getName())) return false;
@@ -175,7 +176,7 @@ namespace {
 
     void nav(Command cmd) {
         if (cmd.args.size() != 2) return;
-        Tree::H next = getTree(cmd.args[1]);
+        auto next = EngineEntity::cast<EngineEntity>(getTree(cmd.args[1]));
         if (!next) return;
         dir = next;
     }
@@ -183,7 +184,7 @@ namespace {
     void make_dir(Command cmd) {
         assert(dir);
         if (cmd.args.size() != 3) return;
-        insertTree(Tree::make(cmd.args[2]));
+        insertTree(EngineEntity::make<EngineDir>(cmd.args[2]));
     }
 
     void make_mesh(Command cmd) {
@@ -435,9 +436,13 @@ namespace {
     void make_distanceconstraint(Command cmd) {
         if (cmd.args.size() != 5) return;
 
-        auto e1 = EngineEntity::cast<EngineParticle>(getTree(cmd.args[3]));
-        auto e2 = EngineEntity::cast<EngineParticle>(getTree(cmd.args[4]));
+        auto e1 = EngineEntity::cast<EnginePhysicsEntity>(getTree(cmd.args[3]));
+        auto e2 = EngineEntity::cast<EnginePhysicsEntity>(getTree(cmd.args[4]));
         if (!e1 || !e2) return;
+
+        auto p1 = e1->getParticle();
+        auto p2 = e2->getParticle();
+        if (!p1 || !p2) return;
 
         bool visible = cmd.hasFlag("visible");
 
@@ -454,7 +459,8 @@ namespace {
         auto c = EngineEntity::make<EngineDistanceConstraint>(
             cmd.args[2],
             visible,
-            DistanceConstraint(l0, a, &e1->get(), &e2->get())
+            l0, a,
+            e1, e2
         );
         insertTree(c);
         addTask([c]() { c->enable(); });
@@ -463,9 +469,13 @@ namespace {
     void make_ropeconstraint(Command cmd) {
         if (cmd.args.size() != 5) return;
 
-        auto e1 = EngineEntity::cast<EngineRigidBody>(getTree(cmd.args[3]));
-        auto e2 = EngineEntity::cast<EngineRigidBody>(getTree(cmd.args[4]));
+        auto e1 = EngineEntity::cast<EnginePhysicsEntity>(getTree(cmd.args[3]));
+        auto e2 = EngineEntity::cast<EnginePhysicsEntity>(getTree(cmd.args[4]));
         if (!e1 || !e2) return;
+
+        auto rb1 = e1->getRigidBody();
+        auto rb2 = e2->getRigidBody();
+        if (!rb1 || !rb2) return;
 
         bool visible = cmd.hasFlag("visible");
 
@@ -490,7 +500,9 @@ namespace {
         auto c = EngineEntity::make<EngineRopeConstraint>(
             cmd.args[2],
             visible,
-            RopeConstraint(l0, a, &e1->get(), r1, &e2->get(), r2)
+            l0, a,
+            e1, e2,
+            r1, r2
         );
         insertTree(c);
         addTask([c]() { c->enable(); });
@@ -677,6 +689,7 @@ namespace {
         assert(dir);
         if (cmd.args.size() != 2) return;
         Tree::H tree = dir->erase(cmd.args[1]);
+        if (!tree) return;
         addTask([tree]() { EngineEntity::disableAll(tree); });
     }
 
@@ -685,7 +698,9 @@ namespace {
         if (cmd.args.size() != 2) return;
         addTask([]() {
             rootSnap = EngineEntity::copyAll(root);
-            dirSnap = rootSnap->getRelative(dir->getPath().substr(dir == root ? 5 : 6));
+            dirSnap = EngineEntity::cast<EngineEntity>(
+                rootSnap->getRelative(dir->getPath())
+            );
             simStart();
         });
     }
@@ -698,6 +713,51 @@ namespace {
             root = std::move(rootSnap);
             dir = std::move(dirSnap);
             simStop();
+        });
+    }
+
+
+    void file_save(Command cmd) {
+        if (cmd.args.size() != 3) return;
+        std::string filename = cmd.args[2];
+
+        addTask([filename]() {
+            BinaryWriter file(filename);
+            if (!file.good()) return;
+
+            writeValue(file, getPos());
+            writeValue(file, getRot());
+            writeValue(file, getFov());
+            writeValue(file, getAmbientLight());
+            writeValue(file, getBackgroundColor());
+
+            EngineEntity::serializeAll(file, root);
+            writeString(file, dir->getPath());
+        });
+    }
+
+    void file_load(Command cmd) {
+        if (cmd.args.size() != 3) return;
+        std::string filename = cmd.args[2];
+
+        addTask([filename]() {
+            BinaryReader file(filename);
+            if (!file.good()) return;
+
+            EngineEntity::disableAll(root);
+
+            setPos(readValue<Vec3f>(file));
+            setRot(readValue<Vec3f>(file));
+            setFov(readValue<float>(file));
+            setAmbientLight(readValue<Vec3f>(file));
+            setBackgroundColor(readValue<Vec3f>(file));
+
+            root = EngineEntity::deserializeAll(file);
+            dir = EngineEntity::cast<EngineEntity>(
+                root->getRelative(readString(file))
+            );
+
+            EngineEntity::enableAll(root);
         });
     }
 
@@ -764,6 +824,11 @@ namespace {
         cmdTreeSim->insert(CommandNode::make("stop", sim_stop));
         cmdTree->insert(cmdTreeSim);
 
+        Tree::H cmdTreeFile = Tree::make("file");
+        cmdTreeFile->insert(CommandNode::make("save", file_save));
+        cmdTreeFile->insert(CommandNode::make("load", file_load));
+        cmdTree->insert(cmdTreeFile);
+
         return cmdTree;
     }
 
@@ -790,7 +855,7 @@ namespace ramiel {
 
 
     std::string getPath() {
-        return dir == root ? "/" : dir->getPath().substr(5);
+        return dir->getPath();
     }
 
     Tree::H getTree(std::string path) {

@@ -49,6 +49,20 @@ namespace {
 
 namespace ramiel {
 
+    EngineVertexShaderBase* EngineVertexShaderBase::make(BinaryReader& file) {
+        file.next();
+
+        std::string type = readString(file);
+        EngineVertexShaderBase* vs{};
+
+        if (type == "vs") vs = new EngineVertexShader(file);
+        else if (type == "vst") vs = new EngineVertexShaderTextured(file);
+
+        file.next();
+        return vs;
+    }
+
+
     EngineVertexShader::EngineVertexShader(
         Vec3f pos,
         Vec3f rot,
@@ -58,6 +72,12 @@ namespace ramiel {
         , scale(scale)
     {
         vs.worldTransform = getWorldTransform(pos, rot, scale);
+    }
+
+    EngineVertexShader::EngineVertexShader(BinaryReader& file)
+        : vs({})
+    {
+        scale = readValue<Vec3f>(file);
     }
 
     std::string EngineVertexShader::getProp(std::string prop) const {
@@ -85,6 +105,11 @@ namespace ramiel {
         vs.worldTransform = matmat(ramiel::scale(scale), transform);
     }
 
+    void EngineVertexShader::serialize(BinaryWriter& file) const {
+        writeString(file, "vs");
+        writeValue(file, scale);
+    }
+
 
     EngineVertexShaderTextured::EngineVertexShaderTextured(
         Vec3f pos,
@@ -95,6 +120,12 @@ namespace ramiel {
         , scale(scale)
     {
         vs.worldTransform = getWorldTransform(pos, rot, scale);
+    }
+
+    EngineVertexShaderTextured::EngineVertexShaderTextured(BinaryReader& file)
+        : vs({})
+    {
+        scale = readValue<Vec3f>(file);
     }
 
     std::string EngineVertexShaderTextured::getProp(std::string prop) const {
@@ -117,6 +148,25 @@ namespace ramiel {
         vs.worldTransform = matmat(ramiel::scale(scale), transform);
     }
 
+    void EngineVertexShaderTextured::serialize(BinaryWriter& file) const {
+        writeString(file, "vst");
+        writeValue(file, scale);
+    }
+
+
+    EnginePixelShaderBase* EnginePixelShaderBase::make(BinaryReader& file) {
+        file.next();
+
+        std::string type = readString(file);
+        EnginePixelShaderBase* ps{};
+
+        if (type == "ps") ps = new EnginePixelShader(file);
+        else if (type == "pst") ps = new EnginePixelShaderTextured(file);
+
+        file.next();
+        return ps;
+    }
+
 
     EnginePixelShader::EnginePixelShader(
         Vec3f color,
@@ -125,6 +175,14 @@ namespace ramiel {
     )
         : ps(color / 255.0f, specexp, specint, Vec3f{})
     {}
+
+    EnginePixelShader::EnginePixelShader(BinaryReader& file)
+        : ps({}, {}, {}, {})
+    {
+        ps.surfaceColor = readValue<Vec3f>(file);
+        ps.specularExponent = readValue<float>(file);
+        ps.specularIntensity = readValue<float>(file);
+    }
 
     std::string EnginePixelShader::getProp(std::string prop) const {
         if (prop == "color") return toString(ps.surfaceColor * 255.0f);
@@ -154,6 +212,13 @@ namespace ramiel {
         );
     }
 
+    void EnginePixelShader::serialize(BinaryWriter& file) const {
+        writeString(file, "ps");
+        writeValue(file, ps.surfaceColor);
+        writeValue(file, ps.specularExponent);
+        writeValue(file, ps.specularIntensity);
+    }
+
 
     EnginePixelShaderTextured::EnginePixelShaderTextured(
         Tree::H texture,
@@ -166,6 +231,21 @@ namespace ramiel {
         assert(EngineEntity::cast<EngineTexture>(texture));
         auto t = &EngineEntity::cast<EngineTexture>(texture)->get();
         ps = PixelShaderTextured(t, specexp, specint, Vec3f{});
+    }
+
+    EnginePixelShaderTextured::EnginePixelShaderTextured(BinaryReader& file)
+        : ps({}, {}, {}, {})
+    {
+        std::string texturePath = readString(file);
+        ps.specularExponent = readValue<float>(file);
+        ps.specularIntensity = readValue<float>(file);
+
+        EngineEntity::addRef(texturePath, [this](Tree::H node) {
+            auto txt = EngineEntity::cast<EngineTexture>(node);
+            assert(txt);
+            texture = txt;
+            ps.texture = &txt->get();
+        });
     }
 
     std::string EnginePixelShaderTextured::getProp(std::string prop) const {
@@ -189,11 +269,25 @@ namespace ramiel {
     }
 
     EnginePixelShaderBase* EnginePixelShaderTextured::copy() const {
-        return new EnginePixelShaderTextured(
+        auto s = new EnginePixelShaderTextured(
             texture,
             ps.specularExponent,
             ps.specularIntensity
         );
+        EngineEntity::addRef(texture->getPath(), [s](Tree::H node) {
+            auto txt = EngineEntity::cast<EngineTexture>(node);
+            assert(txt);
+            s->texture = txt;
+            s->ps.texture = &txt->get();
+        });
+        return s;
+    }
+
+    void EnginePixelShaderTextured::serialize(BinaryWriter& file) const {
+        writeString(file, "pst");
+        writeString(file, texture->getPath());
+        writeValue(file, ps.specularExponent);
+        writeValue(file, ps.specularIntensity);
     }
 
 }
