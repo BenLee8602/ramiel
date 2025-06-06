@@ -3,11 +3,17 @@
 
 namespace ramiel {
 
-    Texture::Texture(std::vector<Vec3f>& data, Vec2u res) {
-        this->res = res;
-        this->resClamp = res - 1;
-        this->data = std::move(data);
-    }
+    Texture::Texture(std::vector<Vec3f>&& data, Vec2u res)
+        : res(res)
+        , resClamp(res - 1)
+        , data(std::move(data))
+    {}
+
+    Texture::Texture(const std::vector<Vec3f>& data, Vec2u res)
+        : res(res)
+        , resClamp(res - 1)
+        , data(data)
+    {}
 
     Texture::Texture(const std::string& filename, Mat4x4f format) {
         res = Vec2u();
@@ -24,6 +30,10 @@ namespace ramiel {
 
     Vec2u Texture::getSize() const {
         return res;
+    }
+
+    Vec3f* Texture::getData() {
+        return data.data();
     }
 
 }

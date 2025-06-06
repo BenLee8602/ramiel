@@ -120,7 +120,7 @@ namespace ramiel {
 
 
     float getFov() {
-        return fov;
+        return fov * 57.295779f;
     }
 
     float getFocalLen() {

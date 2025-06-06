@@ -16,7 +16,7 @@ namespace ramiel {
 
     void Particle::integrate(float dt) {
         posPrev = pos;
-        //vel[Y] -= 9.8f * dt;
+        if (wass) vel[Y] -= 9.8f * dt;
         pos += vel * dt;
     }
 

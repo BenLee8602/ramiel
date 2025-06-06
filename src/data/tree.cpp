@@ -29,6 +29,13 @@ namespace {
         return false;
     }
 
+
+    std::string getTreePath(std::shared_ptr<const Tree> node) {
+        Tree::H parent = node->getParent();
+        if (!parent) return "";
+        return getTreePath(parent) + node->getName() + '/';
+    }
+
 }
 
 namespace ramiel {
@@ -71,8 +78,8 @@ namespace ramiel {
     }
 
     std::string Tree::getPath() const {
-        std::string path = parent ? parent->getPath() : "";
-        path += '/' + name;
+        std::string path = getTreePath(shared_from_this());
+        if (!path.empty()) path.pop_back();
         return path;
     }
 
