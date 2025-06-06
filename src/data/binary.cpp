@@ -106,4 +106,19 @@ namespace ramiel {
         m_file.close();
     }
 
+
+    std::string readString(BinaryReader& file) {
+        assert(file.good());
+        std::string str;
+        str.resize(file.attrSize());
+        file.readAttr(str.data(), str.size());
+        file.next();
+        return str;
+    }
+
+    void writeString(BinaryWriter& file, const std::string& str) {
+        assert(file.good());
+        file.writeAttr(str.data(), str.size());
+    }
+
 }
