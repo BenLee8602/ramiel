@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+#include <cassert>
 
 namespace ramiel {
 
@@ -63,5 +65,41 @@ namespace ramiel {
         std::ofstream m_file;
         size_t m_nodeDepth;
     };
+
+
+    std::string readString(BinaryReader& file);
+
+    template<class T>
+    T readValue(BinaryReader& file) {
+        assert(file.attrSize() == sizeof(T));
+        T val;
+        file.readAttr(&val, sizeof(T));
+        file.next();
+        return val;
+    }
+
+    template<class T>
+    std::vector<T> readVector(BinaryReader& file) {
+        assert(file.attrSize() % sizeof(T) == 0);
+        std::vector<T> val(file.attrSize() / sizeof(T));
+        file.readAttr(val.data(), file.attrSize());
+        file.next();
+        return val;
+    }
+
+
+    void writeString(BinaryWriter& file, const std::string& str);
+
+    template<class T>
+    void writeValue(BinaryWriter& file, const T& val) {
+        assert(file.good());
+        file.writeAttr(&val, sizeof(T));
+    }
+
+    template<class T>
+    void writeVector(BinaryWriter& file, const std::vector<T>& val) {
+        assert(file.good());
+        file.writeAttr(val.data(), val.size() * sizeof(T));
+    }
 
 }
