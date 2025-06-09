@@ -118,7 +118,7 @@ void runCommandLine() {
 
 
 int main() {
-    if (!initWindow()) return 0;
+    initWindow();
     std::thread(runCommandLine).detach();
 
     auto frameTimeStart = std::chrono::steady_clock::now();
