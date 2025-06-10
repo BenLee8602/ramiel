@@ -1,0 +1,6 @@
+[submodule "deps/stb/stb"]
+	path = deps/stb/stb
+	url = https://github.com/nothings/stb
+[submodule "deps/sdl"]
+	path = deps/sdl
+	url = https://github.com/libsdl-org/SDL

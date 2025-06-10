@@ -15,7 +15,9 @@ namespace ramiel {
         TICK, MINUS, PLUS, BRACKETOPEN, BRACKETCLOSE, BACKSLASH, COLON, QUOTE, COMMA, PERIOD, SLASH // misc
     };
 
-    bool initWindow();
+    void initWindow();
+    void destroyWindow();
+
     bool windowGood();
     void pollWindowMessages();
 
