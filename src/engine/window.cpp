@@ -101,7 +101,6 @@ namespace {
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     SDL_Texture* texture = nullptr;
-    std::vector<uint8_t> frame;
 
     std::vector<bool> prevKeyStates(keyMap.size());
     std::vector<bool> keyStates(keyMap.size());
@@ -111,7 +110,7 @@ namespace {
         assert(renderer);
         return SDL_CreateTexture(
             renderer,
-            SDL_PIXELFORMAT_RGB24,
+            SDL_PIXELFORMAT_ARGB8888,
             SDL_TEXTUREACCESS_STREAMING,
             size[X], size[Y]
         );
@@ -136,8 +135,6 @@ namespace {
 
         SDL_DestroyTexture(texture);
         texture = makeTexture(size);
-
-        frame = std::vector<uint8_t>(size[X] * size[Y] * 3);
     }
 
 }
@@ -153,6 +150,8 @@ namespace ramiel {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) return;
 
         constexpr Vec2u defaultSize = { 800, 600 };
+
+        setRes(defaultSize);
 
         window = SDL_CreateWindow(
             "ramiel engine",
@@ -174,8 +173,6 @@ namespace ramiel {
 
         texture = makeTexture(defaultSize);
         assert(texture);
-
-        frame.resize(defaultSize[X] * defaultSize[Y] * 3);
     }
 
 
@@ -190,7 +187,6 @@ namespace ramiel {
         SDL_DestroyWindow(window);
         SDL_Quit();
 
-        frame = std::vector<uint8_t>();
         texture = nullptr;
         renderer = nullptr;
         window = nullptr;
@@ -240,7 +236,6 @@ namespace ramiel {
     void setWindowSize(Vec2u size) {
         assert(window);
         SDL_SetWindowSize(window, size[X], size[Y]);
-        assert(getWindowSize() == size);
     }
 
 
@@ -268,22 +263,24 @@ namespace ramiel {
         assert(renderer);
         assert(texture);
 
-        float* in = reinterpret_cast<float*>(&*getColorBuffer());
-        for (size_t i = 0; i < frame.size(); i++) {
-            frame[i] = static_cast<uint8_t>(in[i]);
-        }
-
         void* txpixels = nullptr;
         int txpitch = 0;
         SDL_LockTexture(texture, nullptr, &txpixels, &txpitch);
+        assert(txpitch == getRes()[X] * 4);
 
-        const Vec2u size = getWindowSize();
+        float* in = reinterpret_cast<float*>(&*getColorBuffer());
+        uint8_t* out = reinterpret_cast<uint8_t*>(txpixels);
+        Vec2u size = getRes();
+
         for (size_t y = 0; y < size[Y]; y++) {
-            memcpy(
-                static_cast<uint8_t*>(txpixels) + y * txpitch,
-                in + y * size[X] * 3,
-                size[X] * 3
-            );
+            uint8_t* o = out + size[X] * 4 * (size[Y] - y - 1);
+            for (size_t x = 0; x < size[X]; x++) {
+                o[2] = static_cast<uint8_t>(std::min(*in++, 255.0f));
+                o[1] = static_cast<uint8_t>(std::min(*in++, 255.0f));
+                o[0] = static_cast<uint8_t>(std::min(*in++, 255.0f));
+                o[3] = 255;
+                o += 4;
+            }
         }
 
         SDL_UnlockTexture(texture);
@@ -294,3 +291,4 @@ namespace ramiel {
     }
 
 }
+

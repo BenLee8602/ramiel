@@ -3,8 +3,5 @@ add_subdirectory(file)
 add_subdirectory(data)
 add_subdirectory(graphics)
 add_subdirectory(physics)
+add_subdirectory(engine)
 
-# engine is windows only for now
-if(WIN32)
-    add_subdirectory(engine)
-endif()
