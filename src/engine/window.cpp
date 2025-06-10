@@ -266,14 +266,13 @@ namespace ramiel {
         void* txpixels = nullptr;
         int txpitch = 0;
         SDL_LockTexture(texture, nullptr, &txpixels, &txpitch);
-        assert(txpitch == getRes()[X] * 4);
 
         float* in = reinterpret_cast<float*>(&*getColorBuffer());
         uint8_t* out = reinterpret_cast<uint8_t*>(txpixels);
         Vec2u size = getRes();
 
         for (size_t y = 0; y < size[Y]; y++) {
-            uint8_t* o = out + size[X] * 4 * (size[Y] - y - 1);
+            uint8_t* o = out + txpitch * (size[Y] - y - 1);
             for (size_t x = 0; x < size[X]; x++) {
                 o[2] = static_cast<uint8_t>(std::min(*in++, 255.0f));
                 o[1] = static_cast<uint8_t>(std::min(*in++, 255.0f));
