@@ -1,4 +1,5 @@
 add_library(${PROJECT_NAME}_math STATIC
+    curve.cpp
     interpolate.cpp
     quaternion.cpp
 )
