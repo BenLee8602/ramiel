@@ -3,6 +3,7 @@ add_library(${PROJECT_NAME}_graphics_core OBJECT
     clip.cpp
     effects.cpp
     entity.cpp
+    glyph.cpp
     light.cpp
     line.cpp
     rasterize.cpp

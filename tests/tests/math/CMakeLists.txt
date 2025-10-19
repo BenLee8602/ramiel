@@ -1,4 +1,5 @@
 add_library(${PROJECT_NAME}_tests_math OBJECT
+    curve.test.cpp
     mat.test.cpp
     quaternion.test.cpp
     transform.test.cpp

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../src/math/curve.h"
 #include "../src/math/interpolate.h"
 #include "../src/math/mat.h"
 #include "../src/math/quaternion.h"

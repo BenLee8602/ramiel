@@ -5,6 +5,7 @@
 #include "../src/graphics/camera.h"
 #include "../src/graphics/effects.h"
 #include "../src/graphics/entity.h"
+#include "../src/graphics/glyph.h"
 #include "../src/graphics/light.h"
 #include "../src/graphics/line.h"
 #include "../src/graphics/pixelshader.h"
