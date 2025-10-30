@@ -106,6 +106,10 @@ namespace {
     std::vector<bool> keyStates(keyMap.size());
 
 
+    InputField* field = nullptr;
+    size_t token = 0;
+
+
     SDL_Texture* makeTexture(Vec2u size) {
         assert(renderer);
         return SDL_CreateTexture(
@@ -117,10 +121,30 @@ namespace {
 
     }
 
-    void updateKey(SDL_Keycode key, bool value) {
-        auto keyIt = keyMap.find(key);
+    void handleKeyEvent(SDL_Keycode keyCode, bool value) {
+        auto keyIt = keyMap.find(keyCode);
         if (keyIt == keyMap.end()) return;
-        keyStates[static_cast<uint8_t>(keyIt->second)] = value;
+        Key key = keyIt->second;
+
+        if (!field) {
+            keyStates[static_cast<uint8_t>(key)] = value;
+            return;
+        }
+
+        if (!value) return;
+        if (key == Key::ESCAPE) {
+            InputField::clearCurrent();
+        } else if (key == Key::ENTER) {
+            field->getOnSubmit()(field->getValue());
+        } else if (key == Key::BACKSPACE && token > 0) {
+            std::string fieldVal = field->getValue();
+            fieldVal.erase(--token, 1);
+            field->setValue(fieldVal);
+        } else if (key == Key::LEFT) {
+            if (token > 0) token--;
+        } else if (key == Key::RIGHT) {
+            if (token < field->getValue().size()) token++;
+        }
     }
 
 
@@ -135,6 +159,14 @@ namespace {
 
         SDL_DestroyTexture(texture);
         texture = makeTexture(size);
+    }
+
+
+    void insertToField(char c) {
+        assert(field);
+        std::string value = field->getValue();
+        value.insert(token, &c, 1);
+        if (field->setValue(value)) token++;
     }
 
 }
@@ -182,6 +214,8 @@ namespace ramiel {
         assert(renderer);
         assert(texture);
 
+        InputField::clearCurrent();
+
         SDL_DestroyTexture(texture);
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
@@ -209,15 +243,17 @@ namespace ramiel {
                 destroyWindow();
                 return;
             } else if (event.type == SDL_EVENT_KEY_DOWN) {
-                updateKey(event.key.key, true);
+                handleKeyEvent(event.key.key, true);
             } else if (event.type == SDL_EVENT_KEY_UP) {
-                updateKey(event.key.key, false);
+                handleKeyEvent(event.key.key, false);
             } else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-                updateKey(event.button.button, true);
+                handleKeyEvent(event.button.button, true);
             } else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
-                updateKey(event.button.button, false);
+                handleKeyEvent(event.button.button, false);
             } else if (event.type == SDL_EVENT_WINDOW_RESIZED) {
                 onWindowResized();
+            } else if (event.type == SDL_EVENT_TEXT_INPUT) {
+                insertToField(event.text.text[0]);
             }
         }
     }
@@ -287,6 +323,81 @@ namespace ramiel {
         SDL_RenderClear(renderer);
         SDL_RenderTexture(renderer, texture, nullptr, nullptr);
         SDL_RenderPresent(renderer);
+    }
+
+
+    InputField* InputField::getCurrent() {
+        return field;
+    }
+
+    void InputField::clearCurrent() {
+        assert(window);
+        if (!field) return;
+        SDL_StopTextInput(window);
+        field = nullptr;
+        token = 0;
+    }
+
+
+    InputField::InputField(
+        const std::string& value,
+        OnChange onChange,
+        OnSubmit onSubmit
+    ) {
+        setOnChange(onChange);
+        setOnSubmit(onSubmit);
+        setValue(value);
+    }
+
+
+    InputField::~InputField() {
+        if (isCurrent()) InputField::clearCurrent();
+    }
+
+
+    bool InputField::isCurrent() const {
+        return field == this;
+    }
+
+    void InputField::makeCurrent() {
+        assert(window);
+        if (!field) {
+            SDL_StartTextInput(window);
+            std::fill(keyStates.begin(), keyStates.end(), false);
+        }
+        field = this;
+        token = value.size();
+    }
+
+
+    const std::string& InputField::getValue() const {
+        return value;
+    }
+
+    bool InputField::setValue(const std::string& value) {
+        if (!onChange(value)) return false;
+        this->value = value;
+        return true;
+    }
+
+
+    InputField::OnChange InputField::getOnChange() const {
+        return onChange;
+    }
+
+    void InputField::setOnChange(OnChange onChange) {
+        static OnChange dflt = [](const std::string&) { return true; };
+        this->onChange = onChange ? onChange : dflt;
+    }
+
+
+    InputField::OnSubmit InputField::getOnSubmit() const {
+        return onSubmit;
+    }
+
+    void InputField::setOnSubmit(OnSubmit onSubmit) {
+        static OnSubmit dflt = [](const std::string&) {};
+        this->onSubmit = onSubmit ? onSubmit : dflt;
     }
 
 }
