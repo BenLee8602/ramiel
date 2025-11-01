@@ -1,5 +1,6 @@
 add_library(${PROJECT_NAME}_graphics_core OBJECT
     camera.cpp
+    colorfmt.cpp
     clip.cpp
     effects.cpp
     entity.cpp

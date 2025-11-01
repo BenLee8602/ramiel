@@ -14,6 +14,7 @@ namespace {
         v *= zinv;
         v = getScreenCoord(v);
         v[W] = zinv;
+        // todo: maybe theres a better way to clip without needing to clamp?
         v[X] = std::clamp(std::floor(v[X]), 0.0f, getRes()[X] - 1.0f);
         v[Y] = std::clamp(std::floor(v[Y]), 0.0f, getRes()[Y] - 1.0f);
         return v;
@@ -42,7 +43,7 @@ namespace ramiel {
             size_t i = (size_t)p[X] + (size_t)p[Y] * getRes()[X];
             if (getDepthBuffer()[i] > v[Z]) {
                 getDepthBuffer()[i] = v[Z];
-                getColorBuffer()[i] = color;
+                writeColorBuffer(i, color);
             }
         });
     }

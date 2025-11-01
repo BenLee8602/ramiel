@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <ramiel/math.h>
+#include "colorfmt.h"
 
 namespace ramiel {
     
@@ -10,10 +11,16 @@ namespace ramiel {
     size_t getBufferSize();
     float getAspectRatio();
 
-    typedef std::vector<Vec3f>::iterator ColorIt;
-    typedef std::vector<float>::iterator DepthIt;
-    ColorIt getColorBuffer();
-    DepthIt getDepthBuffer();
+    void* getColorBuffer();
+    ColorFormat getColorFormat();
+    size_t getColorSize();
+    float* getDepthBuffer();
+
+    void* setColorBuffer(void* buffer);
+    void setColorFormat(ColorFormat fmt, size_t colorSize);
+    float* setDepthBuffer(float* buffer);
+
+    void writeColorBuffer(size_t i, const Vec3f& color);
 
     const Vec3f& getPos();
     const Vec3f& getRot();

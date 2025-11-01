@@ -675,7 +675,7 @@ namespace {
 
     void set_backgroundColor(Command cmd) {
         if (cmd.args.size() != 5) return;
-        Vec3f backgroundColor;
+        Vec3ui8 backgroundColor;
         if (!fromString(cmd.args[2], backgroundColor[R])) return;
         if (!fromString(cmd.args[3], backgroundColor[G])) return;
         if (!fromString(cmd.args[4], backgroundColor[B])) return;
@@ -750,7 +750,7 @@ namespace {
             setRot(readValue<Vec3f>(file));
             setFov(readValue<float>(file));
             setAmbientLight(readValue<Vec3f>(file));
-            setBackgroundColor(readValue<Vec3f>(file));
+            setBackgroundColor(readValue<Vec3ui8>(file));
 
             root = EngineEntity::deserializeAll(file);
             dir = EngineEntity::cast<EngineEntity>(

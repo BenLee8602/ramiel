@@ -136,7 +136,6 @@ int main() {
         simStep(dtime);
         render();
 
-        updateFrame();
         pollWindowMessages();
     }
 

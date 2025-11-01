@@ -46,24 +46,24 @@ namespace {
         rasterizeTri(vpos(v0), vpos(v1), vpos(v2), [&](const Vec2f& pixel) {
             Vec3f weights = interpolate(pixel);
 
-            for (size_t i = 0; i < vSize; i++) {
-                v[i] = (
-                    v0[i] * weights[0] +
-                    v1[i] * weights[1] +
-                    v2[i] * weights[2]
-                );
-            }
+            for (size_t i = 0; i < vSize; i++) v[i] = (
+                v0[i] * weights[0] +
+                v1[i] * weights[1] +
+                v2[i] * weights[2]
+            );
 
             float z = 1.0f / v[W];
-            for (size_t i = 0; i < vSize; i++) {
-                v[i] *= z;
-            }
+            for (size_t i = 0; i < vSize; i++) v[i] *= z;
 
             size_t i = (size_t)pixel[X] + (size_t)pixel[Y] * getRes()[X];
-            if (getDepthBuffer()[i] > v[Z]) {
-                getDepthBuffer()[i] = v[Z];
-                getColorBuffer()[i] = ps->run(v.data());
+
+            float* depth = getDepthBuffer();
+            if (depth) {
+                if (depth[i] <= v[Z]) return;
+                depth[i] = v[Z];
             }
+
+            if (getColorBuffer()) writeColorBuffer(i, ps->run(v.data()));
         });
     }
 
