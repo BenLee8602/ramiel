@@ -23,7 +23,10 @@ void runCommandLine() {
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc >= 2)
+        runCommand(std::string("file load ") + argv[1]);
+
     initWindow();
     std::thread(runCommandLine).detach();
     getCameraMenu()->makeCurrent();
