@@ -3,7 +3,6 @@
 #include <cassert>
 #include <vector>
 
-#include <ramiel/graphics.h>
 #include "window.h"
 #include "graphics.h"
 using namespace ramiel;
@@ -122,29 +121,9 @@ namespace {
     }
 
     void handleKeyEvent(SDL_Keycode keyCode, bool value) {
-        auto keyIt = keyMap.find(keyCode);
-        if (keyIt == keyMap.end()) return;
-        Key key = keyIt->second;
-
-        if (!field) {
-            keyStates[static_cast<uint8_t>(key)] = value;
-            return;
-        }
-
-        if (!value) return;
-        if (key == Key::ESCAPE) {
-            InputField::clearCurrent();
-        } else if (key == Key::ENTER) {
-            field->getOnSubmit()(field->getValue());
-        } else if (key == Key::BACKSPACE && token > 0) {
-            std::string fieldVal = field->getValue();
-            fieldVal.erase(--token, 1);
-            field->setValue(fieldVal);
-        } else if (key == Key::LEFT) {
-            if (token > 0) token--;
-        } else if (key == Key::RIGHT) {
-            if (token < field->getValue().size()) token++;
-        }
+        auto key = keyMap.find(keyCode);
+        if (key == keyMap.end()) return;
+        keyStates[static_cast<uint8_t>(key->second)] = value;
     }
 
 
@@ -302,17 +281,27 @@ namespace ramiel {
         int txpitch = 0;
         SDL_LockTexture(texture, nullptr, &txpixels, &txpitch);
 
-        uint8_t* in  = static_cast<uint8_t*>(getColorBuffer());
-        uint8_t* out = static_cast<uint8_t*>(txpixels);
-        Vec2u size = getRes();
+        Vec3ui8* colorBuf = getColorBuf();
+        Vec4ui8* menuBuf = getMenuBuf();
 
+        uint8_t* out = reinterpret_cast<uint8_t*>(txpixels);
+
+        Vec2u size = getRes();
         for (size_t y = 0; y < size[Y]; y++) {
             uint8_t* o = out + txpitch * (size[Y] - y - 1);
             for (size_t x = 0; x < size[X]; x++) {
-                o[2] = std::min<uint8_t>(*in++, 255);
-                o[1] = std::min<uint8_t>(*in++, 255);
-                o[0] = std::min<uint8_t>(*in++, 255);
+                float alpha = static_cast<float>((*menuBuf)[3]) / 255.0f;
+
+                Vec3 col = static_cast<Vec3>(*colorBuf);
+                Vec3 menuCol = static_cast<Vec3>(sizeView<3>(*menuBuf));
+
+                o[2] = col[0] + alpha * (menuCol[0] - col[0]);
+                o[1] = col[1] + alpha * (menuCol[1] - col[1]);
+                o[0] = col[2] + alpha * (menuCol[2] - col[2]);
                 o[3] = 255;
+
+                colorBuf++;
+                menuBuf++;
                 o += 4;
             }
         }
@@ -329,12 +318,11 @@ namespace ramiel {
         return field;
     }
 
-    void InputField::clearCurrent() {
+    InputField* InputField::clearCurrent() {
         assert(window);
-        if (!field) return;
-        SDL_StopTextInput(window);
-        field = nullptr;
+        if (field) SDL_StopTextInput(window);
         token = 0;
+        return std::exchange(field, nullptr);
     }
 
 
@@ -358,14 +346,14 @@ namespace ramiel {
         return field == this;
     }
 
-    void InputField::makeCurrent() {
+    InputField* InputField::makeCurrent() {
         assert(window);
         if (!field) {
             SDL_StartTextInput(window);
             std::fill(keyStates.begin(), keyStates.end(), false);
         }
-        field = this;
         token = value.size();
+        return std::exchange(field, this);
     }
 
 
@@ -376,6 +364,7 @@ namespace ramiel {
     bool InputField::setValue(const std::string& value) {
         if (!onChange(value)) return false;
         this->value = value;
+        if (isCurrent()) token = std::min(token, value.size());
         return true;
     }
 
@@ -397,6 +386,35 @@ namespace ramiel {
     void InputField::setOnSubmit(OnSubmit onSubmit) {
         static OnSubmit dflt = [](const std::string&) {};
         this->onSubmit = onSubmit ? onSubmit : dflt;
+    }
+
+
+    size_t InputField::getToken() {
+        return isCurrent() ? token : 0;
+    }
+
+    size_t InputField::setToken(size_t token_) {
+        if (!isCurrent()) return 0;
+        token_ = std::min(token_, value.size());
+        return std::exchange(token, token_);
+    }
+
+
+    void InputField::controls() {
+        if (!isCurrent()) return;
+        if (keyDown(Key::ESCAPE)) {
+            InputField::clearCurrent();
+        } if (keyDown(Key::ENTER)) {
+            getOnSubmit()(field->getValue());
+        } if (keyDown(Key::BACKSPACE) && token > 0) {
+            std::string v = value;
+            v.erase(--token, 1);
+            setValue(v);
+        } if (keyDown(Key::LEFT) && token > 0) {
+            token--;
+        } if (keyDown(Key::RIGHT) && token < value.size()) {
+            token++;
+        }
     }
 
 }

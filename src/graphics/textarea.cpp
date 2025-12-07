@@ -114,11 +114,6 @@ namespace ramiel {
         size_t i = line ? lines[line - 1] : 0;
         Vec2f pen = { pos[X], pos[Y] + size[Y] - fontSize };
 
-        std::cout << "value: \"" << value << "\"\n";
-        std::cout << "lines: ";
-        for (auto l : lines) std::cout << l << ' ';
-        std::cout << '\n';
-
         for (size_t l = line; l < lines.size(); l++) {
             for (i; i < lines[l]; i++) {
                 char c = value[i];

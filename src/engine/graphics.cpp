@@ -1,9 +1,11 @@
 #include <cassert>
 #include <unordered_set>
 
+#include <ramiel/graphics.h>
 #include "graphics.h"
 #include "entity.h"
 #include "window.h"
+#include "menu.h"
 using namespace ramiel;
 
 namespace {
@@ -13,11 +15,51 @@ namespace {
     std::vector<Vec3ui8> colorBuffer;
     std::vector<float> depthBuffer;
 
+    std::vector<Vec4ui8> menuBuffer;
+
     Vec3ui8 backgroundColor = {};
 
     std::unordered_set<EngineGraphicsEntity*> entities;
 
     bool renderIsNeeded = true;
+    bool menuRenderIsNeeded = true;
+
+
+    void renderScene() {
+        if (!renderIsNeeded) return;
+        renderIsNeeded = false;
+
+        setColorBuffer(colorBuffer.data());
+        setDepthBuffer(depthBuffer.data());
+        setColorFormat(cfmtRGB888, sizeof(Vec3ui8));
+
+        std::fill(colorBuffer.begin(), colorBuffer.end(), backgroundColor);
+        std::fill(depthBuffer.begin(), depthBuffer.end(), getZ1());
+
+        for (auto& e : entities) {
+            e->updatePhys();
+            e->get().draw();
+        }
+
+        setColorBuffer(nullptr);
+        setDepthBuffer(nullptr);
+        setColorFormat(nullptr, 0);
+    }
+
+
+    void renderMenu() {
+        if (!menuRenderIsNeeded) return;
+        menuRenderIsNeeded = false;
+        
+        setColorBuffer(menuBuffer.data());
+        setDepthBuffer(nullptr);
+        setColorFormat(cfmtRGBA8888, sizeof(Vec4ui8));
+
+        Menu::currentRender();
+
+        setColorBuffer(nullptr);
+        setColorFormat(nullptr, 0);
+    }
 
 }
 
@@ -29,13 +71,23 @@ namespace ramiel {
 
         colorBuffer = std::vector<Vec3ui8>(bufferSize);
         depthBuffer = std::vector<float>(bufferSize);
-
-        setColorBuffer(colorBuffer.data());
-        setDepthBuffer(depthBuffer.data());
-
-        setColorFormat(cfmtRGB888, sizeof(Vec3ui8));
+        menuBuffer = std::vector<Vec4ui8>(bufferSize);
 
         renderNeeded();
+        menuRenderNeeded();
+    }
+
+
+    Vec3ui8* getColorBuf() {
+        return colorBuffer.data();
+    }
+
+    float* getDepthBuf() {
+        return depthBuffer.data();
+    }
+
+    Vec4ui8* getMenuBuf() {
+        return menuBuffer.data();
     }
 
 
@@ -64,19 +116,16 @@ namespace ramiel {
         renderIsNeeded = true;
     }
 
+    void menuRenderNeeded() {
+        menuRenderIsNeeded = true;
+    }
+
     void render() {
         if (!getRes()[X] || !getRes()[Y]) return;
+        if (!renderIsNeeded && !menuRenderIsNeeded) return;
 
-        if (!renderIsNeeded) return;
-        renderIsNeeded = false;
-
-        std::fill(colorBuffer.begin(), colorBuffer.end(), backgroundColor);
-        std::fill(depthBuffer.begin(), depthBuffer.end(), getZ1());
-
-        for (auto& e : entities) {
-            e->updatePhys();
-            e->get().draw();
-        }
+        renderScene();
+        renderMenu();
 
         updateFrame();
     }
