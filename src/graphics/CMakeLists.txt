@@ -8,6 +8,7 @@ add_library(${PROJECT_NAME}_graphics_core OBJECT
     light.cpp
     line.cpp
     rasterize.cpp
+    textarea.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_graphics_core PUBLIC ${CMAKE_SOURCE_DIR}/deps)
