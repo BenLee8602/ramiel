@@ -426,7 +426,7 @@ namespace ramiel {
         e->vs = std::unique_ptr<EngineVertexShaderBase>(vs->copy());
         e->ps = std::unique_ptr<EnginePixelShaderBase>(ps->copy());
 
-        refs.emplace_back(mesh->getPath(), [=](Tree::H node) {
+        refs.emplace_back(mesh->getPath(), [=, this](Tree::H node) {
             e->setName(getName());
             e->mesh = EngineEntity::cast<EngineMesh>(node);
             e->e = Entity(&e->mesh->get(), e->vs->get(), e->ps->get());
@@ -478,7 +478,7 @@ namespace ramiel {
         ps = std::unique_ptr<EnginePixelShaderBase>(
             EnginePixelShaderBase::make(file));
 
-        refs.emplace_back(meshPath, [=](Tree::H node) {
+        refs.emplace_back(meshPath, [=, this](Tree::H node) {
             mesh = EngineEntity::cast<EngineMesh>(node);
             e = Entity(&mesh->get(), vs->get(), ps->get());
             assert(mesh && e);

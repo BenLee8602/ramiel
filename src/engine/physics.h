@@ -2,9 +2,12 @@
 
 namespace ramiel {
 
+    float getDtime();
+    void setDtime();
+
     void simStart();
     void simStop();
 
-    void simStep(float dtime);
+    void simStep();
 
 }

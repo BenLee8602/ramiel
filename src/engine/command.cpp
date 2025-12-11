@@ -12,6 +12,7 @@
 #include "window.h"
 #include "entity.h"
 #include "serialize.h"
+#include "menu/terminal.h"
 using namespace ramiel;
 
 namespace {
@@ -49,10 +50,8 @@ namespace {
             bool manual = flags.find("manual") != flags.end();
             if (!manual && defaultValue) return defaultValue;
 
-            std::string value;
-            std::cout << "enter property " << name << ": ";
-            std::getline(std::cin, value);
-            return value;
+            termWrite("enter property " + name + ": ");
+            return termRead();
         }
 
         bool hasFlag(const std::string& name) const {
@@ -512,24 +511,24 @@ namespace {
     void get_path(Command cmd) {
         assert(dir && root);
         if (cmd.args.size() != 2) return;
-        std::cout << getPath() << '\n';
+        termWrite(getPath() + '\n');
     }
 
     void get_name(Command cmd) {
         assert(dir);
         if (cmd.args.size() != 2) return;
-        std::cout << dir->getName() << '\n';
+        termWrite(dir->getName() + '\n');
     }
 
     void get_kids(Command cmd) {
         assert(dir);
         if (cmd.args.size() != 2) return;
-        std::cout << "[\n";
+        termWrite("[\n");
         dir->forEachKid([](Tree::H kid) {
-            std::cout << "    " << kid->getName() << '\n';
+            termWrite("    " + kid->getName() + '\n');
             return true;
         });
-        std::cout << "]\n";
+        termWrite("]\n");
     }
 
 
@@ -540,48 +539,48 @@ namespace {
         EngineEntity::H e = EngineEntity::cast<EngineEntity>(dir);
         if (!e) return;
 
-        std::cout << e->getProperty(cmd.args[2]) << '\n';
+        termWrite(e->getProperty(cmd.args[2]) + '\n');
     }
 
 
     void get_cameraRes(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getRes() << '\n';
+        termWrite(toString(getRes()) + '\n');
     }
 
     void get_cameraAspectRatio(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getAspectRatio() << '\n';
+        termWrite(toString(getAspectRatio()) + '\n');
     }
 
     void get_cameraPos(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getPos() << '\n';
+        termWrite(toString(getPos()) + '\n');
     }
 
     void get_cameraRot(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getRot() << '\n';
+        termWrite(toString(getRot()) + '\n');
     }
 
     void get_cameraFov(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getFov() << '\n';
+        termWrite(toString(getFov()) + '\n');
     }
 
     void get_cameraFocalLength(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getFocalLen() << '\n';
+        termWrite(toString(getFocalLen()) + '\n');
     }
 
     void get_ambientLight(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getAmbientLight() << '\n';
+        termWrite(toString(getAmbientLight()) + '\n');
     }
 
     void get_backgroundColor(Command cmd) {
         if (cmd.args.size() != 2) return;
-        std::cout << getBackgroundColor() << '\n';
+        termWrite(toString(getBackgroundColor()) + '\n');
     }
 
     void set_name(Command cmd) {
@@ -675,7 +674,7 @@ namespace {
 
     void set_backgroundColor(Command cmd) {
         if (cmd.args.size() != 5) return;
-        Vec3f backgroundColor;
+        Vec3ui8 backgroundColor;
         if (!fromString(cmd.args[2], backgroundColor[R])) return;
         if (!fromString(cmd.args[3], backgroundColor[G])) return;
         if (!fromString(cmd.args[4], backgroundColor[B])) return;
@@ -750,7 +749,7 @@ namespace {
             setRot(readValue<Vec3f>(file));
             setFov(readValue<float>(file));
             setAmbientLight(readValue<Vec3f>(file));
-            setBackgroundColor(readValue<Vec3f>(file));
+            setBackgroundColor(readValue<Vec3ui8>(file));
 
             root = EngineEntity::deserializeAll(file);
             dir = EngineEntity::cast<EngineEntity>(

@@ -17,8 +17,10 @@ namespace {
     size_t bufferSize = 0;
     float aspectRatio = 0.0f;
     
-    std::vector<Vec3f> color;
-    std::vector<float> depth;
+    void* color = nullptr;
+    ColorFormat colorFmt = nullptr;
+    size_t colorSize = 0;
+    float* depth = nullptr;
 
     Vec3f pos = Vec3f();
     Vec3f rot = Vec3f();
@@ -69,8 +71,6 @@ namespace ramiel {
         res = newSize;
         bufferSize = res[X] * res[Y];
         aspectRatio = (float)res[X] / (float)res[Y];
-        color = std::vector<Vec3f>(bufferSize);
-        depth = std::vector<float>(bufferSize);
         calcProjectionTransform();
         calcScreenTransform();
     }
@@ -84,12 +84,42 @@ namespace ramiel {
     }
 
 
-    ColorIt getColorBuffer() {
-        return color.begin();
+    void* getColorBuffer() {
+        return color;
     }
 
-    DepthIt getDepthBuffer() {
-        return depth.begin();
+    ColorFormat getColorFormat() {
+        return colorFmt;
+    }
+
+    size_t getColorSize() {
+        return colorSize;
+    }
+
+    float* getDepthBuffer() {
+        return depth;
+    }
+
+
+    void* setColorBuffer(void* buffer) {
+        std::swap(color, buffer);
+        return buffer;
+    }
+
+    void setColorFormat(ColorFormat fmt, size_t colorSize) {
+        colorFmt = fmt;
+        ::colorSize = colorSize;
+    }
+
+    float* setDepthBuffer(float* buffer) {
+        std::swap(depth, buffer);
+        return buffer;
+    }
+
+
+    void writeColorBuffer(size_t i, const Vec3f& color) {
+        assert(::color && colorFmt && colorSize);
+        colorFmt(color, static_cast<uint8_t*>(::color) + i * colorSize);
     }
 
 

@@ -405,7 +405,7 @@ namespace {
 
         for (float x = ceil2(x0); x < x1; x += 1.0f) {
             size_t i = static_cast<size_t>(x) + static_cast<size_t>(y) * getRes()[X];
-            getColorBuffer()[i] = color;
+            writeColorBuffer(i, color);
         }
     }
 

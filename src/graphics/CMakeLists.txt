@@ -1,5 +1,6 @@
 add_library(${PROJECT_NAME}_graphics_core OBJECT
     camera.cpp
+    colorfmt.cpp
     clip.cpp
     effects.cpp
     entity.cpp
@@ -7,6 +8,7 @@ add_library(${PROJECT_NAME}_graphics_core OBJECT
     light.cpp
     line.cpp
     rasterize.cpp
+    textarea.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_graphics_core PUBLIC ${CMAKE_SOURCE_DIR}/deps)

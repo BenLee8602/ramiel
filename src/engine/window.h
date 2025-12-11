@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <ramiel/graphics.h>
 
 namespace ramiel {
 
@@ -30,4 +31,50 @@ namespace ramiel {
 
     void updateFrame();
 
+
+    class InputField {
+    public:
+        using OnChange = std::function<bool(const std::string&)>;
+        using OnSubmit = std::function<void(const std::string&)>;
+
+        static InputField* getCurrent();
+        static InputField* clearCurrent();
+
+        InputField(
+            const std::string& value = std::string(),
+            OnChange onChange = nullptr,
+            OnSubmit onSubmit = nullptr
+        );
+
+        InputField(const InputField&) = default;
+        InputField& operator=(const InputField&) = default;
+
+        InputField(InputField&&) = default;
+        InputField& operator=(InputField&&) = default;
+
+        ~InputField();
+
+        bool isCurrent() const;
+        InputField* makeCurrent();
+
+        const std::string& getValue() const;
+        bool setValue(const std::string& value);
+
+        OnChange getOnChange() const;
+        void setOnChange(OnChange onChange);
+
+        OnSubmit getOnSubmit() const;
+        void setOnSubmit(OnSubmit onSubmit);
+
+        size_t getToken();
+        size_t setToken(size_t token);
+
+        void controls();
+
+    private:
+        std::string value;
+        OnChange onChange;
+        OnSubmit onSubmit;
+    };
+        
 }
