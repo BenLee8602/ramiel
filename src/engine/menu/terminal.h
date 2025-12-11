@@ -1,18 +1,17 @@
 #pragma once
 
 #include <string>
-#include <functional>
 
 namespace ramiel {
 
-    using TermReadCallback = std::function<void(const std::string&)>;
+    void termInit();
+    void termExit();
 
-    bool termIsOpen();
     void termOpen();
     void termClose();
 
+    std::string termRead();
     void termWrite(const std::string& msg);
-    void termRead(TermReadCallback cb);
 
     class Menu;
     Menu* getTerminal();

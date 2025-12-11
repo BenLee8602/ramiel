@@ -1,6 +1,7 @@
 #include <cassert>
 #include <queue>
 #include <mutex>
+#include <atomic>
 
 #include "task.h"
 using namespace ramiel;
@@ -19,6 +20,18 @@ namespace ramiel {
         std::lock_guard lock(mutex);
         tasks.push(task);
     }
+
+
+    void awaitTask(Task task) {
+        std::atomic<bool> done = false;
+        addTask([task, &done]() {
+            task();
+            done = true;
+            done.notify_one();
+        });
+        done.wait(false);
+    }
+
 
     void execTasks() {
         std::lock_guard lock(mutex);

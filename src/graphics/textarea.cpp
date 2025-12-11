@@ -141,7 +141,7 @@ namespace ramiel {
             return;
         }
 
-        auto it = std::upper_bound(lines.begin(), lines.end(), vi);
+        auto it = std::lower_bound(lines.begin(), lines.end(), vi);
         lines.erase(it, lines.end());
         
         const size_t beg = lines.empty() ? 0 : *(it - 1);

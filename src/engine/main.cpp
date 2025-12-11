@@ -1,5 +1,3 @@
-#include <thread>
-
 #include <ramiel/graphics.h>
 #include <ramiel/physics.h>
 
@@ -10,17 +8,8 @@
 #include "task.h"
 #include "menu.h"
 #include "menu/camera.h"
+#include "menu/terminal.h"
 using namespace ramiel;
-
-
-void runCommandLine() {
-    std::string command;
-    while (true) {
-        std::cout << getPath() << "> ";
-        std::getline(std::cin, command);
-        runCommand(command);
-    }
-}
 
 
 int main(int argc, char* argv[]) {
@@ -28,7 +17,7 @@ int main(int argc, char* argv[]) {
         runCommand(std::string("file load ") + argv[1]);
 
     initWindow();
-    std::thread(runCommandLine).detach();
+    termInit();
     getCameraMenu()->makeCurrent();
 
     while (windowGood()) {
@@ -44,6 +33,7 @@ int main(int argc, char* argv[]) {
         pollWindowMessages();
     }
 
+    termExit();
     destroyWindow();
     return 0;
 }
